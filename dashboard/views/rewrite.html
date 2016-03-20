@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orange Gateway - Rewrite</title>
+    {(meta.html)}
+</head>
+<body>
+
+{(header.html)}<!-- header end -->
+
+<div id="main" class="main-container container">
+    <div class="row">
+        <div class="col-md-12">
+
+            <table class="table table-bordered  table-hover">
+                <thead>
+                <tr>
+                    <th width="40px">序号</th>
+                    <th width="40px">启用</th>
+                    <th>名称</th>
+                    <th>匹配规则</th>
+                    <th>动作</th>
+                    <th width="120px">创建/变更时间</th>
+                    <th width="80px">操作</th>
+                </tr>
+                </thead>
+
+                <tbody id="rules">
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+</div>
+
+<script id="rule-item-tpl" type="text/template">
+    {@each rewrite_rules as r, index}
+    <tr>
+        <td class="center">${parseInt(index)+1}</td>
+        <td class="center">
+            {@if r.enable==true }
+            <input type="checkbox" disabled checked="checked"/>
+            {@/if}
+
+            {@if r.enable!=true }
+            <input type="checkbox" disabled/>
+            {@/if}
+        </td>
+        <td class="center">${r.name}</td>
+        <td class="left">
+            <p>
+                <b>Type</b>: ${r.matcher.type}
+                &nbsp;
+                {@if r.matcher.type==3 }
+                <b>Expression</b>: ${r.matcher.expression}
+                {@/if}
+            </p>
+
+            {@each r.matcher.conditions as c, index}
+            ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
+            {@/each}
+
+        </td>
+        <td class="left action">
+            regrex: ${r.action.regrex}<br/>
+            rewrite_to: ${r.action.rewrite_to}<br/>
+            log: ${r.action.log}
+        </td>
+        <td>${r.time}</td>
+        <td class="center do">
+            <a href="javascript:void(0)" class="edit-rule" data-id="${r.id}"><i title="编辑" class="fa fa-pencil"></i></a>&nbsp;&nbsp;
+            <a href="javascript:void(0)" class="delete-rule" data-id="${r.id}"><i title="删除" class="fa fa-trash"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</script>
+
+<script src="/orange/static/js/rewrite.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var nav = "nav-rewrite";
+        APP.Common.resetNav(nav);
+        APP.Rewrite.init();
+    });
+</script>
+</body>
+</html>

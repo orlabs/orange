@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orange Gateway - WAF</title>
+    {(meta.html)}
+</head>
+<body>
+
+{(header.html)}<!-- header end -->
+
+<div id="main" class="main-container container">
+    <div class="row" style="margin-bottom:20px">
+        <div class="col-md-12">
+            <div class="pull-left">
+                <h4>WAF防火墙配置</h4>
+            </div>
+
+            <div class="pull-right">
+                <a class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                    <i class="fa fa-pause"></i>
+                    <span>停用防火墙</span>
+                </a>
+                <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
+                    <i class="fa fa-filter"></i>
+                    <span>添加新规则</span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <table class="table table-bordered  table-hover">
+                <thead>
+                <tr>
+                    <th width="40px">序号</th>
+                    <th width="40px">启用</th>
+                    <th width="150px">名称</th>
+                    <th>匹配规则</th>
+                    <th>动作</th>
+                    <th width="120px">创建/变更时间</th>
+                    <th width="80px">操作</th>
+                </tr>
+                </thead>
+
+                <tbody id="rules">
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    
+</div>
+
+<script id="rule-item-tpl" type="text/template">
+    {@each access_rules as r, index}
+    <tr>
+        <td class="center">${parseInt(index)+1}</td>
+        <td class="center">
+            {@if r.enable==true }
+            <input type="checkbox" disabled checked="checked"/>
+            {@/if}
+
+            {@if r.enable!=true }
+            <input type="checkbox" disabled/>
+            {@/if}
+        </td>
+        <td class="center">${r.name}</td>
+        <td class="left">
+            <p>
+                <b>Type</b>: ${r.matcher.type}
+                &nbsp;
+                {@if r.matcher.type==3 }
+                    <b>Expression</b>: ${r.matcher.expression}
+                {@/if}
+            </p>
+            {@each r.matcher.conditions as c, index}
+            ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
+            {@/each}
+        </td>
+        <td class="left action">
+            perform: ${r.action.perform}<br/>
+            code: ${r.action.code}<br/>
+            log: ${r.action.log}
+        </td>
+        <td>${r.time}</td>
+        <td class="center do">
+            <a href="javascript:void(0)" class="edit-rule" data-id="${r.id}"><i title="编辑" class="fa fa-pencil"></i></a>&nbsp;&nbsp;
+            <a href="javascript:void(0)" class="delete-rule" data-id="${r.id}"><i title="删除" class="fa fa-trash"></i></a>
+        </td>
+    </tr>
+    {@/each}
+</script>
+
+<script id="add-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="add-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <div class="form-group">
+                <label for="input-matcher-type" class="col-sm-1 control-label">规则</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-matcher-type">
+                        <option value="0">单一条件匹配</option>
+                        <option value="1">and匹配</option>
+                        <option value="2">or匹配</option>
+                        <option value="3">复杂匹配</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-8" id="expression-area" style="display:none;">
+                     <input type="text" class="form-control" id="rule-matcher-expression" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
+                </div>
+            </div><!-- 类型 -->
+
+            <div class="form-group pair condition-holder">
+                <label class="col-sm-1 control-label"></label>
+
+                <div class="col-sm-2">
+                    <select class="form-control" name="rule-matcher-condition-type">
+                        <option value="URI">URI</option>
+                        <option value="Header">Header</option>
+                        <option value="IP">IP</option>
+                        <option value="UserAgent">UserAgent</option>
+                        <!-- <option value="Method">Method</option> -->
+                        <option value="Host">Host</option>
+                        <option value="Referer">Referer</option>
+                    </select>
+                </div>
+                <div class="col-sm-2 condition-name-hodler" style="display:none;">
+                    <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name">
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control"  name="rule-matcher-condition-operator">
+                        <option value="≈">Match RegEx</option>
+                        <option value="!≈">Not Match RegEx</option>
+                        <option value="=">Equal</option>
+                        <option value="!=">Not Equal</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="rule-matcher-condition-value" placeholder="value">
+                </div>
+                <div class="col-sm-1" style="margin-top:10px">
+                    <span class="input-group-btn">
+                        <a class="btn btn-danger" style="padding:0 5px;">
+                            <i class="fa fa-remove"></i>
+                        </a>
+                        <a class="btn btn-success" style="padding:0 5px;">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </span>
+                </div>
+            </div><!-- matcher -->
+
+            <div class="form-group action-holder">
+                <label class="col-sm-1 control-label">执行</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-action-perform">
+                        <option value="deny">deny</option>
+                        <option value="allow">allow</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2 action-code-hodler">
+                    <input type="text" class="form-control" id="rule-action-code" value="403" placeholder="error code">
+                </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control" id="rule-action-log">
+                        <option value="true">Log</option>
+                        <option value="false">Not Log</option>
+                    </select>
+                </div>
+            </div><!-- action -->
+
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script src="/orange/static/js/waf.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var nav = "nav-waf";
+        APP.Common.resetNav(nav);
+        APP.WAF.init();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orange Gateway - status</title>
+    {(meta.html)}
+</head>
+<body>
+
+{(header.html)}
+
+<div id="main" class="main-container container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                    设置
+                    </div>
+                    <div class="filter pull-right" id="time-set"> 
+                        <span class="l">时间间隔:</span>
+                        <a href="javascript:void(0);" class="active timer_interval" data-interval="1000">1s</a> / 
+                        <a href="javascript:void(0);" class="timer_interval" data-interval="3000">3s</a> / 
+                        <a href="javascript:void(0);" class="timer_interval" data-interval="5000">5s</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                    请求统计
+                    </div>
+                    <div class="filter pull-right"> 
+                   
+                    </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="request-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                    QPS
+                    </div>
+                    <div class="filter pull-right"> 
+                    </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="qps-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                    响应时间(秒)
+                    </div>
+                    <div class="filter pull-right"> 
+                      
+                    </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="response-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                    流量统计(KB/s)
+                    </div>
+                    <div class="filter pull-right"> 
+                       
+                    </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="traffic-area"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                        2xx请求
+                    </div>
+                    <div class="filter pull-right"></div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="2xx-area"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                        3xx请求
+                    </div>
+                    <div class="filter pull-right"> </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="3xx-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                        4xx请求
+                    </div>
+                    <div class="filter pull-right"> </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="4xx-area"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <div class="pull-left">
+                        5xx请求
+                    </div>
+                    <div class="filter pull-right"> </div>
+                </div>
+                <div class="panel-body" style="height:400px;padding-top:20px;" id="5xx-area"></div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+<script src="/orange/static/js/status.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var nav = "nav-index";
+        APP.Common.resetNav(nav);
+        APP.Status.init();
+    });
+</script>
+</body>
+</html>
