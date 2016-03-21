@@ -25,11 +25,24 @@
 
         //增加、删除条件按钮事件
         initConditionAddOrRemove: function(){
+
+            //添加规则框里的事件
             //点击“加号“添加新的输入行
             $(document).on('click', '#add-rule-form .pair .btn-success', _this.addNewCondition);
 
             //删除输入行
             $(document).on('click', '#add-rule-form .pair .btn-danger', function(event) {
+                $(this).parents('.form-group').remove();//删除本行输入
+                _this.resetAddConditionBtn();
+            });
+
+
+            //编辑规则框里的事件
+            //点击“加号“添加新的输入行
+            $(document).on('click', '#edit-rule-form .pair .btn-success', _this.addNewCondition);
+
+            //删除输入行
+            $(document).on('click', '#edit-rule-form .pair .btn-danger', function(event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddConditionBtn();
             });
@@ -329,14 +342,95 @@
                         }
                     ]
                 });
-                _this.resetAddConditionBtn();
-
+                _this.resetAddConditionBtn();//删除增加按钮显示与否
                 d.show();
             });
         },
 
         initRuleEditDialog: function(){
+            $(document).on("click", ".edit-btn", function(){
+                var tpl = $("#edit-tpl").html();
+                var rule_id = $(this).attr("data-id");
+                var rule = {};
+                var rules = _this.data.rules;
+                for(var i=0; i< rules.length; i++){
+                    var r = rules[i];
+                    if(r.id == rule_id){
+                        rule = r;
+                        break;
+                    }
+                }
+                if(!rule_id || !rule){
+                    _this.showErrorTip("提示", "要编辑的规则不存在或者查找出错");
+                    return;
+                }
 
+                console.log("编辑", rule);
+
+                var html = juicer(tpl, {
+                    r:rule
+                });
+
+                var d = dialog({
+                    title: "编辑规则",
+                    width: 680,
+                    content: html,
+                    modal:true,
+                    button: [{
+                            value: '取消'
+                        },{
+                            value: '预览',
+                            autofocus: false,
+                            callback: function () {
+                                _this.showRulePreview();
+                                return false;
+                            }
+                        },{
+                            value: '保存修改',
+                            autofocus: false,
+                            callback: function () {
+                                var result = _this.buildRule();
+                                result.data.id = rule.id;//拼上要修改的id
+
+                                if(result.success == true){
+                                    $.ajax({
+                                        url : '/orange/dashboard/waf/configs',
+                                        type : 'post',
+                                        data: {
+                                            rule: JSON.stringify(result.data)
+                                        },
+                                        dataType : 'json',
+                                        success : function(result) {
+                                            if(result.success){
+                                                //重新渲染规则
+                                                var tpl = $("#rule-item-tpl").html();
+                                                var html = juicer(tpl, result.data);
+                                                _this.data.rules = result.data.access_rules;
+                                                $("#rules").html(html);
+                                                return true;
+                                            }else{
+                                                _this.showErrorTip("提示", result.msg || "编辑规则发生错误");
+                                                return false;
+                                            }
+                                        },
+                                        error : function() {
+                                            _this.showErrorTip("提示", "编辑规则请求发生异常");
+                                            return false;
+                                        }
+                                    });
+                                    
+                                }else{
+                                    _this.showErrorTip("错误提示", result.data);
+                                    return false;
+                                }
+                            }
+                        }
+                    ]
+                });
+
+                _this.resetAddConditionBtn();//删除增加按钮显示与否
+                d.show();
+            });
         },
 
         initRuleDeleteDialog: function(){
@@ -455,9 +549,9 @@
         },
 
         resetAddConditionBtn: function(){
-            var l = $("#add-rule-form .pair").length;
+            var l = $(".pair").length;
             var c = 0;
-            $("#add-rule-form .pair").each(function(){
+            $(".pair").each(function(){
                 c++;
                 if(c==l){
                     $(this).find(".btn-success").show();

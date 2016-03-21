@@ -74,6 +74,7 @@ API["/waf/configs"] = {
     POST = function(store)
         return function(req, res, next)
             local rule = req.body.rule
+            rule = cjson.decode(rule)
             -- check
             local current_waf_config = store:get("waf_config")
             local old_rules = current_waf_config.access_rules
