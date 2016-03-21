@@ -1,6 +1,6 @@
 local lor = require("lor.index")
 local store = require("orange.store.file_store")({
-    file_path = "./orange.conf"
+    file_path = "./data.json"
 })
 
 local dashboard_router = lor:Router()
@@ -31,6 +31,7 @@ dashboard_router:get("/rewrite/configs", rewrite_api["/rewrite/configs"].GET(sto
 dashboard_router:get("/redirect/configs", redirect_api["/redirect/configs"].GET(store))
 
 dashboard_router:post("/waf/configs", waf_api["/waf/configs"].POST(store))
-
+dashboard_router:delete("/waf/configs", waf_api["/waf/configs"].DELETE(store))
+dashboard_router:put("/waf/configs", waf_api["/waf/configs"].PUT(store))
 
 return dashboard_router

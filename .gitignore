@@ -8,7 +8,7 @@ uwsgi_temp
 .idea
 start.log
 orange.conf.back
-
+data.back.json
 
 # Compiled Lua sources
 luac.out

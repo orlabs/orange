@@ -1,0 +1,40 @@
+
+<!DOCTYPE HTML>
+<html lang=zh-CN>
+<head>
+
+<title>Json格式化查看工具</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/fe-jsonformat-content.css">
+<script src="js/jquery-2.2.1.min.js"></script>
+<script src="js/FileSaver.min.js"></script>
+<script src="js/json-format-dealer.js"></script>
+<script src="js/json-format-ent.js"></script>
+<script src="js/json-format.js"></script>
+</head>
+
+
+<body>
+
+<div class="wrapper">
+
+    <div class="panel-body mod-json">
+        <div class="row">
+            <textarea class="form-control mod-textarea" id="jsonSource" placeholder="在这里粘贴您需要进行格式化的JSON代码"></textarea>
+            <button id="btnFormat" class="btn btn-primary ui-fl-r ui-mt-10">格式化</button><span id="errorMsg"></span>
+        </div>
+        <div class="row ui-mt-20 ui-d-n rst-item" id="modJsonResult">
+            <div id="formattingMsg">
+                <svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                    <path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path>
+                </svg>加载中...</div>
+            <div id="jfCallbackName_start" class="callback-name"></div>
+            <div id="jfContent"></div><pre id="jfContent_pre"></pre>
+            <div id="jfCallbackName_end" class="callback-name"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

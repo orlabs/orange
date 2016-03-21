@@ -3,7 +3,7 @@
     L.WAF = L.WAF || {};
     _this = L.WAF = {
         data: {
-            rule: {}
+            rules: {}
         },
 
         init: function () {
@@ -14,6 +14,8 @@
 
         initEvents: function(){
             _this.initRuleAddDialog();//添加规则对话框
+            _this.initRuleDeleteDialog();//删除规则对话框
+            _this.initRuleEditDialog();//编辑规则对话框
             _this.initConditionAddOrRemove();//添加或删除条件
             _this.initMatcherTypeChangeEvent();//matcher类型选择事件
             _this.initConditionTypeChangeEvent();//condition类型选择事件
@@ -295,7 +297,7 @@
                                 if(result.success == true){
                                     $.ajax({
                                         url : '/orange/dashboard/waf/configs',
-                                        type : 'post',
+                                        type : 'put',
                                         data: {
                                             rule: JSON.stringify(result.data)
                                         },
@@ -305,6 +307,7 @@
                                                 //重新渲染规则
                                                 var tpl = $("#rule-item-tpl").html();
                                                 var html = juicer(tpl, result.data);
+                                                _this.data.rules = result.data.access_rules;
                                                 $("#rules").html(html);
                                                 return true;
                                             }else{
@@ -327,6 +330,61 @@
                     ]
                 });
                 _this.resetAddConditionBtn();
+
+                d.show();
+            });
+        },
+
+        initRuleEditDialog: function(){
+
+        },
+
+        initRuleDeleteDialog: function(){
+            $(document).on("click", ".delete-btn", function(){
+
+                var name = $(this).attr("data-name");
+                var rule_id = $(this).attr("data-id");
+                console.log("删除:" + name);
+                var d = dialog({
+                    title: '提示',
+                    width: 480,
+                    content: "确定要删除规则【"+ name +"】吗？",
+                    modal:true,
+                    button: [{
+                            value: '取消'
+                        },{
+                            value: '确定',
+                            autofocus: false,
+                            callback: function () {
+                                $.ajax({
+                                    url : '/orange/dashboard/waf/configs',
+                                    type : 'delete',
+                                    data: {
+                                        rule_id: rule_id
+                                    },
+                                    dataType : 'json',
+                                    success : function(result) {
+                                        if(result.success){
+                                            //重新渲染规则
+                                            var tpl = $("#rule-item-tpl").html();
+                                            var html = juicer(tpl, result.data);
+                                            _this.data.rules = result.data.access_rules;
+                                            $("#rules").html(html);
+                                            return true;
+                                        }else{
+                                            _this.showErrorTip("提示", result.msg || "删除规则发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error : function() {
+                                        _this.showErrorTip("提示", "删除规则请求发生异常");
+                                        return false;
+                                    }
+                                });
+                            }
+                        }
+                    ]
+                });
 
                 d.show();
             });
@@ -422,6 +480,7 @@
                         var tpl = $("#rule-item-tpl").html();
                         var html = juicer(tpl, result.data);
                         $("#rules").html(html);
+                        _this.data.rules = result.data.access_rules;
 
                     }else{
                         L.Common.showTipDialog("错误提示", "查询waf配置请求发生错误");

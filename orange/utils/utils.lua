@@ -44,6 +44,10 @@ function _M.random_string()
     return uuid():gsub("-", "")
 end
 
+function _M.new_id()
+    return uuid()
+end
+
 
 --- Calculates a table size.
 -- All entries both in array and hash part.
