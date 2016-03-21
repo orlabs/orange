@@ -21,6 +21,51 @@
             _this.initConditionTypeChangeEvent();//condition类型选择事件
             _this.initActionTypeChangeEvent();//action类型选择事件
 
+            $("#view-btn").click(function(){
+                var self = $(this);
+                var now_state = $(this).attr("data-type");
+                if(now_state == "table"){//当前是表格视图，点击切换到数据视图
+                    self.attr("data-type", "database");
+                    self.find("i").removeClass("fa-database").addClass("fa-table");
+                    self.find("span").text("表格视图");
+                }else{
+                    self.attr("data-type", "table");
+                    self.find("i").removeClass("fa-table").addClass("fa-database");
+                    self.find("span").text("数据视图");
+                }
+            });
+
+            $("#switch-btn").click(function(){
+                var self = $(this);
+                var now_state = $(this).attr("data-on");
+                if(now_state == "yes"){//当前是开启状态，点击则关闭
+                    self.attr("data-on", "no");
+                    self.removeClass("btn-danger").addClass("btn-info");
+                    self.find("i").removeClass("fa-pause").addClass("fa-play");
+                    self.find("span").text("启用防火墙");
+                }else{
+                    self.attr("data-on", "yes");
+                    self.removeClass("btn-info").addClass("btn-danger");
+                    self.find("i").removeClass("fa-play").addClass("fa-pause");
+                    self.find("span").text("停用防火墙");
+                }
+            });
+
+        },
+
+        initSwitchBtn: function(enable){
+            var self = $("#switch-btn");
+            if(enable == true){//当前是开启状态，则应显示“关闭”按钮
+                self.attr("data-on", "yes");
+                self.removeClass("btn-info").addClass("btn-danger");
+                self.find("i").removeClass("fa-play").addClass("fa-pause");
+                self.find("span").text("停用防火墙");
+            }else{
+                self.attr("data-on", "no");
+                self.removeClass("btn-danger").addClass("btn-info");
+                self.find("i").removeClass("fa-pause").addClass("fa-play");
+                self.find("span").text("启用防火墙");
+            }
         },
 
         //增加、删除条件按钮事件
@@ -571,6 +616,10 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
+                        _this.initSwitchBtn(result.data.enable);
+                        $("#switch-btn").show();
+                        $("#view-btn").show();
+
                         var tpl = $("#rule-item-tpl").html();
                         var html = juicer(tpl, result.data);
                         $("#rules").html(html);

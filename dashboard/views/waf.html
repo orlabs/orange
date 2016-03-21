@@ -16,10 +16,15 @@
             </div>
 
             <div class="pull-right">
-                <a class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                <a id="view-btn" style="display:none;" data-type="table" class="btn btn-warning" rel="nofollow" href="javascript:void(0);">
+                    <i class="fa fa-database"></i>
+                    <span>数据视图</span>
+                </a>
+                <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
                     <i class="fa fa-pause"></i>
                     <span>停用防火墙</span>
                 </a>
+                
                 <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
                     <i class="fa fa-filter"></i>
                     <span>添加新规则</span>
