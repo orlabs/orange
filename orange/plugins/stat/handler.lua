@@ -7,12 +7,13 @@ StatHandler.PRIORITY = 2000
 
 function StatHandler:new()
     StatHandler.super.new(self, "stat-plugin")
+end
+
+function StatHandler:init_worker(conf)
     stat.init()
 end
 
-
 function StatHandler:log(conf)
-    StatHandler.super.log(self)
     stat.log()
 end
 

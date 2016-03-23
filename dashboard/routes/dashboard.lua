@@ -34,7 +34,17 @@ dashboard_router:get("/redirect/configs", redirect_api["/redirect/configs"].GET(
 dashboard_router:post("/waf/configs", waf_api["/waf/configs"].POST(store))
 dashboard_router:delete("/waf/configs", waf_api["/waf/configs"].DELETE(store))
 dashboard_router:put("/waf/configs", waf_api["/waf/configs"].PUT(store))
-
 dashboard_router:post("/waf/enable", waf_api["/waf/enable"].POST(store))
+
+
+dashboard_router:post("/redirect/configs", redirect_api["/redirect/configs"].POST(store))
+dashboard_router:delete("/redirect/configs", redirect_api["/redirect/configs"].DELETE(store))
+dashboard_router:put("/redirect/configs", redirect_api["/redirect/configs"].PUT(store))
+dashboard_router:post("/redirect/enable", redirect_api["/redirect/enable"].POST(store))
+
+dashboard_router:post("/rewrite/configs", rewrite_api["/rewrite/configs"].POST(store))
+dashboard_router:delete("/rewrite/configs", rewrite_api["/rewrite/configs"].DELETE(store))
+dashboard_router:put("/rewrite/configs", rewrite_api["/rewrite/configs"].PUT(store))
+dashboard_router:post("/rewrite/enable", rewrite_api["/rewrite/enable"].POST(store))
 
 return dashboard_router

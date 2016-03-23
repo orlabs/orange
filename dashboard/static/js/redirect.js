@@ -20,7 +20,6 @@
             _this.initConditionAddOrRemove();//添加或删除条件
             _this.initMatcherTypeChangeEvent();//matcher类型选择事件
             _this.initConditionTypeChangeEvent();//condition类型选择事件
-            _this.initActionTypeChangeEvent();//action类型选择事件
             _this.initSwitchBtn();//redirect关闭、开启
 
             $("#view-btn").click(function(){//试图转换
@@ -60,14 +59,6 @@
                 var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "data.json");
             });
-
-            
-
-            $(document).on("input", "#rule-search", function(){
-                var word = $(this).val();
-                _this.search(word);
-            });
-
         },
 
 
@@ -88,7 +79,7 @@
                                 autofocus: false,
                                 callback: function () {
                                     $.ajax({
-                                        url : '/orange/dashboard/waf/enable',
+                                        url : '/orange/dashboard/redirect/enable',
                                         type : 'post',
                                         data: {
                                             enable: "0"
@@ -134,7 +125,7 @@
                                 autofocus: false,
                                 callback: function () {
                                     $.ajax({
-                                        url : '/orange/dashboard/waf/enable',
+                                        url : '/orange/dashboard/redirect/enable',
                                         type : 'post',
                                         data: {
                                             enable: "1"
@@ -214,7 +205,7 @@
 
         //condition类型选择事件
         initConditionTypeChangeEvent: function(){
-            $(document).on("change", 'select[name=rule-matcher-condition-type]',function(){
+            $(document).on("change", 'select[name=rule-matcher-condition-type]', function(){
                 var condition_type = $(this).val();
 
                 if(condition_type != "Header"){
@@ -228,20 +219,6 @@
                 }
             });
         },
-
-        //action类型选择事件
-        initActionTypeChangeEvent: function(){
-            $(document).on("change", '#rule-action-perform',function(){
-                var action_type = $(this).val();
-
-                if(action_type == "allow"){
-                    $(this).parents(".action-holder").find(".action-code-hodler").hide();
-                }else{
-                    $(this).parents(".action-holder").find(".action-code-hodler").show();
-                }
-            });
-        },
-
 
         buildRule: function(){
             var result = {
@@ -287,24 +264,21 @@
         buildAction: function(){
             var result = {};
             var action = {};
-            var action_perform = $("#rule-action-perform").val();
-            if(action_perform!="deny" && action_perform!="allow"){
+            var action_regrex = $("#rule-action-regrex").val();
+            if(!action_regrex){
                 result.success = false;
-                result.data = "执行动作类型不合法，只能是deny或allow";
+                result.data = "执行动作的uri regrex不得为空";
                 return result;
             }
-            action.perform = action_perform;
+            action.regrex = action_regrex;
 
-            if(action_perform=="deny"){
-                var action_code = $("#rule-action-code").val();
-                if(!action_code){
-                    result.success = false;
-                    result.data = "执行deny的状态码不能为空";
-                    return result;
-                }
-
-                action.code = parseInt(action_code);
+            var action_redirect_to = $("#rule-action-redirect_to").val();
+            if(!action_redirect_to){
+                result.success = false;
+                result.data = "执行动作的redirect to不得为空";
+                return result;
             }
+            action.redirect_to = action_redirect_to;
 
             action.log = ($("#rule-action-log").val() === "true");
             result.success = true;
@@ -336,7 +310,7 @@
                                 var result = _this.buildRule();
                                 if(result.success == true){
                                     $.ajax({
-                                        url : '/orange/dashboard/waf/configs',
+                                        url : '/orange/dashboard/redirect/configs',
                                         type : 'put',
                                         data: {
                                             rule: JSON.stringify(result.data)
@@ -420,7 +394,7 @@
 
                                 if(result.success == true){
                                     $.ajax({
-                                        url : '/orange/dashboard/waf/configs',
+                                        url : '/orange/dashboard/redirect/configs',
                                         type : 'post',
                                         data: {
                                             rule: JSON.stringify(result.data)
@@ -476,7 +450,7 @@
                             autofocus: false,
                             callback: function () {
                                 $.ajax({
-                                    url : '/orange/dashboard/waf/configs',
+                                    url : '/orange/dashboard/redirect/configs',
                                     type : 'delete',
                                     data: {
                                         rule_id: rule_id

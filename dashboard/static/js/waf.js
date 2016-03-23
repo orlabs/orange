@@ -60,14 +60,6 @@
                 var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "data.json");
             });
-
-            
-
-            $(document).on("input", "#rule-search", function(){
-                var word = $(this).val();
-                _this.search(word);
-            });
-
         },
 
 
