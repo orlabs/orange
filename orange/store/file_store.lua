@@ -63,9 +63,11 @@ function FileStore:store()
     local config_content = cjson.encode(self.data)
     local result, err = IO.write_to_file(self.file_path, config_content)
 
-    if result then
+    if result and not err then
+        return true
     else
         ngx.log(ngx.ERR, " file_store store error:", err)
+        return false
     end
 end
 

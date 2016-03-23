@@ -9,80 +9,323 @@
 {(header.html)}<!-- header end -->
 
 <div id="main" class="main-container container">
-    <div class="row">
+    <div class="row" style="margin-bottom:20px">
         <div class="col-md-12">
+            <div class="pull-left">
+                <h4>Redirect配置</h4>
+            </div>
 
-                <table class="table table-bordered  table-hover">
-                    <thead>
-                        <tr>
-                            <th width="40px">序号</th>
-                            <th width="40px">启用</th>
-                            <th>名称</th>
-                            <th>匹配规则</th>
-                            <th>动作</th>
-                            <th width="120px">创建/变更时间</th>
-                            <th width="80px">操作</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="rules">
-
-                    </tbody>
-                </table>
+            <div class="pull-right">
+                <input id="rule-search" type="text" class="form-control" placeholder="  seach rules" style="width:150px;display: none;margin-right:10px;">
+                <a id="view-btn" style="display:none;" data-type="table" class="btn btn-warning" rel="nofollow" href="javascript:void(0);">
+                    <i class="fa fa-database"></i>
+                    <span>数据视图</span>
+                </a>
+                <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                    <i class="fa fa-pause"></i>
+                    <span>停用redirect</span>
+                </a>
+                
+                <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
+                    <i class="fa fa-filter"></i>
+                    <span>添加新规则</span>
+                </a>
+            </div>
 
         </div>
     </div>
+    <div class="row" id="table-view">
+        <div class="col-md-12">
+            <table  id="operable-table" class="table table-bordered  table-hover">
+                <thead>
+                <tr>
+                    <th width="40px">序号</th>
+                    <th width="40px">启用</th>
+                    <th width="150px" >名称</th>
+                    <th>匹配规则</th>
+                    <th>动作</th>
+                    <th width="120px">创建/变更时间</th>
+                    <th width="100px">操作</th>
+                </tr>
+                </thead>
 
+                <tbody id="rules" class="list">
 
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="row" id="database-view" style="display:none;">
+        <div class="row ui-mt-20 ui-d-n rst-item" id="modJsonResult">
+            <div id="formattingMsg">
+                <svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                    <path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path>
+                </svg>加载中...</div>
+            <div id="jfCallbackName_start" class="callback-name"></div>
+            <div id="jfContent"></div><pre id="jfContent_pre"></pre>
+            <div id="jfCallbackName_end" class="callback-name"></div>
+        </div>
+    </div>
 </div>
+
 
 <script id="rule-item-tpl" type="text/template">
     {@each redirect_rules as r, index}
-    <tr>
-        <td class="center">${parseInt(index)+1}</td>
-        <td class="center">
+    <tr {@if highlight_id == r.id } class="highlight" {@/if} >
+        <td class="sort-index center">${parseInt(index)+1}</td>
+        <td class="sort-enable center">
             {@if r.enable==true }
-                <input type="checkbox" disabled checked="checked"/>
+            <input type="checkbox" disabled checked="checked"/>
             {@/if}
 
             {@if r.enable!=true }
-                <input type="checkbox" disabled />
+            <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="center">${r.name}</td>
-        <td class="left">
+        <td class="sort-name center">${r.name}</td>
+        <td class="sort-matcher left">
             <p>
                 <b>Type</b>: ${r.matcher.type}
                 &nbsp;
                 {@if r.matcher.type==3 }
-                <b>Expression</b>: ${r.matcher.expression}
+                    <b>Expression</b>: ${r.matcher.expression}
                 {@/if}
             </p>
-
             {@each r.matcher.conditions as c, index}
-            ${c.type}: ${c.name} ${c.operator} ${c.value} <br/>
+            ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
-
         </td>
-        <td class="left action">
+        <td class="sort-action left action">
             regrex: ${r.action.regrex}<br/>
             redirect_to: ${r.action.redirect_to}<br/>
             log: ${r.action.log}
         </td>
-        <td>${r.time}</td>
+        <td class="sort-time">${r.time}</td>
         <td class="center do">
-            <a href="javascript:void(0)" class="edit-rule" data-id="${r.id}"><i title="编辑" class="fa fa-pencil"></i></a>&nbsp;&nbsp;
-            <a href="javascript:void(0)" class="delete-rule" data-id="${r.id}"><i title="删除" class="fa fa-trash"></i></a>
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
+              <button type="button" class="btn btn-default delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></button>
+            </div>
         </td>
     </tr>
     {@/each}
 </script>
 
+<script id="add-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="add-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <div class="form-group">
+                <label for="input-matcher-type" class="col-sm-1 control-label">规则</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-matcher-type">
+                        <option value="0">单一条件匹配</option>
+                        <option value="1">and匹配</option>
+                        <option value="2">or匹配</option>
+                        <option value="3">复杂匹配</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-8" id="expression-area" style="display:none;">
+                     <input type="text" class="form-control" id="rule-matcher-expression" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
+                </div>
+            </div><!-- 类型 -->
+
+            <div class="form-group pair condition-holder">
+                <label class="col-sm-1 control-label"></label>
+
+                <div class="col-sm-2">
+                    <select class="form-control" name="rule-matcher-condition-type">
+                        <option value="URI">URI</option>
+                        <option value="Header">Header</option>
+                        <option value="IP">IP</option>
+                        <option value="UserAgent">UserAgent</option>
+                        <!-- <option value="Method">Method</option> -->
+                        <option value="Host">Host</option>
+                        <option value="Referer">Referer</option>
+                    </select>
+                </div>
+                <div class="col-sm-2 condition-name-hodler" style="display:none;">
+                    <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name">
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control"  name="rule-matcher-condition-operator">
+                        <option value="≈">Match RegEx</option>
+                        <option value="!≈">Not Match RegEx</option>
+                        <option value="=">Equal</option>
+                        <option value="!=">Not Equal</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="rule-matcher-condition-value" placeholder="value">
+                </div>
+                <div class="col-sm-1" style="margin-top:10px">
+                    <span class="input-group-btn">
+                        <a class="btn btn-danger" style="padding:0 5px;">
+                            <i class="fa fa-remove"></i>
+                        </a>
+                        <a class="btn btn-success" style="padding:0 5px;">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </span>
+                </div>
+            </div><!-- matcher -->
+
+            <div class="form-group action-holder">
+                <label class="col-sm-1 control-label">执行</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-action-perform">
+                        <option value="deny">deny</option>
+                        <option value="allow">allow</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2 action-code-hodler">
+                    <input type="text" class="form-control" id="rule-action-code" value="403" placeholder="error code">
+                </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control" id="rule-action-log">
+                        <option value="true">Log</option>
+                        <option value="false">Not Log</option>
+                    </select>
+                </div>
+            </div><!-- action -->
+
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script id="edit-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="edit-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" value="${r.name}" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <div class="form-group">
+                <label for="input-matcher-type" class="col-sm-1 control-label">规则</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-matcher-type">
+                        <option value="0" {@if r.matcher.type==0 } selected {@/if}>单一条件匹配</option>
+                        <option value="1" {@if r.matcher.type==1 } selected {@/if}>and匹配</option>
+                        <option value="2" {@if r.matcher.type==2 } selected {@/if}>or匹配</option>
+                        <option value="3" {@if r.matcher.type==3 } selected {@/if}>复杂匹配</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-8" id="expression-area" {@if r.matcher.type != "3" } style="display:none;" {@/if}>
+                     <input type="text" class="form-control" id="rule-matcher-expression" value="${r.matcher.expression}" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
+                </div>
+            </div><!-- 类型 -->
+
+            {@each r.matcher.conditions as c, index}
+                <div class="form-group pair condition-holder">
+                    <label class="col-sm-1 control-label"></label>
+
+                    <div class="col-sm-2">
+                        <select class="form-control" name="rule-matcher-condition-type">
+                            <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
+                            <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
+                            <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
+                            <option value="UserAgent" {@if c.type == "UserAgent" } selected {@/if}>UserAgent</option>
+                            <!-- <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option> -->
+                            <option value="Host" {@if c.type == "Host" } selected {@/if}>Host</option>
+                            <option value="Referer" {@if c.type == "Referer" } selected {@/if}>Referer</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2 condition-name-hodler" {@if c.type!="Header"} style="display:none;" {@/if}>
+                        <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name" value="${c.name}">
+                    </div>
+                    <div class="col-sm-3">
+                        <select class="form-control"  name="rule-matcher-condition-operator">
+                            <option value="≈" {@if c.operator=="≈" } selected {@/if}>Match RegEx</option>
+                            <option value="!≈" {@if c.operator=="!≈" } selected {@/if}>Not Match RegEx</option>
+                            <option value="=" {@if c.operator=="="} selected {@/if}>Equal</option>
+                            <option value="!=" {@if c.operator=="!="} selected {@/if}>Not Equal</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" name="rule-matcher-condition-value" placeholder="value" value="${c.value}">
+                    </div>
+                    <div class="col-sm-1" style="margin-top:10px">
+                        <span class="input-group-btn">
+                            <a class="btn btn-danger" style="padding:0 5px;">
+                                <i class="fa fa-remove"></i>
+                            </a>
+                            <a class="btn btn-success" style="padding:0 5px;">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            {@/each}
+            <!-- matcher -->
+
+            <div class="form-group action-holder">
+                <label class="col-sm-1 control-label">执行</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-action-perform">
+                        <option value="deny" {@if r.action.perform=="deny"} selected {@/if}>deny</option>
+                        <option value="allow" {@if r.action.perform=="allow"} selected {@/if}>allow</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2 action-code-hodler" {@if r.action.perform=="allow"} style="display:none;" {@/if} >
+                    <input type="text" class="form-control" id="rule-action-code" placeholder="error code" value="${r.action.code}">
+                </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control" id="rule-action-log">
+                        <option value="true" {@if r.action.log==true} selected {@/if}>Log</option>
+                        <option value="false" {@if r.action.log==false} selected {@/if}>Not Log</option>
+                    </select>
+                </div>
+            </div><!-- action -->
+
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input {@if r.enable==true} checked {@/if} type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+
 <script src="/orange/static/js/redirect.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        var nav = "nav-redirect";
-        APP.Common.resetNav(nav);
+        APP.Common.resetNav("nav-redirect");
         APP.Redirect.init();
     });
 </script>

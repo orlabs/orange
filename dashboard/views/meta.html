@@ -10,7 +10,7 @@
 <link rel="stylesheet" media="screen" href="/orange/static/css/application.css"/>
 <link rel="stylesheet" media="screen" href="/orange/static/css/pagebar.css"/>
 <link rel="stylesheet" media="screen" href="/orange/static/css/highlight-8.4-github.min.css"/>
-
+<link rel="stylesheet" href="/orange/static/css/fe-jsonformat-content.css">
 
 <style>
     td, th {
@@ -25,14 +25,31 @@
         background-color:#fff;
     }
 
+    .table-bordered>thead>tr>th {
+        border-bottom-width: 1px;
+    }
+
     .table>thead>tr>th{
         height:60px;
         line-height: 60px;
         text-align:center;
     }
 
+    table.table-bordered tr td {
+        vertical-align: middle;
+        border-left: none;
+        border-color: #DEDFE0;
+        border-right: dashed 1px #DEDFE0;
+        min-height: 36px;
+        padding: 16px 8px;
+    }
+
     td.center {
         text-align:center;
+    }
+
+    tr.highlight{
+        background-color: #FFFDDD;
     }
 
     #rules td.left {
@@ -82,19 +99,72 @@
       font-size: 14px;
     }
 
+    table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
+        bottom: 4px;
+    }
+
+    #modJsonResult{
+        margin: 0 17px 0 7px;
+    }
+
+
+
+    .footer {
+        position: absolute;
+        width: 100%;
+        background-color: #f2f4f5;
+        margin-top:40px;
+    }
+
+    .footer .footer-bar {
+        font-size: 13px;
+        line-height: 30px;
+        border-top: 1px solid #e9ecee;
+        padding: 10px 0;
+        max-height: 51px;
+    }
+
+    .footer .footer-bar span:first-of-type a {
+        margin: 0;
+    }
+
+    .footer .footer-bar a {
+        text-decoration: none;
+        -webkit-transition: all .3s ease;
+        transition: all .3s ease;
+        margin-left: 18px;
+        color: #505659;
+    }
+
+    .footer .footer-bar a:hover {
+        color: #262e33;
+    }
+
+    .footer .footer-bar a img {
+        vertical-align: middle;
+        margin-right: 6px;
+    }
 
 </style>
 
 <script src="/orange/static/js/jquery-2.2.1.min.js"></script>
 <script src="/orange/static/js/bootstrap-3.3.2.min.js"></script>
-<script src="/orange/static/js/MD5.min.js"></script>
-<script src="/orange/static/js/dialog-min.js"></script>
 <script src="/orange/static/js/juicer.js"></script>
+<script src="/orange/static/js/dialog-min.js"></script>
+
+<script src="/orange/static/js/MD5.min.js"></script>
 <script src="/orange/static/js/jquery.pagebar.js"></script>
 <script src="/orange/static/js/echarts/echarts-all.js"></script>
+
 <script src="/orange/static/js/highlight-8.4.min.js"></script>
+<script src="/orange/static/js/FileSaver.min.js"></script>
+<script src="/orange/static/js/json-format-dealer.js"></script>
+<script src="/orange/static/js/json-format-ent.js"></script>
+<script src="/orange/static/js/json-format.js"></script>
+
 
 <script type="text/javascript">
     var APP = {};
 </script>
 <script src="/orange/static/js/app.js"></script>
+

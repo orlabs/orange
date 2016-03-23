@@ -3,7 +3,8 @@
     L.WAF = L.WAF || {};
     _this = L.WAF = {
         data: {
-            rules: {}
+            rules: {},
+            ruletable: null
         },
 
         init: function () {
@@ -20,52 +21,153 @@
             _this.initMatcherTypeChangeEvent();//matcher类型选择事件
             _this.initConditionTypeChangeEvent();//condition类型选择事件
             _this.initActionTypeChangeEvent();//action类型选择事件
+            _this.initSwitchBtn();//防火墙关闭、开启
 
-            $("#view-btn").click(function(){
+            $("#view-btn").click(function(){//试图转换
                 var self = $(this);
                 var now_state = $(this).attr("data-type");
                 if(now_state == "table"){//当前是表格视图，点击切换到数据视图
                     self.attr("data-type", "database");
                     self.find("i").removeClass("fa-database").addClass("fa-table");
                     self.find("span").text("表格视图");
+
+                    var showData = {
+                        enable: _this.data.enable,
+                        access_rules: _this.data.rules
+                    }
+                    jsonformat.format(JSON.stringify(showData));
+                    $("#jfContent_pre").text(JSON.stringify(showData, null, 4));
+                    $('pre').each(function(){
+                        hljs.highlightBlock($(this)[0]);
+                    });
+                    $("#table-view").hide();
+                    $("#database-view").show();
                 }else{
                     self.attr("data-type", "table");
                     self.find("i").removeClass("fa-table").addClass("fa-database");
                     self.find("span").text("数据视图");
+
+                    $("#database-view").hide();
+                    $("#table-view").show();
                 }
             });
 
-            $("#switch-btn").click(function(){
-                var self = $(this);
-                var now_state = $(this).attr("data-on");
-                if(now_state == "yes"){//当前是开启状态，点击则关闭
-                    self.attr("data-on", "no");
-                    self.removeClass("btn-danger").addClass("btn-info");
-                    self.find("i").removeClass("fa-pause").addClass("fa-play");
-                    self.find("span").text("启用防火墙");
-                }else{
-                    self.attr("data-on", "yes");
-                    self.removeClass("btn-info").addClass("btn-danger");
-                    self.find("i").removeClass("fa-play").addClass("fa-pause");
-                    self.find("span").text("停用防火墙");
+            $(document).on("click", "#btnDownload", function(){//规则json下载
+                var downloadData = {
+                    enable: _this.data.enable,
+                    access_rules: _this.data.rules
                 }
+                var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "data.json");
+            });
+
+            
+
+            $(document).on("input", "#rule-search", function(){
+                var word = $(this).val();
+                _this.search(word);
             });
 
         },
 
+
         initSwitchBtn: function(enable){
-            var self = $("#switch-btn");
-            if(enable == true){//当前是开启状态，则应显示“关闭”按钮
-                self.attr("data-on", "yes");
-                self.removeClass("btn-info").addClass("btn-danger");
-                self.find("i").removeClass("fa-play").addClass("fa-pause");
-                self.find("span").text("停用防火墙");
-            }else{
-                self.attr("data-on", "no");
-                self.removeClass("btn-danger").addClass("btn-info");
-                self.find("i").removeClass("fa-pause").addClass("fa-play");
-                self.find("span").text("启用防火墙");
-            }
+            $("#switch-btn").click(function(){//是否开启防火墙
+                var self = $(this);
+                var now_state = $(this).attr("data-on");
+                if(now_state == "yes"){//当前是开启状态，点击则“关闭”
+                    var d = dialog({
+                        title: '防火墙设置',
+                        width: 300,
+                        content: "确定要关闭防火墙吗？",
+                        modal:true,
+                        button: [{
+                                value: '取消'
+                            },{
+                                value: '确定',
+                                autofocus: false,
+                                callback: function () {
+                                    $.ajax({
+                                        url : '/orange/dashboard/waf/enable',
+                                        type : 'post',
+                                        data: {
+                                            enable: "0"
+                                        },
+                                        dataType : 'json',
+                                        success : function(result) {
+                                            if(result.success){
+                                                //重置按钮
+                                                _this.data.enable = false;
+                                                self.attr("data-on", "no");
+                                                self.removeClass("btn-danger").addClass("btn-info");
+                                                self.find("i").removeClass("fa-pause").addClass("fa-play");
+                                                self.find("span").text("启用防火墙");
+                                                
+                                                return true;
+                                            }else{
+                                                _this.showErrorTip("提示", result.msg || "关闭防火墙发生错误");
+                                                return false;
+                                            }
+                                        },
+                                        error : function() {
+                                            _this.showErrorTip("提示", "关闭防火墙请求发生异常");
+                                            return false;
+                                        }
+                                    });
+                                }
+                            }
+                        ]
+                    });
+                    d.show();
+
+                    
+                }else{
+                    var d = dialog({
+                        title: '防火墙设置',
+                        width: 300,
+                        content: "确定要开启防火墙吗？",
+                        modal:true,
+                        button: [{
+                                value: '取消'
+                            },{
+                                value: '确定',
+                                autofocus: false,
+                                callback: function () {
+                                    $.ajax({
+                                        url : '/orange/dashboard/waf/enable',
+                                        type : 'post',
+                                        data: {
+                                            enable: "1"
+                                        },
+                                        dataType : 'json',
+                                        success : function(result) {
+                                            if(result.success){
+                                                 _this.data.enable = true;
+                                                //重置按钮
+                                                self.attr("data-on", "yes");
+                                                self.removeClass("btn-info").addClass("btn-danger");
+                                                self.find("i").removeClass("fa-play").addClass("fa-pause");
+                                                self.find("span").text("停用防火墙");
+                                                
+                                                return true;
+                                            }else{
+                                                _this.showErrorTip("提示", result.msg || "开启防火墙发生错误");
+                                                return false;
+                                            }
+                                        },
+                                        error : function() {
+                                            _this.showErrorTip("提示", "开启防火墙请求发生异常");
+                                            return false;
+                                        }
+                                    });
+                                }
+                            }
+                        ]
+                    });
+                    d.show();
+                    
+                }
+            });
         },
 
         //增加、删除条件按钮事件
@@ -152,7 +254,7 @@
             };
 
             //build name and matcher
-            var buildMatcherResult = _this.buildMatcher();
+            var buildMatcherResult = L.Common.buildMatcher();
             if(buildMatcherResult.success == true){
                 result.data.name = buildMatcherResult.data.name;
                 result.data.matcher = buildMatcherResult.data.matcher;
@@ -180,127 +282,7 @@
             return result;
         },
 
-        buildMatcher: function(){
-            var result = {
-                success: false,
-                data: {
-                    name: null,
-                    matcher:{}
-                }
-            };
-            var name = $("#rule-name").val();
-            if(!name){
-                result.success = false;
-                result.data = "规则名称不能为空";
-                return result;
-            }
-
-            result.data.name = name;
-
-            
-
-            var matcher_type = parseInt($("#rule-matcher-type").val());
-            result.data.matcher.type = matcher_type;
-
-            if(matcher_type == 3){
-                var matcher_expression = $("#rule-matcher-expression").val();
-                if(!matcher_expression){
-                    result.success = false;
-                    result.data = "复杂匹配的规则表达式不得为空";
-                    return result;
-                }
-                result.data.matcher.expression = matcher_expression;
-            }
-
-            var matcher_conditions = [];
-
-            var tmp_success = true;
-            var tmp_tip = "";
-            $(".condition-holder").each(function(){
-                var self = $(this);
-                var condition = {};
-                var condition_type = self.find("select[name=rule-matcher-condition-type]").val();
-                condition.type = condition_type;
-
-                if(condition_type == "Header"){
-                    var condition_name = self.find("input[name=rule-matcher-condition-name]").val();
-                    if(!condition_name){
-                        tmp_success = false;
-                        tmp_tip = "condition的name字段不得为空";
-                    }
-
-                    condition.name = condition_name;
-                }
-
-                condition.operator = self.find("select[name=rule-matcher-condition-operator]").val();
-                condition.value = self.find("input[name=rule-matcher-condition-value]").val() || "";
-
-                matcher_conditions.push(condition);
-            });
-
-            if(!tmp_success){
-                result.success = false;
-                result.data = tmp_tip;
-                return result;
-            }
-            result.data.matcher.conditions = matcher_conditions;
-
-            //判断规则类型和条件个数是否匹配
-            if(result.data.matcher.conditions.length<1){
-                result.success = false;
-                result.data = "请配置规则条件";
-                return result;
-            }
-            if(result.data.matcher.type==0 && result.data.matcher.conditions.length!=1){
-                result.success = false;
-                result.data = "单一条件匹配模式只能有一条condition，请删除多余配置";
-                return result;
-            }
-            if(result.data.matcher.type==3){//判断条件表达式与条件个数等
-                try{
-                    var condition_count = result.data.matcher.conditions.length;
-                    var regrex1 = /(v\[[0-9]+\])/g;
-                    var regrex2 = /([0-9]+)/g;
-                    var expression_v_array = [];// 提取条件变量
-                    expression_v_array = result.data.matcher.expression.match(regrex1);
-                    if(!expression_v_array || expression_v_array.length<1){
-                        result.success = false;
-                        result.data = "规则表达式格式错误，请检查";
-                        return result;
-                    }
-
-                    var expression_v_array_len = expression_v_array.length;
-                    var max_v_index = 1;
-                    for(var i = 0; i<expression_v_array_len; i++){
-                        var expression_v = expression_v_array[i];
-                        var index_array = expression_v.match(regrex2);
-                        if(!index_array || index_array.length<1){
-                            result.success = false;
-                            result.data = "规则表达式中条件变量格式错误，请检查";
-                            return result;
-                        }
-
-                        var var_index = parseInt(index_array[0]);
-                        if(var_index>max_v_index){
-                            max_v_index = var_index;
-                        }
-                    }
-
-                    if(condition_count<max_v_index){
-                        result.success = false;
-                        result.data = "规则表达式中的变量最大索引[" + max_v_index + "]与条件个数[" + condition_count + "]不相符，请检查";
-                        return result;
-                    }
-                }catch(e){
-                    result.success = false;
-                    result.data = "条件表达式验证发生异常:"+e;
-                    return result;
-                }                
-            }
-
-            result.success = true;
-            return result;
-        },
+        
 
         buildAction: function(){
             var result = {};
@@ -363,10 +345,11 @@
                                         success : function(result) {
                                             if(result.success){
                                                 //重新渲染规则
-                                                var tpl = $("#rule-item-tpl").html();
-                                                var html = juicer(tpl, result.data);
-                                                _this.data.rules = result.data.access_rules;
-                                                $("#rules").html(html);
+                                                
+                                                _this.data.rules = result.data.access_rules;//重新设置数据
+                                                _this.renderTable(result.data, _this.data.rules[_this.data.rules.length-1].id);//渲染table
+                                                _this.makeTableListable();//list table
+                                                
                                                 return true;
                                             }else{
                                                 _this.showErrorTip("提示", result.msg || "添加规则发生错误");
@@ -410,7 +393,6 @@
                     return;
                 }
 
-                console.log("编辑", rule);
 
                 var html = juicer(tpl, {
                     r:rule
@@ -448,10 +430,10 @@
                                         success : function(result) {
                                             if(result.success){
                                                 //重新渲染规则
-                                                var tpl = $("#rule-item-tpl").html();
-                                                var html = juicer(tpl, result.data);
-                                                _this.data.rules = result.data.access_rules;
-                                                $("#rules").html(html);
+                                                _this.renderTable(result.data, rule_id);//渲染table
+                                                _this.data.rules = result.data.access_rules;//重新设置数据
+                                                _this.makeTableListable();//list table
+                                                
                                                 return true;
                                             }else{
                                                 _this.showErrorTip("提示", result.msg || "编辑规则发生错误");
@@ -505,10 +487,10 @@
                                     success : function(result) {
                                         if(result.success){
                                             //重新渲染规则
-                                            var tpl = $("#rule-item-tpl").html();
-                                            var html = juicer(tpl, result.data);
-                                            _this.data.rules = result.data.access_rules;
-                                            $("#rules").html(html);
+                                             _this.renderTable(result.data);//渲染table
+                                            _this.data.rules = result.data.access_rules;//重新设置数据
+                                            _this.makeTableListable();//list table
+                                            
                                             return true;
                                         }else{
                                             _this.showErrorTip("提示", result.msg || "删除规则发生错误");
@@ -616,14 +598,13 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
-                        _this.initSwitchBtn(result.data.enable);
+                        _this.resetSwitchBtn(result.data.enable);
                         $("#switch-btn").show();
                         $("#view-btn").show();
-
-                        var tpl = $("#rule-item-tpl").html();
-                        var html = juicer(tpl, result.data);
-                        $("#rules").html(html);
-                        _this.data.rules = result.data.access_rules;
+                        _this.renderTable(result.data);//渲染table
+                        _this.data.enable = result.data.enable;
+                        _this.data.rules = result.data.access_rules;//重新设置数据
+                        _this.makeTableListable();//list table
 
                     }else{
                         L.Common.showTipDialog("错误提示", "查询waf配置请求发生错误");
@@ -634,5 +615,50 @@
                 }
             });
         },
+
+        resetSwitchBtn: function(enable){
+            var self = $("#switch-btn");
+            if(enable == true){//当前是开启状态，则应显示“关闭”按钮
+                self.attr("data-on", "yes");
+                self.removeClass("btn-info").addClass("btn-danger");
+                self.find("i").removeClass("fa-play").addClass("fa-pause");
+                self.find("span").text("停用防火墙");
+            }else{
+                self.attr("data-on", "no");
+                self.removeClass("btn-danger").addClass("btn-info");
+                self.find("i").removeClass("fa-pause").addClass("fa-play");
+                self.find("span").text("启用防火墙");
+            }
+        },
+
+        renderTable: function(data, highlight_id){
+            highlight_id = highlight_id || 0;
+            var tpl = $("#rule-item-tpl").html();
+            data.highlight_id = highlight_id;
+            var html = juicer(tpl, data);
+            $("#rules").html(html);
+        },
+
+        makeTableListable: function(){
+            // console.log("build table++++++++++++", $("#rules").html());
+            // _this.data.ruletable = $('#operable-table').DataTable({
+            //     paging: false, 
+            //     searching: false, 
+            //     sort:false,
+            //     destory: true,
+            // }).draw();
+            // console.log("build table------------", $("#rules").html());
+            
+            $("#operable-table_filter").hide();
+            $("#rule-search").hide();
+        },
+
+        search: function(word){
+            if( _this.data.ruletable == null )
+                return;
+            _this.data.ruletable.search(word).draw();
+        }
+
+
     };
 }(APP));

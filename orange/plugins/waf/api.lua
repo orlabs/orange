@@ -3,6 +3,38 @@ local table_insert = table.insert
 local cjson = require("cjson")
 local utils = require("orange.utils.utils")
 
+API["/waf/enable"] = {
+    POST = function(store)
+        return function(req, res, next)
+            local enable = req.body.enable
+            if enable == "1" then
+                enable = true
+            else
+                enable = false
+            end
+
+            local current_waf_config = store:get("waf_config")
+            current_waf_config.enable = enable
+
+            -- save to file
+            store:set("waf_config", current_waf_config)
+            local store_result = store:store()
+
+            if store_result == true then
+                res:json({
+                    success = true,
+                    msg = (enable == true and "开启防火墙成功" or "关闭防火墙成功")
+                })
+            else
+                res:json({
+                    success = false,
+                    data = (enable == true and "开启防火墙失败" or "关闭防火墙失败")
+                })
+            end
+        end
+    end
+}
+
 API["/waf/configs"] = {
     GET = function(store)
         return function(req, res, next)
@@ -23,16 +55,21 @@ API["/waf/configs"] = {
         	-- check
         	local current_waf_config = store:get("waf_config")
         	table_insert(current_waf_config.access_rules, rule)
+
         	-- save to file
-        	store:set("waf_config", current_waf_config)
-        	store:store()
+            store:set("waf_config", current_waf_config)
+            local store_result = store:store()
 
-            local result = {
-                success = true,
-                data = current_waf_config
-            }
-
-            res:json(result)
+            if store_result == true then
+                res:json({
+                    success = true,
+                    data = current_waf_config
+                })
+            else
+                res:json({
+                    success = false
+                })
+            end
         end
     end,
 
@@ -59,14 +96,20 @@ API["/waf/configs"] = {
 
             -- save to file
             store:set("waf_config", current_waf_config)
-            store:store()
+            local store_result = store:store()
 
-            local result = {
-                success = true,
-                data = current_waf_config
-            }
-
-            res:json(result)
+            if store_result == true then
+                res:json({
+                    success = true,
+                    data = current_waf_config
+                })
+            else
+                current_waf_config.access_rules = old_rules
+                res:json({
+                    success = false,
+                    data = current_waf_config
+                })
+            end
         end
     end,
 
@@ -90,14 +133,20 @@ API["/waf/configs"] = {
 
             -- save to file
             store:set("waf_config", current_waf_config)
-            store:store()
+            local store_result = store:store()
 
-            local result = {
-                success = true,
-                data = current_waf_config
-            }
-
-            res:json(result)
+            if store_result == true then
+                res:json({
+                    success = true,
+                    data = current_waf_config
+                })
+            else
+                current_waf_config.access_rules = old_rules
+                res:json({
+                    success = false,
+                    data = current_waf_config
+                })
+            end
         end
     end
 }

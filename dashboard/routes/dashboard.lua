@@ -26,6 +26,7 @@ dashboard_router:get("/redirect", function(req, res, next)
 end)
 
 dashboard_router:get("/status", stat_api["/status"])
+
 dashboard_router:get("/waf/configs", waf_api["/waf/configs"].GET(store))
 dashboard_router:get("/rewrite/configs", rewrite_api["/rewrite/configs"].GET(store))
 dashboard_router:get("/redirect/configs", redirect_api["/redirect/configs"].GET(store))
@@ -33,5 +34,7 @@ dashboard_router:get("/redirect/configs", redirect_api["/redirect/configs"].GET(
 dashboard_router:post("/waf/configs", waf_api["/waf/configs"].POST(store))
 dashboard_router:delete("/waf/configs", waf_api["/waf/configs"].DELETE(store))
 dashboard_router:put("/waf/configs", waf_api["/waf/configs"].PUT(store))
+
+dashboard_router:post("/waf/enable", waf_api["/waf/enable"].POST(store))
 
 return dashboard_router

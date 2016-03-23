@@ -1,6 +1,6 @@
 
 #jfContent{-webkit-user-select:text;margin:0;}
-#optionBar{-webkit-user-select:none;display:block;position:absolute;top:0px;right:0px}
+#optionBar{-webkit-user-select:none;display:block;margin: 0 0 10px 0px;text-align: right;}
 #buttonFormatted,#buttonPlain,#btnDownload,#buttonCollapseAll{-webkit-border-radius:2px;-webkit-box-shadow:0px 1px 3px rgba(0,0,0,0.1);
     -webkit-user-select:none;background:-webkit-linear-gradient(#fafafa, #f4f4f4 40%, #e5e5e5);outline: none;
     border:1px solid #aaa;color:#444;font-size:12px;margin-bottom:0px;min-width:4em;padding:3px 0;
@@ -23,7 +23,7 @@
     background:#ebebeb -webkit-linear-gradient(#e4e4e4, #dfdfdf 40%, #dcdcdc);color:#333}
 #jsonpOpener,#jsonpCloser{padding:4px 0 0 8px;color:black;margin-bottom:-6px}
 #jsonpCloser{margin-top:0}
-#formattedJson{padding-left:28px;padding-top:6px}pre{padding:36px 5px 5px 5px}
+#formattedJson{padding-left:28px;padding-top:6px}pre{padding:5px 5px 5px 5px}
 .kvov{display:block;padding-left:20px;margin-left:-20px;position:relative;padding-top: 2px;}
 #jfContent .kvov .s a {
     color:#00b;text-decoration: underline;
@@ -112,4 +112,9 @@ html body {
 }
 #btnDownload{
     width: 102px;
+}
+
+#jfContent_pre{
+    border:none;
+    padding:10px;
 }

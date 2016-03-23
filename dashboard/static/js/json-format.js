@@ -9,10 +9,10 @@ var jsonformat = (function () {
      * 执行format操作
      * @private
      */
-    var _format = function () {
+    var _format = function (text) {
         $('#errorMsg').html('');
         $('#modJsonResult').hide();
-        var source = $('#jsonSource').val();
+        var source = text;
         if (!source) {
             return;
         }
@@ -80,10 +80,6 @@ var jsonformat = (function () {
      * @private
      */
     var _bindEvents = function () {
-        $('#btnFormat').click(function (e) {
-            _format();
-        });
-
         // 点击区块高亮
         $('#jfContent').delegate('.kvov', 'click', function (e) {
             $('#jfContent .kvov').removeClass('x-outline');
@@ -102,17 +98,14 @@ var jsonformat = (function () {
     };
 
     var _init = function () {
-
-
         $(function () {
-            //输入框聚焦
-            jQuery("#jsonSource").focus();
             _bindEvents();
         });
     };
 
     return {
-        init: _init
+        init: _init,
+        format: _format
     };
 })();
 

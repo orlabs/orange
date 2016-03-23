@@ -16,6 +16,7 @@
             </div>
 
             <div class="pull-right">
+                <input id="rule-search" type="text" class="form-control" placeholder="  seach rules" style="width:150px;display: none;margin-right:10px;">
                 <a id="view-btn" style="display:none;" data-type="table" class="btn btn-warning" rel="nofollow" href="javascript:void(0);">
                     <i class="fa fa-database"></i>
                     <span>数据视图</span>
@@ -33,27 +34,37 @@
 
         </div>
     </div>
-    <div class="row">
+    <div class="row" id="table-view">
         <div class="col-md-12">
-
-            <table class="table table-bordered  table-hover">
+            <table  id="operable-table" class="table table-bordered  table-hover">
                 <thead>
                 <tr>
                     <th width="40px">序号</th>
                     <th width="40px">启用</th>
-                    <th width="150px">名称</th>
+                    <th width="150px" >名称</th>
                     <th>匹配规则</th>
                     <th>动作</th>
                     <th width="120px">创建/变更时间</th>
-                    <th width="80px">操作</th>
+                    <th width="100px">操作</th>
                 </tr>
                 </thead>
 
-                <tbody id="rules">
+                <tbody id="rules" class="list">
 
                 </tbody>
             </table>
 
+        </div>
+    </div>
+    <div class="row" id="database-view" style="display:none;">
+        <div class="row ui-mt-20 ui-d-n rst-item" id="modJsonResult">
+            <div id="formattingMsg">
+                <svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                    <path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path>
+                </svg>加载中...</div>
+            <div id="jfCallbackName_start" class="callback-name"></div>
+            <div id="jfContent"></div><pre id="jfContent_pre"></pre>
+            <div id="jfCallbackName_end" class="callback-name"></div>
         </div>
     </div>
 
@@ -62,9 +73,9 @@
 
 <script id="rule-item-tpl" type="text/template">
     {@each access_rules as r, index}
-    <tr>
-        <td class="center">${parseInt(index)+1}</td>
-        <td class="center">
+    <tr {@if highlight_id == r.id } class="highlight" {@/if} >
+        <td class="sort-index center">${parseInt(index)+1}</td>
+        <td class="sort-enable center">
             {@if r.enable==true }
             <input type="checkbox" disabled checked="checked"/>
             {@/if}
@@ -73,8 +84,8 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="center">${r.name}</td>
-        <td class="left">
+        <td class="sort-name center">${r.name}</td>
+        <td class="sort-matcher left">
             <p>
                 <b>Type</b>: ${r.matcher.type}
                 &nbsp;
@@ -86,15 +97,17 @@
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="left action">
+        <td class="sort-action left action">
             perform: ${r.action.perform}<br/>
             code: ${r.action.code}<br/>
             log: ${r.action.log}
         </td>
-        <td>${r.time}</td>
+        <td class="sort-time">${r.time}</td>
         <td class="center do">
-            <a href="javascript:void(0)" class="edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></a>&nbsp;&nbsp;
-            <a href="javascript:void(0)" class="delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></a>
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
+              <button type="button" class="btn btn-default delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></button>
+            </div>
         </td>
     </tr>
     {@/each}
@@ -312,10 +325,11 @@
 <script src="/orange/static/js/waf.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        var nav = "nav-waf";
-        APP.Common.resetNav(nav);
+        APP.Common.resetNav("nav-waf");
         APP.WAF.init();
     });
 </script>
+
+{(footer.html)}
 </body>
 </html>

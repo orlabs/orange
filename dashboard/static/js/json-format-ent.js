@@ -105,9 +105,11 @@ var JsonFormatEntrance = (function () {
                         if(buttonCollapseAll.innerText == '折叠所有'){
                             buttonCollapseAll.innerText = '展开所有';
                             collapse(document.getElementsByClassName('objProp'));
+
                         }else{
                             buttonCollapseAll.innerText = '折叠所有';
                             expand(document.getElementsByClassName('objProp'));
+
                         }
 
                         $(this).parent().find('button').removeClass('selected');
@@ -124,7 +126,7 @@ var JsonFormatEntrance = (function () {
 
 
                 // Put option bar in DOM
-                jfContent.parentNode.appendChild(optionBar);
+                $(jfContent.parentNode).prepend(optionBar);
                 break;
 
             case 'FORMATTED' :
@@ -333,11 +335,6 @@ var JsonFormatEntrance = (function () {
      */
     var _downloadJsonFile = function (json) {
        $('#optionBar').prepend('<a href="javascript:void(0);" id="btnDownload" target="_blank">下载JSON数据</a>');
-       $("#btnDownload").click(function(){
-            var blob = new Blob([$("#jsonSource").val()], {type: "text/plain;charset=utf-8"});
-                saveAs(blob, "data.json");
-       });        
-       
     };
 
     /**
