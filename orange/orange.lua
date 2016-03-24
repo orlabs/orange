@@ -98,11 +98,12 @@ local Orange = {}
 -- 插件排序
 function Orange.init(options)
     options = options or {}
+    local store
     local status, err = pcall(function()
         local conf_file_path = options.config
         local config = config_loader.load(conf_file_path)
         local store_type = config.store
-        local store
+        
         if store_type == "file" then
             store = require("orange.store.file_store")({
                 file_path = config.store_file.path
@@ -121,6 +122,8 @@ function Orange.init(options)
         ngx.log(ngx.ERR, "Startup error: " .. err)
         os.exit(1)
     end
+
+    return store
 end
 
 function Orange.init_worker()

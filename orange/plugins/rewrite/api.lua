@@ -52,6 +52,7 @@ API["/rewrite/configs"] = {
         	local rule = req.body.rule
         	rule = cjson.decode(rule)
             rule.id = utils.new_id()
+            rule.time = utils.now()
         	-- check
         	local current_rewrite_config = store:get("rewrite_config")
         	table_insert(current_rewrite_config.rewrite_rules, rule)
@@ -124,6 +125,7 @@ API["/rewrite/configs"] = {
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id == rule.id then
+                    rule.time = utils.now()
                     table_insert(new_rules, rule)
                 else
                     table_insert(new_rules, v)

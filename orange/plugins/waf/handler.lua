@@ -1,7 +1,7 @@
 local pairs = pairs
 local judge = require("orange.utils.judge")
 local BasePlugin = require("orange.plugins.base")
-
+local cjson = require("cjson")
 
 local WAFHandler = BasePlugin:extend()
 WAFHandler.PRIORITY = 2000
@@ -14,8 +14,12 @@ end
 function WAFHandler:access(conf)
     WAFHandler.super.access(self)
     local access_config = self.store:get_waf_config()
-    local access_rules = access_config.access_rules
 
+    if access_config.enable ~= true then
+        return
+    end
+
+    local access_rules = access_config.access_rules
     for i, rule in pairs(access_rules) do
         local enable = rule.enable
         if enable == true then
@@ -34,10 +38,12 @@ function WAFHandler:access(conf)
             if pass then
                 local action = rule.action
                 if action.perform == 'allow' then
-                    return 
+                    if action.log == true then
+                        ngx.log(ngx.ERR, "[WAF-Pass-Rule] ", rule.name, " uri:", ngx.var.uri)
+                    end
                 else
                     if action.log == true then
-                        ngx.log(ngx.ERR, "[Forbidden] ", rule.name, " uri:", ngx.var.uri)
+                        ngx.log(ngx.ERR, "[WAF-Forbidden-Rule] ", rule.name, " uri:", ngx.var.uri)
                     end
                     ngx.exit(tonumber(action.code or 403))
                     return

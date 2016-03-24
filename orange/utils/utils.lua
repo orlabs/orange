@@ -3,7 +3,7 @@
 --
 
 local uuid = require "orange.lib.uuid"
-
+local date = require("orange.lib.date")
 local type = type
 local pairs = pairs
 local ipairs = ipairs
@@ -16,6 +16,12 @@ local string_find = string.find
 local string_format = string.format
 
 local _M = {}
+
+function _M.now()
+    local n = date()
+    local result = n:fmt("%Y-%m-%d %H:%M:%S")
+    return result
+end
 
 function _M.table_is_array(t)
     if type(t) ~= "table" then return false end

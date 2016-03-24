@@ -15,6 +15,10 @@ end
 function RewriteHandler:rewrite(conf)
     RewriteHandler.super.rewrite(self)
     local rewrite_config = self.store:get_rewrite_config()
+    if rewrite_config.enable ~= true then
+        return
+    end
+
     local rewrite_rules = rewrite_config.rewrite_rules
 
     local ngx_var_uri = ngx.var.uri
@@ -49,7 +53,6 @@ function RewriteHandler:rewrite(conf)
                     end
 
                     if new_uri ~= ngx_var_uri then
-
                         if action.log == true then
                             ngx.log(ngx.ERR, "[Rewrite] ", ngx_var_uri, " to:",  new_uri)
                         end

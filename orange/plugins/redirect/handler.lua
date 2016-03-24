@@ -16,6 +16,10 @@ end
 function RedirectHandler:redirect()
     RedirectHandler.super.redirect(self)
     local redirect_config = self.store:get_redirect_config()
+    if redirect_config.enable ~= true then
+        return
+    end
+
     local redirect_rules = redirect_config.redirect_rules
 
     local ngx_set_uri = ngx.req.set_uri
@@ -68,7 +72,6 @@ function RedirectHandler:redirect()
                             ngx.log(ngx.ERR, "[Redirect] ", ngx_var_uri, " to:",  new_url)
                         end
 
-                        ngx_set_uri(new_uri, true)
                     end
 
                     return

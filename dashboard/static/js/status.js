@@ -51,7 +51,7 @@
 	        _this.data.timer =  setInterval(function (){
 	        	
 	        	$.ajax({
-	                url : '/orange/dashboard/status',
+	                url : '/orange/dashboard/stat/status',
 	                type : 'get',
 	                data : {},
 	                dataType : 'json',
@@ -195,14 +195,7 @@
 	                data:['全部请求','失败请求']
 	            },
 	            toolbox: {
-	                show : true,
-	                feature : {
-	                    mark : {show: true},
-	                    dataView : {show: true, readOnly: false},
-	                    magicType : {show: true, type: ['line', 'bar']},
-	                    restore : {show: true},
-	                    saveAsImage : {show: true}
-	                }
+	                show : false,
 	            },
 	            xAxis : [
 	                {
@@ -306,15 +299,8 @@
 	            legend: {
 	                data:['QPS']
 	            },
-	            toolbox: {
-	                show : true,
-	                feature : {
-	                    mark : {show: true},
-	                    dataView : {show: true, readOnly: false},
-	                    magicType : {show: true, type: ['line', 'bar']},
-	                    restore : {show: true},
-	                    saveAsImage : {show: true}
-	                }
+	             toolbox: {
+	                show : false,
 	            },
 	            xAxis : [
 	                {
@@ -387,15 +373,8 @@
 	            legend: {
 	                data:['响应时间']
 	            },
-	            toolbox: {
-	                show : true,
-	                feature : {
-	                    mark : {show: true},
-	                    dataView : {show: true, readOnly: false},
-	                    magicType : {show: true, type: ['line', 'bar']},
-	                    restore : {show: true},
-	                    saveAsImage : {show: true}
-	                }
+	             toolbox: {
+	                show : false,
 	            },
 	            xAxis : [
 	                {
@@ -468,15 +447,8 @@
 	            legend: {
 	                data:['in','out']
 	            },
-	            toolbox: {
-	                show : true,
-	                feature : {
-	                    mark : {show: true},
-	                    dataView : {show: true, readOnly: false},
-	                    magicType : {show: true, type: ['line', 'bar']},
-	                    restore : {show: true},
-	                    saveAsImage : {show: true}
-	                }
+	             toolbox: {
+	                show : false,
 	            },
 	            xAxis : [
 	                {
@@ -598,11 +570,8 @@
 	            legend: {
 	                data:[code+"请求"]
 	            },
-	            toolbox: {
-	                show : true,
-	                feature : {
-	                    saveAsImage : {show: true}
-	                }
+	             toolbox: {
+	                show : false,
 	            },
 	            xAxis : [
 	                {
