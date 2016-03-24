@@ -15,5 +15,5 @@ Orange是一个基于OpenResty的API Gateway，提供API监控和管理，实现
 	cd orange
 	sh start.sh
 	```
-
+- 访问http://localhost:9999/orange/dashboard/
 
