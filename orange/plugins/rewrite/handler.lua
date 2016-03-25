@@ -37,7 +37,7 @@ function RewriteHandler:rewrite(conf)
             elseif match_type == 2 then
                 pass = judge.filter_or_conditions(conditions)
             elseif match_type == 3 then
-                pass = judge.filter_complicated_conditions(matcher.expression, conditions)
+                pass = judge.filter_complicated_conditions(matcher.expression, conditions, self:get_name())
             end
 
             if pass then

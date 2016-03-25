@@ -6,6 +6,7 @@ return function(store)
 	local waf_api = require("orange.plugins.waf.api")
 	local rewrite_api = require("orange.plugins.rewrite.api")
 	local redirect_api = require("orange.plugins.redirect.api")
+    local divide_api = require("orange.plugins.divide.api")
 
 	dashboard_router:get("/", function(req, res, next)
 		res:render("status")
@@ -22,6 +23,10 @@ return function(store)
 	dashboard_router:get("/redirect", function(req, res, next)
 	    res:render("redirect")
 	end)
+
+    dashboard_router:get("/divide", function(req, res, next)
+        res:render("divide")
+    end)
 
 	dashboard_router:get("/help", function(req, res, next)
 		res:render("help")
@@ -48,6 +53,12 @@ return function(store)
 	dashboard_router:delete("/rewrite/configs", rewrite_api["/rewrite/configs"].DELETE(store))
 	dashboard_router:put("/rewrite/configs", rewrite_api["/rewrite/configs"].PUT(store))
 	dashboard_router:post("/rewrite/enable", rewrite_api["/rewrite/enable"].POST(store))
+
+    dashboard_router:get("/divide/configs", divide_api["/divide/configs"].GET(store))
+    dashboard_router:post("/divide/configs", divide_api["/divide/configs"].POST(store))
+    dashboard_router:delete("/divide/configs", divide_api["/divide/configs"].DELETE(store))
+    dashboard_router:put("/divide/configs", divide_api["/divide/configs"].PUT(store))
+    dashboard_router:post("/divide/enable", divide_api["/divide/enable"].POST(store))
 
 	return dashboard_router
 end

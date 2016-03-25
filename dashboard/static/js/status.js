@@ -58,103 +58,64 @@
 	                success : function(result) {
 	                    if(result.success){
 	                    	var axisData = APP.Common.formatTime();
-
 	            			var data = result.data || {};
-	            			
-				            _this.data.requestChart.addData([
-				                [
-				                    0,        // 系列索引
-				                    data.total_count, // 新增数据
-				                    false,     // 新增数据是否从队列头部插入
-				                    false,     // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-				                ],
-				                [
-				                    1,
-				                    data.total_count - data.total_success_count,
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
 
-				            if(is_first_request){
-					            is_first_request=false;
-				            }else{
-				            	_this.data.qpsChart.addData([
-					                [
-					                    0,
-					                    (data.total_count - lastTotalRequstCount)/_this.data.interval,
-					                    false,
-					                    false,
-					                    axisData
-					                ]
-					            ]);
-				            }
-				            lastTotalRequstCount = data.total_count;
+                            //request 统计
+				            var requestOption = _this.data.requestChart.getOption();
+				            var data0 = requestOption.series[0].data;
+    						var data1 = requestOption.series[1].data;
+    						data0.shift();
+						    data0.push(data.total_count);
+						    data1.shift();
+						    data1.push(data.total_count - data.total_success_count);
+						    requestOption.xAxis[0].data.shift();
+    						requestOption.xAxis[0].data.push(axisData);
+                            _this.data.requestChart.setOption(requestOption);
 
-				            _this.data.responseChart.addData([
-				                [
-				                    0,
-				                    data.total_request_time,
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
+                            //qps统计
+                            var qpsOption = _this.data.qpsChart.getOption();
+                            if(is_first_request){
+                                is_first_request=false;
+                            }else{
+                                data0 = qpsOption.series[0].data;
+                                data0.shift();
+                                data0.push((data.total_count - lastTotalRequstCount)/_this.data.interval);
+                                qpsOption.xAxis[0].data.shift();
+                                qpsOption.xAxis[0].data.push(axisData);
+                                _this.data.qpsChart.setOption(qpsOption);
+                            }
+                            lastTotalRequstCount = data.total_count;
 
-				            _this.data.trafficChart.addData([
-				                [
-				                    0,
-				                    Math.round(data.traffic_read/1024),
-				                    false,
-				                    false
-				                ],
-				                [
-				                    1,
-				                    Math.round(data.traffic_write/1024),
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
+                            //请求时间统计
+                            var responseOption = _this.data.responseChart.getOption();
+                            data0 = responseOption.series[0].data;
+                            data0.shift();
+                            data0.push(data.total_request_time);
+                            responseOption.xAxis[0].data.shift();
+                            responseOption.xAxis[0].data.push(axisData);
+                            _this.data.responseChart.setOption(responseOption);
 
-				            // state stat
-				            _this.data.stateChart["2xx"].addData([
-				                [
-				                    0,
-				                    data.request_2xx,
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
-				            _this.data.stateChart["3xx"].addData([
-				                [
-				                    0,
-				                    data.request_3xx,
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
-				            _this.data.stateChart["4xx"].addData([
-				                [
-				                    0,
-				                    data.request_4xx,
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
-				             _this.data.stateChart["5xx"].addData([
-				                [
-				                    0,
-				                    data.request_5xx,
-				                    false,
-				                    false,
-				                    axisData
-				                ]
-				            ]);
+                            //流量统计
+                            var trafficOption = _this.data.trafficChart.getOption();
+                            var data0 = trafficOption.series[0].data;
+                            var data1 = trafficOption.series[1].data;
+                            data0.shift();
+                            data0.push(Math.round(data.traffic_read/1024));
+                            data1.shift();
+                            data1.push(Math.round(data.traffic_write/1024));
+                            trafficOption.xAxis[0].data.shift();
+                            trafficOption.xAxis[0].data.push(axisData);
+                            _this.data.trafficChart.setOption(trafficOption);
+
+                            for(var i=2;i<=5;i++){
+                                var option = _this.data.stateChart[i+"xx"].getOption();
+                                data0 = option.series[0].data;
+                                data0.shift();
+                                data0.push( data["request_" + i + "xx"]);
+                                option.xAxis[0].data.shift();
+                                option.xAxis[0].data.push(axisData);
+                                _this.data.stateChart[i+"xx"].setOption(option);
+                            }
 
 	                    }else{
 	                        APP.Common.showTipDialog("错误提示", result.msg);
@@ -177,16 +138,15 @@
 	                    
 	                }
 	            });
-
-	            
-	        }, interval); 
+	        }, interval);
 
         },
 
         initRequestStatus: function(){
         	var option = {
 	            title : {
-	                text: ''
+	                text: '请求统计',
+	                subtext: ''
 	            },
 	            tooltip : {
 	                trigger: 'axis'
@@ -195,22 +155,16 @@
 	                data:['全部请求','失败请求']
 	            },
 	            toolbox: {
-	                show : false,
+	                show: true,
+			        feature: {
+			            dataView: {readOnly: false},
+			            saveAsImage: {}
+			        }
 	            },
 	            xAxis : [
 	                {
 	                    type : 'category',
 	                    boundaryGap : false,
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    },
-	                    // axisLabel: {
-	                    //     interval: 4
-	                    // },
 	                    data : (function (){
 	                        var now = new Date();
 	                        var res = [];
@@ -227,14 +181,7 @@
 	                {
 	                    type : 'value',
 	                    scale: true,
-	                    name : '次数',
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    }
+	                    name : '次数'
 	                }
 	            ],
 	            series : [
@@ -242,20 +189,6 @@
 	                    name:'全部请求',
 	                    type:'line',
 	                    smooth: true,
-	                    symbol: 'none',
-	                    itemStyle: {
-	                        normal: {
-	                            color:"#97BBCD",
-	                            areaStyle: {
-	                                type: 'default',
-	                                color: "rgba(151, 187, 205,0.7)"
-	                            },
-	                            lineStyle:{
-	                                color: "#97BBCD",
-	                                shadownColor: "#97BBCD"
-	                            }
-	                        }
-	                    },
 	                    data:(function (){
 	                        var res = [];
 	                        var len = 100;
@@ -291,7 +224,8 @@
         initQPSStatus: function(){
         	var option = {
 	            title : {
-	                text: ''
+                    text: 'QPS统计',
+                    subtext: ''
 	            },
 	            tooltip : {
 	                trigger: 'axis'
@@ -300,19 +234,16 @@
 	                data:['QPS']
 	            },
 	             toolbox: {
-	                show : false,
+                     show: true,
+                     feature: {
+                         dataView: {readOnly: false},
+                         saveAsImage: {}
+                     }
 	            },
 	            xAxis : [
 	                {
 	                    type : 'category',
 	                    boundaryGap : false,
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    },
 	                    data : (function (){
 	                        var now = new Date();
 	                        var res = [];
@@ -329,14 +260,7 @@
 	                {
 	                    type : 'value',
 	                    scale: true,
-	                    name : 'Query',
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    }
+	                    name : 'Query'
 	                }
 	            ],
 	            series : [
@@ -365,7 +289,8 @@
         initReponseStatus: function(){
         	var option = {
 	            title : {
-	                text: ''
+                    text: '请求时间统计',
+                    subtext: ''
 	            },
 	            tooltip : {
 	                trigger: 'axis'
@@ -374,19 +299,16 @@
 	                data:['响应时间']
 	            },
 	             toolbox: {
-	                show : false,
+                     show: true,
+                     feature: {
+                         dataView: {readOnly: false},
+                         saveAsImage: {}
+                     }
 	            },
 	            xAxis : [
 	                {
 	                    type : 'category',
 	                    boundaryGap : false,
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    },
 	                    data : (function (){
 	                        var now = new Date();
 	                        var res = [];
@@ -403,14 +325,7 @@
 	                {
 	                    type : 'value',
 	                    scale: true,
-	                    name : '秒',
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    }
+	                    name : '秒'
 	                }
 	            ],
 	            series : [
@@ -439,7 +354,8 @@
 		initTrafficStatus: function(){
         	var option = {
 	            title : {
-	                text: ''
+                    text: '流量统计',
+                    subtext: ''
 	            },
 	            tooltip : {
 	                trigger: 'axis'
@@ -448,22 +364,16 @@
 	                data:['in','out']
 	            },
 	             toolbox: {
-	                show : false,
+                     show: true,
+                     feature: {
+                         dataView: {readOnly: false},
+                         saveAsImage: {}
+                     }
 	            },
 	            xAxis : [
 	                {
 	                    type : 'category',
 	                    boundaryGap : false,
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    },
-	                    // axisLabel: {
-	                    //     interval: 4
-	                    // },
 	                    data : (function (){
 	                        var now = new Date();
 	                        var res = [];
@@ -480,14 +390,7 @@
 	                {
 	                    type : 'value',
 	                    scale: true,
-	                    name : 'kbytes',
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    }
+	                    name : 'kbytes'
 	                }
 	            ],
 	            series : [
@@ -495,20 +398,6 @@
 	                    name:'in',
 	                    type:'line',
 	                    smooth: true,
-	                    symbol: 'none',
-	                    itemStyle: {
-	                        normal: {
-	                            color:"#97BBCD",
-	                            areaStyle: {
-	                                type: 'default',
-	                                color: "rgba(151, 187, 205,0.7)"
-	                            },
-	                            lineStyle:{
-	                                color: "#97BBCD",
-	                                shadownColor: "#97BBCD"
-	                            }
-	                        }
-	                    },
 	                    data:(function (){
 	                        var res = [];
 	                        var len = 100;
@@ -522,21 +411,6 @@
 	                {
 	                    name:'out',
 	                    type:'line',
-	                    itemStyle: {normal: {areaStyle: {type: 'default'}}},
-	                    symbol: 'none',
-	                    itemStyle: {
-	                        normal: {
-	                            color:"rgb(228, 235, 239)",
-	                            areaStyle: {
-	                                type: 'default',
-	                                color: "rgba(228, 235, 239,0.7)"
-	                            },
-	                            lineStyle:{
-	                                color: "rgb(228, 235, 239)",
-	                                shadownColor: "rgb(228, 235, 239)"
-	                            }
-	                        }
-	                    },
 	                    data:(function (){
 	                        var res = [];
 	                        var len = 100;
@@ -562,7 +436,8 @@
 
         	var option = {
 	            title : {
-	                text: ''
+                    text: code + '请求统计',
+                    subtext: ''
 	            },
 	            tooltip : {
 	                trigger: 'axis'
@@ -571,19 +446,16 @@
 	                data:[code+"请求"]
 	            },
 	             toolbox: {
-	                show : false,
+                     show: true,
+                     feature: {
+                         dataView: {readOnly: false},
+                         saveAsImage: {}
+                     }
 	            },
 	            xAxis : [
 	                {
 	                    type : 'category',
 	                    boundaryGap : false,
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    },
 	                    data : (function (){
 	                        var now = new Date();
 	                        var res = [];
@@ -600,31 +472,13 @@
 	                {
 	                    type : 'value',
 	                    scale: true,
-	                    name : '次',
-	                    axisLine:{
-	                        lineStyle:{
-	                            color: '#aaa',
-	                            width: 2,
-	                            type: 'solid'
-	                        } 
-	                    }
+	                    name : '次'
 	                }
 	            ],
 	            series : [
 	                {
 	                    name:'请求',
 	                    type:'line',
-	                    symbol: 'none',
-	                    itemStyle: {
-	                        normal: {
-	                            color: color,
-	                            lineStyle:{
-	                                color: color,
-	                                shadownColor: color
-	                            }
-	                        }
-	                    },
-	                  
 	                    data:(function (){
 	                        var res = [];
 	                        var len = 50;

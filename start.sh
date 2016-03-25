@@ -15,7 +15,6 @@ else
 	echo "kill "$pid
 	kill -s QUIT $pid
 	echo "restart orange.."
-	
 fi
 
 mkdir -p logs

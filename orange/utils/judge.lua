@@ -52,7 +52,7 @@ function _M.parse_conditions(expression, params)
 end
 
 
-function  _M.filter_and_conditions(conditions)
+function _M.filter_and_conditions(conditions)
     if not conditions then return false end
 
     local pass = false
@@ -66,7 +66,7 @@ function  _M.filter_and_conditions(conditions)
     return pass
 end
 
-function  _M.filter_or_conditions(conditions)
+function _M.filter_or_conditions(conditions)
     if not conditions then return false end
 
     local pass = false
@@ -80,8 +80,8 @@ function  _M.filter_or_conditions(conditions)
     return pass
 end
 
-function  _M.filter_complicated_conditions(expression, conditions)
-    ngx.log(ngx.ERR, "filter_complicated_conditions: ", expression)
+function _M.filter_complicated_conditions(expression, conditions, plugin_name)
+
 
     if not expression or expression == "" or not conditions then return false end
 
@@ -101,6 +101,10 @@ function  _M.filter_complicated_conditions(expression, conditions)
     end
 
     pass = func()
+    if pass then
+        ngx.log(ngx.ERR, "[", plugin_name or "", "]filter_complicated_conditions: ", expression)
+    end
+
     return pass
 end
 
