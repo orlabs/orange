@@ -18,6 +18,7 @@ Orange是一个基于OpenResty的API Gateway，提供API监控和管理，实现
 	```
 	git clone https://github.com/sumory/orange
 	cd orange
+	chmod 777 data.json #data.json须有读写权限，777是最高权限，建议根据具体需要自行设置
 	sh start.sh
 	```
 - 访问http://localhost:9999/orange/dashboard/
