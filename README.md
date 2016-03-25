@@ -8,6 +8,11 @@ Orange是一个基于OpenResty的API Gateway，提供API监控和管理，实现
 
 - 安装OpenResty
 - 安装[lor](https://github.com/sumory/lor)
+- orange依赖的uuid生成器，需要libuuid.so这个库， centos可通过以下命令安装，其他linux发行版请自行google
+	
+	```
+	yum install  libuuid-devel
+	```
 - 安装Orange
 
 	```
