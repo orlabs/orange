@@ -1,11 +1,7 @@
 -- from https://github.com/Mashape/kong/blob/master/kong/tools/io.lua
-
-local path = require("path").new("/")
-local stringy = require "orange.utils.stringy"
+local stringy = require("orange.utils.stringy")
 
 local _M = {}
-
-_M.path = path
 
 ---
 -- Checks existence of a file.
