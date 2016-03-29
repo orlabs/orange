@@ -9,6 +9,8 @@ function _M.test(condition)
     local pass = false
     if test_type == "URI" then
         pass = _M.test_uri(condition)
+    elseif test_type == "Query" then
+        pass = _M.test_query(condition)
     elseif test_type == "Header" then
         pass = _M.test_header(condition)
     elseif test_type == "IP" then
@@ -28,6 +30,11 @@ function _M.test(condition)
     return pass
 end
 
+-- query string judge
+function _M.test_query(condition)
+    local query = ngx.req.get_uri_args()
+    return _M.test_var(condition, query[condition.name])
+end
 
 function _M.test_uri(condition)
     local uri = ngx.var.uri;
@@ -148,6 +155,39 @@ function _M.test_var(condition, var)
     elseif operator == '!' then
         if var == nil then
             return true
+        end
+
+    elseif operator == '>' then
+        if var ~= nil and value ~= nil then
+            value = tonumber(value)
+            var = tonumber(var)
+            if var and value and var > value then
+                return true
+            end
+        end
+    elseif operator == '>=' then
+        if var ~= nil and value ~= nil then
+            value = tonumber(value)
+            var = tonumber(var)
+            if var and value and var > value then
+                return true
+            end
+        end
+    elseif operator == '<' then
+        if var ~= nil and value ~= nil then
+            value = tonumber(value)
+            var = tonumber(var)
+            if var and value and var > value then
+                return true
+            end
+        end
+    elseif operator == '<=' then
+        if var ~= nil and value ~= nil then
+            value = tonumber(value)
+            var = tonumber(var)
+            if var and value and var > value then
+                return true
+            end
         end
     end
 
