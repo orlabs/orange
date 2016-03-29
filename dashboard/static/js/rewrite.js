@@ -79,7 +79,7 @@
                                 autofocus: false,
                                 callback: function () {
                                     $.ajax({
-                                        url : '/orange/dashboard/rewrite/enable',
+                                        url : '/rewrite/enable',
                                         type : 'post',
                                         data: {
                                             enable: "0"
@@ -125,7 +125,7 @@
                                 autofocus: false,
                                 callback: function () {
                                     $.ajax({
-                                        url : '/orange/dashboard/rewrite/enable',
+                                        url : '/rewrite/enable',
                                         type : 'post',
                                         data: {
                                             enable: "1"
@@ -310,7 +310,7 @@
                                 var result = _this.buildRule();
                                 if(result.success == true){
                                     $.ajax({
-                                        url : '/orange/dashboard/rewrite/configs',
+                                        url : '/rewrite/configs',
                                         type : 'put',
                                         data: {
                                             rule: JSON.stringify(result.data)
@@ -394,7 +394,7 @@
 
                                 if(result.success == true){
                                     $.ajax({
-                                        url : '/orange/dashboard/rewrite/configs',
+                                        url : '/rewrite/configs',
                                         type : 'post',
                                         data: {
                                             rule: JSON.stringify(result.data)
@@ -450,7 +450,7 @@
                             autofocus: false,
                             callback: function () {
                                 $.ajax({
-                                    url : '/orange/dashboard/rewrite/configs',
+                                    url : '/rewrite/configs',
                                     type : 'delete',
                                     data: {
                                         rule_id: rule_id
@@ -563,7 +563,7 @@
 
         loadConfigs: function () {
             $.ajax({
-                url: '/orange/dashboard/rewrite/configs',
+                url: '/rewrite/configs',
                 type: 'get',
                 data: {},
                 dataType: 'json',

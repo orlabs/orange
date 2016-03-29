@@ -9,6 +9,8 @@ uwsgi_temp
 start.log
 orange.conf.back
 data.back.json
+conf/nginx-divide.conf
+start-divide.sh
 
 # Compiled Lua sources
 luac.out

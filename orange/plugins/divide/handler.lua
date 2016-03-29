@@ -82,7 +82,7 @@ function DivideHandler:access(conf)
 
             if pass then
                 if rule.log == true then
-                    ngx.log(ngx.ERR, "[Divide-Match-Rule] ", rule.name, " uri:", ngx.var.uri)
+                    ngx.log(ngx.ERR, "[Divide-Match-Rule] ", rule.name, " host:", ngx.var.host, " uri:", ngx.var.uri)
                 end
 
                 if rule.upstream_host and rule.upstream_url then
@@ -95,14 +95,17 @@ function DivideHandler:access(conf)
 
 
                     ngx.var.upstream_host = rule.upstream_host
-                    ngx.var.upstream_url = rule.upstream_url .. strip_request_path(uri, uri_condition) .. qs
+                    -- 外部upstream
+                    -- ngx.var.upstream_url = rule.upstream_url .. strip_request_path(uri, uri_condition) .. qs
+                    -- 内部upstream
+                    ngx.var.upstream_url = rule.upstream_url
                 else
-                    ngx.log(ngx.ERR, "[Divide-Match-Rule:error] no upstream host or url. ", rule.name, " uri:", ngx.var.uri)
+                    ngx.log(ngx.ERR, "[Divide-Match-Rule:error] no upstream host or url. ", rule.name, " host:", ngx.var.host, " uri:", ngx.var.uri)
                 end
                 return
             else
                 if rule.log == true then
-                    ngx.log(ngx.ERR, "[Divide-NotMatch-Rule] ", rule.name, " uri:", ngx.var.uri)
+                    ngx.log(ngx.ERR, "[Divide-NotMatch-Rule] ", rule.name, " host:", ngx.var.host, " uri:", ngx.var.uri)
                 end
             end
         end

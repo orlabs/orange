@@ -52,7 +52,7 @@
 	        _this.data.timer =  setInterval(function (){
 	        	
 	        	$.ajax({
-	                url : '/orange/dashboard/stat/status',
+	                url : '/stat/status',
 	                type : 'get',
 	                data : {},
 	                dataType : 'json',
