@@ -145,6 +145,7 @@
                     <select class="form-control" name="rule-matcher-condition-type">
                         <option value="URI">URI</option>
                         <option value="Header">Header</option>
+                        <option value="Query">Query</option>
                         <option value="IP">IP</option>
                         <option value="UserAgent">UserAgent</option>
                         <!-- <option value="Method">Method</option> -->
@@ -161,6 +162,10 @@
                         <option value="!≈">Not Match RegEx</option>
                         <option value="=">Equal</option>
                         <option value="!=">Not Equal</option>
+                        <option value=">">&gt;</option>
+                        <option value=">=">&ge;</option>
+                        <option value="<">&lt;</option>
+                        <option value="<=">&le;</option>
                     </select>
                 </div>
                 <div class="col-sm-3">
@@ -251,6 +256,7 @@
                         <select class="form-control" name="rule-matcher-condition-type">
                             <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
                             <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
+                            <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
                             <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
                             <option value="UserAgent" {@if c.type == "UserAgent" } selected {@/if}>UserAgent</option>
                             <!-- <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option> -->
@@ -258,7 +264,7 @@
                             <option value="Referer" {@if c.type == "Referer" } selected {@/if}>Referer</option>
                         </select>
                     </div>
-                    <div class="col-sm-2 condition-name-hodler" {@if c.type!="Header"} style="display:none;" {@/if}>
+                    <div class="col-sm-2 condition-name-hodler" {@if c.type!="Header"&&c.type!="Query" } style="display:none;" {@/if}>
                         <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name" value="${c.name}">
                     </div>
                     <div class="col-sm-3">
@@ -267,6 +273,10 @@
                             <option value="!≈" {@if c.operator=="!≈" } selected {@/if}>Not Match RegEx</option>
                             <option value="=" {@if c.operator=="="} selected {@/if}>Equal</option>
                             <option value="!=" {@if c.operator=="!="} selected {@/if}>Not Equal</option>
+                            <option value=">" {@if c.operator==">" } selected {@/if}>&gt;</option>
+                            <option value=">=" {@if c.operator==">=" } selected {@/if}>&ge;</option>
+                            <option value="<" {@if c.operator=="<"} selected {@/if}>&lt;</option>
+                            <option value="<=" {@if c.operator=="<="} selected {@/if}>&le;</option>
                         </select>
                     </div>
                     <div class="col-sm-3">

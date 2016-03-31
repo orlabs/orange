@@ -11,6 +11,7 @@ orange.conf.back
 data.back.json
 conf/nginx-divide.conf
 start-divide.sh
+*.dev.*
 
 # Compiled Lua sources
 luac.out

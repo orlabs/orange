@@ -208,7 +208,7 @@
             $(document).on("change", 'select[name=rule-matcher-condition-type]', function () {
                 var condition_type = $(this).val();
 
-                if (condition_type != "Header") {
+                if (condition_type != "Header" && condition_type != "Query") {
                     $(this).parents(".condition-holder").each(function () {
                         $(this).find(".condition-name-hodler").hide();
                     });

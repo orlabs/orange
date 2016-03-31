@@ -50,7 +50,7 @@
                 var condition_type = self.find("select[name=rule-matcher-condition-type]").val();
                 condition.type = condition_type;
 
-                if(condition_type == "Header"){
+                if(condition_type == "Header" || condition_type == "Query"){
                     var condition_name = self.find("input[name=rule-matcher-condition-name]").val();
                     if(!condition_name){
                         tmp_success = false;

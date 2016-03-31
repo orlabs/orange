@@ -169,7 +169,7 @@ function _M.test_var(condition, var)
         if var ~= nil and value ~= nil then
             value = tonumber(value)
             var = tonumber(var)
-            if var and value and var > value then
+            if var and value and var >= value then
                 return true
             end
         end
@@ -177,7 +177,7 @@ function _M.test_var(condition, var)
         if var ~= nil and value ~= nil then
             value = tonumber(value)
             var = tonumber(var)
-            if var and value and var > value then
+            if var and value and var < value then
                 return true
             end
         end
@@ -185,7 +185,7 @@ function _M.test_var(condition, var)
         if var ~= nil and value ~= nil then
             value = tonumber(value)
             var = tonumber(var)
-            if var and value and var > value then
+            if var and value and var <= value then
                 return true
             end
         end
