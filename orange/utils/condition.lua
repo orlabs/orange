@@ -1,3 +1,5 @@
+local sfind = string.find
+
 local _M = {}
 
 function _M.test(condition)
@@ -19,8 +21,8 @@ function _M.test(condition)
         pass = _M.test_ua(condition)
     elseif test_type == "Method" then
         pass = _M.test_method(condition)
-    elseif test_type == "Args" then
-        pass = _M.test_args(condition)
+    elseif test_type == "PostParams" then
+        pass = _M.test_post_params(condition)
     elseif test_type == "Referer" then
         pass = _M.test_referer(condition)
     elseif test_type == "Host" then
@@ -71,64 +73,24 @@ function _M.test_method(condition)
     return false
 end
 
-function _M.test_args(condition)
-
-    local target_arg_re = condition['name']
-    local find = ngx.find
-    local test_var = _M.test_var
-
-    --handle args behind uri
-    for k, v in pairs(ngx.req.get_uri_args()) do
-        if type(v) == "table" then
-            for arg_idx, arg_value in ipairs(v) do
-                if target_arg_re == nil or find(k, target_arg_re) ~= nil then
-                    if test_var(condition, arg_value) == true then
-                        return true
-                    end
-                end
-            end
-        elseif type(v) == "string" then
-            if target_arg_re == nil or find(k, target_arg_re) ~= nil then
-                if test_var(condition, v) == true then
-                    return true
-                end
-            end
+function _M.test_post_params(condition)
+    local headers = ngx.req.get_headers()
+    local header = headers['Content-Type']
+    if header then
+        local is_multipart = sfind(header, "multipart")
+        if is_multipart and is_multipart > 0 then
+            return false
         end
     end
-
 
     ngx.req.read_body()
-    --ensure body has not be cached into temp file
-    if ngx.req.get_body_file() ~= nil then
+    local post_params, err = ngx.req.get_post_args()
+    if not post_params or err then
+        ngx.log(ngx.ERR, "failed to get post args: ", err)
         return false
     end
 
-    local body_args, err = ngx.req.get_post_args()
-    if body_args == nil then
-        ngx.say("failed to get post args: ", err)
-        return false
-    end
-
-    --check args in body
-    for k, v in pairs(body_args) do
-        if type(v) == "table" then
-            for arg_idx, arg_value in ipairs(v) do
-                if target_arg_re == nil or find(k, target_arg_re) ~= nil then
-                    if test_var(condition, arg_value) == true then
-                        return true
-                    end
-                end
-            end
-        elseif type(v) == "string" then
-            if target_arg_re == nil or find(k, target_arg_re) ~= nil then
-                if test_var(condition, v) == true then
-                    return true
-                end
-            end
-        end
-    end
-
-    return false
+    return _M.test_var(condition, post_params[condition.name])
 end
 
 
