@@ -122,67 +122,9 @@
                 </div>
             </div><!-- name -->
 
-            <div class="form-group">
-                <label for="input-matcher-type" class="col-sm-1 control-label">规则</label>
-                <div class="col-sm-3">
-                    <select class="form-control" id="rule-matcher-type">
-                        <option value="0">单一条件匹配</option>
-                        <option value="1">and匹配</option>
-                        <option value="2">or匹配</option>
-                        <option value="3">复杂匹配</option>
-                    </select>
-                </div>
-
-                <div class="col-sm-8" id="expression-area" style="display:none;">
-                     <input type="text" class="form-control" id="rule-matcher-expression" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
-                </div>
-            </div><!-- 类型 -->
-
-            <div class="form-group pair condition-holder">
-                <label class="col-sm-1 control-label"></label>
-
-                <div class="col-sm-2">
-                    <select class="form-control" name="rule-matcher-condition-type">
-                        <option value="URI">URI</option>
-                        <option value="Header">Header</option>
-                        <option value="Query">Query</option>
-                        <option value="IP">IP</option>
-                        <option value="UserAgent">UserAgent</option>
-                        <!-- <option value="Method">Method</option> -->
-                        <option value="Host">Host</option>
-                        <option value="Referer">Referer</option>
-                    </select>
-                </div>
-                <div class="col-sm-2 condition-name-hodler" style="display:none;">
-                    <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name">
-                </div>
-                <div class="col-sm-3">
-                    <select class="form-control"  name="rule-matcher-condition-operator">
-                        <option value="≈">Match RegEx</option>
-                        <option value="!≈">Not Match RegEx</option>
-                        <option value="=">Equal</option>
-                        <option value="!=">Not Equal</option>
-                        <option value=">">&gt;</option>
-                        <option value=">=">&ge;</option>
-                        <option value="<">&lt;</option>
-                        <option value="<=">&le;</option>
-                    </select>
-                </div>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" name="rule-matcher-condition-value" placeholder="value">
-                </div>
-                <div class="col-sm-1" style="margin-top:10px">
-                    <span class="input-group-btn">
-                        <a class="btn btn-danger" style="padding:0 5px;">
-                            <i class="fa fa-remove"></i>
-                        </a>
-                        <a class="btn btn-success" style="padding:0 5px;">
-                            <i class="fa fa-plus"></i>
-                        </a>
-                    </span>
-                </div>
-            </div><!-- matcher -->
-
+            <!-- add - 条件编辑器模板 start -->
+            {(condition-add.html)}
+            <!-- add - 条件编辑器模板 end -->
 
             <div class="form-group action-holder">
                 <label class="col-sm-1 control-label">执行</label>
@@ -232,69 +174,10 @@
                 </div>
             </div><!-- name -->
 
-            <div class="form-group">
-                <label for="input-matcher-type" class="col-sm-1 control-label">规则</label>
-                <div class="col-sm-3">
-                    <select class="form-control" id="rule-matcher-type">
-                        <option value="0" {@if r.matcher.type==0 } selected {@/if}>单一条件匹配</option>
-                        <option value="1" {@if r.matcher.type==1 } selected {@/if}>and匹配</option>
-                        <option value="2" {@if r.matcher.type==2 } selected {@/if}>or匹配</option>
-                        <option value="3" {@if r.matcher.type==3 } selected {@/if}>复杂匹配</option>
-                    </select>
-                </div>
-
-                <div class="col-sm-8" id="expression-area" {@if r.matcher.type != "3" } style="display:none;" {@/if}>
-                     <input type="text" class="form-control" id="rule-matcher-expression" value="${r.matcher.expression}" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
-                </div>
-            </div><!-- 类型 -->
-
-            {@each r.matcher.conditions as c, index}
-                <div class="form-group pair condition-holder">
-                    <label class="col-sm-1 control-label"></label>
-
-                    <div class="col-sm-2">
-                        <select class="form-control" name="rule-matcher-condition-type">
-                            <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
-                            <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
-                            <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
-                            <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
-                            <option value="UserAgent" {@if c.type == "UserAgent" } selected {@/if}>UserAgent</option>
-                            <!-- <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option> -->
-                            <option value="Host" {@if c.type == "Host" } selected {@/if}>Host</option>
-                            <option value="Referer" {@if c.type == "Referer" } selected {@/if}>Referer</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-2 condition-name-hodler" {@if c.type!="Header"&&c.type!="Query" } style="display:none;" {@/if}>
-                        <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name" value="${c.name}">
-                    </div>
-                    <div class="col-sm-3">
-                        <select class="form-control"  name="rule-matcher-condition-operator">
-                            <option value="≈" {@if c.operator=="≈" } selected {@/if}>Match RegEx</option>
-                            <option value="!≈" {@if c.operator=="!≈" } selected {@/if}>Not Match RegEx</option>
-                            <option value="=" {@if c.operator=="="} selected {@/if}>Equal</option>
-                            <option value="!=" {@if c.operator=="!="} selected {@/if}>Not Equal</option>
-                            <option value=">" {@if c.operator==">" } selected {@/if}>&gt;</option>
-                            <option value=">=" {@if c.operator==">=" } selected {@/if}>&ge;</option>
-                            <option value="<" {@if c.operator=="<"} selected {@/if}>&lt;</option>
-                            <option value="<=" {@if c.operator=="<="} selected {@/if}>&le;</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control" name="rule-matcher-condition-value" placeholder="value" value="${c.value}">
-                    </div>
-                    <div class="col-sm-1" style="margin-top:10px">
-                        <span class="input-group-btn">
-                            <a class="btn btn-danger" style="padding:0 5px;">
-                                <i class="fa fa-remove"></i>
-                            </a>
-                            <a class="btn btn-success" style="padding:0 5px;">
-                                <i class="fa fa-plus"></i>
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            {@/each}
-            <!-- matcher -->
+            <!-- edit - 条件编辑器模板 start -->
+            {(condition-edit.html)}
+            <!-- edit - 条件编辑器模板 end -->
+            
 
             <div class="form-group action-holder">
                 <label class="col-sm-1 control-label">执行</label>
