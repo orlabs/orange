@@ -472,14 +472,7 @@ kbd {
     text-decoration: line-through;
     color: #EEF3F5;
 }
-.no-result {
-    color: #aaa;
-    padding-bottom: 20px;
-    text-align: center;
-}
-.opts a.active .fa {
-    color: #EB5424;
-}
+
 @media (max-width: 480px) {
     .hidden-mobile {
         display: none !important;
@@ -500,4 +493,144 @@ kbd {
     .pagination li.next {
         float: right;
     }
+}
+
+/* customized by orange start*/
+
+td, th {
+    padding: 15px 5px;
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+table {
+    background-color:#fff;
+}
+
+.table-bordered>thead>tr>th {
+    border-bottom-width: 1px;
+}
+
+.table>thead>tr>th{
+    height:60px;
+    line-height: 60px;
+    text-align:center;
+}
+
+table.table-bordered tr td {
+    vertical-align: middle;
+    border-left: none;
+    border-color: #DEDFE0;
+    border-right: dashed 1px #DEDFE0;
+    min-height: 36px;
+    padding: 16px 8px;
+}
+
+td.center {
+    text-align:center;
+}
+
+tr.highlight{
+    background-color: #FFFDDD;
+}
+
+#rules td.left {
+    padding-left:10px
+}
+
+#rules .action{
+    vertical-align: middle;
+}
+
+#rules .do{
+    vertical-align: middle;
+}
+
+#rules .edit-btn{
+    color:#000
+}
+
+#rules .delete-btn{
+    color:#EA8282
+}
+
+.form-group label{
+    color:#555;
+}
+
+
+.input-group-btn .btn-danger{
+    color: #151414;
+    background-color: #FFFFFF;
+    border-color: #FFFFFF;
+    outline:none;
+}
+
+.input-group-btn .btn-success{
+    color: #151414;
+    background-color: #FFFFFF;
+    border-color: #FFFFFF;
+    outline:none;
+}
+
+.form-horizontal .control-label {
+    padding-top: 8px;
+}
+
+.form-group label {
+  color: #555;
+  font-size: 14px;
+}
+
+#modJsonResult{
+    margin: 0 17px 0 7px;
+}
+
+
+.footer {
+    position: absolute;
+    width: 100%;
+    background-color: #f2f4f5;
+    margin-top:40px;
+}
+
+.footer .footer-bar {
+    font-size: 13px;
+    line-height: 30px;
+    border-top: 1px solid #e9ecee;
+    padding: 10px 0;
+    max-height: 51px;
+}
+
+.footer .footer-bar span:first-of-type a {
+    margin: 0;
+}
+
+.footer .footer-bar a {
+    text-decoration: none;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    margin-left: 18px;
+    color: #505659;
+}
+
+.footer .footer-bar a:hover {
+    color: #262e33;
+}
+
+.footer .footer-bar a img {
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.help-content {
+    height: 400px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.help-content p{
+    padding-top:180px;
 }
