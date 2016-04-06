@@ -17,9 +17,10 @@
             _this.initRuleAddDialog();//添加规则对话框
             _this.initRuleDeleteDialog();//删除规则对话框
             _this.initRuleEditDialog();//编辑规则对话框
-            _this.initConditionAddOrRemove();//添加或删除条件
-            _this.initMatcherTypeChangeEvent();//matcher类型选择事件
-            _this.initConditionTypeChangeEvent();//condition类型选择事件
+            
+            L.Common.initConditionAddOrRemove();//添加或删除条件
+            L.Common.initMatcherTypeChangeEvent();//matcher类型选择事件
+            L.Common.initConditionTypeChangeEvent();//condition类型选择事件
             _this.initActionTypeChangeEvent();//action类型选择事件
             _this.initSwitchBtn();//防火墙关闭、开启
 
@@ -162,65 +163,7 @@
             });
         },
 
-        //增加、删除条件按钮事件
-        initConditionAddOrRemove: function(){
-
-            //添加规则框里的事件
-            //点击“加号“添加新的输入行
-            $(document).on('click', '#add-rule-form .pair .btn-success', _this.addNewCondition);
-
-            //删除输入行
-            $(document).on('click', '#add-rule-form .pair .btn-danger', function(event) {
-                $(this).parents('.form-group').remove();//删除本行输入
-                _this.resetAddConditionBtn();
-            });
-
-
-            //编辑规则框里的事件
-            //点击“加号“添加新的输入行
-            $(document).on('click', '#edit-rule-form .pair .btn-success', _this.addNewCondition);
-
-            //删除输入行
-            $(document).on('click', '#edit-rule-form .pair .btn-danger', function(event) {
-                $(this).parents('.form-group').remove();//删除本行输入
-                _this.resetAddConditionBtn();
-            });
-        },
-
-        //matcher类型选择事件
-        initMatcherTypeChangeEvent: function(){
-            $(document).on("change", '#rule-matcher-type',function(){
-                var matcher_type = $(this).val();
-                if(matcher_type != "0" && matcher_type != "1"  && matcher_type != "2" && matcher_type != "3"){
-                    L.Common.showTipDialog("提示", "选择的matcher类型不合法");
-                    return
-                }
-
-                if(matcher_type == "3"){
-                    $("#expression-area").show();
-                }else{
-                    $("#expression-area").hide();
-                }
-            });
-        },
-
-        //condition类型选择事件
-        initConditionTypeChangeEvent: function(){
-            $(document).on("change", 'select[name=rule-matcher-condition-type]',function(){
-                var condition_type = $(this).val();
-
-                if (condition_type != "Header" && condition_type != "Query") {
-                    $(this).parents(".condition-holder").each(function(){
-                         $(this).find(".condition-name-hodler").hide();
-                    });
-                }else{
-                     $(this).parents(".condition-holder").each(function(){
-                         $(this).find(".condition-name-hodler").show();
-                    });
-                }
-            });
-        },
-
+        
         //action类型选择事件
         initActionTypeChangeEvent: function(){
             $(document).on("change", '#rule-action-perform',function(){
@@ -318,7 +261,8 @@
                             value: '预览',
                             autofocus: false,
                             callback: function () {
-                                _this.showRulePreview();
+                                var rule = _this.buildRule();
+                                L.Common.showRulePreview(rule);
                                 return false;
                             }
                         },{
@@ -362,7 +306,7 @@
                         }
                     ]
                 });
-                _this.resetAddConditionBtn();//删除增加按钮显示与否
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
                 d.show();
             });
         },
@@ -401,7 +345,8 @@
                             value: '预览',
                             autofocus: false,
                             callback: function () {
-                                _this.showRulePreview();
+                                var rule = _this.buildRule();
+                                L.Common.showRulePreview(rule);
                                 return false;
                             }
                         },{
@@ -447,7 +392,7 @@
                     ]
                 });
 
-                _this.resetAddConditionBtn();//删除增加按钮显示与否
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
                 d.show();
             });
         },
@@ -520,67 +465,6 @@
             d.show();
         },
 
-        showRulePreview: function(){
-            var content = "";
-            var rule = _this.buildRule();
-            if(rule.success==true){
-                content = '<pre id="preview_rule"><code></code></pre>';
-            }else{
-                content = rule.data;
-            }
-
-            var d = dialog({
-                title: '规则预览',
-                width: 500,
-                content: content,
-                modal:true,
-                button: [{
-                        value: '返回',
-                        callback: function () {
-                            d.close().remove();
-                        }
-                    }
-                ]
-            });
-            d.show();
-
-            $("#preview_rule code").text(JSON.stringify(rule.data, null, 2));
-            $('pre code').each(function () {
-                hljs.highlightBlock($(this)[0]);
-            });
-        },
-
-        addNewCondition: function(event) {
-            var self = $(this);
-            var row = self.parents('.condition-holder');
-            var new_row = row.clone(true);
-            // $(new_row).find("input[name=rule-matcher-condition-value]").val("");
-            // $(new_row).find("input[name=rule-matcher-condition-name]").val("");
-            
-            var old_type = $(row).find("select[name=rule-matcher-condition-type]").val();
-            $(new_row).find("select[name=rule-matcher-condition-type]").val(old_type);
-
-            var old_operator = $(row).find("select[name=rule-matcher-condition-operator]").val();
-            $(new_row).find("select[name=rule-matcher-condition-operator]").val(old_operator);
-
-            $(new_row).insertAfter($(this).parents('.condition-holder'))
-            _this.resetAddConditionBtn();
-        },
-
-        resetAddConditionBtn: function(){
-            var l = $(".pair").length;
-            var c = 0;
-            $(".pair").each(function(){
-                c++;
-                if(c==l){
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
-                }else{
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
-                }
-            })
-        },
 
         loadConfigs: function () {
             $.ajax({
