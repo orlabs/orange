@@ -40,7 +40,7 @@ function _M.test_query(condition)
 end
 
 function _M.test_uri(condition)
-    local uri = ngx.var.uri;
+    local uri = ngx.var.uri
     return _M.test_var(condition, uri)
 end
 
@@ -55,12 +55,12 @@ function _M.test_ip(condition)
 end
 
 function _M.test_ua(condition)
-    local http_user_agent = ngx.var.http_user_agent;
+    local http_user_agent = ngx.var.http_user_agent
     return _M.test_var(condition, http_user_agent)
 end
 
 function _M.test_referer(condition)
-    local http_referer = ngx.var.http_referer;
+    local http_referer = ngx.var.http_referer
     return _M.test_var(condition, http_referer)
 end
 
