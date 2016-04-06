@@ -98,12 +98,12 @@
                                                 
                                                 return true;
                                             }else{
-                                                _this.showErrorTip("提示", result.msg || "关闭防火墙发生错误");
+                                                L.Common.showErrorTip("提示", result.msg || "关闭防火墙发生错误");
                                                 return false;
                                             }
                                         },
                                         error : function() {
-                                            _this.showErrorTip("提示", "关闭防火墙请求发生异常");
+                                            L.Common.showErrorTip("提示", "关闭防火墙请求发生异常");
                                             return false;
                                         }
                                     });
@@ -144,12 +144,12 @@
                                                 
                                                 return true;
                                             }else{
-                                                _this.showErrorTip("提示", result.msg || "开启防火墙发生错误");
+                                                L.Common.showErrorTip("提示", result.msg || "开启防火墙发生错误");
                                                 return false;
                                             }
                                         },
                                         error : function() {
-                                            _this.showErrorTip("提示", "开启防火墙请求发生异常");
+                                            L.Common.showErrorTip("提示", "开启防火墙请求发生异常");
                                             return false;
                                         }
                                     });
@@ -288,18 +288,18 @@
                                                 
                                                 return true;
                                             }else{
-                                                _this.showErrorTip("提示", result.msg || "添加规则发生错误");
+                                                L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
                                                 return false;
                                             }
                                         },
                                         error : function() {
-                                            _this.showErrorTip("提示", "添加规则请求发生异常");
+                                            L.Common.showErrorTip("提示", "添加规则请求发生异常");
                                             return false;
                                         }
                                     });
                                     
                                 }else{
-                                    _this.showErrorTip("错误提示", result.data);
+                                    L.Common.showErrorTip("错误提示", result.data);
                                     return false;
                                 }
                             }
@@ -325,7 +325,7 @@
                     }
                 }
                 if(!rule_id || !rule){
-                    _this.showErrorTip("提示", "要编辑的规则不存在或者查找出错");
+                    L.Common.showErrorTip("提示", "要编辑的规则不存在或者查找出错");
                     return;
                 }
 
@@ -373,18 +373,18 @@
                                                 
                                                 return true;
                                             }else{
-                                                _this.showErrorTip("提示", result.msg || "编辑规则发生错误");
+                                                L.Common.showErrorTip("提示", result.msg || "编辑规则发生错误");
                                                 return false;
                                             }
                                         },
                                         error : function() {
-                                            _this.showErrorTip("提示", "编辑规则请求发生异常");
+                                            L.Common.showErrorTip("提示", "编辑规则请求发生异常");
                                             return false;
                                         }
                                     });
                                     
                                 }else{
-                                    _this.showErrorTip("错误提示", result.data);
+                                    L.Common.showErrorTip("错误提示", result.data);
                                     return false;
                                 }
                             }
@@ -430,12 +430,12 @@
                                             
                                             return true;
                                         }else{
-                                            _this.showErrorTip("提示", result.msg || "删除规则发生错误");
+                                            L.Common.showErrorTip("提示", result.msg || "删除规则发生错误");
                                             return false;
                                         }
                                     },
                                     error : function() {
-                                        _this.showErrorTip("提示", "删除规则请求发生异常");
+                                        L.Common.showErrorTip("提示", "删除规则请求发生异常");
                                         return false;
                                     }
                                 });
@@ -446,23 +446,6 @@
 
                 d.show();
             });
-        },
-
-        showErrorTip: function(title, content){
-            var d = dialog({
-                title: title,
-                width: 300,
-                content: content,
-                modal:true,
-                button: [{
-                        value: '返回',
-                        callback: function () {
-                            d.close().remove();
-                        }
-                    }
-                ]
-            });
-            d.show();
         },
 
 

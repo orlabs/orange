@@ -251,6 +251,24 @@
             })
         },
 
+
+        showErrorTip: function (title, content) {
+            var d = dialog({
+                title: title,
+                width: 300,
+                content: content,
+                modal: true,
+                button: [{
+                    value: '返回',
+                    callback: function () {
+                        d.close().remove();
+                    }
+                }
+                ]
+            });
+            d.show();
+        },
+
         
         showTipDialog: function (title, content) {
             if (!content) {
