@@ -1,4 +1,5 @@
 local sfind = string.find
+local slower = string.lower
 
 local _M = {}
 
@@ -70,7 +71,12 @@ end
 
 
 function _M.test_method(condition)
-    return false
+    local method = ngx.req.get_method()
+    if condition and condition.value then
+        condition.value = slower(condition.value)
+    end
+
+    return _M.test_var(condition, method)
 end
 
 function _M.test_post_params(condition)
