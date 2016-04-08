@@ -26,7 +26,6 @@ function _M.parse_conditions(expression, params)
         table_insert(new_params, v)
     end
 
-
     local condition = string_gsub(expression, "(v%[[0-9]+%])", function(m)
         local tmp = string_gsub(m, "v%[([0-9]+)%]", function(n)
             n = tonumber(n)
@@ -81,8 +80,6 @@ function _M.filter_or_conditions(conditions)
 end
 
 function _M.filter_complicated_conditions(expression, conditions, plugin_name)
-
-
     if not expression or expression == "" or not conditions then return false end
 
     local params = {}

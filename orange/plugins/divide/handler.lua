@@ -10,7 +10,7 @@ local ipairs = ipairs
 local unpack = unpack
 local type = type
 
-local judge = require("orange.utils.judge")
+local judge_util = require("orange.utils.judge")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
 local BasePlugin = require("orange.plugins.base")
@@ -73,11 +73,11 @@ function DivideHandler:access(conf)
             ngx.log(ngx.ERR, "match_type:", match_type)
 
             if match_type == 0 or match_type == 1 then
-                pass = judge.filter_and_conditions(conditions)
+                pass = judge_util.filter_and_conditions(conditions)
             elseif match_type == 2 then
-                pass = judge.filter_or_conditions(conditions)
+                pass = judge_util.filter_or_conditions(conditions)
             elseif match_type == 3 then
-                pass = judge.filter_complicated_conditions(judge.expression, conditions, self:get_name())
+                pass = judge_util.filter_complicated_conditions(judge.expression, conditions, self:get_name())
             end
 
             if pass then
