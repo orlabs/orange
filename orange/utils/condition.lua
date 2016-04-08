@@ -4,12 +4,16 @@ local type = type
 local ngx_re_find = ngx.re.find
 
 local function assert_condition(real, operator, expected)
+    if not real or not operator or not expected then 
+        return false
+    end
+
     if operator == 'match' then
-        if real ~= nil and ngx_re_find(real, expected, 'isjo') ~= nil then
+        if ngx_re_find(real, expected, 'isjo') ~= nil then
             return true
         end
     elseif operator == 'not_match' then
-        if real == nil or ngx_re_find(real, expected, 'isjo') == nil then
+        if ngx_re_find(real, expected, 'isjo') == nil then
             return true
         end
     elseif operator == "=" then
@@ -18,10 +22,6 @@ local function assert_condition(real, operator, expected)
         end
     elseif operator == "!=" then
         if real ~= expected then
-            return true
-        end
-    elseif operator == '!' then
-        if real == nil then
             return true
         end
     elseif operator == '>' then
@@ -73,34 +73,34 @@ function _M.judge(condition)
 
     local operator = condition.operator
     local expected = condition.value
-    local pass = false
+    if not operator or not expected then
+        return false
+    end
+
+    local real
 
     if condition_type == "URI" then
-        local uri = ngx.var.uri
-        pass = assert_condition(uri, operator, expected)
+        real = ngx.var.uri
     elseif condition_type == "Query" then
         local query = ngx.req.get_uri_args()
-        pass = assert_condition(query[condition.name], operator, expected)
+        real = query[condition.name]
     elseif condition_type == "Header" then
         local headers = ngx.req.get_headers()
-        pass = assert_condition(headers[condition.name], operator, expected)
+        real = headers[condition.name]
     elseif condition_type == "IP" then
-        local remote_addr = ngx.var.remote_addr
-        pass = assert_condition(remote_addr, operator, expected)
+        real =  ngx.var.remote_addr
     elseif condition_type == "UserAgent" then
-        local http_user_agent = ngx.var.http_user_agent
-        pass = assert_condition(http_user_agent, operator, expected)
+        real =  ngx.var.http_user_agent
     elseif condition_type == "Method" then
         local method = ngx.req.get_method()
-        if method then
-            method = slower(method)
-        end
-        if expected and type(expected) == "string" then
-            expected = slower(expected)
-        else
+        method = slower(method)
+
+        if not expected or type(expected) ~= "string" then
             expected = ""
         end
-        pass = assert_condition(method, operator, expected)
+        expected = slower(expected)
+
+        real = method
     elseif condition_type == "PostParams" then
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
@@ -118,16 +118,14 @@ function _M.judge(condition)
             return false
         end
 
-        pass = assert_condition(post_params[condition.name], operator, expected)
+        real = post_params[condition.name]
     elseif condition_type == "Referer" then
-        local http_referer = ngx.var.http_referer
-        pass = assert_condition(http_referer, operator, expected)
+        real =  ngx.var.http_referer
     elseif condition_type == "Host" then
-        local host = ngx.var.host
-        pass = assert_condition(host, operator, expected)
+        real =  ngx.var.host
     end
 
-    return pass
+    return assert_condition(real, operator, expected)
 end
 
 
