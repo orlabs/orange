@@ -86,17 +86,17 @@
         <td class="center">${r.name}</td>
         <td class="left">
             <p>
-                <b>Type</b>: ${r.matcher.type}
+                <b>Type</b>: ${r.judge.type}
                 &nbsp;
-                {@if r.matcher.type==3 }
-                    <b>Expression</b>: ${r.matcher.expression}
+                {@if r.judge.type==3 }
+                    <b>Expression</b>: ${r.judge.expression}
                 {@/if}
             </p>
-            {@each r.matcher.conditions as c, index}
+            {@each r.judge.conditions as c, index}
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="left action">
+        <td class="left handle">
             upstream_host: ${r.upstream_host}<br/>
             upstream_url: ${r.upstream_url}<br/>
             log: ${r.log}
@@ -127,19 +127,19 @@
             <!-- add - 条件编辑器模板 end -->
             
 
-            <div class="form-group action-holder">
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">执行</label>
                 <div class="col-sm-11">
                     <input type="text" class="form-control" id="rule-upstream-host" placeholder="upstream host">
                 </div>
-            </div><!-- action regrex-->
-            <div class="form-group action-holder">
+            </div><!-- handle regrex-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
                     <input type="text" class="form-control" id="rule-upstream-url" placeholder="upstream url">
                 </div>
-            </div><!-- action rewrite to-->
-            <div class="form-group action-holder">
+            </div><!-- handle rewrite to-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
                     <select class="form-control" id="rule-log">
@@ -147,7 +147,7 @@
                         <option value="false">Not Log</option>
                     </select>
                 </div>
-            </div><!-- action log-->
+            </div><!-- handle log-->
 
 
 
@@ -179,19 +179,19 @@
             {(condition-edit.html)}
             <!-- edit - 条件编辑器模板 end -->
 
-            <div class="form-group action-holder">
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">执行</label>
                 <div class="col-sm-11">
                     <input type="text" class="form-control" id="rule-upstream-host" placeholder="upstream host" value="${r.upstream_host}">
                 </div>
-            </div><!-- action regrex-->
-            <div class="form-group action-holder">
+            </div><!-- handle regrex-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
                     <input type="text" class="form-control" id="rule-upstream-url" placeholder="upstream url" value="${r.upstream_url}">
                 </div>
-            </div><!-- action rewrite to-->
-            <div class="form-group action-holder">
+            </div><!-- handle rewrite to-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
                     <select class="form-control" id="rule-log">
@@ -199,7 +199,7 @@
                         <option value="false" {@if r.log==false} selected {@/if}>Not Log</option>
                     </select>
                 </div>
-            </div><!-- action log-->
+            </div><!-- handle log-->
 
 
 

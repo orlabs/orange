@@ -3,7 +3,7 @@ local slower = string.lower
 
 local _M = {}
 
-function _M.test(condition)
+function _M.judge(condition)
     local test_type = condition.type
     if not test_type or not condition then
         return false
@@ -112,11 +112,11 @@ function _M.test_var(condition, var)
         if var ~= value then
             return true
         end
-    elseif operator == '≈' then
+    elseif operator == 'match' then
         if var ~= nil and ngx.re.find(var, value, 'isjo') ~= nil then
             return true
         end
-    elseif operator == '!≈' then
+    elseif operator == 'not_match' then
         if var == nil or ngx.re.find(var, value, 'isjo') == nil then
             return true
         end

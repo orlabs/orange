@@ -19,7 +19,7 @@
             _this.initRuleEditDialog();//编辑规则对话框
 
             L.Common.initConditionAddOrRemove();//添加或删除条件
-            L.Common.initMatcherTypeChangeEvent();//matcher类型选择事件
+            L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
             _this.initSwitchBtn();//rewrite关闭、开启
 
@@ -168,29 +168,29 @@
                 success: false,
                 data: {
                     name: null,
-                    matcher:{},
-                    action:{}
+                    judge:{},
+                    handle:{}
                 }
             };
 
-            //build name and matcher
-            var buildMatcherResult = L.Common.buildMatcher();
-            if(buildMatcherResult.success == true){
-                result.data.name = buildMatcherResult.data.name;
-                result.data.matcher = buildMatcherResult.data.matcher;
+            //build name and judge
+            var buildJudgeResult = L.Common.buildJudge();
+            if(buildJudgeResult.success == true){
+                result.data.name = buildJudgeResult.data.name;
+                result.data.judge = buildJudgeResult.data.judge;
             }else{
                 result.success = false;
-                result.data = buildMatcherResult.data;
+                result.data = buildJudgeResult.data;
                 return result;
             }
 
-            //build action
-            var buildActionResult = _this.buildAction();
-            if(buildActionResult.success == true){
-                result.data.action = buildActionResult.action;
+            //build handle
+            var buildHandleResult = _this.buildHandle();
+            if(buildHandleResult.success == true){
+                result.data.handle = buildHandleResult.handle;
             }else{
                 result.success = false;
-                result.data = buildActionResult.data;
+                result.data = buildHandleResult.data;
                 return result;
             }
 
@@ -204,28 +204,28 @@
 
         
 
-        buildAction: function(){
+        buildHandle: function(){
             var result = {};
-            var action = {};
-            var action_regrex = $("#rule-action-regrex").val();
-            if(!action_regrex){
+            var handle = {};
+            var handle_regrex = $("#rule-handle-regrex").val();
+            if(!handle_regrex){
                 result.success = false;
                 result.data = "执行动作的uri regrex不得为空";
                 return result;
             }
-            action.regrex = action_regrex;
+            handle.regrex = handle_regrex;
 
-            var action_rewrite_to = $("#rule-action-rewrite_to").val();
-            if(!action_rewrite_to){
+            var handle_rewrite_to = $("#rule-handle-rewrite_to").val();
+            if(!handle_rewrite_to){
                 result.success = false;
                 result.data = "执行动作的rewrite to不得为空";
                 return result;
             }
-            action.rewrite_to = action_rewrite_to;
+            handle.rewrite_to = handle_rewrite_to;
 
-            action.log = ($("#rule-action-log").val() === "true");
+            handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
-            result.action = action;
+            result.handle = handle;
             return result;
         },
 

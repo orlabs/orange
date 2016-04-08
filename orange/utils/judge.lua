@@ -8,7 +8,7 @@ local table_insert = table.insert
 local table_concat = table.concat
 local string_gsub = string.gsub
 local utils = require("orange.utils.utils")
-local filter = require("orange.utils.condition")
+local condition = require("orange.utils.condition")
 
 local _M = {}
 
@@ -57,7 +57,7 @@ function _M.filter_and_conditions(conditions)
 
     local pass = false
     for i, c in ipairs(conditions) do
-        pass = filter.test(c)
+        pass = condition.judge(c)
         if not pass then
             return false
         end
@@ -71,7 +71,7 @@ function _M.filter_or_conditions(conditions)
 
     local pass = false
     for i, c in ipairs(conditions) do
-        pass = filter.test(c)
+        pass = condition.judge(c)
         if pass then
             return true
         end
@@ -87,7 +87,7 @@ function _M.filter_complicated_conditions(expression, conditions, plugin_name)
 
     local params = {}
     for i, c in ipairs(conditions) do
-        table_insert(params, filter.test(c))
+        table_insert(params, condition.judge(c))
     end
 
     local ok, condition = _M.parse_conditions(expression, params)

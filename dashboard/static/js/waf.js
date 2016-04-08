@@ -19,9 +19,9 @@
             _this.initRuleEditDialog();//编辑规则对话框
             
             L.Common.initConditionAddOrRemove();//添加或删除条件
-            L.Common.initMatcherTypeChangeEvent();//matcher类型选择事件
+            L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
-            _this.initActionTypeChangeEvent();//action类型选择事件
+            _this.initHandleTypeChangeEvent();//handle类型选择事件
             _this.initSwitchBtn();//防火墙关闭、开启
 
             $("#view-btn").click(function(){//试图转换
@@ -164,15 +164,15 @@
         },
 
         
-        //action类型选择事件
-        initActionTypeChangeEvent: function(){
-            $(document).on("change", '#rule-action-perform',function(){
-                var action_type = $(this).val();
+        //handle类型选择事件
+        initHandleTypeChangeEvent: function(){
+            $(document).on("change", '#rule-handle-perform',function(){
+                var handle_type = $(this).val();
 
-                if(action_type == "allow"){
-                    $(this).parents(".action-holder").find(".action-code-hodler").hide();
+                if(handle_type == "allow"){
+                    $(this).parents(".handle-holder").find(".handle-code-hodler").hide();
                 }else{
-                    $(this).parents(".action-holder").find(".action-code-hodler").show();
+                    $(this).parents(".handle-holder").find(".handle-code-hodler").show();
                 }
             });
         },
@@ -183,29 +183,29 @@
                 success: false,
                 data: {
                     name: null,
-                    matcher:{},
-                    action:{}
+                    judge:{},
+                    handle:{}
                 }
             };
 
-            //build name and matcher
-            var buildMatcherResult = L.Common.buildMatcher();
-            if(buildMatcherResult.success == true){
-                result.data.name = buildMatcherResult.data.name;
-                result.data.matcher = buildMatcherResult.data.matcher;
+            //build name and judge
+            var buildJudgeResult = L.Common.buildJudge();
+            if(buildJudgeResult.success == true){
+                result.data.name = buildJudgeResult.data.name;
+                result.data.judge = buildJudgeResult.data.judge;
             }else{
                 result.success = false;
-                result.data = buildMatcherResult.data;
+                result.data = buildJudgeResult.data;
                 return result;
             }
 
-            //build action
-            var buildActionResult = _this.buildAction();
-            if(buildActionResult.success == true){
-                result.data.action = buildActionResult.action;
+            //build handle
+            var buildHandleResult = _this.buildHandle();
+            if(buildHandleResult.success == true){
+                result.data.handle = buildHandleResult.handle;
             }else{
                 result.success = false;
-                result.data = buildActionResult.data;
+                result.data = buildHandleResult.data;
                 return result;
             }
 
@@ -219,31 +219,31 @@
 
         
 
-        buildAction: function(){
+        buildHandle: function(){
             var result = {};
-            var action = {};
-            var action_perform = $("#rule-action-perform").val();
-            if(action_perform!="deny" && action_perform!="allow"){
+            var handle = {};
+            var handle_perform = $("#rule-handle-perform").val();
+            if(handle_perform!="deny" && handle_perform!="allow"){
                 result.success = false;
                 result.data = "执行动作类型不合法，只能是deny或allow";
                 return result;
             }
-            action.perform = action_perform;
+            handle.perform = handle_perform;
 
-            if(action_perform=="deny"){
-                var action_code = $("#rule-action-code").val();
-                if(!action_code){
+            if(handle_perform=="deny"){
+                var handle_code = $("#rule-handle-code").val();
+                if(!handle_code){
                     result.success = false;
                     result.data = "执行deny的状态码不能为空";
                     return result;
                 }
 
-                action.code = parseInt(action_code);
+                handle.code = parseInt(handle_code);
             }
 
-            action.log = ($("#rule-action-log").val() === "true");
+            handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
-            result.action = action;
+            result.handle = handle;
             return result;
         },
 

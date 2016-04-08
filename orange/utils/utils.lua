@@ -1,7 +1,8 @@
---
--- general utility functions.
---
+--- 
+-- from https://github.com/Mashape/kong/blob/master/kong/tools/utils.lua
+-- modified by sumory.wu
 
+-- general utility functions.
 local uuid = require "orange.lib.uuid"
 local date = require("orange.lib.date")
 local type = type

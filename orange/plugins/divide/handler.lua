@@ -58,11 +58,11 @@ function DivideHandler:access(conf)
     for i, rule in pairs(divide_rules) do
         local enable = rule.enable
         if enable == true then
-            local matcher = rule.matcher
-            local match_type = matcher.type
-            local conditions = matcher.conditions
+            local judge = rule.judge
+            local match_type = judge.type
+            local conditions = judge.conditions
             local uri_condition = ""
-            for m, n in ipairs(matcher.conditions) do
+            for m, n in ipairs(judge.conditions) do
                 if n.type == "URI" then
                     uri_condition = n.value
                 end
@@ -77,7 +77,7 @@ function DivideHandler:access(conf)
             elseif match_type == 2 then
                 pass = judge.filter_or_conditions(conditions)
             elseif match_type == 3 then
-                pass = judge.filter_complicated_conditions(matcher.expression, conditions, self:get_name())
+                pass = judge.filter_complicated_conditions(judge.expression, conditions, self:get_name())
             end
 
             if pass then

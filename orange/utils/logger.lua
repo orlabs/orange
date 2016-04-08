@@ -1,8 +1,8 @@
---
+--- 
+-- from https://github.com/Mashape/kong/blob/master/kong/cli/utils/logger.lua
+-- modified by sumory.wu
+
 -- logger util
---
-
-
 local ansicolors = require "orange.lib.ansicolors"
 local Object = require "orange.lib.classic"
 

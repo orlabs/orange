@@ -84,22 +84,22 @@
             {@/if}
         </td>
         <td class="sort-name center">${r.name}</td>
-        <td class="sort-matcher left">
+        <td class="sort-judge left">
             <p>
-                <b>Type</b>: ${r.matcher.type}
+                <b>Type</b>: ${r.judge.type}
                 &nbsp;
-                {@if r.matcher.type==3 }
-                    <b>Expression</b>: ${r.matcher.expression}
+                {@if r.judge.type==3 }
+                    <b>Expression</b>: ${r.judge.expression}
                 {@/if}
             </p>
-            {@each r.matcher.conditions as c, index}
+            {@each r.judge.conditions as c, index}
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="sort-action left action">
-            regrex: ${r.action.regrex}<br/>
-            redirect_to: ${r.action.redirect_to}<br/>
-            log: ${r.action.log}
+        <td class="sort-handle left handle">
+            regrex: ${r.handle.regrex}<br/>
+            redirect_to: ${r.handle.redirect_to}<br/>
+            log: ${r.handle.log}
         </td>
         <td class="sort-time">${r.time}</td>
         <td class="center do">
@@ -126,27 +126,27 @@
             {(condition-add.html)}
             <!-- add - 条件编辑器模板 end -->
 
-            <div class="form-group action-holder">
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">执行</label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-action-regrex" placeholder="uri regrex">
+                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex">
                 </div>
-            </div><!-- action regrex-->
-            <div class="form-group action-holder">
+            </div><!-- handle regrex-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-action-redirect_to" placeholder="redirect to">
+                    <input type="text" class="form-control" id="rule-handle-redirect_to" placeholder="redirect to">
                 </div>
-            </div><!-- action redirect to-->
-            <div class="form-group action-holder">
+            </div><!-- handle redirect to-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
-                    <select class="form-control" id="rule-action-log">
+                    <select class="form-control" id="rule-handle-log">
                         <option value="true">Log</option>
                         <option value="false">Not Log</option>
                     </select>
                 </div>
-            </div><!-- action log-->
+            </div><!-- handle log-->
 
 
 
@@ -179,27 +179,27 @@
             <!-- edit - 条件编辑器模板 end -->
             
 
-            <div class="form-group action-holder">
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">执行</label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-action-regrex" placeholder="uri regrex" value="${r.action.regrex}">
+                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex" value="${r.handle.regrex}">
                 </div>
-            </div><!-- action regrex-->
-            <div class="form-group action-holder">
+            </div><!-- handle regrex-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-action-redirect_to" placeholder="redirect to" value="${r.action.redirect_to}">
+                    <input type="text" class="form-control" id="rule-handle-redirect_to" placeholder="redirect to" value="${r.handle.redirect_to}">
                 </div>
-            </div><!-- action redirect to-->
-            <div class="form-group action-holder">
+            </div><!-- handle redirect to-->
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
-                    <select class="form-control" id="rule-action-log">
-                        <option value="true" {@if r.action.log==true} selected {@/if}>Log</option>
-                        <option value="false" {@if r.action.log==false} selected {@/if}>Not Log</option>
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true" {@if r.handle.log==true} selected {@/if}>Log</option>
+                        <option value="false" {@if r.handle.log==false} selected {@/if}>Not Log</option>
                     </select>
                 </div>
-            </div><!-- action log-->
+            </div><!-- handle log-->
 
 
 

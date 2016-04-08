@@ -23,29 +23,29 @@ function WAFHandler:access(conf)
     for i, rule in pairs(access_rules) do
         local enable = rule.enable
         if enable == true then
-            local matcher = rule.matcher
-            local match_type = matcher.type
-            local conditions = matcher.conditions
+            local judge = rule.judge
+            local match_type = judge.type
+            local conditions = judge.conditions
             local pass = false
             if match_type == 0 or match_type == 1 then
                 pass = judge.filter_and_conditions(conditions)
             elseif match_type == 2 then
                 pass = judge.filter_or_conditions(conditions)
             elseif match_type == 3 then
-                pass = judge.filter_complicated_conditions(matcher.expression, conditions, self:get_name())
+                pass = judge.filter_complicated_conditions(judge.expression, conditions, self:get_name())
             end
 
             if pass then
-                local action = rule.action
-                if action.perform == 'allow' then
-                    if action.log == true then
+                local handle = rule.handle
+                if handle.perform == 'allow' then
+                    if handle.log == true then
                         ngx.log(ngx.ERR, "[WAF-Pass-Rule] ", rule.name, " uri:", ngx.var.uri)
                     end
                 else
-                    if action.log == true then
+                    if handle.log == true then
                         ngx.log(ngx.ERR, "[WAF-Forbidden-Rule] ", rule.name, " uri:", ngx.var.uri)
                     end
-                    ngx.exit(tonumber(action.code or 403))
+                    ngx.exit(tonumber(handle.code or 403))
                     return
                 end
             end

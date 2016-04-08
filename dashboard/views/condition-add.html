@@ -1,7 +1,7 @@
 <div class="form-group">
-    <label for="input-matcher-type" class="col-sm-1 control-label">规则</label>
+    <label for="input-judge-type" class="col-sm-1 control-label">规则</label>
     <div class="col-sm-3">
-        <select class="form-control" id="rule-matcher-type">
+        <select class="form-control" id="rule-judge-type">
             <option value="0">单一条件匹配</option>
             <option value="1">and匹配</option>
             <option value="2">or匹配</option>
@@ -10,7 +10,7 @@
     </div>
 
     <div class="col-sm-8" id="expression-area" style="display:none;">
-         <input type="text" class="form-control" id="rule-matcher-expression" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
+         <input type="text" class="form-control" id="rule-judge-expression" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
     </div>
 </div><!-- 类型 -->
 
@@ -18,7 +18,7 @@
     <label class="col-sm-1 control-label"></label>
 
     <div class="col-sm-2">
-        <select class="form-control" name="rule-matcher-condition-type">
+        <select class="form-control" name="rule-judge-condition-type">
             <option value="URI">URI</option>
             <option value="Header">Header</option>
             <option value="Query">Query</option>
@@ -30,14 +30,14 @@
         </select>
     </div>
     <div class="col-sm-2 condition-name-hodler" style="display:none;">
-        <input type="text" class="form-control" name="rule-matcher-condition-name" placeholder="name">
+        <input type="text" class="form-control" name="rule-judge-condition-name" placeholder="name">
     </div>
     <div class="col-sm-3">
-        <select class="form-control"  name="rule-matcher-condition-operator">
-            <option value="≈">Match RegEx</option>
-            <option value="!≈">Not Match RegEx</option>
-            <option value="=">Equal</option>
-            <option value="!=">Not Equal</option>
+        <select class="form-control"  name="rule-judge-condition-operator">
+            <option value="match">match</option>
+            <option value="not_match">not match</option>
+            <option value="=">=</option>
+            <option value="!=">!=</option>
             <option value=">">&gt;</option>
             <option value=">=">&ge;</option>
             <option value="<">&lt;</option>
@@ -45,7 +45,7 @@
         </select>
     </div>
     <div class="col-sm-3">
-        <input type="text" class="form-control" name="rule-matcher-condition-value" placeholder="value">
+        <input type="text" class="form-control" name="rule-judge-condition-value" placeholder="value">
     </div>
     <div class="col-sm-1" style="margin-top:10px">
         <span class="input-group-btn">
@@ -57,4 +57,4 @@
             </a>
         </span>
     </div>
-</div><!-- matcher -->
+</div><!-- judge -->

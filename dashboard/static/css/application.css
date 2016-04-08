@@ -509,21 +509,31 @@ table {
     background-color:#fff;
 }
 
-.table-bordered>thead>tr>th {
-    border-bottom-width: 1px;
+table thead{
+    background: rgba(52, 73, 94, 0.94);
+    color: #eee;
+    border: 1px solid rgba(52, 73, 94, 0.94);
 }
 
-.table>thead>tr>th{
+.table-bordered>thead>tr>th {
+    /*border-bottom-width: 1px;*/
+}
+
+.table>thead>tr>th, .table-bordered>thead>tr>th{
     height:60px;
     line-height: 60px;
     text-align:center;
+    border:none;
+    border-radius: 0px;
 }
+
 
 table.table-bordered tr td {
     vertical-align: middle;
     border-left: none;
     border-color: #DEDFE0;
-    border-right: dashed 1px #DEDFE0;
+    /*border-right: dashed 1px #DEDFE0;*/
+    border-right:none;
     min-height: 36px;
     padding: 16px 8px;
 }
@@ -540,7 +550,7 @@ tr.highlight{
     padding-left:10px
 }
 
-#rules .action{
+#rules .handle{
     vertical-align: middle;
 }
 

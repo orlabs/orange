@@ -1,4 +1,7 @@
--- from https://github.com/Mashape/kong/blob/master/kong/tools/io.lua
+--- 
+-- :P some origin code is from https://github.com/Mashape/kong/blob/master/kong/tools/io.lua
+-- modified by sumory.wu
+
 local stringy = require("orange.utils.stringy")
 
 local _M = {}

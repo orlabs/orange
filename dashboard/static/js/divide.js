@@ -19,7 +19,7 @@
             _this.initRuleEditDialog();//编辑规则对话框
             
             L.Common.initConditionAddOrRemove();//添加或删除条件
-            L.Common.initMatcherTypeChangeEvent();//matcher类型选择事件
+            L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
             _this.initSwitchBtn();//divide关闭、开启
 
@@ -168,18 +168,18 @@
                 success: false,
                 data: {
                     name: null,
-                    matcher: {}
+                    judge: {}
                 }
             };
 
-            //build name and matcher
-            var buildMatcherResult = L.Common.buildMatcher();
-            if (buildMatcherResult.success == true) {
-                result.data.name = buildMatcherResult.data.name;
-                result.data.matcher = buildMatcherResult.data.matcher;
+            //build name and judge
+            var buildJudgeResult = L.Common.buildJudge();
+            if (buildJudgeResult.success == true) {
+                result.data.name = buildJudgeResult.data.name;
+                result.data.judge = buildJudgeResult.data.judge;
             } else {
                 result.success = false;
-                result.data = buildMatcherResult.data;
+                result.data = buildJudgeResult.data;
                 return result;
             }
 

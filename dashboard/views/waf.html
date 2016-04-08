@@ -85,22 +85,22 @@
             {@/if}
         </td>
         <td class="sort-name center">${r.name}</td>
-        <td class="sort-matcher left">
+        <td class="sort-judge left">
             <p>
-                <b>Type</b>: ${r.matcher.type}
+                <b>Type</b>: ${r.judge.type}
                 &nbsp;
-                {@if r.matcher.type==3 }
-                    <b>Expression</b>: ${r.matcher.expression}
+                {@if r.judge.type==3 }
+                    <b>Expression</b>: ${r.judge.expression}
                 {@/if}
             </p>
-            {@each r.matcher.conditions as c, index}
+            {@each r.judge.conditions as c, index}
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="sort-action left action">
-            perform: ${r.action.perform}<br/>
-            code: ${r.action.code}<br/>
-            log: ${r.action.log}
+        <td class="sort-handle left handle">
+            perform: ${r.handle.perform}<br/>
+            code: ${r.handle.code}<br/>
+            log: ${r.handle.log}
         </td>
         <td class="sort-time">${r.time}</td>
         <td class="center do">
@@ -127,26 +127,26 @@
             {(condition-add.html)}
             <!-- add - 条件编辑器模板 end -->
 
-            <div class="form-group action-holder">
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">执行</label>
                 <div class="col-sm-3">
-                    <select class="form-control" id="rule-action-perform">
+                    <select class="form-control" id="rule-handle-perform">
                         <option value="deny">deny</option>
                         <option value="allow">allow</option>
                     </select>
                 </div>
 
-                <div class="col-sm-2 action-code-hodler">
-                    <input type="text" class="form-control" id="rule-action-code" value="403" placeholder="error code">
+                <div class="col-sm-2 handle-code-hodler">
+                    <input type="text" class="form-control" id="rule-handle-code" value="403" placeholder="error code">
                 </div>
 
                 <div class="col-sm-2">
-                    <select class="form-control" id="rule-action-log">
+                    <select class="form-control" id="rule-handle-log">
                         <option value="true">Log</option>
                         <option value="false">Not Log</option>
                     </select>
                 </div>
-            </div><!-- action -->
+            </div><!-- handle -->
 
 
 
@@ -180,26 +180,26 @@
             <!-- edit - 条件编辑器模板 end -->
 
 
-            <div class="form-group action-holder">
+            <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">执行</label>
                 <div class="col-sm-3">
-                    <select class="form-control" id="rule-action-perform">
-                        <option value="deny" {@if r.action.perform=="deny"} selected {@/if}>deny</option>
-                        <option value="allow" {@if r.action.perform=="allow"} selected {@/if}>allow</option>
+                    <select class="form-control" id="rule-handle-perform">
+                        <option value="deny" {@if r.handle.perform=="deny"} selected {@/if}>deny</option>
+                        <option value="allow" {@if r.handle.perform=="allow"} selected {@/if}>allow</option>
                     </select>
                 </div>
 
-                <div class="col-sm-2 action-code-hodler" {@if r.action.perform=="allow"} style="display:none;" {@/if} >
-                    <input type="text" class="form-control" id="rule-action-code" placeholder="error code" value="${r.action.code}">
+                <div class="col-sm-2 handle-code-hodler" {@if r.handle.perform=="allow"} style="display:none;" {@/if} >
+                    <input type="text" class="form-control" id="rule-handle-code" placeholder="error code" value="${r.handle.code}">
                 </div>
 
                 <div class="col-sm-2">
-                    <select class="form-control" id="rule-action-log">
-                        <option value="true" {@if r.action.log==true} selected {@/if}>Log</option>
-                        <option value="false" {@if r.action.log==false} selected {@/if}>Not Log</option>
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true" {@if r.handle.log==true} selected {@/if}>Log</option>
+                        <option value="false" {@if r.handle.log==false} selected {@/if}>Not Log</option>
                     </select>
                 </div>
-            </div><!-- action -->
+            </div><!-- handle -->
 
 
 

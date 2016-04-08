@@ -1,0 +1,1 @@
+the plugin design is strongly inspired by [Kong](https://github.com/Mashape/kong). you can find more details [here](https://github.com/Mashape/kong/tree/master/kong/plugins).

@@ -4,8 +4,8 @@ local _M = {}
 _M.operator = {
     ["equal"] = "=",
     ["not_equal"] = "!=",
-    ["regex"] = "≈",
-    ["not_regex"] = "!≈",
+    ["regex"] = "match",
+    ["not_regex"] = "not_match",
     ["null"] = "!",
     ["not_null"] = "!!"
 }
