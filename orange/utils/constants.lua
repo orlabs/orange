@@ -1,13 +1,15 @@
 local _M = {}
 
-
+-- operators
 _M.operator = {
-    ["equal"] = "=",
-    ["not_equal"] = "!=",
-    ["regex"] = "match",
-    ["not_regex"] = "not_match",
-    ["null"] = "!",
-    ["not_null"] = "!!"
+    ["="] = "=",
+    ["!="] = "!=",
+    [">"] = ">",
+    [">="] = ">=",
+    ["<"] = "<",
+    ["<="] = "<=",
+    ["match"] = "match",
+    ["not_match"] = "not_match",
 }
 
 

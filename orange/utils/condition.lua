@@ -1,6 +1,6 @@
-local sfind = string.find
-local slower = string.lower
 local type = type
+local string_find = string.find
+local string_lower = string.lower
 local ngx_re_find = ngx.re.find
 
 local function assert_condition(real, operator, expected)
@@ -62,7 +62,6 @@ local function assert_condition(real, operator, expected)
 end
 
 
-
 local _M = {}
 
 function _M.judge(condition)
@@ -93,19 +92,17 @@ function _M.judge(condition)
         real =  ngx.var.http_user_agent
     elseif condition_type == "Method" then
         local method = ngx.req.get_method()
-        method = slower(method)
-
+        method = string_lower(method)
         if not expected or type(expected) ~= "string" then
             expected = ""
         end
-        expected = slower(expected)
-
+        expected = string_lower(expected)
         real = method
     elseif condition_type == "PostParams" then
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
         if header then
-            local is_multipart = sfind(header, "multipart")
+            local is_multipart = string_find(header, "multipart")
             if is_multipart and is_multipart > 0 then
                 return false
             end

@@ -3,7 +3,7 @@
 -- modified by sumory.wu
 
 -- general utility functions.
-local uuid = require "orange.lib.uuid"
+local uuid = require("orange.lib.uuid")
 local date = require("orange.lib.date")
 local type = type
 local pairs = pairs
