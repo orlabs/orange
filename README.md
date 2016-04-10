@@ -1,23 +1,13 @@
 # Orange
 
-Orange是一个基于OpenResty的API Gateway，提供API监控和管理，实现了防火墙、访问统计、流量切分、API重定向等功能。
+API Gateway based on OpenResty.
 
 
-### 文档
+### Documents
 
-[orange documents](http://orange.sumory.com/docs)
-
-
-### Screenshots
+Find all about **Orange** from [Documents Website](http://orange.sumory.com/docs).
 
 
-<table>
-    <tr>
-        
-         <td width="300px"><img src="http://orange.sumory.com/img/orange/divide.png"/>
-         <img src="http://orange.sumory.com/img/orange/database_view.png"/></td>
-         <td width="300px"><img src="http://orange.sumory.com/img/orange/monitor.png"/></td>
+### See also
 
-        <td width="300px"><img src="http://orange.sumory.com/img/orange/redirect.png"/></td>
-    </tr>
-</table>
+The architecture is highly inspired by [Kong](https://github.com/Mashape/kong).
