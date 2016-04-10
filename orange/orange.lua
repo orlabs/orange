@@ -8,15 +8,8 @@ local logger = require("orange.utils.logger")
 
 
 local HEADERS = {
-    HOST_OVERRIDE = "X-Host-Override",
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
     UPSTREAM_LATENCY = "X-Orange-Upstream-Latency",
-    CONSUMER_ID = "X-Consumer-ID",
-    CONSUMER_CUSTOM_ID = "X-Consumer-Custom-ID",
-    CONSUMER_USERNAME = "X-Consumer-Username",
-    CREDENTIAL_USERNAME = "X-Credential-Username",
-    RATELIMIT_LIMIT = "X-RateLimit-Limit",
-    RATELIMIT_REMAINING = "X-RateLimit-Remaining"
 }
 
 local loaded_plugins = {}
@@ -40,7 +33,6 @@ local function load_node_plugins(config, store)
         end
     end
 
-
     table_sort(sorted_plugins, function(a, b)
         local priority_a = a.handler.PRIORITY or 0
         local priority_b = b.handler.PRIORITY or 0
@@ -55,6 +47,8 @@ local function now()
     return ngx.now() * 1000
 end
 
+---
+-- modified usage: the origin is from `Kong`
 local function iter_plugins_for_req(loaded_plugins, is_access)
     if not ngx.ctx.plugin_conf_for_request then
         ngx.ctx.plugin_conf_for_request = {}
