@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - Rewrite</title>
+    <title>Orange Gateway - URL Monitor</title>
     {(meta.html)}
 </head>
 <body>
@@ -12,7 +12,7 @@
     <div class="row" style="margin-bottom:20px">
         <div class="col-md-12">
             <div class="pull-left">
-                <h4>Rewrite配置</h4>
+                <h4>URL监控</h4>
             </div>
 
             <div class="pull-right">
@@ -23,7 +23,7 @@
                 </a>
                 <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
                     <i class="fa fa-pause"></i>
-                    <span>停用rewrite</span>
+                    <span>停用所有URL监控</span>
                 </a>
                 
                 <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
@@ -41,9 +41,8 @@
                 <tr>
                     <th width="40px">序号</th>
                     <th width="40px">启用</th>
-                    <th width="150px" >名称</th>
                     <th>匹配规则</th>
-                    <th>动作</th>
+                    <th>监控项</th>
                     <th width="120px">创建/变更时间</th>
                     <th width="100px">操作</th>
                 </tr>
@@ -71,7 +70,7 @@
 
 
 <script id="rule-item-tpl" type="text/template">
-    {@each rewrite_rules as r, index}
+    {@each monitor_rules as r, index}
     <tr {@if highlight_id == r.id } class="highlight" {@/if} >
         <td class="sort-index center">${parseInt(index)+1}</td>
         <td class="sort-enable center">
@@ -83,7 +82,6 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="sort-name center">${r.name}</td>
         <td class="sort-judge left">
             <p>
                 <b>Type</b>: ${r.judge.type}
@@ -97,8 +95,6 @@
             {@/each}
         </td>
         <td class="sort-handle left handle">
-            regrex: ${r.handle.regrex}<br/>
-            rewrite_to: ${r.handle.rewrite_to}<br/>
             log: ${r.handle.log}
         </td>
         <td class="sort-time">${r.time}</td>
@@ -126,19 +122,6 @@
             {(condition-add.html)}
             <!-- add - 条件编辑器模板 end -->
 
-
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">执行</label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex">
-                </div>
-            </div><!-- handle regrex-->
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-rewrite_to" placeholder="rewrite to">
-                </div>
-            </div><!-- handle rewrite to-->
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
@@ -148,8 +131,6 @@
                     </select>
                 </div>
             </div><!-- handle log-->
-
-
 
             <div class="form-group">
                 <div class="col-sm-offset-1 col-sm-11">
@@ -178,19 +159,7 @@
             <!-- edit - 条件编辑器模板 start -->
             {(condition-edit.html)}
             <!-- edit - 条件编辑器模板 end -->
-
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">执行</label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex" value="${r.handle.regrex}">
-                </div>
-            </div><!-- handle regrex-->
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-rewrite_to" placeholder="rewrite to" value="${r.handle.rewrite_to}">
-                </div>
-            </div><!-- handle rewrite to-->
+    
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
@@ -200,7 +169,6 @@
                     </select>
                 </div>
             </div><!-- handle log-->
-
 
 
             <div class="form-group">
@@ -218,11 +186,11 @@
 </script>
 
 
-<script src="/orange/static/js/rewrite.js"></script>
+<script src="/orange/static/js/url_monitor.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        APP.Common.resetNav("url-manage");
-        APP.Rewrite.init();
+        APP.Common.resetNav("nav-url-monitor");
+        APP.URLMonitor.init();
     });
 </script>
 

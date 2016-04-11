@@ -24,6 +24,10 @@ return function(store)
 	    res:render("redirect")
 	end)
 
+	dashboard_router:get("/url_monitor", function(req, res, next)
+		res:render("url_monitor")
+	end)
+
     dashboard_router:get("/divide", function(req, res, next)
         res:render("divide")
     end)
