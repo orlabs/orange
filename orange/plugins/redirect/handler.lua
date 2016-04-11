@@ -1,4 +1,5 @@
 local pairs = pairs
+local ipairs = ipairs
 local string_len = string.len
 local string_find = string.find
 local ngx_re_gsub = ngx.re.gsub
@@ -24,15 +25,13 @@ function RedirectHandler:redirect()
         return
     end
 
-    local redirect_rules = redirect_config.redirect_rules
-
-
     local ngx_var = ngx.var
     local ngx_var_uri = ngx_var.uri
-    local ngx_var_scheme = ngx_var.scheme
     local ngx_var_host = ngx_var.http_host
+    local ngx_var_scheme = ngx_var.scheme
 
-    for i, rule in pairs(redirect_rules) do
+    local redirect_rules = redirect_config.redirect_rules
+    for i, rule in ipairs(redirect_rules) do
         local enable = rule.enable
         if enable == true then
 
@@ -63,7 +62,7 @@ function RedirectHandler:redirect()
                 if handle and handle.url_tmpl then
                     local new_url = handle_util.build_url(handle.url_tmpl, variables, self:get_name())
                     if new_url ~= ngx_var_uri then
-                        local redirect_status = handle.redirect_status
+                        local redirect_status = tonumber(handle.redirect_status)
                         -- ngx.HTTP_MOVED_PERMANENTLY (301)
                         -- ngx.HTTP_MOVED_TEMPORARILY (302)
 
@@ -81,8 +80,9 @@ function RedirectHandler:redirect()
                             ngx.log(ngx.ERR, "[Redirect] ", ngx_var_uri, " to:", new_url)
                         end
                     end
-                    return
                 end
+
+                return
             end
         end
     end
