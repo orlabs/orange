@@ -39,21 +39,18 @@
             <table  id="operable-table" class="table table-bordered  table-hover">
                 <thead>
                 <tr>
-                    <th width="40px">序号</th>
+                    <th width="60px">序号</th>
                     <th width="40px">启用</th>
                     <th width="150px" >名称</th>
-                    <th>匹配规则</th>
-                    <th>动作</th>
+                    <th>匹配规则配置</th>
+                    <th>变量提取配置</th>
+                    <th>处理</th>
                     <th width="120px">创建/变更时间</th>
                     <th width="100px">操作</th>
                 </tr>
                 </thead>
-
-                <tbody id="rules" class="list">
-
-                </tbody>
+                <tbody id="rules" class="list"></tbody>
             </table>
-
         </div>
     </div>
     <div class="row" id="database-view" style="display:none;">
@@ -73,8 +70,8 @@
 <script id="rule-item-tpl" type="text/template">
     {@each redirect_rules as r, index}
     <tr {@if highlight_id == r.id } class="highlight" {@/if} >
-        <td class="sort-index center">${parseInt(index)+1}</td>
-        <td class="sort-enable center">
+        <td class="center">${parseInt(index)+1}</td>
+        <td class="center">
             {@if r.enable==true }
             <input type="checkbox" disabled checked="checked"/>
             {@/if}
@@ -83,8 +80,8 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="sort-name center">${r.name}</td>
-        <td class="sort-judge left">
+        <td class="center">${r.name}</td>
+        <td class="left">
             <p>
                 <b>Type</b>: ${r.judge.type}
                 &nbsp;
@@ -96,12 +93,23 @@
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="sort-handle left handle">
-            regrex: ${r.handle.regrex}<br/>
-            redirect_to: ${r.handle.redirect_to}<br/>
+        <td class="left">
+            {@if r.extractor && r.extractor.extractions }
+                {@each r.extractor.extractions as e, index}
+                    <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>: 
+                    ${e.type}{@if e.name }
+                        [${e.name}]
+                    {@/if}
+                    <br/>
+                {@/each}
+            {@/if}
+        </td>
+        <td class="left handle">
+            url_tmpl: ${r.handle.url_tmpl}<br/>
+            trim_qs: ${r.handle.trim_qs}<br/>
             log: ${r.handle.log}
         </td>
-        <td class="sort-time">${r.time}</td>
+        <td class="center">${r.time}</td>
         <td class="center do">
             <div class="btn-group" role="group" aria-label="...">
               <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
@@ -126,20 +134,24 @@
             {(condition-add.html)}
             <!-- add - 条件编辑器模板 end -->
 
+            <!-- add - 变量提取器模板 start -->
+            {(extraction-add.html)}
+            <!-- add - 变量提取器模板 end -->
+
             <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">执行</label>
+                <label class="col-sm-1 control-label">处理</label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex">
+                    <input type="text" class="form-control" id="rule-handle-url-template" placeholder="url template to redirect">
                 </div>
-            </div><!-- handle regrex-->
+            </div><!-- handle url template-->
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-redirect_to" placeholder="redirect to">
+                <div class="col-sm-4">
+                    <select class="form-control" id="rule-handle-trim-qs">
+                        <option value="true">Trim Query String</option>
+                        <option value="false" selected>Not Trim Query String</option>
+                    </select>
                 </div>
-            </div><!-- handle redirect to-->
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
                     <select class="form-control" id="rule-handle-log">
                         <option value="true">Log</option>
@@ -177,22 +189,26 @@
             <!-- edit - 条件编辑器模板 start -->
             {(condition-edit.html)}
             <!-- edit - 条件编辑器模板 end -->
+
+            <!-- edit - 变量提取器模板 start -->
+            {(extraction-edit.html)}
+            <!-- edit - 变量提取器模板 end -->
             
 
             <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">执行</label>
+                <label class="col-sm-1 control-label">处理</label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex" value="${r.handle.regrex}">
+                    <input type="text" class="form-control" id="rule-handle-url-template" placeholder="url template to redirect" value="${r.handle.url_tmpl}">
                 </div>
-            </div><!-- handle regrex-->
+            </div><!-- handle url template-->
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-redirect_to" placeholder="redirect to" value="${r.handle.redirect_to}">
+                <div class="col-sm-4">
+                    <select class="form-control" id="rule-handle-trim-qs">
+                        <option value="true" {@if r.handle.trim_qs==true} selected {@/if}>Trim Query String</option>
+                        <option value="false" {@if r.handle.trim_qs==false} selected {@/if}>Not Trim Query String</option>
+                    </select>
                 </div>
-            </div><!-- handle redirect to-->
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
                     <select class="form-control" id="rule-handle-log">
                         <option value="true" {@if r.handle.log==true} selected {@/if}>Log</option>
@@ -200,8 +216,6 @@
                     </select>
                 </div>
             </div><!-- handle log-->
-
-
 
             <div class="form-group">
                 <div class="col-sm-offset-1 col-sm-11">
@@ -216,6 +230,7 @@
         </form>
     </div>
 </script>
+{(extraction-tmpl.html)}
 
 
 <script src="/orange/static/js/redirect.js"></script>

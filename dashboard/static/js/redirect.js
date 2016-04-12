@@ -21,6 +21,11 @@
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
+
+            L.Common.initExtractionAddOrRemove();//添加或删除条件
+            L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
+            L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
+
             _this.initSwitchBtn();//redirect关闭、开启
 
             $("#view-btn").click(function () {//试图转换
@@ -170,6 +175,7 @@
                 data: {
                     name: null,
                     judge: {},
+                    extractor: {},
                     handle: {}
                 }
             };
@@ -182,6 +188,16 @@
             } else {
                 result.success = false;
                 result.data = buildJudgeResult.data;
+                return result;
+            }
+
+            //build extractor
+            var buildExtractorResult = L.Common.buildExtractor();
+            if (buildExtractorResult.success == true) {
+                result.data.extractor = buildExtractorResult.data.extractor;
+            } else {
+                result.success = false;
+                result.data = buildExtractorResult.data;
                 return result;
             }
 
@@ -207,22 +223,14 @@
         buildHandle: function () {
             var result = {};
             var handle = {};
-            var handle_regrex = $("#rule-handle-regrex").val();
-            if (!handle_regrex) {
+            var url_tmpl = $("#rule-handle-url-template").val();
+            if (!url_tmpl) {
                 result.success = false;
-                result.data = "执行动作的uri regrex不得为空";
+                result.data = "要跳转到的url template不得为空";
                 return result;
             }
-            handle.regrex = handle_regrex;
-
-            var handle_redirect_to = $("#rule-handle-redirect_to").val();
-            if (!handle_redirect_to) {
-                result.success = false;
-                result.data = "执行动作的redirect to不得为空";
-                return result;
-            }
-            handle.redirect_to = handle_redirect_to;
-
+            handle.url_tmpl = url_tmpl;
+            handle.trim_qs = ($("#rule-handle-trim-qs").val() === "true");
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
             result.handle = handle;

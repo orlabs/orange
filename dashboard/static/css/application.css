@@ -415,6 +415,10 @@ kbd {
 
 /* customized by orange start*/
 
+#main{
+    margin-bottom: 80px;
+}
+
 
 #url-manage li a, #url-manage li.active a{
     padding-bottom:8px;
@@ -540,7 +544,12 @@ tr.highlight{
     line-height: 30px;
     border-top: 1px solid #e9ecee;
     padding: 10px 0;
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
     max-height: 51px;
+    background-color: #efefef;
 }
 
 .footer .footer-bar span:first-of-type a {

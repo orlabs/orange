@@ -60,25 +60,36 @@ function RedirectHandler:redirect()
             if pass then
                 local handle = rule.handle
                 if handle and handle.url_tmpl then
-                    local new_url = handle_util.build_url(handle.url_tmpl, variables, self:get_name())
-                    if new_url ~= ngx_var_uri then
+                    local to_redirect = handle_util.build_url(handle.url_tmpl, variables, self:get_name())
+                    if to_redirect and to_redirect ~= ngx_var_uri then
                         local redirect_status = tonumber(handle.redirect_status)
+                        if redirect_status ~= 301 and redirect_status ~= 302 then
+                            redirect_status = 301
+                        end
                         -- ngx.HTTP_MOVED_PERMANENTLY (301)
                         -- ngx.HTTP_MOVED_TEMPORARILY (302)
 
-                        if string_find(new_url, 'http') ~= 1 then
-                            new_url = ngx_var_scheme .. "://" .. ngx_var_host .. new_url
+                        if string_find(to_redirect, 'http') ~= 1 then
+                            to_redirect = ngx_var_scheme .. "://" .. ngx_var_host .. to_redirect
                         end
 
                         if ngx_var.args ~= nil then
-                            new_url = new_url .. "?" .. ngx_var.args
+                            if string_find(to_redirect, '?') then -- 不存在?，直接缀上url args
+                                if handle.trim_qs ~= true then
+                                    to_redirect = to_redirect .. "&" .. ngx_var.args
+                                end
+                            else
+                                if handle.trim_qs ~= true then
+                                    to_redirect = to_redirect .. "?" .. ngx_var.args
+                                end
+                            end
                         end
-
-                        ngx_redirect(new_url, redirect_status or ngx.HTTP_MOVED_TEMPORARILY)
 
                         if handle.log == true then
-                            ngx.log(ngx.ERR, "[Redirect] ", ngx_var_uri, " to:", new_url)
+                            ngx.log(ngx.ERR, "[Redirect] ", ngx_var_uri, " to:", to_redirect)
                         end
+
+                        ngx_redirect(to_redirect, redirect_status)
                     end
                 end
 

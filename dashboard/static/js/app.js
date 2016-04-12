@@ -13,25 +13,53 @@
 
             //添加规则框里的事件
             //点击“加号“添加新的输入行
-            $(document).on('click', '#add-rule-form .pair .btn-success', _this.addNewCondition);
+            $(document).on('click', '#judge-area .pair .btn-success', _this.addNewCondition);
 
             //删除输入行
-            $(document).on('click', '#add-rule-form .pair .btn-danger', function (event) {
-                $(this).parents('.form-group').remove();//删除本行输入
-                _this.resetAddConditionBtn();
-            });
-
-
-            //编辑规则框里的事件
-            //点击“加号“添加新的输入行
-            $(document).on('click', '#edit-rule-form .pair .btn-success', _this.addNewCondition);
-
-            //删除输入行
-            $(document).on('click', '#edit-rule-form .pair .btn-danger', function (event) {
+            $(document).on('click', '#judge-area .pair .btn-danger', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddConditionBtn();
             });
         },
+
+        //变量提取器增加、删除按钮事件
+        initExtractionAddOrRemove: function () {
+
+            //添加规则框里的事件
+            //点击“加号“添加新的输入行
+            $(document).on('click', '#extractor-area .pair .btn-success', _this.addNewExtraction);
+
+            //删除输入行
+            $(document).on('click', '#extractor-area .pair .btn-danger', function (event) {
+                $(this).parents('.form-group').remove();//删除本行输入
+                _this.resetAddExtractionBtn();
+            });
+        },
+
+        initExtractionAddBtnEvent: function(){
+            $(document).on('click', '#add-extraction-btn', function(){
+                var row;
+                var current_es =  $('.extraction-holder');
+                if(current_es && current_es.length) {
+                    row = current_es[current_es.length-1];
+                }
+                if(row){//至少存在了一个提取项
+                    var new_row = $(row).clone(true);
+
+                    var old_type = $(row).find("select[name=rule-extractor-extraction-type]").val();
+                    $(new_row).find("select[name=rule-extractor-extraction-type]").val(old_type);
+                    $(new_row).find("label").text("");
+
+                    $("#extractor-area").append( $(new_row));
+                }else{//没有任何提取项，从模板创建一个
+                    var html = $("#single-extraction-tmpl").html();
+                    $("#extractor-area").append(html);
+                }
+
+                _this.resetAddExtractionBtn();
+            });
+        },
+
 
         //judge类型选择事件
         initJudgeTypeChangeEvent: function () {
@@ -55,13 +83,29 @@
             $(document).on("change", 'select[name=rule-judge-condition-type]', function () {
                 var condition_type = $(this).val();
 
-                if (condition_type != "Header" && condition_type != "Query") {
+                if (condition_type != "Header" && condition_type != "Query" && condition_type != "PostParams") {
                     $(this).parents(".condition-holder").each(function () {
                         $(this).find(".condition-name-hodler").hide();
                     });
                 } else {
                     $(this).parents(".condition-holder").each(function () {
                         $(this).find(".condition-name-hodler").show();
+                    });
+                }
+            });
+        },
+
+        initExtractionTypeChangeEvent: function () {
+            $(document).on("change", 'select[name=rule-extractor-extraction-type]', function () {
+                var extraction_type = $(this).val();
+
+                if (extraction_type != "Header" && extraction_type != "Query" && extraction_type != "PostParams") {
+                    $(this).parents(".extraction-holder").each(function () {
+                        $(this).find(".extraction-name-hodler").hide();
+                    });
+                } else {
+                    $(this).parents(".extraction-holder").each(function () {
+                        $(this).find(".extraction-name-hodler").show();
                     });
                 }
             });
@@ -109,7 +153,7 @@
                 var condition_type = self.find("select[name=rule-judge-condition-type]").val();
                 condition.type = condition_type;
 
-                if(condition_type == "Header" || condition_type == "Query"){
+                if(condition_type == "Header" || condition_type == "Query" || condition_type == "PostParams"){
                     var condition_name = self.find("input[name=rule-judge-condition-name]").val();
                     if(!condition_name){
                         tmp_success = false;
@@ -189,6 +233,46 @@
             return result;
         },
 
+
+        buildExtractor:function(){
+            var result = {
+                success: false,
+                data: {
+                    extractor:{}
+                }
+            };
+
+            var extractions = [];
+            var tmp_success = true;
+            var tmp_tip = "";
+            $(".extraction-holder").each(function(){
+                var self = $(this);
+                var extraction = {};
+                var type = self.find("select[name=rule-extractor-extraction-type]").val();
+                extraction.type = type;
+
+                if(type == "Header" || type == "Query" || type == "PostParams"){
+                    var name = self.find("input[name=rule-extractor-extraction-name]").val();
+                    if(!name){
+                        tmp_success = false;
+                        tmp_tip = "变量提取项的name字段不得为空";
+                    }
+
+                    extraction.name = name;
+                }
+                extractions.push(extraction);
+            });
+
+            if(!tmp_success){
+                result.success = false;
+                result.data = tmp_tip;
+                return result;
+            }
+            result.data.extractor.extractions = extractions;
+            result.success = true;
+            return result;
+        },
+
         showRulePreview: function (rule) {
             var content = "";
             
@@ -203,6 +287,7 @@
                 width: 500,
                 content: content,
                 modal: true,
+                top: 50,
                 button: [{
                     value: '返回',
                     callback: function () {
@@ -237,9 +322,37 @@
         },
 
         resetAddConditionBtn: function () {
-            var l = $(".pair").length;
+            var l = $("#judge-area .pair").length;
             var c = 0;
-            $(".pair").each(function () {
+            $("#judge-area .pair").each(function () {
+                c++;
+                if (c == l) {
+                    $(this).find(".btn-success").show();
+                    $(this).find(".btn-danger").show();
+                } else {
+                    $(this).find(".btn-success").hide();
+                    $(this).find(".btn-danger").show();
+                }
+            })
+        },
+
+        addNewExtraction: function (event) {
+            var self = $(this);
+            var row = self.parents('.extraction-holder');
+            var new_row = row.clone(true);
+
+            var old_type = $(row).find("select[name=rule-extractor-extraction-type]").val();
+            $(new_row).find("select[name=rule-extractor-extraction-type]").val(old_type);
+            $(new_row).find("label").text("");
+
+            $(new_row).insertAfter($(this).parents('.extraction-holder'))
+            _this.resetAddExtractionBtn();
+        },
+
+        resetAddExtractionBtn: function () {
+            var l = $("#extractor-area .pair").length;
+            var c = 0;
+            $("#extractor-area .pair").each(function () {
                 c++;
                 if (c == l) {
                     $(this).find(".btn-success").show();

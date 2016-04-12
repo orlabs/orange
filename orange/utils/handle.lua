@@ -25,7 +25,7 @@ local _M = {}
 -- @param variables array: variables used to compose url
 --
 function _M.build_url(url_tmpl, variables)
-    compose(url_tmpl, variables)
+    return compose(url_tmpl, variables)
 end
 
 ---
@@ -34,7 +34,7 @@ end
 -- @param variables array: variables used to compose url
 --
 function _M.build_uri(uri_tmpl, variables)
-    compose(uri_tmpl, variables)
+    return compose(uri_tmpl, variables)
 end
 
 

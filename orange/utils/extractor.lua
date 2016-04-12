@@ -35,15 +35,15 @@ local function extract_variable(extraction)
                 return false
             end
         end
-
         ngx.req.read_body()
         local post_params, err = ngx.req.get_post_args()
         if not post_params or err then
             ngx.log(ngx.ERR, "[Extract Variable]failed to get post args: ", err)
             return false
         end
-
         result = post_params[extraction.name]
+    elseif etype == "Host" then
+        result = ngx.var.host
     elseif etype == "IP" then
         result =  ngx.var.remote_addr
     elseif etype == "Method" then
