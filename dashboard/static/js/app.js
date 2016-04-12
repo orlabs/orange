@@ -614,6 +614,176 @@
             });
         },
 
+        initRuleEditDialog: function (type, context) {
+            var op_type = "";
+            var rules_key = "";
+            if(type=="redirect"){
+                op_type = "redirect";
+                rules_key = "redirect_rules";
+            }else if(type=="rewrite"){
+                op_type = "rewrite";
+                rules_key = "rewrite_rules";
+            }else if(type=="waf"){
+                op_type = "waf";
+                rules_key = "access_rules";
+            }else if(type=="divide"){
+                op_type = "divide";
+                rules_key = "divide_rules";
+            }else{
+                return;
+            }
+
+            $(document).on("click", ".edit-btn", function () {
+                var tpl = $("#edit-tpl").html();
+                var rule_id = $(this).attr("data-id");
+                var rule = {};
+                var rules = context.data.rules;
+                for (var i = 0; i < rules.length; i++) {
+                    var r = rules[i];
+                    if (r.id == rule_id) {
+                        rule = r;
+                        break;
+                    }
+                }
+                if (!rule_id || !rule) {
+                    L.Common.showErrorTip("提示", "要编辑的规则不存在或者查找出错");
+                    return;
+                }
+
+
+                var html = juicer(tpl, {
+                    r: rule
+                });
+
+                var d = dialog({
+                    title: "编辑规则",
+                    width: 680,
+                    content: html,
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '预览',
+                        autofocus: false,
+                        callback: function () {
+                            var rule = context.buildRule();
+                            L.Common.showRulePreview(rule);
+                            return false;
+                        }
+                    }, {
+                        value: '保存修改',
+                        autofocus: false,
+                        callback: function () {
+                            var result = context.buildRule();
+                            result.data.id = rule.id;//拼上要修改的id
+
+                            if (result.success == true) {
+                                $.ajax({
+                                    url: '/' +op_type+ '/configs',
+                                    type: 'post',
+                                    data: {
+                                        rule: JSON.stringify(result.data)
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重新渲染规则
+                                            context.renderTable(result.data, rule_id);//渲染table
+                                            context.data.rules = result.data[rules_key];//重新设置数据
+
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "编辑规则发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "编辑规则请求发生异常");
+                                        return false;
+                                    }
+                                });
+
+                            } else {
+                                L.Common.showErrorTip("错误提示", result.data);
+                                return false;
+                            }
+                        }
+                    }
+                    ]
+                });
+
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                d.show();
+            });
+        },
+
+        initRuleDeleteDialog: function (type, context) {
+            var op_type = "";
+            var rules_key = "";
+            if(type=="redirect"){
+                op_type = "redirect";
+                rules_key = "redirect_rules";
+            }else if(type=="rewrite"){
+                op_type = "rewrite";
+                rules_key = "rewrite_rules";
+            }else if(type=="waf"){
+                op_type = "waf";
+                rules_key = "access_rules";
+            }else if(type=="divide"){
+                op_type = "divide";
+                rules_key = "divide_rules";
+            }else{
+                return;
+            }
+
+            $(document).on("click", ".delete-btn", function () {
+
+                var name = $(this).attr("data-name");
+                var rule_id = $(this).attr("data-id");
+                console.log("删除:" + name);
+                var d = dialog({
+                    title: '提示',
+                    width: 480,
+                    content: "确定要删除规则【" + name + "】吗？",
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '确定',
+                        autofocus: false,
+                        callback: function () {
+                            $.ajax({
+                                url: '/' +op_type+ '/configs',
+                                type: 'delete',
+                                data: {
+                                    rule_id: rule_id
+                                },
+                                dataType: 'json',
+                                success: function (result) {
+                                    if (result.success) {
+                                        //重新渲染规则
+                                        context.renderTable(result.data);//渲染table
+                                        context.data.rules = result.data[rules_key];//重新设置数据
+
+                                        return true;
+                                    } else {
+                                        L.Common.showErrorTip("提示", result.msg || "删除规则发生错误");
+                                        return false;
+                                    }
+                                },
+                                error: function () {
+                                    L.Common.showErrorTip("提示", "删除规则请求发生异常");
+                                    return false;
+                                }
+                            });
+                        }
+                    }
+                    ]
+                });
+
+                d.show();
+            });
+        },
 
 
         showErrorTip: function (title, content) {
