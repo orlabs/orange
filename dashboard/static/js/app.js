@@ -287,7 +287,6 @@
                 width: 500,
                 content: content,
                 modal: true,
-                top: 50,
                 button: [{
                     value: '返回',
                     callback: function () {
@@ -363,6 +362,258 @@
                 }
             })
         },
+
+        //数据/表格视图转换和下载事件
+        initViewAndDownloadEvent: function(type){
+            var data = {};
+            var rules_key = "";
+            if(type=="redirect"){
+                data = L.Redirect.data;
+                rules_key = "redirect_rules";
+            }else if(type=="rewrite"){
+                data = L.Rewrite.data;
+                rules_key = "rewrite_rules";
+            }else if(type=="waf"){
+                data = L.WAF.data;
+                rules_key = "access_rules";
+            }else if(type=="divide"){
+                data = L.Divide.data;
+                rules_key = "divide_rules";
+            }else{
+                return;
+            }
+
+            $("#view-btn").click(function(){//试图转换
+                var self = $(this);
+                var now_state = $(this).attr("data-type");
+                if(now_state == "table"){//当前是表格视图，点击切换到数据视图
+                    self.attr("data-type", "database");
+                    self.find("i").removeClass("fa-database").addClass("fa-table");
+                    self.find("span").text("表格视图");
+
+                    var showData = {};
+                    showData.enable = data.enable;
+                    showData[rules_key] = data.rules;
+                    jsonformat.format(JSON.stringify(showData));
+                    $("#jfContent_pre").text(JSON.stringify(showData, null, 4));
+                    $('pre').each(function(){
+                        hljs.highlightBlock($(this)[0]);
+                    });
+                    $("#table-view").hide();
+                    $("#database-view").show();
+                }else{
+                    self.attr("data-type", "table");
+                    self.find("i").removeClass("fa-table").addClass("fa-database");
+                    self.find("span").text("数据视图");
+
+                    $("#database-view").hide();
+                    $("#table-view").show();
+                }
+            });
+
+            $(document).on("click", "#btnDownload", function(){//规则json下载
+                var downloadData = {};
+                downloadData.enable = data.enable;
+                downloadData[rules_key] = data.rules;
+                var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "data.json");
+            });
+
+        },
+
+        initSwitchBtn: function (type) {
+            var op_type = "";
+            if(type=="redirect"){
+                op_type = "redirect";
+            }else if(type=="rewrite"){
+                op_type = "rewrite";
+            }else if(type=="waf"){
+                op_type = "waf";
+            }else if(type=="divide"){
+                op_type = "divide";
+            }else{
+                return;
+            }
+
+            $("#switch-btn").click(function () {//是否开启redirect
+                var self = $(this);
+                var now_state = $(this).attr("data-on");
+                if (now_state == "yes") {//当前是开启状态，点击则“关闭”
+                    var d = dialog({
+                        title: op_type + '设置',
+                        width: 300,
+                        content: "确定要关闭" +op_type+ "吗？",
+                        modal: true,
+                        button: [{
+                            value: '取消'
+                        }, {
+                            value: '确定',
+                            autofocus: false,
+                            callback: function () {
+                                $.ajax({
+                                    url: '/' +op_type+ '/enable',
+                                    type: 'post',
+                                    data: {
+                                        enable: "0"
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重置按钮
+                                            _this.data.enable = false;
+                                            self.attr("data-on", "no");
+                                            self.removeClass("btn-danger").addClass("btn-info");
+                                            self.find("i").removeClass("fa-pause").addClass("fa-play");
+                                            self.find("span").text("启用" +op_type);
+
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "关闭" +op_type+ "发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "关闭" +op_type+ "请求发生异常");
+                                        return false;
+                                    }
+                                });
+                            }
+                        }
+                        ]
+                    });
+                    d.show();
+
+
+                } else {
+                    var d = dialog({
+                        title: op_type+ '设置',
+                        width: 300,
+                        content: "确定要开启" +op_type+ "吗？",
+                        modal: true,
+                        button: [{
+                            value: '取消'
+                        }, {
+                            value: '确定',
+                            autofocus: false,
+                            callback: function () {
+                                $.ajax({
+                                    url: '/' +op_type+ '/enable',
+                                    type: 'post',
+                                    data: {
+                                        enable: "1"
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            _this.data.enable = true;
+                                            //重置按钮
+                                            self.attr("data-on", "yes");
+                                            self.removeClass("btn-info").addClass("btn-danger");
+                                            self.find("i").removeClass("fa-play").addClass("fa-pause");
+                                            self.find("span").text("停用" +op_type);
+
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "开启" +op_type+ "发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "开启" +op_type+ "请求发生异常");
+                                        return false;
+                                    }
+                                });
+                            }
+                        }
+                        ]
+                    });
+                    d.show();
+                }
+            });
+        },
+
+
+        initRuleAddDialog: function(type, context) {
+            var op_type = "";
+            var rules_key = "";
+            if(type=="redirect"){
+                op_type = "redirect";
+                rules_key = "redirect_rules";
+            }else if(type=="rewrite"){
+                op_type = "rewrite";
+                rules_key = "rewrite_rules";
+            }else if(type=="waf"){
+                op_type = "waf";
+                rules_key = "access_rules";
+            }else if(type=="divide"){
+                op_type = "divide";
+                rules_key = "divide_rules";
+            }else{
+                return;
+            }
+
+            $("#add-btn").click(function () {
+                var content = $("#add-tpl").html()
+                var d = dialog({
+                    title: '添加规则',
+                    width: 680,
+                    content: content,
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '预览',
+                        autofocus: false,
+                        callback: function () {
+                            var rule = context.buildRule();
+                            L.Common.showRulePreview(rule);
+                            return false;
+                        }
+                    }, {
+                        value: '确定',
+                        autofocus: false,
+                        callback: function () {
+                            var result = context.buildRule();
+                            if (result.success == true) {
+                                $.ajax({
+                                    url: '/' +op_type+ '/configs',
+                                    type: 'put',
+                                    data: {
+                                        rule: JSON.stringify(result.data)
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重新渲染规则
+
+                                            context.data.rules = result.data[rules_key];//重新设置数据
+                                            context.renderTable(result.data, context.data.rules[context.data.rules.length - 1].id);//渲染table
+
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "添加规则请求发生异常");
+                                        return false;
+                                    }
+                                });
+
+                            } else {
+                                L.Common.showErrorTip("错误提示", result.data);
+                                return false;
+                            }
+                        }
+                    }
+                    ]
+                });
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                d.show();
+            });
+        },
+
 
 
         showErrorTip: function (title, content) {

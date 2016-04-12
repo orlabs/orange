@@ -1,6 +1,9 @@
 local pairs = pairs
+local ipairs = ipairs
 local string_len = string.len
 local judge_util = require("orange.utils.judge")
+local extractor_util = require("orange.utils.extractor")
+local handle_util = require("orange.utils.handle")
 local BasePlugin = require("orange.plugins.base")
 
 
@@ -19,48 +22,50 @@ function RewriteHandler:rewrite(conf)
         return
     end
 
-    local rewrite_rules = rewrite_config.rewrite_rules
-
     local ngx_var_uri = ngx.var.uri
     local ngx_set_uri = ngx.req.set_uri
-    local ngx_re_gsub = ngx.re.gsub
 
-    for i, rule in pairs(rewrite_rules) do
+    local rewrite_rules = rewrite_config.rewrite_rules
+    for i, rule in ipairs(rewrite_rules) do
         local enable = rule.enable
         if enable == true then
+
+            -- judge阶段
             local judge = rule.judge
-            local match_type = judge.type
+            local judge_type = judge.type
             local conditions = judge.conditions
             local pass = false
-            if match_type == 0 or match_type == 1 then
+            if judge_type == 0 or judge_type == 1 then
                 pass = judge_util.filter_and_conditions(conditions)
-            elseif match_type == 2 then
+            elseif judge_type == 2 then
                 pass = judge_util.filter_or_conditions(conditions)
-            elseif match_type == 3 then
+            elseif judge_type == 3 then
                 pass = judge_util.filter_complicated_conditions(judge.expression, conditions, self:get_name())
             end
 
+            -- extract阶段
+            local extractor = rule.extractor
+            local extractions = extractor and extractor.extractions
+            local variables
+            if extractions then
+                variables = extractor_util.extract(extractions)
+            end
+
+            -- handle阶段
             if pass then
                 local handle = rule.handle
-
-                if handle and handle.rewrite_to then
-                    local new_uri
-                    local replace_re = handle.regrex
-                    if replace_re and replace_re ~= "" then
-                        new_uri = ngx_re_gsub(ngx_var_uri, replace_re, handle.rewrite_to)
-                    else
-                        new_uri = handle.rewrite_to
-                    end
-
-                    if new_uri ~= ngx_var_uri then
+                if handle and handle.uri_tmpl then
+                    local to_rewrite = handle_util.build_uri(handle.uri_tmpl, variables, self:get_name())
+                    if to_rewrite and to_rewrite ~= ngx_var_uri then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, "[Rewrite] ", ngx_var_uri, " to:",  new_uri)
+                            ngx.log(ngx.ERR, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)
                         end
-                        ngx_set_uri(new_uri, true)
-                    end
 
-                    return
+                        ngx_set_uri(to_rewrite, true)
+                    end
                 end
+
+                return
             end
         end
     end

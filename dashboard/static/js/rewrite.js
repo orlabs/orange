@@ -14,155 +14,25 @@
         },
 
         initEvents: function(){
-            _this.initRuleAddDialog();//添加规则对话框
+            L.Common.initRuleAddDialog("rewrite", _this);//添加规则对话框
             _this.initRuleDeleteDialog();//删除规则对话框
             _this.initRuleEditDialog();//编辑规则对话框
 
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
-            _this.initSwitchBtn();//rewrite关闭、开启
 
-            $("#view-btn").click(function(){//试图转换
-                var self = $(this);
-                var now_state = $(this).attr("data-type");
-                if(now_state == "table"){//当前是表格视图，点击切换到数据视图
-                    self.attr("data-type", "database");
-                    self.find("i").removeClass("fa-database").addClass("fa-table");
-                    self.find("span").text("表格视图");
+            L.Common.initExtractionAddOrRemove();//添加或删除条件
+            L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
+            L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
 
-                    var showData = {
-                        enable: _this.data.enable,
-                        rewrite_rules: _this.data.rules
-                    }
-                    jsonformat.format(JSON.stringify(showData));
-                    $("#jfContent_pre").text(JSON.stringify(showData, null, 4));
-                    $('pre').each(function(){
-                        hljs.highlightBlock($(this)[0]);
-                    });
-                    $("#table-view").hide();
-                    $("#database-view").show();
-                }else{
-                    self.attr("data-type", "table");
-                    self.find("i").removeClass("fa-table").addClass("fa-database");
-                    self.find("span").text("数据视图");
+            L.Common.initViewAndDownloadEvent("rewrite");
 
-                    $("#database-view").hide();
-                    $("#table-view").show();
-                }
-            });
+            L.Common.initSwitchBtn("rewrite");//rewrite关闭、开启
 
-            $(document).on("click", "#btnDownload", function(){//规则json下载
-                var downloadData = {
-                    enable: _this.data.enable,
-                    rewrite_rules: _this.data.rules
-                }
-                var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
-                saveAs(blob, "data.json");
-            });
         },
 
-
-        initSwitchBtn: function(enable){
-            $("#switch-btn").click(function(){//是否开启rewrite
-                var self = $(this);
-                var now_state = $(this).attr("data-on");
-                if(now_state == "yes"){//当前是开启状态，点击则“关闭”
-                    var d = dialog({
-                        title: 'rewrite设置',
-                        width: 300,
-                        content: "确定要关闭rewrite吗？",
-                        modal:true,
-                        button: [{
-                                value: '取消'
-                            },{
-                                value: '确定',
-                                autofocus: false,
-                                callback: function () {
-                                    $.ajax({
-                                        url : '/rewrite/enable',
-                                        type : 'post',
-                                        data: {
-                                            enable: "0"
-                                        },
-                                        dataType : 'json',
-                                        success : function(result) {
-                                            if(result.success){
-                                                //重置按钮
-                                                _this.data.enable = false;
-                                                self.attr("data-on", "no");
-                                                self.removeClass("btn-danger").addClass("btn-info");
-                                                self.find("i").removeClass("fa-pause").addClass("fa-play");
-                                                self.find("span").text("启用rewrite");
-                                                
-                                                return true;
-                                            }else{
-                                                L.Common.showErrorTip("提示", result.msg || "关闭rewrite发生错误");
-                                                return false;
-                                            }
-                                        },
-                                        error : function() {
-                                            L.Common.showErrorTip("提示", "关闭rewrite请求发生异常");
-                                            return false;
-                                        }
-                                    });
-                                }
-                            }
-                        ]
-                    });
-                    d.show();
-
-                    
-                }else{
-                    var d = dialog({
-                        title: 'rewrite设置',
-                        width: 300,
-                        content: "确定要开启rewrite吗？",
-                        modal:true,
-                        button: [{
-                                value: '取消'
-                            },{
-                                value: '确定',
-                                autofocus: false,
-                                callback: function () {
-                                    $.ajax({
-                                        url : '/rewrite/enable',
-                                        type : 'post',
-                                        data: {
-                                            enable: "1"
-                                        },
-                                        dataType : 'json',
-                                        success : function(result) {
-                                            if(result.success){
-                                                 _this.data.enable = true;
-                                                //重置按钮
-                                                self.attr("data-on", "yes");
-                                                self.removeClass("btn-info").addClass("btn-danger");
-                                                self.find("i").removeClass("fa-play").addClass("fa-pause");
-                                                self.find("span").text("停用rewrite");
-                                                
-                                                return true;
-                                            }else{
-                                                L.Common.showErrorTip("提示", result.msg || "开启rewrite发生错误");
-                                                return false;
-                                            }
-                                        },
-                                        error : function() {
-                                            L.Common.showErrorTip("提示", "开启rewrite请求发生异常");
-                                            return false;
-                                        }
-                                    });
-                                }
-                            }
-                        ]
-                    });
-                    d.show();
-                    
-                }
-            });
-        },
-
-
+        
         buildRule: function(){
             var result = {
                 success: false,
@@ -227,69 +97,6 @@
             result.success = true;
             result.handle = handle;
             return result;
-        },
-
-        initRuleAddDialog: function(){
-            $("#add-btn").click(function(){
-                var content = $("#add-tpl").html()
-                var d = dialog({
-                    title: '添加规则',
-                    width: 680,
-                    content: content,
-                    modal:true,
-                    button: [{
-                            value: '取消'
-                        },{
-                            value: '预览',
-                            autofocus: false,
-                            callback: function () {
-                                var rule = _this.buildRule();
-                                L.Common.showRulePreview(rule);
-                                return false;
-                            }
-                        },{
-                            value: '确定',
-                            autofocus: false,
-                            callback: function () {
-                                var result = _this.buildRule();
-                                if(result.success == true){
-                                    $.ajax({
-                                        url : '/rewrite/configs',
-                                        type : 'put',
-                                        data: {
-                                            rule: JSON.stringify(result.data)
-                                        },
-                                        dataType : 'json',
-                                        success : function(result) {
-                                            if(result.success){
-                                                //重新渲染规则
-                                                
-                                                _this.data.rules = result.data.rewrite_rules;//重新设置数据
-                                                _this.renderTable(result.data, _this.data.rules[_this.data.rules.length-1].id);//渲染table
-                                                
-                                                return true;
-                                            }else{
-                                                L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
-                                                return false;
-                                            }
-                                        },
-                                        error : function() {
-                                            L.Common.showErrorTip("提示", "添加规则请求发生异常");
-                                            return false;
-                                        }
-                                    });
-                                    
-                                }else{
-                                    L.Common.showErrorTip("错误提示", result.data);
-                                    return false;
-                                }
-                            }
-                        }
-                    ]
-                });
-                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
-                d.show();
-            });
         },
 
         initRuleEditDialog: function(){
