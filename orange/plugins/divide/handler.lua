@@ -10,9 +10,11 @@ local ipairs = ipairs
 local unpack = unpack
 local type = type
 
-local judge_util = require("orange.utils.judge")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
+local judge_util = require("orange.utils.judge")
+local extractor_util = require("orange.utils.extractor")
+local handle_util = require("orange.utils.handle")
 local BasePlugin = require("orange.plugins.base")
 local cjson = require("cjson")
 
@@ -47,65 +49,59 @@ end
 function DivideHandler:access(conf)
     DivideHandler.super.access(self)
     local divide_config = self.store:get("divide_config")
-
     if divide_config.enable ~= true then
         return
     end
 
-    local divide_rules = divide_config.divide_rules
     local ngx_var = ngx.var
-    local uri = ngx_var.uri
-    for i, rule in pairs(divide_rules) do
+
+    local divide_rules = divide_config.divide_rules
+    for i, rule in ipairs(divide_rules) do
         local enable = rule.enable
         if enable == true then
+
+            -- judge阶段
             local judge = rule.judge
-            local match_type = judge.type
+            local judge_type = judge.type
             local conditions = judge.conditions
-            local uri_condition = ""
-            for m, n in ipairs(judge.conditions) do
-                if n.type == "URI" then
-                    uri_condition = n.value
-                end
-            end
-
-
             local pass = false
-            ngx.log(ngx.ERR, "match_type:", match_type)
-
-            if match_type == 0 or match_type == 1 then
+            if judge_type == 0 or judge_type == 1 then
                 pass = judge_util.filter_and_conditions(conditions)
-            elseif match_type == 2 then
+            elseif judge_type == 2 then
                 pass = judge_util.filter_or_conditions(conditions)
-            elseif match_type == 3 then
+            elseif judge_type == 3 then
                 pass = judge_util.filter_complicated_conditions(judge.expression, conditions, self:get_name())
             end
 
+            -- extract阶段
+            local extractor = rule.extractor
+            local extractions = extractor and extractor.extractions
+            local variables
+            if extractions then
+                variables = extractor_util.extract(extractions)
+            end
+
+            -- handle阶段
             if pass then
                 if rule.log == true then
-                    ngx.log(ngx.ERR, "[Divide-Match-Rule] ", rule.name, " host:", ngx.var.host, " uri:", ngx.var.uri)
+                    ngx.log(ngx.ERR, "[Divide-Match-Rule] ", rule.name, " host:", ngx_var.host, " uri:", ngx_var.uri)
                 end
 
                 if rule.upstream_host and rule.upstream_url then
-                    -- Append any querystring parameters modified during plugins execution
-                    local qs = ""
-
-                    if ngx_var.args ~= nil then
-                        qs = "?"..ngx_var.args
-                    end
-
-
-                    ngx.var.upstream_host = rule.upstream_host
+                    ngx_var.upstream_host = handle_util.build_upstream_host(rule.upstream_host, variables, self:get_name())
                     -- 外部upstream
                     -- ngx.var.upstream_url = rule.upstream_url .. strip_request_path(uri, uri_condition) .. qs
                     -- 内部upstream
-                    ngx.var.upstream_url = rule.upstream_url
+                    ngx_var.upstream_url = handle_util.build_upstream_url(rule.upstream_url, variables, self:get_name())
+                    ngx.log(ngx.ERR, "[Divide-Match-Rule:upstream] ", rule.name, " upstream_host:", ngx_var.upstream_host, " upstream_url:", ngx_var.upstream_url)
                 else
-                    ngx.log(ngx.ERR, "[Divide-Match-Rule:error] no upstream host or url. ", rule.name, " host:", ngx.var.host, " uri:", ngx.var.uri)
+                    ngx.log(ngx.ERR, "[Divide-Match-Rule:error] no upstream host or url. ", rule.name, " host:", ngx_var.host, " uri:", ngx_var.uri)
                 end
+
                 return
             else
                 if rule.log == true then
-                    ngx.log(ngx.ERR, "[Divide-NotMatch-Rule] ", rule.name, " host:", ngx.var.host, " uri:", ngx.var.uri)
+                    ngx.log(ngx.ERR, "[Divide-NotMatch-Rule] ", rule.name, " host:", ngx_var.host, " uri:", ngx_var.uri)
                 end
             end
         end

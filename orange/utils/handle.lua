@@ -38,4 +38,13 @@ function _M.build_uri(uri_tmpl, variables)
 end
 
 
+function _M.build_upstream_host(upstream_host_tmpl, variables)
+    return compose(upstream_host_tmpl, variables)
+end
+
+function _M.build_upstream_url(upstream_url_tmpl, variables)
+    return compose(upstream_url_tmpl, variables)
+end
+
+
 return _M
