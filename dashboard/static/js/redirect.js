@@ -4,7 +4,6 @@
     _this = L.Redirect = {
         data: {
             rules: {},
-            ruletable: null
         },
 
         init: function () {
@@ -108,7 +107,7 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
-                        _this.resetSwitchBtn(result.data.enable);
+                        L.Common.resetSwitchBtn(result.data.enable, "redirect");
                         $("#switch-btn").show();
                         $("#view-btn").show();
                         _this.renderTable(result.data);//渲染table
@@ -125,20 +124,7 @@
             });
         },
 
-        resetSwitchBtn: function (enable) {
-            var self = $("#switch-btn");
-            if (enable == true) {//当前是开启状态，则应显示“关闭”按钮
-                self.attr("data-on", "yes");
-                self.removeClass("btn-info").addClass("btn-danger");
-                self.find("i").removeClass("fa-play").addClass("fa-pause");
-                self.find("span").text("停用redirect");
-            } else {
-                self.attr("data-on", "no");
-                self.removeClass("btn-danger").addClass("btn-info");
-                self.find("i").removeClass("fa-pause").addClass("fa-play");
-                self.find("span").text("启用redirect");
-            }
-        },
+
 
         renderTable: function (data, highlight_id) {
             highlight_id = highlight_id || 0;
@@ -146,7 +132,6 @@
             data.highlight_id = highlight_id;
             var html = juicer(tpl, data);
             $("#rules").html(html);
-        },
-
+        }
     };
 }(APP));

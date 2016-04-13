@@ -39,11 +39,12 @@
             <table  id="operable-table" class="table table-bordered  table-hover">
                 <thead>
                 <tr>
-                    <th width="40px">序号</th>
+                    <th width="60px">序号</th>
                     <th width="40px">启用</th>
                     <th width="150px" >名称</th>
-                    <th>匹配规则</th>
-                    <th>动作</th>
+                    <th>匹配规则配置</th>
+                    <th>变量提取配置</th>
+                    <th>处理</th>
                     <th width="120px">创建/变更时间</th>
                     <th width="100px">操作</th>
                 </tr>
@@ -56,25 +57,16 @@
 
         </div>
     </div>
-    <div class="row" id="database-view" style="display:none;">
-        <div class="row ui-mt-20 ui-d-n rst-item" id="modJsonResult">
-            <div id="formattingMsg">
-                <svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                    <path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path>
-                </svg>加载中...</div>
-            <div id="jfCallbackName_start" class="callback-name"></div>
-            <div id="jfContent"></div><pre id="jfContent_pre"></pre>
-            <div id="jfCallbackName_end" class="callback-name"></div>
-        </div>
-    </div>
+
+    {(data-view-part.html)}
 </div>
 
 
 <script id="rule-item-tpl" type="text/template">
     {@each rewrite_rules as r, index}
     <tr {@if highlight_id == r.id } class="highlight" {@/if} >
-        <td class="sort-index center">${parseInt(index)+1}</td>
-        <td class="sort-enable center">
+        <td class="center">${parseInt(index)+1}</td>
+        <td class="center">
             {@if r.enable==true }
             <input type="checkbox" disabled checked="checked"/>
             {@/if}
@@ -83,8 +75,8 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="sort-name center">${r.name}</td>
-        <td class="sort-judge left">
+        <td class="center">${r.name}</td>
+        <td class="left">
             <p>
                 <b>Type</b>: ${r.judge.type}
                 &nbsp;
@@ -96,12 +88,22 @@
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="sort-handle left handle">
-            regrex: ${r.handle.regrex}<br/>
-            rewrite_to: ${r.handle.rewrite_to}<br/>
+        <td class="left">
+            {@if r.extractor && r.extractor.extractions }
+                {@each r.extractor.extractions as e, index}
+                    <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                    ${e.type}{@if e.name }
+                        [${e.name}]
+                    {@/if}
+                    <br/>
+                {@/each}
+            {@/if}
+        </td>
+        <td class="left handle">
+            uri_tmpl: ${r.handle.uri_tmpl}<br/>
             log: ${r.handle.log}
         </td>
-        <td class="sort-time">${r.time}</td>
+        <td class="center">${r.time}</td>
         <td class="center do">
             <div class="btn-group" role="group" aria-label="...">
               <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
@@ -126,19 +128,17 @@
             {(condition-add.html)}
             <!-- add - 条件编辑器模板 end -->
 
+            <!-- add - 变量提取器模板 start -->
+            {(extraction-add.html)}
+            <!-- add - 变量提取器模板 end -->
+
 
             <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">执行</label>
+                <label class="col-sm-1 control-label">处理</label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex">
+                    <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite">
                 </div>
-            </div><!-- handle regrex-->
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-rewrite_to" placeholder="rewrite to">
-                </div>
-            </div><!-- handle rewrite to-->
+            </div><!-- handle uri template-->
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
@@ -148,8 +148,6 @@
                     </select>
                 </div>
             </div><!-- handle log-->
-
-
 
             <div class="form-group">
                 <div class="col-sm-offset-1 col-sm-11">
@@ -179,18 +177,16 @@
             {(condition-edit.html)}
             <!-- edit - 条件编辑器模板 end -->
 
+            <!-- edit - 变量提取器模板 start -->
+            {(extraction-edit.html)}
+            <!-- edit - 变量提取器模板 end -->
+
             <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">执行</label>
+                <label class="col-sm-1 control-label">处理</label>
                 <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-regrex" placeholder="uri regrex" value="${r.handle.regrex}">
+                    <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite" value="${r.handle.uri_tmpl}">
                 </div>
-            </div><!-- handle regrex-->
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-handle-rewrite_to" placeholder="rewrite to" value="${r.handle.rewrite_to}">
-                </div>
-            </div><!-- handle rewrite to-->
+            </div><!-- handle uri template-->
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
@@ -216,6 +212,7 @@
         </form>
     </div>
 </script>
+{(extraction-tmpl.html)}
 
 
 <script src="/orange/static/js/rewrite.js"></script>

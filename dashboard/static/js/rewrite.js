@@ -4,7 +4,6 @@
     _this = L.Rewrite = {
          data: {
             rules: {},
-            ruletable: null
         },
 
         init: function () {
@@ -39,6 +38,7 @@
                 data: {
                     name: null,
                     judge:{},
+                    extractor: {},
                     handle:{}
                 }
             };
@@ -51,6 +51,16 @@
             }else{
                 result.success = false;
                 result.data = buildJudgeResult.data;
+                return result;
+            }
+
+            //build extractor
+            var buildExtractorResult = L.Common.buildExtractor();
+            if (buildExtractorResult.success == true) {
+                result.data.extractor = buildExtractorResult.data.extractor;
+            } else {
+                result.success = false;
+                result.data = buildExtractorResult.data;
                 return result;
             }
 
@@ -77,22 +87,13 @@
         buildHandle: function(){
             var result = {};
             var handle = {};
-            var handle_regrex = $("#rule-handle-regrex").val();
-            if(!handle_regrex){
+            var uri_tmpl = $("#rule-handle-uri-template").val();
+            if (!uri_tmpl) {
                 result.success = false;
-                result.data = "执行动作的uri regrex不得为空";
+                result.data = "rewrite使用的uri template不得为空";
                 return result;
             }
-            handle.regrex = handle_regrex;
-
-            var handle_rewrite_to = $("#rule-handle-rewrite_to").val();
-            if(!handle_rewrite_to){
-                result.success = false;
-                result.data = "执行动作的rewrite to不得为空";
-                return result;
-            }
-            handle.rewrite_to = handle_rewrite_to;
-
+            handle.uri_tmpl = uri_tmpl;
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
             result.handle = handle;
@@ -107,7 +108,7 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
-                        _this.resetSwitchBtn(result.data.enable);
+                        L.Common.resetSwitchBtn(result.data.enable, "rewrite");
                         $("#switch-btn").show();
                         $("#view-btn").show();
                         _this.renderTable(result.data);//渲染table
@@ -124,28 +125,12 @@
             });
         },
 
-        resetSwitchBtn: function(enable){
-            var self = $("#switch-btn");
-            if(enable == true){//当前是开启状态，则应显示“关闭”按钮
-                self.attr("data-on", "yes");
-                self.removeClass("btn-info").addClass("btn-danger");
-                self.find("i").removeClass("fa-play").addClass("fa-pause");
-                self.find("span").text("停用rewrite");
-            }else{
-                self.attr("data-on", "no");
-                self.removeClass("btn-danger").addClass("btn-info");
-                self.find("i").removeClass("fa-pause").addClass("fa-play");
-                self.find("span").text("启用rewrite");
-            }
-        },
-
         renderTable: function(data, highlight_id){
             highlight_id = highlight_id || 0;
             var tpl = $("#rule-item-tpl").html();
             data.highlight_id = highlight_id;
             var html = juicer(tpl, data);
             $("#rules").html(html);
-        },
-
+        }
     };
 }(APP));

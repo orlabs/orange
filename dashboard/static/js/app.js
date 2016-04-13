@@ -785,6 +785,33 @@
             });
         },
 
+        resetSwitchBtn: function (enable, type) {
+            var op_type = "";
+            if(type=="redirect"){
+                op_type = "redirect";
+            }else if(type=="rewrite"){
+                op_type = "rewrite";
+            }else if(type=="waf"){
+                op_type = "waf";
+            }else if(type=="divide"){
+                op_type = "divide";
+            }else{
+                return;
+            }
+
+            var self = $("#switch-btn");
+            if (enable == true) {//当前是开启状态，则应显示“关闭”按钮
+                self.attr("data-on", "yes");
+                self.removeClass("btn-info").addClass("btn-danger");
+                self.find("i").removeClass("fa-play").addClass("fa-pause");
+                self.find("span").text("停用"+op_type);
+            } else {
+                self.attr("data-on", "no");
+                self.removeClass("btn-danger").addClass("btn-info");
+                self.find("i").removeClass("fa-pause").addClass("fa-play");
+                self.find("span").text("启用"+op_type);
+            }
+        },
 
         showErrorTip: function (title, content) {
             var d = dialog({
