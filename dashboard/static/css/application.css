@@ -415,6 +415,10 @@ kbd {
 
 /* customized by orange start*/
 
+.btn {
+    box-shadow: 0 2px 3px rgba(0,0,0,.1);
+}
+
 #main{
     margin-bottom: 80px;
     margin-top: 40px;
@@ -441,6 +445,7 @@ td, th {
 
 table {
     background-color:#fff;
+    box-shadow: 0 2px 3px rgba(0,0,0,.1);
 }
 
 table thead{
@@ -510,6 +515,7 @@ tr.highlight{
     background-color: #FFFFFF;
     border-color: #FFFFFF;
     outline:none;
+    box-shadow: none;
 }
 
 .input-group-btn .btn-success{
@@ -517,6 +523,7 @@ tr.highlight{
     background-color: #FFFFFF;
     border-color: #FFFFFF;
     outline:none;
+    box-shadow: none;
 }
 
 .form-horizontal .control-label {

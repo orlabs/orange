@@ -1,7 +1,10 @@
 local API = {}
 local table_insert = table.insert
+local ipairs = ipairs
+local type = type
 local cjson = require("cjson")
 local utils = require("orange.utils.utils")
+local stat = require("orange.plugins.waf.stat")
 
 API["/waf/enable"] = {
     POST = function(store)
@@ -33,6 +36,46 @@ API["/waf/enable"] = {
             end
         end
     end
+}
+
+
+API["/waf/stat"] = {
+    GET = function(store)
+        return function(req, res, next)
+            local max_count = req.query.max_count or 500
+            local statistics = stat.get_all(max_count)
+            local current_waf_config = store:get("waf_config")
+            local rules = current_waf_config and current_waf_config.access_rules
+
+            local data = {}
+            local not_empty = rules and type(rules) == "table" and #rules > 0
+            for i, s in ipairs(statistics) do
+                local tmp = {
+                    name = s.name,
+                    count = s.count,
+                    perform = ""
+                }
+                ngx.log(ngx.ERR, s.name, "  ==88888888888888==" )
+                if not_empty then
+                    for j, r in ipairs(rules) do
+
+                        ngx.log(ngx.ERR, s.name, "  ==999999999999== ", r.name )
+                        if s.name == r.name then
+                            tmp.perform = r.handle.perform
+                        end
+                    end
+                end
+                table_insert(data, tmp)
+            end
+
+            local result = {
+                success = true,
+                data = data
+            }
+
+            res:json(result)
+        end
+    end,
 }
 
 API["/waf/configs"] = {

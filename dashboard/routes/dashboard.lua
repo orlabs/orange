@@ -45,6 +45,7 @@ return function(store)
 	dashboard_router:delete("/waf/configs", waf_api["/waf/configs"].DELETE(store))
 	dashboard_router:put("/waf/configs", waf_api["/waf/configs"].PUT(store))
 	dashboard_router:post("/waf/enable", waf_api["/waf/enable"].POST(store))
+    dashboard_router:get("/waf/stat", waf_api["/waf/stat"].GET(store))
 
 	dashboard_router:get("/redirect/configs", redirect_api["/redirect/configs"].GET(store))
 	dashboard_router:post("/redirect/configs", redirect_api["/redirect/configs"].POST(store))

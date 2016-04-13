@@ -1,7 +1,11 @@
 local pairs = pairs
-local judge_util = require("orange.utils.judge")
-local BasePlugin = require("orange.plugins.base")
+local ipairs = ipairs
 local cjson = require("cjson")
+local judge_util = require("orange.utils.judge")
+local extractor_util = require("orange.utils.extractor")
+local handle_util = require("orange.utils.handle")
+local BasePlugin = require("orange.plugins.base")
+local stat = require("orange.plugins.waf.stat")
 
 local WAFHandler = BasePlugin:extend()
 WAFHandler.PRIORITY = 2000
@@ -14,29 +18,43 @@ end
 function WAFHandler:access(conf)
     WAFHandler.super.access(self)
     local access_config = self.store:get_waf_config()
-
     if access_config.enable ~= true then
         return
     end
 
     local access_rules = access_config.access_rules
-    for i, rule in pairs(access_rules) do
+    for i, rule in ipairs(access_rules) do
         local enable = rule.enable
         if enable == true then
             local judge = rule.judge
-            local match_type = judge.type
+            local judge_type = judge.type
             local conditions = judge.conditions
             local pass = false
-            if match_type == 0 or match_type == 1 then
+            if judge_type == 0 or judge_type == 1 then
                 pass = judge_util.filter_and_conditions(conditions)
-            elseif match_type == 2 then
+            elseif judge_type == 2 then
                 pass = judge_util.filter_or_conditions(conditions)
-            elseif match_type == 3 then
+            elseif judge_type == 3 then
                 pass = judge_util.filter_complicated_conditions(judge.expression, conditions, self:get_name())
             end
 
+            -- extract阶段
+            local extractor = rule.extractor
+            local extractions = extractor and extractor.extractions
+            local variables
+            if extractions then
+                variables = extractor_util.extract(extractions)
+            end
+
+
+            -- handle阶段
             if pass then
                 local handle = rule.handle
+                if handle.stat == true then
+                    local key = rule.name or rule.id
+                    stat.count(key, 1)
+                end
+
                 if handle.perform == 'allow' then
                     if handle.log == true then
                         ngx.log(ngx.ERR, "[WAF-Pass-Rule] ", rule.name, " uri:", ngx.var.uri)

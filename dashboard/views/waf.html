@@ -12,7 +12,7 @@
     <div class="row" style="margin-bottom:20px">
         <div class="col-md-12">
             <div class="pull-left">
-                <h4>WAF防火墙配置</h4>
+                <h4>WAF防火墙</h4>
             </div>
 
             <div class="pull-right">
@@ -25,6 +25,11 @@
                     <i class="fa fa-pause"></i>
                     <span>停用防火墙</span>
                 </a>
+
+                <a id="stat-btn" data-show="true" class="btn btn-success" rel="nofollow" href="javascript:void(0);">
+                    <i class="fa fa-bar-chart"></i>
+                    <span>统计</span>
+                </a>
                 
                 <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
                     <i class="fa fa-filter"></i>
@@ -34,12 +39,20 @@
 
         </div>
     </div>
+
+    <div class="row" id="stat-view" style="display: none;">
+        <div class="col-md-12">
+            <div style="height:400px;padding-top:20px;" id="stat-area"></div>
+
+        </div>
+    </div>
+
     <div class="row" id="table-view">
         <div class="col-md-12">
             <table  id="operable-table" class="table table-bordered  table-hover">
                 <thead>
                 <tr>
-                    <th width="40px">序号</th>
+                    <th width="60px">序号</th>
                     <th width="40px">启用</th>
                     <th width="150px" >名称</th>
                     <th>匹配规则</th>
@@ -56,26 +69,15 @@
 
         </div>
     </div>
-    <div class="row" id="database-view" style="display:none;">
-        <div class="row ui-mt-20 ui-d-n rst-item" id="modJsonResult">
-            <div id="formattingMsg">
-                <svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                    <path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path>
-                </svg>加载中...</div>
-            <div id="jfCallbackName_start" class="callback-name"></div>
-            <div id="jfContent"></div><pre id="jfContent_pre"></pre>
-            <div id="jfCallbackName_end" class="callback-name"></div>
-        </div>
-    </div>
 
-    
+    {(data-view-part.html)}
 </div>
 
 <script id="rule-item-tpl" type="text/template">
     {@each access_rules as r, index}
     <tr {@if highlight_id == r.id } class="highlight" {@/if} >
-        <td class="sort-index center">${parseInt(index)+1}</td>
-        <td class="sort-enable center">
+        <td class="center">${parseInt(index)+1}</td>
+        <td class="center">
             {@if r.enable==true }
             <input type="checkbox" disabled checked="checked"/>
             {@/if}
@@ -84,8 +86,8 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="sort-name center">${r.name}</td>
-        <td class="sort-judge left">
+        <td class="center">${r.name}</td>
+        <td class="left">
             <p>
                 <b>Type</b>: ${r.judge.type}
                 &nbsp;
@@ -97,12 +99,15 @@
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="sort-handle left handle">
+        <td class="left handle">
             perform: ${r.handle.perform}<br/>
-            code: ${r.handle.code}<br/>
-            log: ${r.handle.log}
+            {@if r.handle.perform=="deny" }
+                code: ${r.handle.code}<br/>
+            {@/if}
+            log: ${r.handle.log}<br/>
+            stat: ${r.handle.stat}
         </td>
-        <td class="sort-time">${r.time}</td>
+        <td class="center">${r.time}</td>
         <td class="center do">
             <div class="btn-group" role="group" aria-label="...">
               <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
@@ -144,6 +149,13 @@
                     <select class="form-control" id="rule-handle-log">
                         <option value="true">Log</option>
                         <option value="false">Not Log</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control" id="rule-handle-stat">
+                        <option value="true">Stat</option>
+                        <option value="false">Not Stat</option>
                     </select>
                 </div>
             </div><!-- handle -->
@@ -197,6 +209,13 @@
                     <select class="form-control" id="rule-handle-log">
                         <option value="true" {@if r.handle.log==true} selected {@/if}>Log</option>
                         <option value="false" {@if r.handle.log==false} selected {@/if}>Not Log</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <select class="form-control" id="rule-handle-stat">
+                        <option value="true" {@if r.handle.stat==true} selected {@/if}>Stat</option>
+                        <option value="false" {@if r.handle.stat==false} selected {@/if}>Not Stat</option>
                     </select>
                 </div>
             </div><!-- handle -->

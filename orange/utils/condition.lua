@@ -4,10 +4,6 @@ local string_lower = string.lower
 local ngx_re_find = ngx.re.find
 
 local function assert_condition(real, operator, expected)
-    if not real or not operator or not expected then 
-        return false
-    end
-
     if operator == 'match' then
         if ngx_re_find(real, expected, 'isjo') ~= nil then
             return true
