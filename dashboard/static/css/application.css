@@ -417,6 +417,7 @@ kbd {
 
 #main{
     margin-bottom: 80px;
+    margin-top: 40px;
 }
 
 
@@ -453,8 +454,8 @@ table thead{
 }
 
 .table>thead>tr>th, .table-bordered>thead>tr>th{
-    height:60px;
-    line-height: 60px;
+    height:40px;
+    line-height: 40px;
     text-align:center;
     border:none;
     border-radius: 0px;
