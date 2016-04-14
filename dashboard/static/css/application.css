@@ -434,6 +434,15 @@ kbd {
     border-bottom: 0px solid #FFFFFF;
 }
 
+#nav-monitor li a, #nav-monitor li.active a{
+    padding-bottom:8px;
+    padding-top:8px;
+}
+
+#nav-monitor .active ul li a {
+    border-bottom: 0px solid #FFFFFF;
+}
+
 
 td, th {
     padding: 15px 5px;
@@ -539,6 +548,10 @@ tr.highlight{
     margin: 0 17px 0 7px;
 }
 
+#time-set a.active{
+    text-decoration: underline;
+}
+
 
 .footer {
     position: absolute;
@@ -589,4 +602,23 @@ tr.highlight{
 
 .help-content p{
     padding-top:180px;
+}
+
+.plugin-item{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.plugin-item .plugin-op{
+    margin-top:40px
+}
+
+.badge{
+    padding: 5px 14px 5px 14px;
+}
+.off-badge{
+    background-color: #EB5424;
+}
+.on-badge{
+    background-color: #4cae4c;
 }

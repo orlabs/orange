@@ -7,13 +7,19 @@
 
             <span>
               <ul class="nav navbar-nav" id="main-nav-menu">
-                  <li id="nav-index"><a href="/">状态</a></li>
+                  <li id="nav-index"><a href="/">概况</a></li>
+                  <li id="nav-monitor" class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">监控&nbsp;<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                          <li><a href="/status">全局统计</a></li>
+                          <li><a href="/url_monitor">自定义监控</a></li>
+                      </ul>
+                  </li>
                   <li id="url-manage" class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">URL管理<span class="caret"></span></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">URL管理&nbsp;<span class="caret"></span></a>
                       <ul class="dropdown-menu">
                           <li id="nav-redirect"><a href="/redirect">URL重定向</a></li>
                           <li id="nav-rewrite"><a href="/rewrite">URI重写</a></li>
-                          <li id="nav-url-monitor"><a href="/url_monitor">URL监控</a></li>
                       </ul>
                   </li>
                   <li id="nav-waf"><a href="/waf">WAF</a></li>

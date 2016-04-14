@@ -111,6 +111,7 @@ function Orange.init(options)
 
         loaded_plugins = load_node_plugins(config, store)
         ngx.update_time()
+        config.orange_start_at = ngx.now()
     end)
     if not status or err then
         ngx.log(ngx.ERR, "Startup error: " .. err)

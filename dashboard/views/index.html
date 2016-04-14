@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orange Gateway - Help</title>
+    {(meta.html)}
+</head>
+<body>
+
+{(header.html)}
+
+<div id="main" class="main-container container">
+
+    <div class="row" style="margin-top:-10px;margin-bottom:20px;">
+        <div class="col-md-12">
+            <div class="pull-left">
+                <h4>Orange概览</h4>
+            </div>
+
+            <div class="pull-right"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12" style="padding:0;">
+            {% for i, v in ipairs(plugins) do %}
+            <div class="col-sm-6 col-md-3 plugin-item">
+                <div class="thumbnail">
+                    <div class="caption">
+                        <h3>{{ v }}</h3>
+                        <p class="plugin-name">
+                            {%
+                            local plugin_config = plugin_configs[v]
+                            if v=="stat" or plugin_config.enable==true then
+
+                            %}
+                                <span title="插件已被启用" class="badge on-badge">已启用</span>
+                            {% else %}
+                                <span title="插件已被停用" class="badge off-badge">已停用</span>
+                            {% end %}
+                        </p>
+
+                        <p class="plugin-op">
+                            <span href="javascript:void(0)" class="btn btn-primary" title="开启的规则条数为{{plugin_config.active_rule_count}}">On {{plugin_config.active_rule_count}}</span>
+                            <span href="javascript:void(0)" class="btn btn-default" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}">Off {{plugin_config.inactive_rule_count}}</span>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            {% end %}
+        </div>
+
+    </div>
+
+
+</div>
+
+
+{(footer.html)}
+</body>
+</html>

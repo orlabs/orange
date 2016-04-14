@@ -1,4 +1,6 @@
 local lor = require("lor.index")
+local ipairs = ipairs
+local table_insert = table.insert
 
 return function(config, store)
 	local dashboard_router = lor:Router()
@@ -13,8 +15,37 @@ return function(config, store)
         -- 当前加载的插件，开启与关闭情况
         -- 每个插件的规则条数等
         local data = {}
+        local plugins = config.plugins
         local store_data = store:get_all()
-        data.config = config
+        data.plugins = plugins
+        data.store_type = config.store
+
+        local plugin_configs = {}
+        for i, v in ipairs(plugins) do
+            local tmp = {
+                enable = nil,
+                name = v,
+                active_rule_count = 0,
+                inactive_rule_count = 0
+            }
+            local plugin_config = store_data[v .. "_config"]
+            if plugin_config then
+                tmp.enable = plugin_config.enable
+                local plugin_rules = plugin_config[v.."_rules"]
+                if plugin_rules then
+                    for j, r in ipairs(plugin_rules) do
+                        if r.enable == true then
+                            tmp.active_rule_count = tmp.active_rule_count + 1
+                        else
+                            tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                        end
+                    end
+                end
+            end
+
+            plugin_configs[v] = tmp
+        end
+        data.plugin_configs = plugin_configs
 
         res:render("index", data)
 	end)
