@@ -1,7 +1,7 @@
 local sfind = string.find
 
 
-function start_app(store, views_path)
+function start_app(config, store, views_path)
     local lor = require("lor.index")
     local dashboard_router = require("dashboard.routes.dashboard")
     local app = lor()
@@ -10,7 +10,7 @@ function start_app(store, views_path)
     app:conf("view engine",  "tmpl")
     app:conf("view ext", "html")
     app:conf("views",   views_path or "./dashboard/views")
-    app:use(dashboard_router(store)())
+    app:use(dashboard_router(config, store)())
 
     -- 404 error
     app:use(function(req, res, next)

@@ -92,10 +92,10 @@ local Orange = {}
 -- 插件排序
 function Orange.init(options)
     options = options or {}
-    local store
+    local store, config
     local status, err = pcall(function()
         local conf_file_path = options.config
-        local config = config_loader.load(conf_file_path)
+        config = config_loader.load(conf_file_path)
         local store_type = config.store
         
         if store_type == "file" then
@@ -117,7 +117,7 @@ function Orange.init(options)
         os.exit(1)
     end
 
-    return store
+    return config, store
 end
 
 function Orange.init_worker()

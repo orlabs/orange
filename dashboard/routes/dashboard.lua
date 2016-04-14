@@ -1,6 +1,6 @@
 local lor = require("lor.index")
 
-return function(store)
+return function(config, store)
 	local dashboard_router = lor:Router()
 	local stat_api = require("orange.plugins.stat.api")
 	local waf_api = require("orange.plugins.waf.api")
@@ -9,12 +9,24 @@ return function(store)
     local divide_api = require("orange.plugins.divide.api")
 
 	dashboard_router:get("/", function(req, res, next)
-		res:render("status")
+		--- 全局信息
+        -- 当前加载的插件，开启与关闭情况
+        -- 每个插件的规则条数等
+        local data = {}
+        local store_data = store:get_all()
+        data.config = config
+
+        res:render("index", data)
 	end)
 
-	dashboard_router:get("/waf", function(req, res, next)
-		res:render("waf")
-	end)
+    dashboard_router:get("/status", function(req, res, next)
+        res:render("status")
+    end)
+
+    dashboard_router:get("/url_monitor", function(req, res, next)
+        res:render("url_monitor")
+    end)
+
 
 	dashboard_router:get("/rewrite", function(req, res, next)
 	    res:render("rewrite")
@@ -24,9 +36,10 @@ return function(store)
 	    res:render("redirect")
 	end)
 
-	dashboard_router:get("/url_monitor", function(req, res, next)
-		res:render("url_monitor")
-	end)
+
+    dashboard_router:get("/waf", function(req, res, next)
+        res:render("waf")
+    end)
 
     dashboard_router:get("/divide", function(req, res, next)
         res:render("divide")
