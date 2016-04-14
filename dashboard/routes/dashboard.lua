@@ -31,7 +31,14 @@ return function(config, store)
             local plugin_config = store_data[v .. "_config"]
             if plugin_config then
                 tmp.enable = plugin_config.enable
-                local plugin_rules = plugin_config[v.."_rules"]
+                local rules_key = ""
+                if v=="waf" then
+                    rules_key = "access_rules"
+                else
+                    rules_key = v.."_rules"
+                end
+
+                local plugin_rules = plugin_config[rules_key]
                 if plugin_rules then
                     for j, r in ipairs(plugin_rules) do
                         if r.enable == true then
