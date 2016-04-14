@@ -10,11 +10,9 @@ function URLMonitorHandler:new()
 end
 
 function URLMonitorHandler:init_worker(conf)
-    stat.init()
 end
 
 function URLMonitorHandler:log(conf)
-    stat.log()
 end
 
 return URLMonitorHandler

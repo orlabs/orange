@@ -46,7 +46,7 @@ API["/url_monitor/configs"] = {
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get_url_monitor_config()
+                data = store:get("url_monitor_config")
             }
 
             res:json(result)
@@ -60,7 +60,7 @@ API["/url_monitor/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
             -- check
-            local current_url_monitor_config = store:get("url_monitor_config")
+            local current_url_monitor_config = store:get("url_monitor_config") or {rules={}}
             table_insert(current_url_monitor_config.rules, rule)
 
             -- save to file

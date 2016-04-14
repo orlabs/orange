@@ -9,6 +9,7 @@ return function(config, store)
 	local rewrite_api = require("orange.plugins.rewrite.api")
 	local redirect_api = require("orange.plugins.redirect.api")
     local divide_api = require("orange.plugins.divide.api")
+    local url_monitor_api = require("orange.plugins.url_monitor.api")
 
 	dashboard_router:get("/", function(req, res, next)
 		--- 全局信息
@@ -89,6 +90,12 @@ return function(config, store)
 
 
 	dashboard_router:get("/stat/status", stat_api["/stat/status"])
+
+    dashboard_router:get("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].GET(store))
+    dashboard_router:post("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].POST(store))
+    dashboard_router:delete("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].DELETE(store))
+    dashboard_router:put("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].PUT(store))
+    dashboard_router:post("/url_monitor/enable", url_monitor_api["/url_monitor/enable"].POST(store))
 
 
 	dashboard_router:get("/waf/configs", waf_api["/waf/configs"].GET(store))

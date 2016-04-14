@@ -25,7 +25,7 @@
                     <i class="fa fa-pause"></i>
                     <span>停用所有URL监控</span>
                 </a>
-                
+
                 <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
                     <i class="fa fa-filter"></i>
                     <span>添加新规则</span>
@@ -39,8 +39,9 @@
             <table  id="operable-table" class="table table-bordered  table-hover">
                 <thead>
                 <tr>
-                    <th width="40px">序号</th>
+                    <th width="60px">序号</th>
                     <th width="40px">启用</th>
+                    <th width="120px">名称</th>
                     <th>匹配规则</th>
                     <th>监控项</th>
                     <th width="120px">创建/变更时间</th>
@@ -70,10 +71,10 @@
 
 
 <script id="rule-item-tpl" type="text/template">
-    {@each monitor_rules as r, index}
+    {@each rules as r, index}
     <tr {@if highlight_id == r.id } class="highlight" {@/if} >
-        <td class="sort-index center">${parseInt(index)+1}</td>
-        <td class="sort-enable center">
+        <td class="center">${parseInt(index)+1}</td>
+        <td class="center">
             {@if r.enable==true }
             <input type="checkbox" disabled checked="checked"/>
             {@/if}
@@ -82,7 +83,8 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="sort-judge left">
+        <td class="center">${r.name}</td>
+        <td class="left">
             <p>
                 <b>Type</b>: ${r.judge.type}
                 &nbsp;
@@ -94,10 +96,10 @@
             ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
             {@/each}
         </td>
-        <td class="sort-handle left handle">
+        <td class="left handle">
             log: ${r.handle.log}
         </td>
-        <td class="sort-time">${r.time}</td>
+        <td class="center">${r.time}</td>
         <td class="center do">
             <div class="btn-group" role="group" aria-label="...">
               <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
@@ -159,7 +161,7 @@
             <!-- edit - 条件编辑器模板 start -->
             {(condition-edit.html)}
             <!-- edit - 条件编辑器模板 end -->
-    
+
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
@@ -184,7 +186,7 @@
         </form>
     </div>
 </script>
-
+{(extraction-tmpl.html)}
 
 <script src="/orange/static/js/url_monitor.js"></script>
 <script type="text/javascript">
