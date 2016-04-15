@@ -41,7 +41,7 @@
                 <tr>
                     <th width="60px">序号</th>
                     <th width="40px">启用</th>
-                    <th width="120px">名称</th>
+                    <th width="160px">名称</th>
                     <th>匹配规则</th>
                     <th>监控项</th>
                     <th width="120px">创建/变更时间</th>
@@ -97,6 +97,7 @@
             {@/each}
         </td>
         <td class="left handle">
+            continue: ${r.handle.continue}<br/>
             log: ${r.handle.log}
         </td>
         <td class="center">${r.time}</td>
@@ -125,11 +126,17 @@
             <!-- add - 条件编辑器模板 end -->
 
             <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
+                <label class="col-sm-1 control-label">处理</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-handle-continue">
+                        <option value="true">Continue</option>
+                        <option value="false">Stop</option>
+                    </select>
+                </div>
                 <div class="col-sm-3">
                     <select class="form-control" id="rule-handle-log">
                         <option value="true">Log</option>
-                        <option value="false">Not Log</option>
+                        <option value="false" selected>Not Log</option>
                     </select>
                 </div>
             </div><!-- handle log-->
@@ -163,7 +170,13 @@
             <!-- edit - 条件编辑器模板 end -->
 
             <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label"></label>
+                <label class="col-sm-1 control-label">处理</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true" {@if r.handle.continue==true} selected {@/if}>Continue</option>
+                        <option value="false" {@if r.handle.continue==false} selected {@/if}>Stop</option>
+                    </select>
+                </div>
                 <div class="col-sm-3">
                     <select class="form-control" id="rule-handle-log">
                         <option value="true" {@if r.handle.log==true} selected {@/if}>Log</option>

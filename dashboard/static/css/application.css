@@ -609,6 +609,10 @@ tr.highlight{
     margin-bottom: 20px;
 }
 
+.plugin-item .thumbnail {
+    min-height: 200px;
+}
+
 .plugin-item .plugin-op{
     margin-top:40px
 }

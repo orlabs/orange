@@ -32,13 +32,7 @@ return function(config, store)
             local plugin_config = store_data[v .. "_config"]
             if plugin_config then
                 tmp.enable = plugin_config.enable
-                local rules_key = ""
-                if v=="waf" then
-                    rules_key = "rules"
-                else
-                    rules_key = v.."_rules"
-                end
-
+                local rules_key = "rules"
                 local plugin_rules = plugin_config[rules_key]
                 if plugin_rules then
                     for j, r in ipairs(plugin_rules) do
@@ -96,6 +90,7 @@ return function(config, store)
     dashboard_router:delete("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].DELETE(store))
     dashboard_router:put("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].PUT(store))
     dashboard_router:post("/url_monitor/enable", url_monitor_api["/url_monitor/enable"].POST(store))
+    dashboard_router:get("/url_monitor/stat", url_monitor_api["/url_monitor/stat"].GET(store))
 
 
 	dashboard_router:get("/waf/configs", waf_api["/waf/configs"].GET(store))

@@ -1,4 +1,4 @@
-local _M = {}
+local tonumber = tonumber
 
 local STAT_LOCK = "STAT_LOCK"
 local KEY_START_TIME = "START_TIME"
@@ -12,9 +12,11 @@ local KEY_REQUEST_2XX = "REQUEST_2XX"
 local KEY_REQUEST_3XX = "REQUEST_3XX"
 local KEY_REQUEST_4XX = "REQUEST_4XX"
 local KEY_REQUEST_5XX = "REQUEST_5XX"
+local status = ngx.shared.status
+
+local _M = {}
 
 function _M.init()
-    local status = ngx.shared.status
     local ok, err = status:add(STAT_LOCK, true)
     if ok then
         status:set(KEY_START_TIME, ngx.time())
@@ -35,7 +37,6 @@ function _M.init()
 end
 
 function _M.log()
-    local status = ngx.shared.status
     local ngx_var = ngx.var
     status:incr(KEY_TOTAL_COUNT, 1)
 
@@ -64,7 +65,6 @@ function _M.log()
 end
 
 function _M.stat()
-    local status = ngx.shared.status
     local result = {
         start_time = status:get(KEY_START_TIME),
         total_count = status:get(KEY_TOTAL_COUNT),

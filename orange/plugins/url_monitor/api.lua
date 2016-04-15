@@ -39,6 +39,22 @@ API["/url_monitor/enable"] = {
     end
 }
 
+API["/url_monitor/stat"] = {
+    GET = function(store)
+        return function(req, res, next)
+            local rule_id = req.query.rule_id
+            local statistics = stat.get(rule_id)
+
+            local result = {
+                success = true,
+                data = statistics
+            }
+
+            res:json(result)
+        end
+    end,
+}
+
 
 
 API["/url_monitor/configs"] = {

@@ -74,13 +74,12 @@
         buildHandle: function(){
             var result = {};
             var handle = {};
+            handle.continue = ($("#rule-handle-continue").val() === "true");
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
             result.handle = handle;
             return result;
         },
-
-
 
         loadConfigs: function () {
             $.ajax({
@@ -109,15 +108,12 @@
             });
         },
 
-
-
         renderTable: function(data, highlight_id){
             highlight_id = highlight_id || 0;
             var tpl = $("#rule-item-tpl").html();
             data.highlight_id = highlight_id;
             var html = juicer(tpl, data);
             $("#rules").html(html);
-        },
-
+        }
     };
 }(APP));
