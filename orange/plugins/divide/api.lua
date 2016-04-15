@@ -53,8 +53,8 @@ API["/divide/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
             -- check
-            local current_divide_config = store:get("divide_config")
-            table_insert(current_divide_config.divide_rules, rule)
+            local current_divide_config = store:get("divide_config") or {rules={}}
+            table_insert(current_divide_config.rules, rule)
 
             -- save to file
             store:set("divide_config", current_divide_config)
@@ -84,14 +84,14 @@ API["/divide/configs"] = {
 
             -- check
             local current_divide_config = store:get("divide_config")
-            local old_rules = current_divide_config.divide_rules
+            local old_rules = current_divide_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
             end
-            current_divide_config.divide_rules = new_rules
+            current_divide_config.rules = new_rules
 
             -- save to file
             store:set("divide_config", current_divide_config)
@@ -103,7 +103,7 @@ API["/divide/configs"] = {
                     data = current_divide_config
                 })
             else
-                current_divide_config.divide_rules = old_rules
+                current_divide_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_divide_config
@@ -117,7 +117,7 @@ API["/divide/configs"] = {
             rule = cjson.decode(rule)
             -- check
             local current_divide_config = store:get("divide_config")
-            local old_rules = current_divide_config.divide_rules
+            local old_rules = current_divide_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do
                 if v.id == rule.id then
@@ -127,7 +127,7 @@ API["/divide/configs"] = {
                     table_insert(new_rules, v)
                 end
             end
-            current_divide_config.divide_rules = new_rules
+            current_divide_config.rules = new_rules
 
             -- save to file
             store:set("divide_config", current_divide_config)
@@ -139,7 +139,7 @@ API["/divide/configs"] = {
                     data = current_divide_config
                 })
             else
-                current_divide_config.divide_rules = old_rules
+                current_divide_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_divide_config

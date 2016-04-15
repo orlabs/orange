@@ -368,16 +368,16 @@
             var rules_key = "";
             if (type == "redirect") {
                 data = L.Redirect.data;
-                rules_key = "redirect_rules";
+                rules_key = "rules";
             } else if (type == "rewrite") {
                 data = L.Rewrite.data;
-                rules_key = "rewrite_rules";
+                rules_key = "rules";
             } else if (type == "waf") {
                 data = L.WAF.data;
-                rules_key = "access_rules";
+                rules_key = "rules";
             } else if (type == "divide") {
                 data = L.Divide.data;
-                rules_key = "divide_rules";
+                rules_key = "rules";
             } else if (type == "url_monitor") {
                 data = L.URLMonitor.data;
                 rules_key = "rules";
@@ -542,16 +542,16 @@
             var rules_key = "";
             if (type == "redirect") {
                 op_type = "redirect";
-                rules_key = "redirect_rules";
+                rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
-                rules_key = "rewrite_rules";
+                rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
-                rules_key = "access_rules";
+                rules_key = "rules";
             } else if (type == "divide") {
                 op_type = "divide";
-                rules_key = "divide_rules";
+                rules_key = "rules";
             } else if (type == "url_monitor") {
                 op_type = "url_monitor";
                 rules_key = "rules";
@@ -626,16 +626,16 @@
             var rules_key = "";
             if (type == "redirect") {
                 op_type = "redirect";
-                rules_key = "redirect_rules";
+                rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
-                rules_key = "rewrite_rules";
+                rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
-                rules_key = "access_rules";
+                rules_key = "rules";
             } else if (type == "divide") {
                 op_type = "divide";
-                rules_key = "divide_rules";
+                rules_key = "rules";
             } else if (type == "url_monitor") {
                 op_type = "url_monitor";
                 rules_key = "rules";
@@ -732,16 +732,16 @@
             var rules_key = "";
             if (type == "redirect") {
                 op_type = "redirect";
-                rules_key = "redirect_rules";
+                rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
-                rules_key = "rewrite_rules";
+                rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
-                rules_key = "access_rules";
+                rules_key = "rules";
             } else if (type == "divide") {
                 op_type = "divide";
-                rules_key = "divide_rules";
+                rules_key = "rules";
             } else if (type == "url_monitor") {
                 op_type = "url_monitor";
                 rules_key = "rules";

@@ -45,7 +45,7 @@ API["/waf/stat"] = {
             local max_count = req.query.max_count or 500
             local statistics = stat.get_all(max_count)
             local current_waf_config = store:get("waf_config")
-            local rules = current_waf_config and current_waf_config.access_rules
+            local rules = current_waf_config and current_waf_config.rules
 
             local data = {}
             local not_empty = rules and type(rules) == "table" and #rules > 0
@@ -97,8 +97,8 @@ API["/waf/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
         	-- check
-        	local current_waf_config = store:get("waf_config")
-        	table_insert(current_waf_config.access_rules, rule)
+        	local current_waf_config = store:get("waf_config") or {rules={}}
+        	table_insert(current_waf_config.rules, rule)
 
         	-- save to file
             store:set("waf_config", current_waf_config)
@@ -129,14 +129,14 @@ API["/waf/configs"] = {
 
             -- check
             local current_waf_config = store:get("waf_config")
-            local old_rules = current_waf_config.access_rules
+            local old_rules = current_waf_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
             end
-            current_waf_config.access_rules = new_rules
+            current_waf_config.rules = new_rules
 
             -- save to file
             store:set("waf_config", current_waf_config)
@@ -148,7 +148,7 @@ API["/waf/configs"] = {
                     data = current_waf_config
                 })
             else
-                current_waf_config.access_rules = old_rules
+                current_waf_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_waf_config
@@ -164,7 +164,7 @@ API["/waf/configs"] = {
             rule = cjson.decode(rule)
             -- check
             local current_waf_config = store:get("waf_config")
-            local old_rules = current_waf_config.access_rules
+            local old_rules = current_waf_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id == rule.id then
@@ -174,7 +174,7 @@ API["/waf/configs"] = {
                     table_insert(new_rules, v)
                 end
             end
-            current_waf_config.access_rules = new_rules
+            current_waf_config.rules = new_rules
 
             -- save to file
             store:set("waf_config", current_waf_config)
@@ -186,7 +186,7 @@ API["/waf/configs"] = {
                     data = current_waf_config
                 })
             else
-                current_waf_config.access_rules = old_rules
+                current_waf_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_waf_config

@@ -25,8 +25,8 @@ function RewriteHandler:rewrite(conf)
     local ngx_var_uri = ngx.var.uri
     local ngx_set_uri = ngx.req.set_uri
 
-    local rewrite_rules = rewrite_config.rewrite_rules
-    for i, rule in ipairs(rewrite_rules) do
+    local rules = rewrite_config.rules
+    for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then
 

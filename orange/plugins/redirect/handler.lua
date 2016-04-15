@@ -30,8 +30,8 @@ function RedirectHandler:redirect()
     local ngx_var_host = ngx_var.http_host
     local ngx_var_scheme = ngx_var.scheme
 
-    local redirect_rules = redirect_config.redirect_rules
-    for i, rule in ipairs(redirect_rules) do
+    local rules = redirect_config.rules
+    for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then
 

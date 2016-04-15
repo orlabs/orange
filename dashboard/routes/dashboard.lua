@@ -34,7 +34,7 @@ return function(config, store)
                 tmp.enable = plugin_config.enable
                 local rules_key = ""
                 if v=="waf" then
-                    rules_key = "access_rules"
+                    rules_key = "rules"
                 else
                     rules_key = v.."_rules"
                 end

@@ -22,8 +22,8 @@ function WAFHandler:access(conf)
         return
     end
 
-    local access_rules = access_config.access_rules
-    for i, rule in ipairs(access_rules) do
+    local rules = access_config.rules
+    for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then
             local judge = rule.judge

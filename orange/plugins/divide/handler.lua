@@ -55,8 +55,8 @@ function DivideHandler:access(conf)
 
     local ngx_var = ngx.var
 
-    local divide_rules = divide_config.divide_rules
-    for i, rule in ipairs(divide_rules) do
+    local rules = divide_config.rules
+    for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then
 

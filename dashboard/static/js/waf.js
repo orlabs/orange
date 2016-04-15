@@ -224,7 +224,7 @@
                         $("#view-btn").show();
                         _this.renderTable(result.data);//渲染table
                         _this.data.enable = result.data.enable;
-                        _this.data.rules = result.data.access_rules;//重新设置数据
+                        _this.data.rules = result.data.rules;//重新设置数据
 
                     } else {
                         L.Common.showTipDialog("错误提示", "查询waf配置请求发生错误");

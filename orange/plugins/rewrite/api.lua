@@ -54,8 +54,8 @@ API["/rewrite/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
         	-- check
-        	local current_rewrite_config = store:get("rewrite_config")
-        	table_insert(current_rewrite_config.rewrite_rules, rule)
+        	local current_rewrite_config = store:get("rewrite_config") or {rules={}}
+        	table_insert(current_rewrite_config.rules, rule)
 
         	-- save to file
             store:set("rewrite_config", current_rewrite_config)
@@ -86,14 +86,14 @@ API["/rewrite/configs"] = {
 
             -- check
             local current_rewrite_config = store:get("rewrite_config")
-            local old_rules = current_rewrite_config.rewrite_rules
+            local old_rules = current_rewrite_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
             end
-            current_rewrite_config.rewrite_rules = new_rules
+            current_rewrite_config.rules = new_rules
 
             -- save to file
             store:set("rewrite_config", current_rewrite_config)
@@ -105,7 +105,7 @@ API["/rewrite/configs"] = {
                     data = current_rewrite_config
                 })
             else
-                current_rewrite_config.rewrite_rules = old_rules
+                current_rewrite_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_rewrite_config
@@ -121,7 +121,7 @@ API["/rewrite/configs"] = {
             rule = cjson.decode(rule)
             -- check
             local current_rewrite_config = store:get("rewrite_config")
-            local old_rules = current_rewrite_config.rewrite_rules
+            local old_rules = current_rewrite_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id == rule.id then
@@ -131,7 +131,7 @@ API["/rewrite/configs"] = {
                     table_insert(new_rules, v)
                 end
             end
-            current_rewrite_config.rewrite_rules = new_rules
+            current_rewrite_config.rules = new_rules
 
             -- save to file
             store:set("rewrite_config", current_rewrite_config)
@@ -143,7 +143,7 @@ API["/rewrite/configs"] = {
                     data = current_rewrite_config
                 })
             else
-                current_rewrite_config.rewrite_rules = old_rules
+                current_rewrite_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_rewrite_config

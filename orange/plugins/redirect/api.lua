@@ -54,8 +54,8 @@ API["/redirect/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
         	-- check
-        	local current_redirect_config = store:get("redirect_config")
-        	table_insert(current_redirect_config.redirect_rules, rule)
+        	local current_redirect_config = store:get("redirect_config") or {rules={}}
+        	table_insert(current_redirect_config.rules, rule)
 
         	-- save to file
             store:set("redirect_config", current_redirect_config)
@@ -86,14 +86,14 @@ API["/redirect/configs"] = {
 
             -- check
             local current_redirect_config = store:get("redirect_config")
-            local old_rules = current_redirect_config.redirect_rules
+            local old_rules = current_redirect_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
             end
-            current_redirect_config.redirect_rules = new_rules
+            current_redirect_config.rules = new_rules
 
             -- save to file
             store:set("redirect_config", current_redirect_config)
@@ -105,7 +105,7 @@ API["/redirect/configs"] = {
                     data = current_redirect_config
                 })
             else
-                current_redirect_config.redirect_rules = old_rules
+                current_redirect_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_redirect_config
@@ -121,7 +121,7 @@ API["/redirect/configs"] = {
             rule = cjson.decode(rule)
             -- check
             local current_redirect_config = store:get("redirect_config")
-            local old_rules = current_redirect_config.redirect_rules
+            local old_rules = current_redirect_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do 
                 if v.id == rule.id then
@@ -131,7 +131,7 @@ API["/redirect/configs"] = {
                     table_insert(new_rules, v)
                 end
             end
-            current_redirect_config.redirect_rules = new_rules
+            current_redirect_config.rules = new_rules
 
             -- save to file
             store:set("redirect_config", current_redirect_config)
@@ -143,7 +143,7 @@ API["/redirect/configs"] = {
                     data = current_redirect_config
                 })
             else
-                current_redirect_config.redirect_rules = old_rules
+                current_redirect_config.rules = old_rules
                 res:json({
                     success = false,
                     data = current_redirect_config
