@@ -379,7 +379,7 @@
                 data = L.Divide.data;
                 rules_key = "rules";
             } else if (type == "monitor") {
-                data = L.URLMonitor.data;
+                data = L.Monitor.data;
                 rules_key = "rules";
             } else {
                 return;

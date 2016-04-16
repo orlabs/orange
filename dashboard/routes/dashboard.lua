@@ -59,6 +59,14 @@ return function(config, store)
     dashboard_router:get("/monitor", function(req, res, next)
         res:render("monitor")
     end)
+    dashboard_router:get("/monitor/rule/statistic", function(req, res, next)
+        local rule_id = req.query.rule_id;
+        local rule_name = req.query.rule_name or "";
+        res:render("monitor-rule-stat", {
+            rule_id = rule_id,
+            rule_name = rule_name
+        })
+    end)
 
 
 	dashboard_router:get("/rewrite", function(req, res, next)

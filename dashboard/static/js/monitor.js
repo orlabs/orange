@@ -1,7 +1,7 @@
 (function (L) {
     var _this = null;
-    L.URLMonitor = L.URLMonitor || {};
-    _this = L.URLMonitor = {
+    L.Monitor = L.Monitor || {};
+    _this = L.Monitor = {
          data: {
             rules: {},
         },
@@ -29,6 +29,8 @@
             L.Common.initViewAndDownloadEvent("monitor");
 
             L.Common.initSwitchBtn("monitor");//redirect关闭、开启
+
+            _this.initStatisticBtnEvent();
         },
 
         buildRule: function(){
@@ -79,6 +81,19 @@
             result.success = true;
             result.handle = handle;
             return result;
+        },
+
+        initStatisticBtnEvent:function(){
+            $(document).on( "click",".statistic-btn", function(){
+                var self = $(this);
+                var rule_id = self.attr("data-id");
+                var rule_name = self.attr("data-name");
+                if(!rule_id){
+                    return;
+                }
+                window.location.href = "/monitor/rule/statistic?rule_id="+rule_id+"&rule_name="+encodeURI(rule_name);
+            });
+
         },
 
         loadConfigs: function () {
