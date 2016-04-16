@@ -11,7 +11,7 @@ local REQUEST_3XX = "REQUEST_3XX:"
 local REQUEST_4XX = "REQUEST_4XX:"
 local REQUEST_5XX = "REQUEST_5XX:"
 
-local status = ngx.shared.url_monitor
+local status = ngx.shared.monitor
 local function safe_count(key, value, default_value)
     local newval, err = status:incr(key, value)
     if not newval or err then

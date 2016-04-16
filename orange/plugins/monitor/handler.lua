@@ -1,6 +1,6 @@
 local pairs = pairs
 local ipairs = ipairs
-local stat = require("orange.plugins.url_monitor.stat")
+local stat = require("orange.plugins.monitor.stat")
 local judge_util = require("orange.utils.judge")
 local handle_util = require("orange.utils.handle")
 local BasePlugin = require("orange.plugins.base")
@@ -15,14 +15,14 @@ end
 
 function URLMonitorHandler:log(conf)
     URLMonitorHandler.super.log(self)
-    local url_monitor_config = self.store:get("url_monitor_config")
-    if not url_monitor_config or url_monitor_config.enable ~= true then
+    local monitor_config = self.store:get("monitor_config")
+    if not monitor_config or monitor_config.enable ~= true then
         return
     end
 
     local ngx_var_uri = ngx.var.uri
 
-    local rules = url_monitor_config.rules
+    local rules = monitor_config.rules
     for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then

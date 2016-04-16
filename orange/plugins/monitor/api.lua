@@ -5,9 +5,9 @@ local type = type
 local tostring = tostring
 local cjson = require("cjson")
 local utils = require("orange.utils.utils")
-local stat = require("orange.plugins.url_monitor.stat")
+local stat = require("orange.plugins.monitor.stat")
 
-API["/url_monitor/enable"] = {
+API["/monitor/enable"] = {
     POST = function(store)
         return function(req, res, next)
             local enable = req.body.enable
@@ -17,11 +17,11 @@ API["/url_monitor/enable"] = {
                 enable = false
             end
 
-            local current_url_monitor_config = store:get("url_monitor_config") or {}
-            current_url_monitor_config.enable = enable
+            local current_monitor_config = store:get("monitor_config") or {}
+            current_monitor_config.enable = enable
 
             -- save to file
-            store:set("url_monitor_config", current_url_monitor_config)
+            store:set("monitor_config", current_monitor_config)
             local store_result = store:store()
 
             if store_result == true then
@@ -39,7 +39,7 @@ API["/url_monitor/enable"] = {
     end
 }
 
-API["/url_monitor/stat"] = {
+API["/monitor/stat"] = {
     GET = function(store)
         return function(req, res, next)
             local rule_id = req.query.rule_id
@@ -57,12 +57,12 @@ API["/url_monitor/stat"] = {
 
 
 
-API["/url_monitor/configs"] = {
+API["/monitor/configs"] = {
     GET = function(store)
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get("url_monitor_config") or {}
+                data = store:get("monitor_config") or {}
             }
 
             res:json(result)
@@ -76,18 +76,18 @@ API["/url_monitor/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
             -- check
-            local current_url_monitor_config = store:get("url_monitor_config") or {rules={} }
-            current_url_monitor_config.rules = current_url_monitor_config.rules or {}
-            table_insert(current_url_monitor_config.rules, rule)
+            local current_monitor_config = store:get("monitor_config") or {rules={} }
+            current_monitor_config.rules = current_monitor_config.rules or {}
+            table_insert(current_monitor_config.rules, rule)
 
             -- save to file
-            store:set("url_monitor_config", current_url_monitor_config)
+            store:set("monitor_config", current_monitor_config)
             local store_result = store:store()
 
             if store_result == true then
                 res:json({
                     success = true,
-                    data = current_url_monitor_config
+                    data = current_monitor_config
                 })
             else
                 res:json({
@@ -108,30 +108,30 @@ API["/url_monitor/configs"] = {
             end
 
             -- check
-            local current_url_monitor_config = store:get("url_monitor_config")
-            local old_rules = current_url_monitor_config.rules
+            local current_monitor_config = store:get("monitor_config")
+            local old_rules = current_monitor_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
             end
-            current_url_monitor_config.rules = new_rules
+            current_monitor_config.rules = new_rules
 
             -- save to file
-            store:set("url_monitor_config", current_url_monitor_config)
+            store:set("monitor_config", current_monitor_config)
             local store_result = store:store()
 
             if store_result == true then
                 res:json({
                     success = true,
-                    data = current_url_monitor_config
+                    data = current_monitor_config
                 })
             else
-                current_url_monitor_config.rules = old_rules
+                current_monitor_config.rules = old_rules
                 res:json({
                     success = false,
-                    data = current_url_monitor_config
+                    data = current_monitor_config
                 })
             end
         end
@@ -143,8 +143,8 @@ API["/url_monitor/configs"] = {
             local rule = req.body.rule
             rule = cjson.decode(rule)
             -- check
-            local current_url_monitor_config = store:get("url_monitor_config")
-            local old_rules = current_url_monitor_config.rules
+            local current_monitor_config = store:get("monitor_config")
+            local old_rules = current_monitor_config.rules
             local new_rules = {}
             for i, v in ipairs(old_rules) do
                 if v.id == rule.id then
@@ -154,22 +154,22 @@ API["/url_monitor/configs"] = {
                     table_insert(new_rules, v)
                 end
             end
-            current_url_monitor_config.rules = new_rules
+            current_monitor_config.rules = new_rules
 
             -- save to file
-            store:set("url_monitor_config", current_url_monitor_config)
+            store:set("monitor_config", current_monitor_config)
             local store_result = store:store()
 
             if store_result == true then
                 res:json({
                     success = true,
-                    data = current_url_monitor_config
+                    data = current_monitor_config
                 })
             else
-                current_url_monitor_config.rules = old_rules
+                current_monitor_config.rules = old_rules
                 res:json({
                     success = false,
-                    data = current_url_monitor_config
+                    data = current_monitor_config
                 })
             end
         end
