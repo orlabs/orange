@@ -35,11 +35,15 @@ function _M.get_one(key_suffix)
     local total_request_time, _ = status:get(TOTAL_REQUEST_TIME .. key_suffix)
     total_request_time = total_request_time or 0
 
-    local average_request_time
+    local average_request_time, average_traffic_read, average_traffix_write
     if total_count ~= 0 then
         average_request_time = total_request_time / total_count
+        average_traffic_read = traffic_read / total_count
+        average_traffix_write = traffic_write /total_count
     else
         average_request_time = 0
+        average_traffic_read = 0
+        average_traffix_write = 0
     end
 
     local request_2xx, _ = status:get(REQUEST_2XX .. key_suffix)
@@ -60,6 +64,8 @@ function _M.get_one(key_suffix)
         traffic_write = traffic_write,
         total_request_time = total_request_time,
         average_request_time = average_request_time,
+        average_traffic_read = average_traffic_read,
+        average_traffix_write = average_traffix_write,
         request_2xx = request_2xx,
         request_3xx = request_3xx,
         request_4xx = request_4xx,
