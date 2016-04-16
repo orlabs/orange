@@ -17,7 +17,7 @@ API["/url_monitor/enable"] = {
                 enable = false
             end
 
-            local current_url_monitor_config = store:get("url_monitor_config")
+            local current_url_monitor_config = store:get("url_monitor_config") or {}
             current_url_monitor_config.enable = enable
 
             -- save to file
@@ -62,7 +62,7 @@ API["/url_monitor/configs"] = {
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get("url_monitor_config")
+                data = store:get("url_monitor_config") or {}
             }
 
             res:json(result)
@@ -76,7 +76,8 @@ API["/url_monitor/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
             -- check
-            local current_url_monitor_config = store:get("url_monitor_config") or {rules={}}
+            local current_url_monitor_config = store:get("url_monitor_config") or {rules={} }
+            current_url_monitor_config.rules = current_url_monitor_config.rules or {}
             table_insert(current_url_monitor_config.rules, rule)
 
             -- save to file

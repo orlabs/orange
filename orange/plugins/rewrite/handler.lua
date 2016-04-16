@@ -18,7 +18,7 @@ end
 function RewriteHandler:rewrite(conf)
     RewriteHandler.super.rewrite(self)
     local rewrite_config = self.store:get_rewrite_config()
-    if rewrite_config.enable ~= true then
+    if not rewrite_config or rewrite_config.enable ~= true then
         return
     end
 

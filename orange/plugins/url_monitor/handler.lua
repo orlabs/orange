@@ -16,7 +16,7 @@ end
 function URLMonitorHandler:log(conf)
     URLMonitorHandler.super.log(self)
     local url_monitor_config = self.store:get("url_monitor_config")
-    if url_monitor_config.enable ~= true then
+    if not url_monitor_config or url_monitor_config.enable ~= true then
         return
     end
 
