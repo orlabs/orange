@@ -13,7 +13,7 @@ API["/rewrite/enable"] = {
                 enable = false
             end
 
-            local current_rewrite_config = store:get("rewrite_config")
+            local current_rewrite_config = store:get("rewrite_config") or {}
             current_rewrite_config.enable = enable
 
             -- save to file
@@ -40,7 +40,7 @@ API["/rewrite/configs"] = {
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get("rewrite_config")
+                data = store:get("rewrite_config") or {}
             }
 
             res:json(result)
@@ -54,7 +54,8 @@ API["/rewrite/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
         	-- check
-        	local current_rewrite_config = store:get("rewrite_config") or {rules={}}
+        	local current_rewrite_config = store:get("rewrite_config") or {rules={} }
+            current_rewrite_config.rules = current_rewrite_config.rules or {}
         	table_insert(current_rewrite_config.rules, rule)
 
         	-- save to file
@@ -88,7 +89,7 @@ API["/rewrite/configs"] = {
             local current_rewrite_config = store:get("rewrite_config")
             local old_rules = current_rewrite_config.rules
             local new_rules = {}
-            for i, v in ipairs(old_rules) do 
+            for i, v in ipairs(old_rules) do
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
@@ -123,7 +124,7 @@ API["/rewrite/configs"] = {
             local current_rewrite_config = store:get("rewrite_config")
             local old_rules = current_rewrite_config.rules
             local new_rules = {}
-            for i, v in ipairs(old_rules) do 
+            for i, v in ipairs(old_rules) do
                 if v.id == rule.id then
                     rule.time = utils.now()
                     table_insert(new_rules, rule)

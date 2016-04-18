@@ -21,7 +21,7 @@ end
 function RedirectHandler:redirect()
     RedirectHandler.super.redirect(self)
     local redirect_config = self.store:get_redirect_config()
-    if redirect_config.enable ~= true then
+    if not redirect_config or redirect_config.enable ~= true then
         return
     end
 

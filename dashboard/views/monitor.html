@@ -12,7 +12,7 @@
     <div class="row" style="margin-bottom:20px">
         <div class="col-md-12">
             <div class="pull-left">
-                <h4>URL监控</h4>
+                <h4>自定义监控</h4>
             </div>
 
             <div class="pull-right">
@@ -23,7 +23,7 @@
                 </a>
                 <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
                     <i class="fa fa-pause"></i>
-                    <span>停用所有URL监控</span>
+                    <span>停用所有自定义监控</span>
                 </a>
 
                 <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
@@ -45,7 +45,7 @@
                     <th>匹配规则</th>
                     <th>监控项</th>
                     <th width="120px">创建/变更时间</th>
-                    <th width="100px">操作</th>
+                    <th width="150px">操作</th>
                 </tr>
                 </thead>
 
@@ -56,17 +56,8 @@
 
         </div>
     </div>
-    <div class="row" id="database-view" style="display:none;">
-        <div class="row ui-mt-20 ui-d-n rst-item" id="modJsonResult">
-            <div id="formattingMsg">
-                <svg id="spinner" width="16" height="16" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                    <path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#3d7fe6"></path>
-                </svg>加载中...</div>
-            <div id="jfCallbackName_start" class="callback-name"></div>
-            <div id="jfContent"></div><pre id="jfContent_pre"></pre>
-            <div id="jfCallbackName_end" class="callback-name"></div>
-        </div>
-    </div>
+
+    {(data-view-part.html)}
 </div>
 
 
@@ -105,6 +96,7 @@
             <div class="btn-group" role="group" aria-label="...">
               <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
               <button type="button" class="btn btn-default delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></button>
+              <button type="button" class="btn btn-default statistic-btn" data-id="${r.id}" data-name="${r.name}"><i title="查看统计" class="fa fa-bar-chart"></i></button>
             </div>
         </td>
     </tr>
@@ -199,13 +191,12 @@
         </form>
     </div>
 </script>
-{(extraction-tmpl.html)}
 
-<script src="/orange/static/js/url_monitor.js"></script>
+<script src="/orange/static/js/monitor.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         APP.Common.resetNav("nav-monitor");
-        APP.URLMonitor.init();
+        APP.Monitor.init();
     });
 </script>
 

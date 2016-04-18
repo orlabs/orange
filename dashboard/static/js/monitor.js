@@ -1,7 +1,7 @@
 (function (L) {
     var _this = null;
-    L.URLMonitor = L.URLMonitor || {};
-    _this = L.URLMonitor = {
+    L.Monitor = L.Monitor || {};
+    _this = L.Monitor = {
          data: {
             rules: {},
         },
@@ -13,9 +13,9 @@
         },
 
         initEvents: function(){
-            L.Common.initRuleAddDialog("url_monitor", _this);//添加规则对话框
-            L.Common.initRuleDeleteDialog("url_monitor", _this);//删除规则对话框
-            L.Common.initRuleEditDialog("url_monitor", _this);//编辑规则对话框
+            L.Common.initRuleAddDialog("monitor", _this);//添加规则对话框
+            L.Common.initRuleDeleteDialog("monitor", _this);//删除规则对话框
+            L.Common.initRuleEditDialog("monitor", _this);//编辑规则对话框
 
 
             L.Common.initConditionAddOrRemove();//添加或删除条件
@@ -26,9 +26,11 @@
             L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
             L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
 
-            L.Common.initViewAndDownloadEvent("url_monitor");
+            L.Common.initViewAndDownloadEvent("monitor");
 
-            L.Common.initSwitchBtn("url_monitor");//redirect关闭、开启
+            L.Common.initSwitchBtn("monitor");//redirect关闭、开启
+
+            _this.initStatisticBtnEvent();
         },
 
         buildRule: function(){
@@ -81,16 +83,29 @@
             return result;
         },
 
+        initStatisticBtnEvent:function(){
+            $(document).on( "click",".statistic-btn", function(){
+                var self = $(this);
+                var rule_id = self.attr("data-id");
+                var rule_name = self.attr("data-name");
+                if(!rule_id){
+                    return;
+                }
+                window.location.href = "/monitor/rule/statistic?rule_id="+rule_id+"&rule_name="+encodeURI(rule_name);
+            });
+
+        },
+
         loadConfigs: function () {
             $.ajax({
-                url: '/url_monitor/configs',
+                url: '/monitor/configs',
                 type: 'get',
                 data: {},
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
                         if(result.data){
-                            L.Common.resetSwitchBtn(result.data.enable, "url_monitor");
+                            L.Common.resetSwitchBtn(result.data.enable, "monitor");
                             $("#switch-btn").show();
                             $("#view-btn").show();
                             _this.renderTable(result.data);//渲染table
@@ -99,11 +114,11 @@
                         }
 
                     }else{
-                        L.Common.showTipDialog("错误提示", "查询URL监控配置请求发生错误");
+                        L.Common.showTipDialog("错误提示", "查询自定义监控配置请求发生错误");
                     }
                 },
                 error: function () {
-                    L.Common.showTipDialog("提示", "查询URL监控配置请求发生异常");
+                    L.Common.showTipDialog("提示", "查询自定义监控配置请求发生异常");
                 }
             });
         },

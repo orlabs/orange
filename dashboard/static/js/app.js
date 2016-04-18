@@ -378,8 +378,8 @@
             } else if (type == "divide") {
                 data = L.Divide.data;
                 rules_key = "rules";
-            } else if (type == "url_monitor") {
-                data = L.URLMonitor.data;
+            } else if (type == "monitor") {
+                data = L.Monitor.data;
                 rules_key = "rules";
             } else {
                 return;
@@ -433,8 +433,8 @@
                 op_type = "waf";
             } else if (type == "divide") {
                 op_type = "divide";
-            } else if (type == "url_monitor") {
-                op_type = "url_monitor";
+            } else if (type == "monitor") {
+                op_type = "monitor";
             } else {
                 return;
             }
@@ -552,8 +552,8 @@
             } else if (type == "divide") {
                 op_type = "divide";
                 rules_key = "rules";
-            } else if (type == "url_monitor") {
-                op_type = "url_monitor";
+            } else if (type == "monitor") {
+                op_type = "monitor";
                 rules_key = "rules";
             } else {
                 return;
@@ -636,8 +636,8 @@
             } else if (type == "divide") {
                 op_type = "divide";
                 rules_key = "rules";
-            } else if (type == "url_monitor") {
-                op_type = "url_monitor";
+            } else if (type == "monitor") {
+                op_type = "monitor";
                 rules_key = "rules";
             } else {
                 return;
@@ -742,8 +742,8 @@
             } else if (type == "divide") {
                 op_type = "divide";
                 rules_key = "rules";
-            } else if (type == "url_monitor") {
-                op_type = "url_monitor";
+            } else if (type == "monitor") {
+                op_type = "monitor";
                 rules_key = "rules";
             } else {
                 return;
@@ -808,8 +808,8 @@
                 op_type = "waf";
             } else if (type == "divide") {
                 op_type = "divide";
-            } else if (type == "url_monitor") {
-                op_type = "url_monitor";
+            } else if (type == "monitor") {
+                op_type = "monitor";
             } else {
                 return;
             }

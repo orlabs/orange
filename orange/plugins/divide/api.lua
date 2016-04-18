@@ -13,7 +13,7 @@ API["/divide/enable"] = {
                 enable = false
             end
 
-            local current_divide_config = store:get("divide_config")
+            local current_divide_config = store:get("divide_config") or {}
             current_divide_config.enable = enable
 
             -- save to file
@@ -40,7 +40,7 @@ API["/divide/configs"] = {
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get("divide_config")
+                data = store:get("divide_config") or {}
             }
 
             res:json(result)
@@ -53,7 +53,8 @@ API["/divide/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
             -- check
-            local current_divide_config = store:get("divide_config") or {rules={}}
+            local current_divide_config = store:get("divide_config") or {rules={} }
+            current_divide_config.rules = current_divide_config.rules or {}
             table_insert(current_divide_config.rules, rule)
 
             -- save to file

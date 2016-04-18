@@ -13,7 +13,7 @@ API["/redirect/enable"] = {
                 enable = false
             end
 
-            local current_redirect_config = store:get("redirect_config")
+            local current_redirect_config = store:get("redirect_config") or {}
             current_redirect_config.enable = enable
 
             -- save to file
@@ -40,7 +40,7 @@ API["/redirect/configs"] = {
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get("redirect_config")
+                data = store:get("redirect_config") or {}
             }
 
             res:json(result)
@@ -54,7 +54,9 @@ API["/redirect/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
         	-- check
-        	local current_redirect_config = store:get("redirect_config") or {rules={}}
+        	local current_redirect_config = store:get("redirect_config") or {rules={} }
+            current_redirect_config.rules = current_redirect_config.rules or {}
+
         	table_insert(current_redirect_config.rules, rule)
 
         	-- save to file
@@ -88,7 +90,7 @@ API["/redirect/configs"] = {
             local current_redirect_config = store:get("redirect_config")
             local old_rules = current_redirect_config.rules
             local new_rules = {}
-            for i, v in ipairs(old_rules) do 
+            for i, v in ipairs(old_rules) do
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
@@ -123,7 +125,7 @@ API["/redirect/configs"] = {
             local current_redirect_config = store:get("redirect_config")
             local old_rules = current_redirect_config.rules
             local new_rules = {}
-            for i, v in ipairs(old_rules) do 
+            for i, v in ipairs(old_rules) do
                 if v.id == rule.id then
                     rule.time = utils.now()
                     table_insert(new_rules, rule)

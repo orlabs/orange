@@ -9,7 +9,7 @@ return function(config, store)
 	local rewrite_api = require("orange.plugins.rewrite.api")
 	local redirect_api = require("orange.plugins.redirect.api")
     local divide_api = require("orange.plugins.divide.api")
-    local url_monitor_api = require("orange.plugins.url_monitor.api")
+    local monitor_api = require("orange.plugins.monitor.api")
 
 	dashboard_router:get("/", function(req, res, next)
 		--- 全局信息
@@ -56,8 +56,16 @@ return function(config, store)
         res:render("status")
     end)
 
-    dashboard_router:get("/url_monitor", function(req, res, next)
-        res:render("url_monitor")
+    dashboard_router:get("/monitor", function(req, res, next)
+        res:render("monitor")
+    end)
+    dashboard_router:get("/monitor/rule/statistic", function(req, res, next)
+        local rule_id = req.query.rule_id;
+        local rule_name = req.query.rule_name or "";
+        res:render("monitor-rule-stat", {
+            rule_id = rule_id,
+            rule_name = rule_name
+        })
     end)
 
 
@@ -85,12 +93,12 @@ return function(config, store)
 
 	dashboard_router:get("/stat/status", stat_api["/stat/status"])
 
-    dashboard_router:get("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].GET(store))
-    dashboard_router:post("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].POST(store))
-    dashboard_router:delete("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].DELETE(store))
-    dashboard_router:put("/url_monitor/configs", url_monitor_api["/url_monitor/configs"].PUT(store))
-    dashboard_router:post("/url_monitor/enable", url_monitor_api["/url_monitor/enable"].POST(store))
-    dashboard_router:get("/url_monitor/stat", url_monitor_api["/url_monitor/stat"].GET(store))
+    dashboard_router:get("/monitor/configs", monitor_api["/monitor/configs"].GET(store))
+    dashboard_router:post("/monitor/configs", monitor_api["/monitor/configs"].POST(store))
+    dashboard_router:delete("/monitor/configs", monitor_api["/monitor/configs"].DELETE(store))
+    dashboard_router:put("/monitor/configs", monitor_api["/monitor/configs"].PUT(store))
+    dashboard_router:post("/monitor/enable", monitor_api["/monitor/enable"].POST(store))
+    dashboard_router:get("/monitor/stat", monitor_api["/monitor/stat"].GET(store))
 
 
 	dashboard_router:get("/waf/configs", waf_api["/waf/configs"].GET(store))

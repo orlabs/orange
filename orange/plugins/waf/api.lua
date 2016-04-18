@@ -16,7 +16,7 @@ API["/waf/enable"] = {
                 enable = false
             end
 
-            local current_waf_config = store:get("waf_config")
+            local current_waf_config = store:get("waf_config") or {}
             current_waf_config.enable = enable
 
             -- save to file
@@ -83,7 +83,7 @@ API["/waf/configs"] = {
         return function(req, res, next)
             local result = {
                 success = true,
-                data = store:get_waf_config()
+                data = store:get_waf_config() or {}
             }
 
             res:json(result)
@@ -97,7 +97,8 @@ API["/waf/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
         	-- check
-        	local current_waf_config = store:get("waf_config") or {rules={}}
+        	local current_waf_config = store:get("waf_config") or {rules={} }
+            current_waf_config.rules = current_waf_config.rules or {}
         	table_insert(current_waf_config.rules, rule)
 
         	-- save to file
@@ -131,7 +132,7 @@ API["/waf/configs"] = {
             local current_waf_config = store:get("waf_config")
             local old_rules = current_waf_config.rules
             local new_rules = {}
-            for i, v in ipairs(old_rules) do 
+            for i, v in ipairs(old_rules) do
                 if v.id ~= rule_id then
                     table_insert(new_rules, v)
                 end
@@ -166,7 +167,7 @@ API["/waf/configs"] = {
             local current_waf_config = store:get("waf_config")
             local old_rules = current_waf_config.rules
             local new_rules = {}
-            for i, v in ipairs(old_rules) do 
+            for i, v in ipairs(old_rules) do
                 if v.id == rule.id then
                     rule.time = utils.now()
                     table_insert(new_rules, rule)

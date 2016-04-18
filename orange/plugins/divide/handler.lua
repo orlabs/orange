@@ -49,7 +49,7 @@ end
 function DivideHandler:access(conf)
     DivideHandler.super.access(self)
     local divide_config = self.store:get("divide_config")
-    if divide_config.enable ~= true then
+    if not divide_config or divide_config.enable ~= true then
         return
     end
 
