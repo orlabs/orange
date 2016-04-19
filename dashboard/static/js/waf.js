@@ -37,6 +37,7 @@
                     $.ajax({
                         url: '/waf/stat',
                         type: 'get',
+                        cache:false,
                         data: {},
                         dataType: 'json',
                         success: function (result) {
@@ -215,6 +216,7 @@
             $.ajax({
                 url: '/waf/configs',
                 type: 'get',
+                cache:false,
                 data: {},
                 dataType: 'json',
                 success: function (result) {

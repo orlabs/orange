@@ -457,6 +457,7 @@
                                 $.ajax({
                                     url: '/' + op_type + '/enable',
                                     type: 'post',
+                                    cache:false,
                                     data: {
                                         enable: "0"
                                     },
@@ -503,6 +504,7 @@
                                 $.ajax({
                                     url: '/' + op_type + '/enable',
                                     type: 'post',
+                                    cache:false,
                                     data: {
                                         enable: "1"
                                     },
@@ -585,6 +587,7 @@
                                 $.ajax({
                                     url: '/' + op_type + '/configs',
                                     type: 'put',
+                                    cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
                                     },
@@ -691,6 +694,7 @@
                                 $.ajax({
                                     url: '/' + op_type + '/configs',
                                     type: 'post',
+                                    cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
                                     },
@@ -768,6 +772,7 @@
                             $.ajax({
                                 url: '/' + op_type + '/configs',
                                 type: 'delete',
+                                cache:false,
                                 data: {
                                     rule_id: rule_id
                                 },

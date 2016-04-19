@@ -104,6 +104,7 @@
             $.ajax({
                 url: '/rewrite/configs',
                 type: 'get',
+                cache:false,
                 data: {},
                 dataType: 'json',
                 success: function (result) {

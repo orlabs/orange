@@ -91,6 +91,7 @@
             $.ajax({
                 url: '/divide/configs',
                 type: 'get',
+                cache:false,
                 data: {},
                 dataType: 'json',
                 success: function (result) {

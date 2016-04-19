@@ -103,6 +103,7 @@
             $.ajax({
                 url: '/redirect/configs',
                 type: 'get',
+                cache:false,
                 data: {},
                 dataType: 'json',
                 success: function (result) {
