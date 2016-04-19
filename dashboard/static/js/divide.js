@@ -63,12 +63,12 @@
 
             //build upstream
             var upstream_host = $("#rule-upstream-host").val();
-            if (!upstream_host) {
-                result.success = false;
-                result.data = "upstream host不得为空";
-                return result;
-            }
-            result.data.upstream_host = upstream_host;
+            // if (!upstream_host) {
+            //     result.success = false;
+            //     result.data = "upstream host不得为空";
+            //     return result;
+            // }
+            result.data.upstream_host = upstream_host||"";
 
             var upstream_url = $("#rule-upstream-url").val();
             if (!upstream_url) {

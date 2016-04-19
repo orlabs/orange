@@ -87,8 +87,14 @@ function DivideHandler:access(conf)
                     ngx.log(ngx.ERR, "[Divide-Match-Rule] ", rule.name, " host:", ngx_var.host, " uri:", ngx_var.uri)
                 end
 
-                if rule.upstream_host and rule.upstream_url then
-                    ngx_var.upstream_host = handle_util.build_upstream_host(rule.upstream_host, variables, self:get_name())
+                if rule.upstream_url then
+                    if not rule.upstream_host or rule.upstream_host=="" then -- 不写host默认取请求的host
+                        ngx_var.upstream_host = ngx_var.host
+                    else 
+                        ngx_var.upstream_host = handle_util.build_upstream_host(rule.upstream_host, variables, self:get_name())
+                    end
+
+
                     -- 外部upstream
                     -- ngx.var.upstream_url = rule.upstream_url .. strip_request_path(uri, uri_condition) .. qs
                     -- 内部upstream
