@@ -48,13 +48,13 @@ end
 
 function FileStore:set(k, v)
     if not k or k == "" then return false, "nil key." end
-    ngx.log(ngx.DEBUG, " file_store \"" .. self._name .. "\" set:" .. k, " v:", v)
+    ngx.log(ngx.ERR, " file_store \"" .. self._name .. "\" set:" .. k, " v:", v)
     self.data[k] = v
 end
 
 function FileStore:get(k)
     if not k or k == "" then return nil end
-    ngx.log(ngx.DEBUG, " file_store \"" .. self._name .. "\" get:" .. k)
+    ngx.log(ngx.ERR, " file_store \"" .. self._name .. "\" get:" .. k)
     return self.data[k]
 end
 
