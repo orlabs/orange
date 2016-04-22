@@ -7,7 +7,9 @@ local FileStore = Store:extend()
 
 function FileStore:new(options)
     options = options or {}
-    FileStore.super.new(self, options.name or "file-store")
+    self._name = options.name or "file-store"
+    FileStore.super.new(self, self._name)
+    self.store_type = "file"
     self.file_path = options.file_path
     self.data = {}
     if not self.loaded then
@@ -23,9 +25,6 @@ function FileStore:load()
         local config = cjson.decode(config_content)
         if config then
             self.data = config
-            self.data.redirect_config = self.data.redirect_config or {}
-            self.data.rewrite_config = self.data.rewrite_config or {}
-            self.data.waf_config = self.data.waf_config or {}
         end
     end)
     if not status or err then
@@ -34,27 +33,16 @@ function FileStore:load()
     end
 end
 
-function FileStore:get_redirect_config()
-    return self.data.redirect_config
-end
-
-function FileStore:get_rewrite_config()
-    return self.data.rewrite_config
-end
-
-function FileStore:get_waf_config()
-    return self.data.waf_config
-end
 
 function FileStore:set(k, v)
     if not k or k == "" then return false, "nil key." end
-    ngx.log(ngx.ERR, " file_store \"" .. self._name .. "\" set:" .. k, " v:", v)
+    ngx.log(ngx.ERR, " file_store \"", self._name, "\" set:", k)
     self.data[k] = v
 end
 
 function FileStore:get(k)
     if not k or k == "" then return nil end
-    ngx.log(ngx.ERR, " file_store \"" .. self._name .. "\" get:" .. k)
+    ngx.log(ngx.ERR, " file_store \"", self._name, "\" get:", k)
     return self.data[k]
 end
 
@@ -68,6 +56,8 @@ function FileStore:store()
     local result, err = IO.write_to_file(self.file_path, config_content)
 
     if result and not err then
+        ngx.log(ngx.ERR, " file_store store success.")
+        self:load()
         return true
     else
         ngx.log(ngx.ERR, " file_store store error:", err)

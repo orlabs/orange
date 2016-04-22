@@ -17,7 +17,7 @@ end
 
 function WAFHandler:access(conf)
     WAFHandler.super.access(self)
-    local access_config = self.store:get_waf_config()
+    local access_config = self.store:ge("waf_config")
     if not access_config or access_config.enable ~= true then
         return
     end

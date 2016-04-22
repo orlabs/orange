@@ -4,8 +4,10 @@ local Store = require("orange.store.base")
 local RedisStore = Store:extend()
 
 
-function RedisStore:new(name)
-    self._name = name
+function RedisStore:new(options)
+    options = options or {}
+    RedisStore.super.new(self, "redis-store")
+    self.store_type = "redis"
 end
 
 function RedisStore:set(k, v)

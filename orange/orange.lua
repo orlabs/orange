@@ -1,11 +1,14 @@
 local ipairs = ipairs
 local table_insert = table.insert
 local table_sort = table.sort
-
-local utils = require "orange.utils.utils"
-local config_loader = require "orange.utils.config_loader"
+local pcall = pcall
+local type = type
+local require = require
+local cjson = require("cjson")
+local utils = require("orange.utils.utils")
+local config_loader = require("orange.utils.config_loader")
+local orange_db = require("orange.store.orange_db")
 local logger = require("orange.utils.logger")
-
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -82,6 +85,54 @@ local function iter_plugins_for_req(loaded_plugins, is_access)
     end
 end
 
+local function load_data_by_file()
+end
+
+--- load data for orange and its plugins from MySQL
+-- ${plugin}.enable
+-- ${plugin}.rules
+local function load_data_by_mysql(store, config)
+    -- 查找enable
+    local enables, err = store:query({
+        sql = "select `key`, `value` from meta where `key` like \"%.enable\""
+    })
+
+    if err then
+        ngx.log(ngx.ERR, "Load Meta Data error: ", err)
+        os.exit(1)
+    end
+
+    if enables and type(enables) == "table" and #enables > 0 then
+        for i, v in ipairs(enables) do
+            orange_db.set(v.key, v.value == "1")
+        end
+    end
+
+    local available_plugins = config.plugins
+    for i, v in ipairs(available_plugins) do
+        if v ~= "stat" then
+            local rules, err = store:query({
+                sql = "select `value` from " .. v .. " order by id asc"
+            })
+
+            if err then
+                ngx.log(ngx.ERR, "Load Plugin Rules Data error: ", err)
+                os.exit(1)
+            end
+
+            if rules and type(rules) == "table" and #rules > 0 then
+                local format_rules = {}
+                for i, v in ipairs(rules) do
+                    table_insert(format_rules, cjson.decode(v.value))
+                end
+                orange_db.set_json(v .. ".rules", format_rules)
+            end
+        end
+    end
+end
+
+
+
 -- ########################### Orange #############################
 local Orange = {}
 
@@ -97,33 +148,50 @@ function Orange.init(options)
         local conf_file_path = options.config
         config = config_loader.load(conf_file_path)
         local store_type = config.store
-        
+
         if store_type == "file" then
             store = require("orange.store.file_store")({
                 file_path = config.store_file.path
             })
+            load_data_by_file(store, config)
         elseif store_type == "redis" then
             store = require("orange.store.redis_store")()
         elseif store_type == "mysql" then
-            store = require("orange.store.mysql_store")()
+            store = require("orange.store.mysql_store")(config.store_mysql)
         end
-
 
         loaded_plugins = load_node_plugins(config, store)
         ngx.update_time()
         config.orange_start_at = ngx.now()
     end)
+
     if not status or err then
         ngx.log(ngx.ERR, "Startup error: " .. err)
         os.exit(1)
     end
 
+    Orange.data = {
+        store = store,
+        config = config
+    }
+
     return config, store
 end
 
 function Orange.init_worker()
-    -- 初始化定时器
-    -- 清理计数器
+    -- 初始化定时器，清理计数器等
+    if Orange.data and Orange.data.store and Orange.data.config.store == "mysql" then
+        local worker_id = ngx.worker.id()
+        if worker_id == 0 then
+            local ok, err = ngx.timer.at(0, function(premature, store, config)
+                load_data_by_mysql(store, config)
+            end, Orange.data.store, Orange.data.config)
+            if not ok then
+                ngx.log(ngx.ERR, "failed to create the timer: ", err)
+                return
+            end
+        end
+    end
 
     for _, plugin in ipairs(loaded_plugins) do
         plugin.handler:init_worker()
@@ -173,7 +241,7 @@ end
 
 function Orange.header_filter()
 
-    if ngx.ctx.ACCESSED  then
+    if ngx.ctx.ACCESSED then
         local now = now()
         ngx.ctx.ORANGE_WAITING_TIME = now - ngx.ctx.ORANGE_ACCESS_ENDED_AT -- time spent waiting for a response from upstream
         ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now
