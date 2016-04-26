@@ -494,6 +494,10 @@ tr.highlight{
     background-color: #FFFDDD;
 }
 
+#preview_plugin_config {
+    max-height:300px;
+}
+
 #rules td.left {
     padding-left:10px
 }

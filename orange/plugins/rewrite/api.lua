@@ -52,17 +52,77 @@ API["/rewrite/enable"] = {
     end
 }
 
-API["/rewrite/configs/sync"] = {
-    -- fetch data from db and update the local cache
+API["/rewrite/fetch_config"] = {
+    -- fetch data from db
     GET = function(store)
         local store_type = store.store_type
 
         return function(req, res, next)
             local success, data = false, {}
             if store_type == "file" then
-                -- do nothing...
                 success = true
-                data = store:get("rewrite_config") or { enable = false, rules = {} }
+                data = store:get("divide_config") or { enable = false, rules = {} }
+            elseif store_type == "mysql" then
+                -- 查找enable
+                local enable, err1 = store:query({
+                    sql = "select `value` from meta where `key`=?",
+                    params = { "rewrite.enable" }
+                })
+
+                if err1 then
+                    return res:json({
+                        success = false,
+                        msg = "get enable error"
+                    })
+                end
+
+                if enable and type(enable) == "table" and #enable == 1 and enable[1].value == "1" then
+                    data.enable = true
+                else
+                    data.enable = false
+                end
+
+                -- 查找rules
+                local rules, err2 = store:query({
+                    sql = "select `value` from rewrite order by id asc"
+                })
+                if err2 then
+                    return res:json({
+                        success = false,
+                        msg = "get rules error"
+                    })
+                end
+
+                if rules and type(rules) == "table" and #rules > 0 then
+                    local format_rules = {}
+                    for i, v in ipairs(rules) do
+                        table_insert(format_rules, cjson.decode(v.value))
+                    end
+                    data.rules = format_rules
+                    success = true
+                else
+                    success = true
+                    data.rules = {}
+                end
+            end
+
+            res:json({
+                success = success,
+                data = data
+            })
+        end
+    end,
+}
+
+API["/rewrite/sync"] = {
+    -- update the local cache to data stored in db
+    POST = function(store)
+        local store_type = store.store_type
+
+        return function(req, res, next)
+            local success, data = false, {}
+            if store_type == "file" then
+                success = true
             elseif store_type == "mysql" then
                 -- 查找enable
                 local enable, err1 = store:query({
@@ -105,20 +165,22 @@ API["/rewrite/configs/sync"] = {
                 end
 
 
-                local success, err3, forcible = orange_db.set("rewrite.enable", data.enable)
-                if not success or err3 then
+                local ss, err3, forcible = orange_db.set("rewrite.enable", data.enable)
+                if not ss or err3 then
                     return res:json({
                         success = false,
                         msg = "update local enable error"
                     })
                 end
-                success, err3, forcible = orange_db.set_json("rewrite.rules", data.rules)
-                if not success or err3 then
+                ss, err3, forcible = orange_db.set_json("rewrite.rules", data.rules)
+                if not ss or err3 then
                     return res:json({
                         success = false,
                         msg = "update local rules error"
                     })
                 end
+
+                success = true
             end
 
             res:json({

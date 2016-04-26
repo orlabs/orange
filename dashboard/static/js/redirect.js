@@ -16,6 +16,7 @@
             L.Common.initRuleAddDialog("redirect", _this);//添加规则对话框
             L.Common.initRuleDeleteDialog("redirect", _this);//删除规则对话框
             L.Common.initRuleEditDialog("redirect", _this);//编辑规则对话框
+            L.Common.initSyncDialog("redirect", _this);//编辑规则对话框
 
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件

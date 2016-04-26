@@ -624,6 +624,93 @@
             });
         },
 
+        initSyncDialog: function (type, context) {
+            var op_type = "";
+            var rules_key = "";
+            if (type == "redirect") {
+                op_type = "redirect";
+                rules_key = "rules";
+            } else if (type == "rewrite") {
+                op_type = "rewrite";
+                rules_key = "rules";
+            } else if (type == "waf") {
+                op_type = "waf";
+                rules_key = "rules";
+            } else if (type == "divide") {
+                op_type = "divide";
+                rules_key = "rules";
+            } else if (type == "monitor") {
+                op_type = "monitor";
+                rules_key = "rules";
+            } else {
+                return;
+            }
+
+            $("#sync-btn").click(function () {
+                $.ajax({
+                    url: '/' + op_type + '/fetch_config',
+                    type: 'get',
+                    cache:false,
+                    data: {},
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            var d = dialog({
+                                title: '确定要从存储中同步配置吗?',
+                                width: 680,
+                                content: '<pre id="preview_plugin_config"><code></code></pre>',
+                                modal: true,
+                                button: [{
+                                    value: '取消'
+                                }, {
+                                    value: '确定同步',
+                                    autofocus: false,
+                                    callback: function () {
+                                        $.ajax({
+                                            url: '/' + op_type + '/sync',
+                                            type: 'post',
+                                            cache:false,
+                                            data: {},
+                                            dataType: 'json',
+                                            success: function (r) {
+                                                if (r.success) {
+                                                    context.data.rules = result.data[rules_key];//重新设置数据
+                                                    context.renderTable(result.data);//渲染table
+                                                    return true;
+                                                } else {
+                                                    L.Common.showErrorTip("提示", r.msg || "同步配置发生错误");
+                                                    return false;
+                                                }
+                                            },
+                                            error: function () {
+                                                L.Common.showErrorTip("提示", "同步配置请求发生异常");
+                                                return false;
+                                            }
+                                        });
+                                    }
+                                }
+                                ]
+                            });
+                            d.show();
+
+                            $("#preview_plugin_config code").text(JSON.stringify(result.data, null, 2));
+                            $('pre code').each(function () {
+                                hljs.highlightBlock($(this)[0]);
+                            });
+                        } else {
+                            L.Common.showErrorTip("提示", result.msg || "从存储中获取该插件配置发生错误");
+                            return;
+                        }
+                    },
+                    error: function () {
+                        L.Common.showErrorTip("提示", "从存储中获取该插件配置请求发生异常");
+                        return false;
+                    }
+                });
+                
+            });
+        },
+
         initRuleEditDialog: function (type, context) {
             var op_type = "";
             var rules_key = "";

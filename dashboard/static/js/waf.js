@@ -15,6 +15,7 @@
             L.Common.initRuleAddDialog("waf", _this);//添加规则对话框
             L.Common.initRuleDeleteDialog("waf", _this);//删除规则对话框
             L.Common.initRuleEditDialog("waf", _this);//编辑规则对话框
+            L.Common.initSyncDialog("waf", _this);//编辑规则对话框
 
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件

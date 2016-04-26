@@ -16,6 +16,7 @@
             L.Common.initRuleAddDialog("divide", _this);//添加规则对话框
             L.Common.initRuleDeleteDialog("divide", _this);//删除规则对话框
             L.Common.initRuleEditDialog("divide", _this);//编辑规则对话框
+            L.Common.initSyncDialog("divide", _this);//编辑规则对话框
 
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
