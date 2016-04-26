@@ -12,6 +12,7 @@ local type = type
 
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
+local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
@@ -48,7 +49,17 @@ end
 
 function DivideHandler:access(conf)
     DivideHandler.super.access(self)
-    local divide_config = self.store:get("divide_config")
+    
+    local divide_config 
+    if self.store.store_type == "file" then
+        divide_config = self.store:get("divide_config")
+    elseif self.store.store_type == "mysql" then
+        divide_config = {
+            enable = orange_db.get("divide.enable"),
+            rules = orange_db.get_json("divide.rules")
+        }
+    end
+
     if not divide_config or divide_config.enable ~= true then
         return
     end

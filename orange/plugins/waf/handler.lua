@@ -1,6 +1,7 @@
 local pairs = pairs
 local ipairs = ipairs
 local cjson = require("cjson")
+local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
@@ -17,7 +18,17 @@ end
 
 function WAFHandler:access(conf)
     WAFHandler.super.access(self)
-    local access_config = self.store:ge("waf_config")
+
+    local access_config 
+    if self.store.store_type == "file" then
+        access_config = self.store:get("waf_config")
+    elseif self.store.store_type == "mysql" then
+        access_config = {
+            enable = orange_db.get("waf.enable"),
+            rules = orange_db.get_json("waf.rules")
+        }
+    end
+
     if not access_config or access_config.enable ~= true then
         return
     end

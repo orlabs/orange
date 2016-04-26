@@ -1,6 +1,7 @@
 local pairs = pairs
 local ipairs = ipairs
 local string_len = string.len
+local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
@@ -17,7 +18,17 @@ end
 
 function RewriteHandler:rewrite(conf)
     RewriteHandler.super.rewrite(self)
-    local rewrite_config = self.store:get_rewrite_config()
+
+    local rewrite_config 
+    if self.store.store_type == "file" then
+        rewrite_config = self.store:get("rewrite_config")
+    elseif self.store.store_type == "mysql" then
+        rewrite_config = {
+            enable = orange_db.get("rewrite.enable"),
+            rules = orange_db.get_json("rewrite.rules")
+        }
+    end
+    
     if not rewrite_config or rewrite_config.enable ~= true then
         return
     end

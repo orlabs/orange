@@ -1,5 +1,6 @@
 local pairs = pairs
 local ipairs = ipairs
+local orange_db = require("orange.store.orange_db")
 local stat = require("orange.plugins.monitor.stat")
 local judge_util = require("orange.utils.judge")
 local handle_util = require("orange.utils.handle")
@@ -15,7 +16,17 @@ end
 
 function URLMonitorHandler:log(conf)
     URLMonitorHandler.super.log(self)
-    local monitor_config = self.store:get("monitor_config")
+
+    local monitor_config 
+    if self.store.store_type == "file" then
+        monitor_config = self.store:get("divide_config")
+    elseif self.store.store_type == "mysql" then
+        monitor_config = {
+            enable = orange_db.get("monitor.enable"),
+            rules = orange_db.get_json("monitor.rules")
+        }
+    end
+
     if not monitor_config or monitor_config.enable ~= true then
         return
     end

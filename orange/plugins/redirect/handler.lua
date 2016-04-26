@@ -4,6 +4,7 @@ local string_len = string.len
 local string_find = string.find
 local ngx_re_gsub = ngx.re.gsub
 local ngx_redirect = ngx.redirect
+local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
@@ -20,7 +21,17 @@ end
 
 function RedirectHandler:redirect()
     RedirectHandler.super.redirect(self)
-    local redirect_config = self.store:get_redirect_config()
+
+    local redirect_config 
+    if self.store.store_type == "file" then
+        redirect_config = self.store:get("redirect_config")
+    elseif self.store.store_type == "mysql" then
+        redirect_config = {
+            enable = orange_db.get("redirect.enable"),
+            rules = orange_db.get_json("redirect.rules")
+        }
+    end
+    
     if not redirect_config or redirect_config.enable ~= true then
         return
     end
