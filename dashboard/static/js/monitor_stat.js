@@ -109,12 +109,18 @@
 
                             //流量统计
                             var trafficOption = _this.data.trafficChart.getOption();
-                            var data0 = trafficOption.series[0].data;
-                            var data1 = trafficOption.series[1].data;
+                            data0 = trafficOption.series[0].data;
+                            data1 = trafficOption.series[1].data;
+                            data2 = trafficOption.series[2].data;
+                            data3 = trafficOption.series[3].data;
                             data0.shift();
                             data0.push(Math.round(data.traffic_read/1024));
                             data1.shift();
                             data1.push(Math.round(data.traffic_write/1024));
+                            data2.shift();
+                            data2.push(Math.round(data.average_traffic_read));
+                            data3.shift();
+                            data3.push(Math.round(data.average_traffix_write));
                             trafficOption.xAxis[0].data.shift();
                             trafficOption.xAxis[0].data.push(axisData);
                             _this.data.trafficChart.setOption(trafficOption);
@@ -466,7 +472,7 @@
                     trigger: 'axis'
                 },
                 legend: {
-                    data:['in','out']
+                    data:['总入(kb)','总出(kb)','均入(bytes)','均出(bytes)']
                 },
                 xAxis : [
                     {
@@ -488,12 +494,12 @@
                     {
                         type : 'value',
                         scale: true,
-                        name : 'kbytes'
+                        name : ''
                     }
                 ],
                 series : [
                     {
-                        name:'in',
+                        name:'总入(kb)',
                         type:'line',
                         smooth: true,
                         data:(function (){
@@ -504,10 +510,30 @@
                             }
                             return res;
                         })()
-                    },
-
-                    {
-                        name:'out',
+                    },{
+                        name:'总出(kb)',
+                        type:'line',
+                        data:(function (){
+                            var res = [];
+                            var len = 100;
+                            while (len--) {
+                                res.push(0);
+                            }
+                            return res;
+                        })()
+                    },{
+                        name:'均入(bytes)',
+                        type:'line',
+                        data:(function (){
+                            var res = [];
+                            var len = 100;
+                            while (len--) {
+                                res.push(0);
+                            }
+                            return res;
+                        })()
+                    },{
+                        name:'均出(bytes)',
                         type:'line',
                         data:(function (){
                             var res = [];

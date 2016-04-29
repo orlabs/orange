@@ -96,8 +96,8 @@ function _M.count(key_suffix)
     end
 
 
-    safe_count(TRAFFIC_READ .. key_suffix, ngx_var.request_length)
-    safe_count(TRAFFIC_WRITE .. key_suffix, ngx_var.bytes_sent)
+    safe_count(TRAFFIC_READ .. key_suffix, tonumber(ngx_var.request_length))
+    safe_count(TRAFFIC_WRITE .. key_suffix, tonumber(ngx_var.bytes_sent))
     safe_count(TOTAL_REQUEST_TIME .. key_suffix, ngx.now() - ngx.req.start_time())
 end
 
