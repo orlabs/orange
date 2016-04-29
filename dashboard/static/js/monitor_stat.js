@@ -102,7 +102,7 @@
                             data0.shift();
                             data0.push(data.total_request_time);
                             data1.shift();
-                            data1.push(data.average_request_time);
+                            data1.push(data.average_request_time*1000);
                             responseOption.xAxis[0].data.shift();
                             responseOption.xAxis[0].data.push(axisData);
                             _this.data.responseChart.setOption(responseOption);
@@ -388,7 +388,7 @@
                     trigger: 'axis'
                 },
                 legend: {
-                    data:['总响应时间','平均响应时间']
+                    data:['总时间(s)','平均响应时间(ms)']
                 },
                 xAxis : [
                     {
@@ -410,12 +410,12 @@
                     {
                         type : 'value',
                         scale: true,
-                        name : '秒'
+                        name : ''
                     }
                 ],
                 series : [
                     {
-                        name:'总时间',
+                        name:'总时间(s)',
                         type:'line',
                         itemStyle: {
                             normal: {
@@ -432,7 +432,7 @@
                         })()
                     },
                     {
-                        name:'平均请求时间',
+                        name:'平均响应时间(ms)',
                         type:'line',
                         itemStyle: {
                             normal: {

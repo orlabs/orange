@@ -101,9 +101,9 @@
                             var data0 = trafficOption.series[0].data;
                             var data1 = trafficOption.series[1].data;
                             data0.shift();
-                            data0.push(Math.round(data.traffic_read/1024));
+                            data0.push(Math.round(data.traffic_read/1024/1024));
                             data1.shift();
-                            data1.push(Math.round(data.traffic_write/1024));
+                            data1.push(Math.round(data.traffic_write/1024/1024));
                             trafficOption.xAxis[0].data.shift();
                             trafficOption.xAxis[0].data.push(axisData);
                             _this.data.trafficChart.setOption(trafficOption);
@@ -368,7 +368,7 @@
 	            ],
 	            series : [
 	                {
-	                    name:'秒',
+	                    name:'响应时间',
 	                    type:'line',
 	                    smooth: true,
 	                    symbol: 'none',
@@ -405,7 +405,7 @@
 	                trigger: 'axis'
 	            },
 	            legend: {
-	                data:['in','out']
+	                data:['流入','流出']
 	            },
 	            xAxis : [
 	                {
@@ -427,12 +427,12 @@
 	                {
 	                    type : 'value',
 	                    scale: true,
-	                    name : 'kbytes'
+	                    name : 'mbytes'
 	                }
 	            ],
 	            series : [
 	                {
-	                    name:'in',
+	                    name:'流入',
 	                    type:'line',
 	                    smooth: true,
 	                    data:(function (){
@@ -446,7 +446,7 @@
 	                },
 
 	                {
-	                    name:'out',
+	                    name:'流出',
 	                    type:'line',
 	                    data:(function (){
 	                        var res = [];
