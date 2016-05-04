@@ -61,3 +61,8 @@ Find all about **Orange** on [Documents Website](http://orange.sumory.com/docs).
 ### See also
 
 The architecture is highly inspired by [Kong](https://github.com/Mashape/kong).
+
+
+### License
+
+[MIT](./LICENSE)
