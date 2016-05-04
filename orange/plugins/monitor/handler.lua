@@ -34,6 +34,10 @@ function URLMonitorHandler:log(conf)
     local ngx_var_uri = ngx.var.uri
 
     local rules = monitor_config.rules
+    if not rules or type(rules) ~= "table" or #rules<=0 then
+        return
+    end
+    
     for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then

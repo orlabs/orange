@@ -34,6 +34,10 @@ function WAFHandler:access(conf)
     end
 
     local rules = access_config.rules
+    if not rules or type(rules) ~= "table" or #rules<=0 then
+        return
+    end
+    
     for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then

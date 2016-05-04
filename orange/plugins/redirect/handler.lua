@@ -42,6 +42,10 @@ function RedirectHandler:redirect()
     local ngx_var_scheme = ngx_var.scheme
 
     local rules = redirect_config.rules
+    if not rules or type(rules) ~= "table" or #rules<=0 then
+        return
+    end
+    
     for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then
