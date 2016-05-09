@@ -39,14 +39,6 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
             "pool_size": 3
         },
         "desc": "mysql configuration"
-    },
-    "dashboard": {//dashboard configuration. if `store` is `mysql`, this will make sense
-        "auth": false, //if the dashboard UI shoule be authorized
-        "session_secret": "y0ji4pdj61aaf3f11c2e65cd2263d3e7e5", // used to encrypt cookie
-        "whitelist": [//needn't check authorization
-            "^/auth/login$",
-            "^/error/$"
-        ]
     }
 }
 ```
