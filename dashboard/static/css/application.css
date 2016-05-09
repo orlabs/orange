@@ -443,6 +443,15 @@ kbd {
     border-bottom: 0px solid #FFFFFF;
 }
 
+#user-op li a, #user-op li.active a{
+    padding-bottom:8px;
+    padding-top:8px;
+}
+
+#user-op .active ul li a {
+    border-bottom: 0px solid #FFFFFF;
+}
+
 
 td, th {
     padding: 15px 5px;

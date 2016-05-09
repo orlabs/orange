@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orange Gateway - 登录</title>
+    {(meta.html)}
+</head>
+<body>
+{(header.html)}
+
+<div id="main" class="main-container container">
+    <div class="row" style="margin-top:60px;">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">登录</div>
+                <div class="panel-body">
+                    <form class="simple_form ">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="用户名" name="username" id="user_login">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="密码" name="password" id="user_password">
+                        </div>
+                        
+              
+                        <div class="form-group">
+                            <a id="login-btn" class="btn btn-primary btn-block">登录</a>
+                        </div>
+
+                        <div class="form-group" style="display:none;" id="tip">
+                            <div class="alert alert-danger"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{(footer.html)}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#login-btn").click(function(){
+            var username =$("input[name=username]").val();
+            var password = $("input[name=password]").val();
+
+            $("#tip").hide();
+
+            var pattern = /^[A-Za-z][A-Za-z0-9_]+$/;
+            if(!username || username.length<4 || username.length>50 || !username.match(pattern)) {
+                $("#tip div").text("用户名为4~50位, 只能输入字母、下划线、数字，必须以字母开头.");
+                $("#tip").show();
+                return;
+            }
+
+            if(!password || password.length<6 || password.length>50){
+                $("#tip div").text("密码长度须为6~50位!");
+                $("#tip").show();
+                return;
+            }
+
+
+            $.ajax({
+                url : '/auth/login',
+                type : 'post',
+                data : {
+                    username: username,
+                    password: password
+                },
+                dataType : 'json',
+                success : function(result) {
+                    if(result.success){
+                        window.location.href="/";
+                    }else{
+                        $("#tip div").text(result.msg||"登录失败");
+                        $("#tip").show();
+                    }
+                },
+                error : function() {
+                    $("#tip div").text("登录请求出错!");
+                    $("#tip").show();
+                }
+            });
+        })
+    });
+</script>
+</body>
+</html>
