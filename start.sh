@@ -13,7 +13,8 @@ then
 	echo "start orange.."
 else
 	echo "kill "$pid
-	kill -s QUIT $pid
+	#kill -s QUIT $pid
+	nginx -p `pwd` -c ./conf/nginx.conf -s stop
 	echo "restart orange.."
 fi
 
