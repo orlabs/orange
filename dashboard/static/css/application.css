@@ -478,10 +478,11 @@ table thead{
 
 .table>thead>tr>th, .table-bordered>thead>tr>th{
     height:40px;
-    line-height: 40px;
+    /*line-height: 40px;*/
     text-align:center;
     border:none;
     border-radius: 0px;
+   vertical-align: middle;
 }
 
 
@@ -510,6 +511,11 @@ tr.highlight{
 }
 .conditionp{
     max-width: 500px;
+    display: inline-block;
+    overflow-wrap: break-word;
+}
+.urltmplp{
+    max-width: 250px;
     display: inline-block;
     overflow-wrap: break-word;
 }
@@ -650,3 +656,4 @@ tr.highlight{
 .on-badge{
     background-color: #4cae4c;
 }
+
