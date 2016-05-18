@@ -503,6 +503,17 @@ tr.highlight{
     background-color: #FFFDDD;
 }
 
+.namep{
+    max-width: 200px;
+    display: inline-block;
+    overflow-wrap: break-word;
+}
+.conditionp{
+    max-width: 500px;
+    display: inline-block;
+    overflow-wrap: break-word;
+}
+
 #preview_plugin_config {
     max-height:300px;
 }

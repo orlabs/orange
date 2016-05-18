@@ -91,7 +91,7 @@
             <input type="checkbox" disabled/>
             {@/if}
         </td>
-        <td class="center">${r.name}</td>
+        <td class="center"><p class="namep">${r.name}</p></td>
         <td class="left">
             <p>
                 <b>Type</b>: ${r.judge.type}
@@ -101,7 +101,7 @@
                 {@/if}
             </p>
             {@each r.judge.conditions as c, index}
-            ${c.type}: ${c.name} ${c.operator} ${c.value}<br/>
+                <p class="conditionp">${c.type}: ${c.name} ${c.operator} ${c.value}</p>
             {@/each}
         </td>
         <td class="left handle">
