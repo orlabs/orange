@@ -7,7 +7,7 @@ API Gateway based on OpenResty.
 
 Clone the repo to local. Check the sample config file `orange.conf` first:
 
-```
+```javascript
 {
     "plugins": [ //available plugins. remove one if you do not need it.
         "stat", 
@@ -19,12 +19,12 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
     ],
 
     "store": "file",//which `store` to use, `file` or `mysql`
-    "store_file": { //configuration if you choose `file` store
+    "store_file": { //config if you choose `file` store
         "path": "./data.json",
         "desc": "file db configuration"
     },
 
-    "store_mysql": { //configuration if you choose `mysql` store
+    "store_mysql": { //config if you choose `mysql` store
         "timeout": 5000,
         "connect_config": {
             "host": "127.0.0.1",
@@ -40,10 +40,10 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
         },
         "desc": "mysql configuration"
     },
-    "dashboard": {//dashboard configuration. if `store` is `mysql`, this will make sense
-        "auth": false, //if the dashboard UI shoule be authorized
+    "dashboard": {//dashboard config. if `store` is `mysql`, this will make sense
+        "auth": false, //the dashboard UI should be authorized or not
         "session_secret": "y0ji4pdj61aaf3f11c2e65cd2263d3e7e5", // used to encrypt cookie
-        "whitelist": [//needn't check authorization
+        "whitelist": [//url list that needn't be authorized
             "^/auth/login$",
             "^/error/$"
         ]
@@ -53,10 +53,9 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
 
 If you just need a single Orange node, set `store` with `file`, then your configuration will be stored in `store_file.path` with json format.
 
-Otherwise, if you need share the configuration data of Orange plugins among different Orange nodes, set `store` with `mysql` and import `install/orange-${version}-${min_version}` to MySQL 
-and modify the `store_mysql` config as you want.
+Otherwise, if you need share the configuration data of Orange plugins among different Orange nodes, set `store` with `mysql` and import `install/orange-${version}` to MySQL and modify `store_mysql` as you want.
 
-Then just type `sh start.sh` to start Orange. Maybe you should check the start script and customize it for you own need.
+Then just type `sh start.sh` to start Orange. Maybe you should check the start script and customize it for your own need.
 
 
 ### Documents
