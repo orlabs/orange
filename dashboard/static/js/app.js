@@ -251,7 +251,7 @@
                 var type = self.find("select[name=rule-extractor-extraction-type]").val();
                 extraction.type = type;
 
-                if (type == "Header" || type == "Query" || type == "PostParams") {
+                if (type == "Header" || type == "Query" || type == "PostParams"|| type == "URI") {
                     var name = self.find("input[name=rule-extractor-extraction-name]").val();
                     if (!name) {
                         tmp_success = false;
