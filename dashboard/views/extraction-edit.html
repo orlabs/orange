@@ -25,7 +25,7 @@
                         <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option>
                     </select>
                 </div>
-                <div class="col-sm-2 extraction-name-hodler" {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" } style="display:none;" {@/if}>
+                <div class="col-sm-2 extraction-name-hodler" {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams"&&c.type!="URI" } style="display:none;" {@/if}>
                     <input type="text" class="form-control" name="rule-extractor-extraction-name" placeholder="name" value="${c.name}">
                 </div>
                 <div class="col-sm-1" style="margin-top:10px">
