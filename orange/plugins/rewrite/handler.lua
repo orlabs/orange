@@ -1,6 +1,9 @@
 local pairs = pairs
 local ipairs = ipairs
+local ngx_re_sub = ngx.re.sub
+local ngx_re_find = ngx.re.find
 local string_len = string.len
+local string_sub = string.sub
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
@@ -35,6 +38,8 @@ function RewriteHandler:rewrite(conf)
 
     local ngx_var_uri = ngx.var.uri
     local ngx_set_uri = ngx.req.set_uri
+    local ngx_set_uri_args = ngx.req.set_uri_args
+    local ngx_decode_args = ngx.decode_args
 
     local rules = rewrite_config.rules
     if not rules or type(rules) ~= "table" or #rules<=0 then
@@ -74,6 +79,18 @@ function RewriteHandler:rewrite(conf)
                     if to_rewrite and to_rewrite ~= ngx_var_uri then
                         if handle.log == true then
                             ngx.log(ngx.ERR, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)
+                        end
+
+                        local from, to, err = ngx_re_find(to_rewrite, "[%?]{1}", "jo")
+                        if not err and from and from >= 1 then
+                            --local qs = ngx_re_sub(to_rewrite, "[A-Z0-9a-z-_/]*[%?]{1}", "", "jo")
+                            local qs = string_sub(to_rewrite, from+1)
+                            if qs then
+                                local args = ngx_decode_args(qs, 0)
+                                if args then 
+                                    ngx_set_uri_args(args) 
+                                end
+                            end
                         end
 
                         ngx_set_uri(to_rewrite, true)
