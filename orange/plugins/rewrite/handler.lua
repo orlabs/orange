@@ -20,10 +20,9 @@ function RewriteHandler:rewrite(conf)
     RewriteHandler.super.rewrite(self)
 
     local rewrite_config = {
-            enable = orange_db.get("rewrite.enable"),
-            rules = orange_db.get_json("rewrite.rules")
-        }
-    end
+        enable = orange_db.get("rewrite.enable"),
+        rules = orange_db.get_json("rewrite.rules")
+    }
     
     if not rewrite_config or rewrite_config.enable ~= true then
         return

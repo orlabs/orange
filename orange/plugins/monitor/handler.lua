@@ -18,10 +18,9 @@ function URLMonitorHandler:log(conf)
     URLMonitorHandler.super.log(self)
 
     local monitor_config = {
-            enable = orange_db.get("monitor.enable"),
-            rules = orange_db.get_json("monitor.rules")
-        }
-    end
+        enable = orange_db.get("monitor.enable"),
+        rules = orange_db.get_json("monitor.rules")
+    }
 
     if not monitor_config or monitor_config.enable ~= true then
         return
@@ -37,7 +36,6 @@ function URLMonitorHandler:log(conf)
     for i, rule in ipairs(rules) do
         local enable = rule.enable
         if enable == true then
-
             -- judge阶段
             local judge = rule.judge
             local judge_type = judge.type
@@ -70,6 +68,9 @@ function URLMonitorHandler:log(conf)
             end
         end
     end
+
 end
+
+
 
 return URLMonitorHandler

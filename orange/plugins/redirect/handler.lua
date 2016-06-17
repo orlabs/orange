@@ -23,10 +23,9 @@ function RedirectHandler:redirect()
     RedirectHandler.super.redirect(self)
 
     local redirect_config = {
-            enable = orange_db.get("redirect.enable"),
-            rules = orange_db.get_json("redirect.rules")
-        }
-    end
+        enable = orange_db.get("redirect.enable"),
+        rules = orange_db.get_json("redirect.rules")
+    }
     
     if not redirect_config or redirect_config.enable ~= true then
         return

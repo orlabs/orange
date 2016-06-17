@@ -20,10 +20,9 @@ function WAFHandler:access(conf)
     WAFHandler.super.access(self)
 
     local access_config = {
-            enable = orange_db.get("waf.enable"),
-            rules = orange_db.get_json("waf.rules")
-        }
-    end
+        enable = orange_db.get("waf.enable"),
+        rules = orange_db.get_json("waf.rules")
+    }
 
     if not access_config or access_config.enable ~= true then
         return

@@ -51,10 +51,9 @@ function DivideHandler:access(conf)
     DivideHandler.super.access(self)
     
     local divide_config = {
-            enable = orange_db.get("divide.enable"),
-            rules = orange_db.get_json("divide.rules")
-        }
-    end
+        enable = orange_db.get("divide.enable"),
+        rules = orange_db.get_json("divide.rules")
+    }
 
     if not divide_config or divide_config.enable ~= true then
         return
