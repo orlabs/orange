@@ -37,7 +37,7 @@ API["/divide/enable"] = {
             else
                 res:json({
                     success = false,
-                    data = (enable == true and "开启分流功能失败" or "关闭分流功能失败")
+                    msg = (enable == true and "开启分流功能失败" or "关闭分流功能失败")
                 })
             end
         end
