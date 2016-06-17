@@ -99,7 +99,8 @@
             $(document).on("change", 'select[name=rule-extractor-extraction-type]', function () {
                 var extraction_type = $(this).val();
 
-                if (extraction_type != "Header" && extraction_type != "Query" && extraction_type != "PostParams") {
+                if (extraction_type != "Header" && extraction_type != "Query" 
+                    && extraction_type != "PostParams" && extraction_type != "URI") {
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find(".extraction-name-hodler").hide();
                     });
@@ -250,7 +251,7 @@
                 var type = self.find("select[name=rule-extractor-extraction-type]").val();
                 extraction.type = type;
 
-                if (type == "Header" || type == "Query" || type == "PostParams") {
+                if (type == "Header" || type == "Query" || type == "PostParams"|| type == "URI") {
                     var name = self.find("input[name=rule-extractor-extraction-name]").val();
                     if (!name) {
                         tmp_success = false;

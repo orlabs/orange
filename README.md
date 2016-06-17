@@ -63,6 +63,16 @@ Then just type `sh start.sh` to start Orange. Maybe you should check the start s
 Find all about **Orange** on [Documents Website](http://orange.sumory.com/docs). There is only a Chinese version for now.
 
 
+### Docker
+
+[http://hub.docker.com/r/syhily/orange](http://hub.docker.com/r/syhily/orange) maintained by [@syhily](https://github.com/syhily)
+
+
+### Contributors
+
+- [@雨帆](https://github.com/syhily)
+
+
 ### See also
 
 The architecture is highly inspired by [Kong](https://github.com/Mashape/kong).

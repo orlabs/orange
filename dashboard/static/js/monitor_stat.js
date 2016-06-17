@@ -8,7 +8,7 @@
             qpsChart: null,
             responseChart: null,
             trafficChart: null,
-            interval: 1
+            interval: 3000
         },
 
         init: function () {
@@ -29,14 +29,14 @@
 
             $(document).on("click", ".timer_interval", function(){
                 var interval  = parseInt($(this).attr("data-interval"));
-                _this.data.interval = interval/1000;
+                _this.data.interval = interval;
                 _this.startTimer(interval);
             });
         },
 
 
         startTimer:function(interval){
-            interval = interval || 1000;
+            interval = interval || 3000;//默认3s请求一次
             if(_this.data.timer){
                 clearInterval(_this.data.timer);
             }
