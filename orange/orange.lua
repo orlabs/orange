@@ -147,18 +147,7 @@ function Orange.init(options)
     local status, err = pcall(function()
         local conf_file_path = options.config
         config = config_loader.load(conf_file_path)
-        local store_type = config.store
-
-        if store_type == "file" then
-            store = require("orange.store.file_store")({
-                file_path = config.store_file.path
-            })
-            load_data_by_file(store, config)
-        elseif store_type == "redis" then
-            store = require("orange.store.redis_store")()
-        elseif store_type == "mysql" then
-            store = require("orange.store.mysql_store")(config.store_mysql)
-        end
+        store = require("orange.store.mysql_store")(config.store_mysql)
 
         loaded_plugins = load_node_plugins(config, store)
         ngx.update_time()

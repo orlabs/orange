@@ -19,11 +19,7 @@ end
 function WAFHandler:access(conf)
     WAFHandler.super.access(self)
 
-    local access_config 
-    if self.store.store_type == "file" then
-        access_config = self.store:get("waf_config")
-    elseif self.store.store_type == "mysql" then
-        access_config = {
+    local access_config = {
             enable = orange_db.get("waf.enable"),
             rules = orange_db.get_json("waf.rules")
         }

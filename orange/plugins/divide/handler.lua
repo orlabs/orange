@@ -50,11 +50,7 @@ end
 function DivideHandler:access(conf)
     DivideHandler.super.access(self)
     
-    local divide_config 
-    if self.store.store_type == "file" then
-        divide_config = self.store:get("divide_config")
-    elseif self.store.store_type == "mysql" then
-        divide_config = {
+    local divide_config = {
             enable = orange_db.get("divide.enable"),
             rules = orange_db.get_json("divide.rules")
         }

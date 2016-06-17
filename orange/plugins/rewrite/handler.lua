@@ -19,11 +19,7 @@ end
 function RewriteHandler:rewrite(conf)
     RewriteHandler.super.rewrite(self)
 
-    local rewrite_config 
-    if self.store.store_type == "file" then
-        rewrite_config = self.store:get("rewrite_config")
-    elseif self.store.store_type == "mysql" then
-        rewrite_config = {
+    local rewrite_config = {
             enable = orange_db.get("rewrite.enable"),
             rules = orange_db.get_json("rewrite.rules")
         }

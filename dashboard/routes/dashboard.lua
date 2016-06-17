@@ -12,8 +12,6 @@ return function(config, store)
     local monitor_api = require("orange.plugins.monitor.api")
     local orange_db = require("orange.store.orange_db")
 
-    local store_type = store.store_type
-
     dashboard_router:get("/", function(req, res, next)
         --- 全局信息
         -- 当前加载的插件，开启与关闭情况
@@ -21,56 +19,26 @@ return function(config, store)
         local data = {}
         local plugins = config.plugins
         data.plugins = plugins
-        data.store_type = config.store
 
         local plugin_configs = {}
-        if store_type == "file" then
-            local store_data = store:get_all()
-            for i, v in ipairs(plugins) do
-                local tmp = {
-                    enable = nil,
-                    name = v,
-                    active_rule_count = 0,
-                    inactive_rule_count = 0
-                }
-                local plugin_config = store_data[v .. "_config"]
-                if plugin_config then
-                    tmp.enable = plugin_config.enable
-                    local rules_key = "rules"
-                    local plugin_rules = plugin_config[rules_key]
-                    if plugin_rules then
-                        for j, r in ipairs(plugin_rules) do
-                            if r.enable == true then
-                                tmp.active_rule_count = tmp.active_rule_count + 1
-                            else
-                                tmp.inactive_rule_count = tmp.inactive_rule_count + 1
-                            end
-                        end
+        for i, v in ipairs(plugins) do
+            local tmp = {
+                enable =  orange_db.get(v .. ".enable"),
+                name = v,
+                active_rule_count = 0,
+                inactive_rule_count = 0
+            }
+            local plugin_rules = orange_db.get_json(v .. ".rules")
+            if plugin_rules then
+                for j, r in ipairs(plugin_rules) do
+                    if r.enable == true then
+                        tmp.active_rule_count = tmp.active_rule_count + 1
+                    else
+                        tmp.inactive_rule_count = tmp.inactive_rule_count + 1
                     end
                 end
-
-                plugin_configs[v] = tmp
             end
-        elseif store_type == "mysql" then
-            for i, v in ipairs(plugins) do
-                local tmp = {
-                    enable =  orange_db.get(v .. ".enable"),
-                    name = v,
-                    active_rule_count = 0,
-                    inactive_rule_count = 0
-                }
-                local plugin_rules = orange_db.get_json(v .. ".rules")
-                if plugin_rules then
-                    for j, r in ipairs(plugin_rules) do
-                        if r.enable == true then
-                            tmp.active_rule_count = tmp.active_rule_count + 1
-                        else
-                            tmp.inactive_rule_count = tmp.inactive_rule_count + 1
-                        end
-                    end
-                end
-                plugin_configs[v] = tmp
-            end
+            plugin_configs[v] = tmp
         end
         data.plugin_configs = plugin_configs
 

@@ -17,11 +17,7 @@ end
 function URLMonitorHandler:log(conf)
     URLMonitorHandler.super.log(self)
 
-    local monitor_config 
-    if self.store.store_type == "file" then
-        monitor_config = self.store:get("divide_config")
-    elseif self.store.store_type == "mysql" then
-        monitor_config = {
+    local monitor_config = {
             enable = orange_db.get("monitor.enable"),
             rules = orange_db.get_json("monitor.rules")
         }

@@ -22,11 +22,7 @@ end
 function RedirectHandler:redirect()
     RedirectHandler.super.redirect(self)
 
-    local redirect_config 
-    if self.store.store_type == "file" then
-        redirect_config = self.store:get("redirect_config")
-    elseif self.store.store_type == "mysql" then
-        redirect_config = {
+    local redirect_config = {
             enable = orange_db.get("redirect.enable"),
             rules = orange_db.get_json("redirect.rules")
         }
