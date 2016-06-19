@@ -48,7 +48,7 @@ return function(config, store)
         })
     end)
 
-    
+
     api_router:get("/stat/status", stat_api["/stat/status"])
 
     api_router:get("/monitor/configs", monitor_api["/monitor/configs"].GET(store))
@@ -98,6 +98,6 @@ return function(config, store)
     api_router:post("/divide/sync", divide_api["/divide/sync"].POST(store))
     
 
-    return api_routerend
+    return api_router
 end
 
