@@ -4,12 +4,12 @@ local table_insert = table.insert
 
 return function(config, store)
     local dashboard_router = lor:Router()
-    local stat_api = require("orange.plugins.stat.api")
-    local waf_api = require("orange.plugins.waf.api")
-    local rewrite_api = require("orange.plugins.rewrite.api")
-    local redirect_api = require("orange.plugins.redirect.api")
-    local divide_api = require("orange.plugins.divide.api")
-    local monitor_api = require("orange.plugins.monitor.api")
+    local stat_api = require("orange.dashboard.routes.stat_api")
+    local waf_api = require("orange.dashboard.routes.waf_api")
+    local rewrite_api = require("orange.dashboard.routes.rewrite_api")
+    local redirect_api = require("orange.dashboard.routes.redirect_api")
+    local divide_api = require("orange.dashboard.routes.divide_api")
+    local monitor_api = require("orange.dashboard.routes.monitor_api")
     local orange_db = require("orange.store.orange_db")
 
     dashboard_router:get("/", function(req, res, next)
