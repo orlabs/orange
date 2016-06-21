@@ -37,7 +37,7 @@ API["/rewrite/enable"] = {
             else
                 res:json({
                     success = false,
-                    data = (enable == true and "开启rewrite失败" or "关闭rewrite失败")
+                    msg = (enable == true and "开启rewrite失败" or "关闭rewrite失败")
                 })
             end
         end
@@ -162,10 +162,9 @@ API["/rewrite/sync"] = {
                 })
             end
 
-            success = true
-
             res:json({
-                success = success
+                success = true,
+                msg = "ok"
             })
         end
     end,
@@ -174,14 +173,13 @@ API["/rewrite/sync"] = {
 API["/rewrite/configs"] = {
     GET = function(store)
         return function(req, res, next)
-            local success, data = false, {}
+            local  data = false
             
             data.enable = orange_db.get("rewrite.enable")
             data.rules = orange_db.get_json("rewrite.rules")
-            success = true
 
             res:json({
-                success = success,
+                success = true,
                 data = data
             })
         end
@@ -195,7 +193,7 @@ API["/rewrite/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
 
-            local success, data = false, {}
+            local success = false
            
             -- 插入到mysql
             local insert_result = store:insert({
@@ -210,8 +208,6 @@ API["/rewrite/configs"] = {
                 local s, err, forcible = orange_db.set_json("rewrite.rules", rewrite_rules)
                 if s then
                     success = true
-                    data.rules = rewrite_rules
-                    data.enable = orange_db.get("rewrite.enable")
                 else
                     ngx.log(ngx.ERR, "save rewrite rules locally error: ", err)
                 end
@@ -221,7 +217,7 @@ API["/rewrite/configs"] = {
 
             res:json({
                 success = success,
-                data = data
+                msg = success and "ok" or "failed"
             })
         end
     end,
@@ -259,10 +255,7 @@ API["/rewrite/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("rewrite.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
             else
                 res:json({
@@ -307,10 +300,7 @@ API["/rewrite/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("rewrite.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
 
             else

@@ -40,7 +40,7 @@ function _M.get_all(max_count)
     if keys then
         for i, k in ipairs(keys) do
             table_insert(result, {
-                name = k,
+                rule_id = k,
                 count = _M.get_one(k)
             })
         end

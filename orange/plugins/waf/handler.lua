@@ -61,7 +61,7 @@ function WAFHandler:access(conf)
             if pass then
                 local handle = rule.handle
                 if handle.stat == true then
-                    local key = rule.name .. ":" .. rule.id
+                    local key = rule.id -- rule.name .. ":" .. rule.id
                     stat.count(key, 1)
                 end
 

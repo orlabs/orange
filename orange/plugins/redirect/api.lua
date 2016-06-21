@@ -37,7 +37,7 @@ API["/redirect/enable"] = {
             else
                 res:json({
                     success = false,
-                    data = (enable == true and "开启redirect失败" or "关闭redirect失败")
+                    msg = (enable == true and "开启redirect失败" or "关闭redirect失败")
                 })
             end
         end
@@ -161,10 +161,9 @@ API["/redirect/sync"] = {
                 })
             end
 
-            success = true
-
             res:json({
-                success = success
+                success = true,
+                msg = "ok"
             })
         end
     end,
@@ -172,15 +171,13 @@ API["/redirect/sync"] = {
 
 API["/redirect/configs"] = {
     GET = function(store)
-
         return function(req, res, next)
-            local success, data = false, {}
+            local data = {}
             data.enable = orange_db.get("redirect.enable")
             data.rules = orange_db.get_json("redirect.rules")
-            success = true
 
             res:json({
-                success = success,
+                success = true,
                 data = data
             })
         end
@@ -194,7 +191,7 @@ API["/redirect/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
 
-            local success, data = false, {}
+            local success = false
             -- 插入到mysql
             local insert_result = store:insert({
                 sql = "insert into redirect(`key`, `value`) values(?,?)",
@@ -208,8 +205,6 @@ API["/redirect/configs"] = {
                 local s, err, forcible = orange_db.set_json("redirect.rules", redirect_rules)
                 if s then
                     success = true
-                    data.rules = redirect_rules
-                    data.enable = orange_db.get("redirect.enable")
                 else
                     ngx.log(ngx.ERR, "save redirect rules locally error: ", err)
                 end
@@ -219,7 +214,7 @@ API["/redirect/configs"] = {
 
             res:json({
                 success = success,
-                data = data
+                msg = success and "ok" or "failed"
             })
         end
     end,
@@ -259,10 +254,7 @@ API["/redirect/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("redirect.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
             else
                 res:json({
@@ -307,10 +299,7 @@ API["/redirect/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("redirect.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
             else
                 res:json({

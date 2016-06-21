@@ -38,7 +38,7 @@ API["/waf/enable"] = {
             else
                 res:json({
                     success = false,
-                    data = (enable == true and "开启防火墙失败" or "关闭防火墙失败")
+                    msg = (enable == true and "开启防火墙失败" or "关闭防火墙失败")
                 })
             end
         end
@@ -49,34 +49,27 @@ API["/waf/stat"] = {
     GET = function(store)
         return function(req, res, next)
             local max_count = req.query.max_count or 500
-            local statistics = stat.get_all(max_count)
+            local stats = stat.get_all(max_count)
 
             local rules = {}
           
             local values, flag = orange_db.get_json("waf.rules")
             rules = values or {}
 
-            local data = {}
-            local not_empty = rules and type(rules) == "table" and #rules > 0
-            for i, s in ipairs(statistics) do
+            local statistics = {}
+            for i, s in ipairs(stats) do
                 local tmp = {
-                    name = s.name,
+                    rule_id = s.rule_id,
                     count = s.count,
-                    perform = ""
                 }
-                if not_empty then
-                    for j, r in ipairs(rules) do
-                        if s.name == r.name then
-                            tmp.perform = r.handle.perform
-                        end
-                    end
-                end
-                table_insert(data, tmp)
+                table_insert(statistics, tmp)
             end
 
             local result = {
                 success = true,
-                data = data
+                data = {
+                    statistics = statistics
+                }   
             }
 
             res:json(result)
@@ -201,10 +194,9 @@ API["/waf/sync"] = {
                 })
             end
 
-            success = true
-
             res:json({
-                success = success
+                success = true,
+                msg = "ok"
             })
         end
     end,
@@ -213,14 +205,13 @@ API["/waf/sync"] = {
 API["/waf/configs"] = {
     GET = function(store)
         return function(req, res, next)
-            local success, data = false, {}
+            local data = {}
             
             data.enable = orange_db.get("waf.enable")
             data.rules = orange_db.get_json("waf.rules")
-            success = true
 
             res:json({
-                success = success,
+                success = true,
                 data = data
             })
         end
@@ -234,7 +225,7 @@ API["/waf/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
 
-            local success, data = false, {}
+            local success = false
             
             -- 插入到mysql
             local insert_result = store:insert({
@@ -249,8 +240,6 @@ API["/waf/configs"] = {
                 local s, err, forcible = orange_db.set_json("waf.rules", waf_rules)
                 if s then
                     success = true
-                    data.rules = waf_rules
-                    data.enable = orange_db.get("waf.enable")
                 else
                     ngx.log(ngx.ERR, "save waf rules locally error: ", err)
                 end
@@ -260,7 +249,7 @@ API["/waf/configs"] = {
 
             res:json({
                 success = success,
-                data = data
+                msg = success and "ok" or "failed"
             })
         end
     end,
@@ -299,11 +288,8 @@ API["/waf/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("waf.enable")
-                    }
-                })
+                    msg = success and "ok" or "failed"
+                }) 
             else
                 res:json({
                     success = false,
@@ -347,10 +333,7 @@ API["/waf/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("waf.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
 
             else

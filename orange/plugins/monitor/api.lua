@@ -38,7 +38,7 @@ API["/monitor/enable"] = {
             else
                 res:json({
                     success = false,
-                    data = (enable == true and "开启自定义监控失败" or "关闭自定义监控失败")
+                    msg = (enable == true and "开启自定义监控失败" or "关闭自定义监控失败")
                 })
             end
         end
@@ -51,11 +51,10 @@ API["/monitor/stat"] = {
             local rule_id = req.query.rule_id
             local statistics = stat.get(rule_id)
 
-            local result = {
+            res:json({
                 success = true,
                 data = statistics
-            }
-            res:json(result)
+            })
         end
     end,
 }
@@ -101,14 +100,13 @@ API["/monitor/fetch_config"] = {
                     table_insert(format_rules, cjson.decode(v.value))
                 end
                 data.rules = format_rules
-                success = true
             else
-                success = true
                 data.rules = {}
             end
 
             res:json({
-                success = success,
+                success = true,
+                msg = "ok",
                 data = data
             })
         end
@@ -176,10 +174,9 @@ API["/monitor/sync"] = {
                 })
             end
 
-            success = true
-
             res:json({
-                success = success
+                success = true,
+                msg = "ok"
             })
         end
     end,
@@ -189,13 +186,12 @@ API["/monitor/sync"] = {
 API["/monitor/configs"] = {
     GET = function(store)
         return function(req, res, next)
-            local success, data = false, {}
-            data.enable = orange_db.get("monitor.enable")
-            data.rules = orange_db.get_json("monitor.rules")
-            success = true
+            local data = {}
+            data.enable = orange_db.get("monitor.enable") or false
+            data.rules = orange_db.get_json("monitor.rules") or {}
 
             res:json({
-                success = success,
+                success = true,
                 data = data
             })
         end
@@ -207,7 +203,7 @@ API["/monitor/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
 
-            local success, data = false, {}
+            local success = false
             -- 插入到mysql
             local insert_result = store:insert({
                 sql = "insert into monitor(`key`, `value`) values(?,?)",
@@ -221,8 +217,6 @@ API["/monitor/configs"] = {
                 local s, err, forcible = orange_db.set_json("monitor.rules", monitor_rules)
                 if s then
                     success = true
-                    data.rules = monitor_rules
-                    data.enable = orange_db.get("monitor.enable")
                 else
                     ngx.log(ngx.ERR, "save monitor rules locally error: ", err)
                 end
@@ -232,7 +226,7 @@ API["/monitor/configs"] = {
 
             res:json({
                 success = success,
-                data = data
+                msg = success and "ok" or "failed"
             })
         end
     end,
@@ -270,10 +264,7 @@ API["/monitor/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("monitor.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
             else
                 res:json({
@@ -288,7 +279,6 @@ API["/monitor/configs"] = {
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
-
 
             local update_result = store:delete({
                 sql = "update monitor set `value`=? where `key`=?",
@@ -318,10 +308,7 @@ API["/monitor/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("monitor.enable")
-                    }
+                    msg = success and "ok" or "failed"
                 })
 
             else

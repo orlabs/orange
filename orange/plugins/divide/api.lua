@@ -48,7 +48,7 @@ API["/divide/fetch_config"] = {
     -- fetch data from db
     GET = function(store)
         return function(req, res, next)
-            local success, data = false, {}
+            local success, data = false, {enable=false}
             
             -- 查找enable
             local enable, err1 = store:query({
@@ -162,10 +162,9 @@ API["/divide/sync"] = {
                 })
             end
 
-            success = true
-
             res:json({
-                success = success
+                success = true,
+                msg = "ok"
             })
         end
     end,
@@ -175,12 +174,11 @@ API["/divide/configs"] = {
     GET = function(store)
         return function(req, res, next)
             local success, data = false, {}
-            data.enable = orange_db.get("divide.enable")
-            data.rules = orange_db.get_json("divide.rules")
-            success = true
+            data.enable = orange_db.get("divide.enable") or false
+            data.rules = orange_db.get_json("divide.rules") or {}
 
             res:json({
-                success = success,
+                success = true,
                 data = data
             })
         end
@@ -194,7 +192,7 @@ API["/divide/configs"] = {
             rule.id = utils.new_id()
             rule.time = utils.now()
 
-            local success, data = false, {}
+            local success = false
             
             -- 插入到mysql
             local insert_result = store:insert({
@@ -209,8 +207,6 @@ API["/divide/configs"] = {
                 local s, err, forcible = orange_db.set_json("divide.rules", divide_rules)
                 if s then
                     success = true
-                    data.rules = divide_rules
-                    data.enable = orange_db.get("divide.enable")
                 else
                     ngx.log(ngx.ERR, "save divide rules locally error: ", err)
                 end
@@ -220,7 +216,7 @@ API["/divide/configs"] = {
 
             res:json({
                 success = success,
-                data = data
+                msg = success and "ok" or "new rule failed"
             })
         end
     end,
@@ -259,10 +255,7 @@ API["/divide/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("divide.enable")
-                    }
+                    msg = success and "ok" or "new rule failed"
                 })
             else
                 res:json({
@@ -308,10 +301,7 @@ API["/divide/configs"] = {
 
                 res:json({
                     success = success,
-                    data = {
-                        rules = new_rules,
-                        enable = orange_db.get("divide.enable")
-                    }
+                    msg = success and "ok" or "new rule failed"
                 })
 
             else
