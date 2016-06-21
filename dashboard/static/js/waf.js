@@ -43,7 +43,7 @@
                         dataType: 'json',
                         success: function (result) {
                             if (result.success) {
-                                if (result.data && result.data.length > 0) {
+                                if (result.data && result.data.statistics) {
                                     $("#stat-area").html('');
                                     $("#stat-view").show();
                                     $("#stat-area").css("height", "400px");
@@ -71,21 +71,17 @@
 
         initStatChart: function (data) {
             var keys = [];
-            var inner_data = [], outer_data = [];
-            for(var i=0;i<data.length;i++){
-                var s = data[i];
-                keys.push(s.name);
-                if(s.perform == 'allow'){
-                    inner_data.push({
-                        value: s.count,
-                        name: s.name
-                    });
-                }else{
-                    outer_data.push({
-                        value: s.count,
-                        name: s.name
-                    });
-                }
+            var outer_data = [];
+
+            var statistics = data.statistics;
+            for(var i=0; i < statistics.length;i++){
+                var s = statistics[i];
+                keys.push(s.rule_id);
+                
+                outer_data.push({
+                    value: s.count,
+                    name: s.rule_id
+                });
             }
 
             var option = {
@@ -99,28 +95,10 @@
                     data: keys
                 },
                 series: [
+                    
                     {
-                        name: 'Allow规则',
+                        name: '规则',
                         type: 'pie',
-                        selectedMode: 'single',
-                        radius: [0, '30%'],
-
-                        label: {
-                            normal: {
-                                position: 'inner'
-                            }
-                        },
-                        labelLine: {
-                            normal: {
-                                show: false
-                            }
-                        },
-                        data: inner_data
-                    },
-                    {
-                        name: 'Deny规则',
-                        type: 'pie',
-                        radius: ['40%', '55%'],
 
                         data: outer_data
                     }
