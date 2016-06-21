@@ -16,16 +16,17 @@ return function(config, store)
     -- 当前加载的插件，开启与关闭情况
     -- 每个插件的规则条数等
     api_router:get("/plugins", function(req, res, next)
-        local plugins = config.plugins
+        local available_plugins = config.plugins
 
-        local plugin_configs = {}
-        for i, v in ipairs(plugins) do
+        local plugins = {}
+        for i, v in ipairs(available_plugins) do
             local tmp = {
-                enable =  orange_db.get(v .. ".enable"),
+                enable =  (v=="stat") and true or (orange_db.get(v .. ".enable") or false),
                 name = v,
                 active_rule_count = 0,
                 inactive_rule_count = 0
             }
+
             local plugin_rules = orange_db.get_json(v .. ".rules")
             if plugin_rules then
                 for j, r in ipairs(plugin_rules) do
@@ -36,14 +37,13 @@ return function(config, store)
                     end
                 end
             end
-            plugin_configs[v] = tmp
+            plugins[v] = tmp
         end
 
         res:json({
             success = true,
             data = {
-                plugins = plugins,
-                plugin_configs = plugin_configs
+                plugins = plugins
             }
         })
     end)
