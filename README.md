@@ -64,7 +64,7 @@ Find all about **Orange** on [Documents Website](http://orange.sumory.com/docs).
 
 ### Contributors
 
-- [@雨帆](https://github.com/syhily)
+- 雨帆[@syhily](https://github.com/syhily)
 
 
 ### See also
