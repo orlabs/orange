@@ -173,7 +173,7 @@ API["/rewrite/sync"] = {
 API["/rewrite/configs"] = {
     GET = function(store)
         return function(req, res, next)
-            local  data = false
+            local  data = {}
             
             data.enable = orange_db.get("rewrite.enable")
             data.rules = orange_db.get_json("rewrite.rules")
