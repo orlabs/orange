@@ -1,3 +1,9 @@
+### v0.2.0
+
+- 去除file store支持
+- 提供Restful API及详细描述文档
+- 分离内置的Dashboard，减少与API的耦合
+
 ### v0.1.1 2016.05.09
 
 - 在使用MySQL作为存储时，为dashboard控制台添加账户系统
