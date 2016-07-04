@@ -82,7 +82,8 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 
 ### 文档
 
-[Documents Website](http://orange.sumory.com/docs). 
+- 项目文档: [官网](http://orange.sumory.com/docs), 目前只有0.1.*版本
+- API文档: [开放API](./api/README.md)
 
 
 ### Docker
