@@ -52,6 +52,7 @@ end
 
 ---
 -- modified usage: the origin is from `Kong`
+-- @Deprecated
 local function iter_plugins_for_req(loaded_plugins, is_access)
     if not ngx.ctx.plugin_conf_for_request then
         ngx.ctx.plugin_conf_for_request = {}
@@ -191,8 +192,8 @@ end
 function Orange.redirect()
     ngx.ctx.ORANGE_REDIRECT_START = now()
 
-    for plugin, plugin_conf in iter_plugins_for_req(loaded_plugins, true) do
-        plugin.handler:redirect(plugin_conf)
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:redirect()
     end
 
     local now = now()
@@ -203,8 +204,8 @@ end
 function Orange.rewrite()
     ngx.ctx.ORANGE_REWRITE_START = now()
 
-    for plugin, plugin_conf in iter_plugins_for_req(loaded_plugins, true) do
-        plugin.handler:rewrite(plugin_conf)
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:rewrite()
     end
 
     local now = now()
@@ -216,8 +217,8 @@ end
 function Orange.access()
     ngx.ctx.ORANGE_ACCESS_START = now()
 
-    for plugin, plugin_conf in iter_plugins_for_req(loaded_plugins, true) do
-        plugin.handler:access(plugin_conf)
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:access()
     end
 
     local now = now()
@@ -236,8 +237,8 @@ function Orange.header_filter()
         ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now
     end
 
-    for plugin, plugin_conf in iter_plugins_for_req(loaded_plugins) do
-        plugin.handler:header_filter(plugin_conf)
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:header_filter()
     end
 
     if ngx.ctx.ACCESSED then
@@ -247,8 +248,8 @@ function Orange.header_filter()
 end
 
 function Orange.body_filter()
-    for plugin, plugin_conf in iter_plugins_for_req(loaded_plugins) do
-        plugin.handler:body_filter(plugin_conf)
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:body_filter()
     end
 
     if ngx.ctx.ACCESSED then
@@ -257,11 +258,9 @@ function Orange.body_filter()
 end
 
 function Orange.log()
-    for plugin, plugin_conf in iter_plugins_for_req(loaded_plugins) do
-        plugin.handler:log(plugin_conf)
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:log()
     end
-
-    -- stat_plugin.log()
 end
 
 return Orange
