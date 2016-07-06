@@ -99,7 +99,7 @@ function _M.filter_complicated_conditions(expression, conditions, plugin_name)
 
     pass = func()
     if pass then
-        ngx.log(ngx.ERR, "[", plugin_name or "", "]filter_complicated_conditions: ", expression)
+        ngx.log(ngx.INFO, "[", plugin_name or "", "]filter_complicated_conditions: ", expression)
     end
 
     return pass

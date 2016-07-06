@@ -64,7 +64,7 @@ return function(config, store)
         else
             if plugin_api and type(plugin_api) == "table" then
                 for uri, api_methods in pairs(plugin_api) do
-                    ngx.log(ngx.ERR, "load route, uri:", uri)
+                    ngx.log(ngx.INFO, "load route, uri:", uri)
 
                     if type(api_methods) == "table" then
                         for method, func in pairs(api_methods) do

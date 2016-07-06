@@ -67,11 +67,11 @@ function WAFHandler:access(conf)
 
                 if handle.perform == 'allow' then
                     if handle.log == true then
-                        ngx.log(ngx.ERR, "[WAF-Pass-Rule] ", rule.name, " uri:", ngx.var.uri)
+                        ngx.log(ngx.INFO, "[WAF-Pass-Rule] ", rule.name, " uri:", ngx.var.uri)
                     end
                 else
                     if handle.log == true then
-                        ngx.log(ngx.ERR, "[WAF-Forbidden-Rule] ", rule.name, " uri:", ngx.var.uri)
+                        ngx.log(ngx.INFO, "[WAF-Forbidden-Rule] ", rule.name, " uri:", ngx.var.uri)
                     end
                     ngx.exit(tonumber(handle.code or 403))
                     return

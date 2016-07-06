@@ -18,7 +18,6 @@ function _M.load(config_path)
         ngx.log(ngx.ERR, "No configuration file at: ", config_path)
         os.exit(1)
     end
-    ngx.log(ngx.ERR, "Load config file from ", config_path)
 
     local config = cjson.decode(config_contents)
     return config, config_path

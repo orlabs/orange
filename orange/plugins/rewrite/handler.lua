@@ -73,7 +73,7 @@ function RewriteHandler:rewrite(conf)
                     local to_rewrite = handle_util.build_uri(handle.uri_tmpl, variables, self:get_name())
                     if to_rewrite and to_rewrite ~= ngx_var_uri then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)
+                            ngx.log(ngx.INFO, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)
                         end
 
                         local from, to, err = ngx_re_find(to_rewrite, "[%?]{1}", "jo")

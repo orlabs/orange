@@ -59,10 +59,10 @@ return function(config, store)
         if isExist == true then
             local is_admin = false
             if user.is_admin == 1 then
-                ngx.log(ngx.ERR, "管理员[", user.username, "]登录")
+                ngx.log(ngx.INFO, "管理员[", user.username, "]登录")
                 is_admin = true
             else
-                ngx.log(ngx.ERR, "普通用户[", user.username, "]登录")
+                ngx.log(ngx.INFO, "普通用户[", user.username, "]登录")
             end
 
             req.session.set("user", {

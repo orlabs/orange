@@ -57,7 +57,7 @@ function URLMonitorHandler:log(conf)
                 local handle = rule.handle
                 if handle then
                     if handle.log == true then
-                        ngx.log(ngx.ERR, "[URLMonitor] ", rule.id, ":", ngx_var_uri)
+                        ngx.log(ngx.INFO, "[URLMonitor] ", rule.id, ":", ngx_var_uri)
                     end
 
                     if handle.continue == true then

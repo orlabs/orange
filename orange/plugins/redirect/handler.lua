@@ -96,7 +96,7 @@ function RedirectHandler:redirect()
                         end
 
                         if handle.log == true then
-                            ngx.log(ngx.ERR, "[Redirect] ", ngx_var_uri, " to:", to_redirect)
+                            ngx.log(ngx.INFO, "[Redirect] ", ngx_var_uri, " to:", to_redirect)
                         end
 
                         ngx_redirect(to_redirect, redirect_status)
