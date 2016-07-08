@@ -1,5 +1,8 @@
 ### v0.2.0
 
+- 变量提取模块增加新类型
+	- URL提取器支持一次提取多值
+	- 以模板方式使用变量，格式为{{extractor.key}}
 - 去除file store支持
 - 提供Restful API及详细描述文档
 - 分离内置的Dashboard，减少与API的耦合
