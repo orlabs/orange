@@ -102,10 +102,10 @@ function DivideHandler:access(conf)
                     if not rule.upstream_host or rule.upstream_host=="" then -- host默认取请求的host
                         ngx_var.upstream_host = ngx_var.host
                     else 
-                        ngx_var.upstream_host = handle_util.build_upstream_host(rule.upstream_host, extractor_type, variables, self:get_name())
+                        ngx_var.upstream_host = handle_util.build_upstream_host(extractor_type, rule.upstream_host, variables, self:get_name())
                     end
 
-                    ngx_var.upstream_url = handle_util.build_upstream_url(rule.upstream_url, extractor_type, variables, self:get_name())
+                    ngx_var.upstream_url = handle_util.build_upstream_url(extractor_type, rule.upstream_url, variables, self:get_name())
                     ngx.log(ngx.INFO, "[Divide-Match-Rule:upstream] ", rule.name, " upstream_host:", ngx_var.upstream_host, " upstream_url:", ngx_var.upstream_url)
                 else
                     ngx.log(ngx.INFO, "[Divide-Match-Rule:error] no upstream host or url. ", rule.name, " host:", ngx_var.host, " uri:", ngx_var.uri)

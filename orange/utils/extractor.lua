@@ -1,5 +1,6 @@
 local type = type
 local ipairs = ipairs
+local pairs = pairs
 local string_find = string.find
 local string_lower = string.lower
 local table_insert = table.insert
@@ -55,54 +56,6 @@ local function extract_variable(extraction)
 end
 
 
-local function extract_variable_for_template(etype, extraction)
-    if not extraction or not extraction.type then
-        return ""
-    end
-
-    local result = ""
-
-    if etype == "URI" then -- 为简化逻辑，URI模式每次只允许提取一个变量
-        local uri = ngx.var.uri
-        local m, err = ngx_re_match(uri, extraction.name)
-        if not err and m and m[1] then
-            result = m[1] -- 提取第一个匹配的子模式
-        end
-    elseif etype == "Query" then
-        local query = ngx.req.get_uri_args()
-        result = query[extraction.name]
-    elseif etype == "Header" then
-        local headers = ngx.req.get_headers()
-        result = headers[extraction.name]
-    elseif etype == "PostParams" then
-        local headers = ngx.req.get_headers()
-        local header = headers['Content-Type']
-        if header then
-            local is_multipart = string_find(header, "multipart")
-            if is_multipart and is_multipart > 0 then
-                return false
-            end
-        end
-        ngx.req.read_body()
-        local post_params, err = ngx.req.get_post_args()
-        if not post_params or err then
-            ngx.log(ngx.ERR, "[Extract Variable]failed to get post args: ", err)
-            return false
-        end
-        result = post_params[extraction.name]
-    elseif etype == "Host" then
-        result = ngx.var.host
-    elseif etype == "IP" then
-        result =  ngx.var.remote_addr
-    elseif etype == "Method" then
-        local method = ngx.req.get_method()
-        result = string_lower(method)
-    end
-
-    return result
-end
-
-
 local _M = {}
 
 function _M.extract(extractor_type, extractions)
@@ -115,26 +68,67 @@ function _M.extract(extractor_type, extractions)
     end
 
     local result = {}
-
     if extractor_type == 1 then -- simple variables extractor
         for i, extraction in ipairs(extractions) do
             local variable = extract_variable(extraction)
             table_insert(result, variable)
         end
     elseif extractor_type == 2 then -- tempalte variables extractor
+        local ngx_var = ngx.var
         for i, extraction in ipairs(extractions) do
             local etype = extraction.type
-            local variable = extract_variable_for_template(etype, extraction)
-            if not result[etype] then
-                result[etype] = {}
-            else
+            if etype == "URI" then -- URI模式通过正则可以提取出N个值
+                local uri = ngx_var.uri
+                local m, err = ngx_re_match(uri, extraction.name)
+                if not err and m and m[1] then
+                    if not result["uri"] then result["uri"] = {} end
+                    for j, v in ipairs(m) do
+                        if j >= 1 then
+                            result["uri"]["v" .. j] = v
+                        end
+                    end
+                end
+            elseif etype == "Query" then
+                local query = ngx.req.get_uri_args()
+                if not result["query"] then result["query"] = {} end
+                result["query"][extraction.name] = query[extraction.name] or extraction.default
+            elseif etype == "Header" then
+                local headers = ngx.req.get_headers()
+                if not result["header"] then result["header"] = {} end
+                result["header"][extraction.name]  = headers[extraction.name] or extraction.default
+            elseif etype == "PostParams" then
+                local headers = ngx.req.get_headers()
+                local header = headers['Content-Type']
+                local ok = true
+                if header then
+                    local is_multipart = string_find(header, "multipart")
+                    if is_multipart and is_multipart > 0 then
+                        ok = false
+                    end
+                end
+                ngx.req.read_body()
+                local post_params, err = ngx.req.get_post_args()
+                if not post_params or err then
+                    ngx.log(ngx.ERR, "[Extract Variable]failed to get post args: ", err)
+                    ok = false
+                end
 
+                if ok then
+                    if not result["body"] then result["body"] = {} end
+                    result["body"][extraction.name] = post_params[extraction.name] or extraction.default
+                end
+            elseif etype == "Host" then
+                result["host"] = ngx_var.host or extraction.default
+            elseif etype == "IP" then
+                result["ip"] =  ngx_var.remote_addr or extraction.default
+            elseif etype == "Method" then
+                local method = ngx.req.get_method()
+                result["method"] = string_lower(method)
             end
         end
     end
 
     return result
 end
-
 
 return _M
