@@ -85,10 +85,11 @@ function DivideHandler:access(conf)
 
             -- extract阶段
             local extractor = rule.extractor
+            local extractor_type = extractor.type
             local extractions = extractor and extractor.extractions
             local variables
             if extractions then
-                variables = extractor_util.extract(extractions)
+                variables = extractor_util.extract(extractor_type, extractions)
             end
 
             -- handle阶段
@@ -98,17 +99,13 @@ function DivideHandler:access(conf)
                 end
 
                 if rule.upstream_url then
-                    if not rule.upstream_host or rule.upstream_host=="" then -- 不写host默认取请求的host
+                    if not rule.upstream_host or rule.upstream_host=="" then -- host默认取请求的host
                         ngx_var.upstream_host = ngx_var.host
                     else 
-                        ngx_var.upstream_host = handle_util.build_upstream_host(rule.upstream_host, variables, self:get_name())
+                        ngx_var.upstream_host = handle_util.build_upstream_host(rule.upstream_host, extractor_type, variables, self:get_name())
                     end
 
-
-                    -- 外部upstream
-                    -- ngx.var.upstream_url = rule.upstream_url .. strip_request_path(uri, uri_condition) .. qs
-                    -- 内部upstream
-                    ngx_var.upstream_url = handle_util.build_upstream_url(rule.upstream_url, variables, self:get_name())
+                    ngx_var.upstream_url = handle_util.build_upstream_url(rule.upstream_url, extractor_type, variables, self:get_name())
                     ngx.log(ngx.INFO, "[Divide-Match-Rule:upstream] ", rule.name, " upstream_host:", ngx_var.upstream_host, " upstream_url:", ngx_var.upstream_url)
                 else
                     ngx.log(ngx.INFO, "[Divide-Match-Rule:error] no upstream host or url. ", rule.name, " host:", ngx_var.host, " uri:", ngx_var.uri)
