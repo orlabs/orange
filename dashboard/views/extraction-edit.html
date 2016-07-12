@@ -2,10 +2,22 @@
     <div class="form-group">
         <label class="col-sm-1 control-label">变量</label>
         <div class="col-sm-11">
-            <p style="margin-top:9px;">
-            根据需要提取变量使用
-            <a id="add-extraction-btn" class="btn btn-success" style="padding:0 5px;"><i class="fa fa-plus"></i></a>
-            </p>
+            <div class="col-sm-3" style="padding-left:0px;">
+                <select class="form-control" id="rule-extractor-type">
+                    {@if r.extractor}
+                        <option value="1" {@if !r.extractor.type || r.extractor.type==1 } selected {@/if}>索引式提取</option>
+                        <option value="2" {@if r.extractor.type && r.extractor.type==2 } selected {@/if}>模板式提取</option>
+                    {@/if}
+
+                    {@if !r.extractor}
+                        <option value="1">索引式提取</option>
+                        <option value="2">模板式提取</option>
+                    {@/if}
+                </select>
+            </div>
+            <div class="col-sm-1" style="line-height: 36px;">
+                <a id="add-extraction-btn" class="btn btn-success" style="padding:0 5px;"><i class="fa fa-plus"></i></a>
+            </div>
         </div>
     </div><!-- 描述 -->
 
@@ -28,6 +40,28 @@
                 <div class="col-sm-2 extraction-name-hodler" {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams"&&c.type!="URI" } style="display:none;" {@/if}>
                     <input type="text" class="form-control" name="rule-extractor-extraction-name" placeholder="name" value="${c.name}">
                 </div>
+
+                <!-- URI提取不提供默认值功能-->
+                <div class="col-sm-5 extraction-default-hodler">
+                    <div class="col-sm-6">
+                        <select class="form-control" name="rule-extractor-extraction-has-default" {@if c.type=="URI"} style="display:none;" {@/if}>
+                            {@if c.default || c.default=="" }
+                                <option value="0">No Default</option>
+                                <option value="1" selected>Has Default</option>
+                            {@/if}
+
+                            {@if c.default!="" && !c.default }
+                                <option value="0" selected>No Default</option>
+                                <option value="1">Has Default</option>
+                            {@/if}
+                            
+                        </select>
+                    </div>
+                    <div class="col-sm-6" >
+                        <input type="text" {@if c.type=="URI" || c.default!="" && !c.default } style="display:none;" {@/if} class="form-control" name="rule-extractor-extraction-default" placeholder="default value" value="${c.default}">
+                    </div>
+                </div>
+
                 <div class="col-sm-1" style="margin-top:10px">
                     <span class="input-group-btn">
                         <a class="btn btn-danger" style="padding:0 5px;">

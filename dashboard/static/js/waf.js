@@ -20,6 +20,7 @@
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
+            L.Common.initExtractionHasDefaultValueOrNotEvent();//提取项是否有默认值选择事件
 
             _this.initHandleTypeChangeEvent();//handle类型选择事件
             _this.initStatBtnEvent();//统计按钮事件

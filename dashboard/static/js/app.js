@@ -95,6 +95,23 @@
             });
         },
 
+        //提取项是否有默认值选择事件
+        initExtractionHasDefaultValueOrNotEvent: function () {
+            $(document).on("change", 'select[name=rule-extractor-extraction-has-default]', function () {
+                var has_default = $(this).val();
+
+                if (has_default=="1") {
+                    $(this).parents(".extraction-default-hodler").each(function () {
+                        $(this).find("input[name=rule-extractor-extraction-default]").show();
+                    });
+                } else {
+                    $(this).parents(".extraction-default-hodler").each(function () {
+                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                    });
+                }
+            });
+        },
+
         initExtractionTypeChangeEvent: function () {
             $(document).on("change", 'select[name=rule-extractor-extraction-type]', function () {
                 var extraction_type = $(this).val();
@@ -107,6 +124,19 @@
                 } else {
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find(".extraction-name-hodler").show();
+                    });
+                }
+
+                //URI类型没有默认值选项
+                if(extraction_type=="URI"){
+                    $(this).parents(".extraction-holder").each(function () {
+                        $(this).find("select[name=rule-extractor-extraction-has-default]").hide();
+                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                    });
+                }else{
+                    $(this).parents(".extraction-holder").each(function () {
+                        $(this).find("select[name=rule-extractor-extraction-has-default]").val("0").show();
+                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
                     });
                 }
             });
@@ -242,6 +272,19 @@
                 }
             };
 
+            //提取器类型
+            var extractor_type = $("#rule-extractor-type").val();
+            try{
+                extractor_type = parseInt(extractor_type);
+                if(!extractor_type || extractor_type != 2){
+                    extractor_type = 1;
+                }
+            }catch(e){
+                extractor_type = 1;
+            }
+
+
+            //提取项
             var extractions = [];
             var tmp_success = true;
             var tmp_tip = "";
@@ -251,15 +294,27 @@
                 var type = self.find("select[name=rule-extractor-extraction-type]").val();
                 extraction.type = type;
 
+                //如果允许子key则提取
                 if (type == "Header" || type == "Query" || type == "PostParams"|| type == "URI") {
                     var name = self.find("input[name=rule-extractor-extraction-name]").val();
                     if (!name) {
                         tmp_success = false;
                         tmp_tip = "变量提取项的name字段不得为空";
                     }
-
                     extraction.name = name;
                 }
+
+                //如果允许默认值则提取
+                var allow_default = (type == "Header" || type == "Query" || type == "PostParams"|| type == "Host"|| type == "IP"|| type == "Method");
+                var has_default = self.find("select[name=rule-extractor-extraction-has-default]").val();
+                if (allow_default && has_default=="1") {//只有允许提取&&有默认值的才取默认值
+                    var default_value = self.find("input[name=rule-extractor-extraction-default]").val();
+                    if (!default_value) {
+                        default_value = "";
+                    }
+                    extraction.default = default_value;
+                }
+
                 extractions.push(extraction);
             });
 
@@ -268,6 +323,8 @@
                 result.data = tmp_tip;
                 return result;
             }
+
+            result.data.extractor.type = extractor_type;
             result.data.extractor.extractions = extractions;
             result.success = true;
             return result;
@@ -342,6 +399,20 @@
 
             var old_type = $(row).find("select[name=rule-extractor-extraction-type]").val();
             $(new_row).find("select[name=rule-extractor-extraction-type]").val(old_type);
+
+            var old_has_default_value = $(row).find("select[name=rule-extractor-extraction-has-default]").val();
+            $(new_row).find("select[name=rule-extractor-extraction-has-default]").val(old_has_default_value);
+            if(old_has_default_value=="1"){
+                $(new_row).find("input[name=rule-extractor-extraction-default]").show().val("");
+            }else{
+                $(new_row).find("input[name=rule-extractor-extraction-default]").hide();
+            }
+
+            if(old_type=="URI"){//如果拷贝的是URI类型，则不显示default
+                $(new_row).find("input[name=rule-extractor-extraction-default]").hide();
+                $(new_row).find("select[name=rule-extractor-extraction-has-default]").hide();
+            }
+
             $(new_row).find("label").text("");
 
             $(new_row).insertAfter($(this).parents('.extraction-holder'))

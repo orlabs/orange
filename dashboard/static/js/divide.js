@@ -25,6 +25,7 @@
             L.Common.initExtractionAddOrRemove();//添加或删除条件
             L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
             L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
+            L.Common.initExtractionHasDefaultValueOrNotEvent();//提取项是否有默认值选择事件
 
             L.Common.initViewAndDownloadEvent("divide");
 

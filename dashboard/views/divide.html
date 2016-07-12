@@ -92,6 +92,12 @@
             {@/each}
         </td>
         <td class="left">
+            <p>
+            {@if r.extractor && r.extractor.type }
+            <b>Type</b>: ${r.extractor.type}<br/>
+            {@/if}
+            </p>
+
             {@if r.extractor && r.extractor.extractions }
                 {@each r.extractor.extractions as e, index}
                     <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:

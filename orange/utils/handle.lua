@@ -9,7 +9,7 @@ end
 
 local function compose(extractor_type, tmpl, variables)
     if not tmpl then return "" end
-    if not variables or type(variables) ~= "table" or #variables < 1 then
+    if not variables or type(variables) ~= "table" then
         return tmpl
     end
 
