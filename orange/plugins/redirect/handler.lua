@@ -60,17 +60,18 @@ function RedirectHandler:redirect()
 
             -- extract阶段
             local extractor = rule.extractor
+            local extractor_type = extractor.type
             local extractions = extractor and extractor.extractions
             local variables
             if extractions then
-                variables = extractor_util.extract(extractions)
+                variables = extractor_util.extract(extractor_type, extractions)
             end
 
             -- handle阶段
             if pass then
                 local handle = rule.handle
                 if handle and handle.url_tmpl then
-                    local to_redirect = handle_util.build_url(handle.url_tmpl, variables, self:get_name())
+                    local to_redirect = handle_util.build_url(extractor_type, handle.url_tmpl, variables, self:get_name())
                     if to_redirect and to_redirect ~= ngx_var_uri then
                         local redirect_status = tonumber(handle.redirect_status)
                         if redirect_status ~= 301 and redirect_status ~= 302 then

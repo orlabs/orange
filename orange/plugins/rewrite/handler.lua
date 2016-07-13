@@ -60,17 +60,18 @@ function RewriteHandler:rewrite(conf)
 
             -- extract阶段
             local extractor = rule.extractor
+            local extractor_type = extractor.type
             local extractions = extractor and extractor.extractions
             local variables
             if extractions then
-                variables = extractor_util.extract(extractions)
+                variables = extractor_util.extract(extractor_type, extractions)
             end
 
             -- handle阶段
             if pass then
                 local handle = rule.handle
                 if handle and handle.uri_tmpl then
-                    local to_rewrite = handle_util.build_uri(handle.uri_tmpl, variables, self:get_name())
+                    local to_rewrite = handle_util.build_uri(extractor_type, handle.uri_tmpl, variables, self:get_name())
                     if to_rewrite and to_rewrite ~= ngx_var_uri then
                         if handle.log == true then
                             ngx.log(ngx.INFO, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)

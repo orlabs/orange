@@ -93,25 +93,76 @@
         </td>
         <td class="left">
             <p>
-            {@if r.extractor && r.extractor.type }
-            <b>Type</b>: ${r.extractor.type}<br/>
-            {@/if}
+                {@if r.extractor}
+                <b>Type</b>: 
+                    {@if !r.extractor.type || r.extractor.type==1 }
+                        索引式提取
+                    {@/if}
+                    {@if r.extractor.type==2 }
+                        模板式提取
+                    {@/if}
+                <br/>
+                {@/if}
             </p>
 
             {@if r.extractor && r.extractor.extractions }
                 {@each r.extractor.extractions as e, index}
-                    <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
-                    ${e.type}{@if e.name }
-                        [${e.name}]
+
+                    {@if !r.extractor.type || r.extractor.type==1 }<!-- 索引式提取 -->
+                        {@if e.type!="URI" }
+                            <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                            ${e.type}{@if e.name }[${e.name}]{@/if}
+
+                            {@if e.default=="" || e.default }
+                                <span style="color:#aaa;margin-left:15px;">
+                                    default: <i style="text-decoration:underline">${e.default}</i>
+                                </span>
+                            {@/if}
+                        {@/if}
+
+                        {@if e.type=="URI" }
+                            <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                            <i style="text-decoration:underline">${e.name}</i>
+                        {@/if}
+                        <br/>
                     {@/if}
-                    <br/>
+                    {@if r.extractor.type==2 }<!-- 模板式提取 -->
+                        {@if e.type!="URI" }
+                            <span>{</span><span>{</span>
+                            {@if e.type=="Query" }query.<span>${e.name}</span>{@/if}
+                            {@if e.type=="Header" }header.<span>${e.name}</span>{@/if}
+                            {@if e.type=="PostParams" }body.<span>${e.name}</span>{@/if}
+                            {@if e.type=="Host" }host{@/if}
+                            
+                            {@if e.type=="IP" }ip{@/if}
+                            {@if e.type=="Method" }method{@/if}
+                            <span>}</span><span>}</span>
+
+                            {@if e.default=="" || e.default }
+                                <span style="color:#aaa;margin-left:15px;">
+                                    default: <i style="text-decoration:underline">${e.default}</i>
+                                </span>
+                            {@/if}
+                        {@/if}
+
+                        {@if e.type=="URI" }
+                           <span>{</span><span>{</span> 
+                            uri.v1 or uri.v2 ...
+                           <span>}</span><span>}</span>
+
+                           <i style="text-decoration:underline">regrex: ${e.name}</i>
+
+                        {@/if}
+                        <br/>
+                    {@/if}
+
                 {@/each}
             {@/if}
         </td>
         <td class="left handle">
-            <p class="urltmplp">upstream_host_tmpl: ${r.upstream_host}</p>
-            <p class="urltmplp">upstream_url_tmpl: ${r.upstream_url}</p>
-            <p class="urltmplp">log: ${r.log}</p>
+            <b>upstream_host_tmpl</b>:<br/> ${r.upstream_host}<br/>
+            <b>upstream_url_tmpl</b>:<br/> ${r.upstream_url}<br/>
+            <b>log</b>: ${r.log}<br/>
         </td>
         <td>${r.time}</td>
         <td class="center do">
