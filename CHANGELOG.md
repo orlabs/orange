@@ -1,5 +1,6 @@
 ### v0.2.0
 
+- API Server支持HTTP Basic Authorization
 - 变量提取模块增加新类型
 	- URL提取器支持一次提取多值
 	- 以模板方式使用变量，格式为{{extractor.key}}
