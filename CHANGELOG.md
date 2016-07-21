@@ -1,3 +1,7 @@
+### v0.3.0
+
+- 添加HTTP Basic Auth插件
+
 ### v0.2.0
 
 - API Server支持HTTP Basic Authorization
