@@ -17,6 +17,7 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
         "monitor", 
         "redirect", 
         "rewrite", 
+        "basic_auth",
         "waf", 
         "divide"
     ],
@@ -46,6 +47,16 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
             "^/auth/login$",
             "^/error/$"
         ]
+    },
+
+    "api": {//api server authorization
+        "auth_enable": true,//API should be authroized or not
+        "credentials": [//HTTP Basic Auth config
+            {
+                "username":"api_username",
+                "password":"api_password"
+            }
+        ]
     }
 }
 ```
@@ -67,7 +78,7 @@ Find all about **Orange** on [Documents Website](http://orange.sumory.com/docs).
 
 ### Contributors
 
-- 雨帆[@syhily](https://github.com/syhily)
+- 雨帆([@syhily](https://github.com/syhily))
 
 
 ### See also

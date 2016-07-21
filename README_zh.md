@@ -21,7 +21,7 @@ Orange是一个基于OpenResty的API网关.
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将install/orange-v0.2.0.sql导入到orange库中
+- 将install/orange-v0.3.0.sql导入到orange库中
 
 #### 修改配置文件
 
@@ -36,6 +36,7 @@ orange.conf的配置如下，请按需修改:
         "monitor", 
         "redirect", 
         "rewrite", 
+        "basic_auth",
         "waf", 
         "divide"
     ],
@@ -64,6 +65,16 @@ orange.conf的配置如下，请按需修改:
         "whitelist": [//不需要鉴权的uri，如登录页面，无需修改此值
             "^/auth/login$",
             "^/error/$"
+        ]
+    },
+
+    "api": {//API server配置
+        "auth_enable": true,//访问API时是否需要授权
+        "credentials": [//HTTP Basic Auth配置，仅在开启auth_enable时有效，自行添加或修改即可
+            {
+                "username":"api_username",
+                "password":"api_password"
+            }
         ]
     }
 }
