@@ -6,6 +6,7 @@ return function(config, store)
     local dashboard_router = lor:Router()
     local stat_api = require("dashboard.routes.stat_api")
     local waf_api = require("dashboard.routes.waf_api")
+    local basic_auth_api = require("dashboard.routes.basic_auth_api")
     local rewrite_api = require("dashboard.routes.rewrite_api")
     local redirect_api = require("dashboard.routes.redirect_api")
     local divide_api = require("dashboard.routes.divide_api")
@@ -70,6 +71,9 @@ return function(config, store)
         res:render("redirect")
     end)
 
+    dashboard_router:get("/basic_auth", function(req, res, next)
+        res:render("basic_auth")
+    end)
 
     dashboard_router:get("/waf", function(req, res, next)
         res:render("waf")
@@ -104,6 +108,15 @@ return function(config, store)
     dashboard_router:get("/waf/stat", waf_api["/waf/stat"].GET(store))
     dashboard_router:get("/waf/fetch_config", waf_api["/waf/fetch_config"].GET(store))
     dashboard_router:post("/waf/sync", waf_api["/waf/sync"].POST(store))
+
+
+    dashboard_router:get("/basic_auth/configs", basic_auth_api["/basic_auth/configs"].GET(store))
+    dashboard_router:post("/basic_auth/configs", basic_auth_api["/basic_auth/configs"].POST(store))
+    dashboard_router:delete("/basic_auth/configs", basic_auth_api["/basic_auth/configs"].DELETE(store))
+    dashboard_router:put("/basic_auth/configs", basic_auth_api["/basic_auth/configs"].PUT(store))
+    dashboard_router:post("/basic_auth/enable", basic_auth_api["/basic_auth/enable"].POST(store))
+    dashboard_router:get("/basic_auth/fetch_config", basic_auth_api["/basic_auth/fetch_config"].GET(store))
+    dashboard_router:post("/basic_auth/sync", basic_auth_api["/basic_auth/sync"].POST(store))
 
 
     dashboard_router:get("/redirect/configs", redirect_api["/redirect/configs"].GET(store))

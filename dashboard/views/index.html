@@ -30,7 +30,7 @@
                         <p class="plugin-name">
                             {%
                             local plugin_config = plugin_configs[v]
-                            if v=="stat" or plugin_config.enable==true then
+                            if v=="stat" or (plugin_config and plugin_config.enable==true) then
 
                             %}
                                 <span title="插件已被启用" class="badge on-badge">已启用</span>

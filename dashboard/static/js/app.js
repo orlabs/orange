@@ -22,6 +22,39 @@
             });
         },
 
+        //增加、删除credential按钮事件
+        initCredentialAddOrRemove: function () {
+
+            //点击“加号“添加新的输入行
+            $(document).on('click', '#credential-area .pair .btn-success', _this.addNewCredential);
+
+            //删除输入行
+            $(document).on('click', '#credential-area .pair .btn-danger', function (event) {
+                $(this).parents('.form-group').remove();//删除本行输入
+                _this.resetAddCredentialBtn();
+            });
+        },
+
+        initCredentialAddBtnEvent: function () {
+            $(document).on('click', '#add-credential-btn', function () {
+                var row;
+                var current_es = $('.credential-holder');
+                if (current_es && current_es.length) {
+                    row = current_es[current_es.length - 1];
+                }
+                if (row) {//至少存在了一个提取项
+                    var new_row = $(row).clone(true);
+                    $(new_row).find("label").text("");
+                    $("#credential-area").append($(new_row));
+                } else {//没有任何提取项，从模板创建一个
+                    var html = $("#single-credential-tmpl").html();
+                    $("#credential-area").append(html);
+                }
+
+                _this.resetAddCredentialBtn();
+            });
+        },
+
         //变量提取器增加、删除按钮事件
         initExtractionAddOrRemove: function () {
 
@@ -392,6 +425,34 @@
             })
         },
 
+        addNewCredential: function (event) {
+            var self = $(this);
+            var row = self.parents('.credential-holder');
+            var new_row = row.clone(true);
+
+            $(new_row).find("input[name=rule-handle-credential-username]").val("");
+            $(new_row).find("input[name=rule-handle-credential-password]").val("");
+            $(new_row).find("label").text("");
+
+            $(new_row).insertAfter($(this).parents('.credential-holder'))
+            _this.resetAddCredentialBtn();
+        },
+
+        resetAddCredentialBtn: function () {
+            var l = $("#credential-area .pair").length;
+            var c = 0;
+            $("#credential-area .pair").each(function () {
+                c++;
+                if (c == l) {
+                    $(this).find(".btn-success").show();
+                    $(this).find(".btn-danger").show();
+                } else {
+                    $(this).find(".btn-success").hide();
+                    $(this).find(".btn-danger").show();
+                }
+            })
+        },
+
         addNewExtraction: function (event) {
             var self = $(this);
             var row = self.parents('.extraction-holder');
@@ -443,6 +504,9 @@
                 rules_key = "rules";
             } else if (type == "rewrite") {
                 data = L.Rewrite.data;
+                rules_key = "rules";
+            } else if (type == "basic_auth") {
+                data = L.BasicAuth.data;
                 rules_key = "rules";
             } else if (type == "waf") {
                 data = L.WAF.data;
@@ -501,6 +565,8 @@
                 op_type = "redirect";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+            } else if (type == "basic_auth") {
+                op_type = "basic_auth";
             } else if (type == "waf") {
                 op_type = "waf";
             } else if (type == "divide") {
@@ -620,7 +686,10 @@
             } else if (type == "rewrite") {
                 op_type = "rewrite";
                 rules_key = "rules";
-            } else if (type == "waf") {
+            } else if (type == "basic_auth") {
+                op_type = "basic_auth";
+                rules_key = "rules";
+            }  else if (type == "waf") {
                 op_type = "waf";
                 rules_key = "rules";
             } else if (type == "divide") {
@@ -704,6 +773,9 @@
                 rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+                rules_key = "rules";
+            } else if (type == "basic_auth") {
+                op_type = "basic_auth";
                 rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
@@ -791,6 +863,9 @@
                 rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+                rules_key = "rules";
+            } else if (type == "basic_auth") {
+                op_type = "basic_auth";
                 rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
@@ -899,6 +974,9 @@
             } else if (type == "rewrite") {
                 op_type = "rewrite";
                 rules_key = "rules";
+            } else if (type == "basic_auth") {
+                op_type = "basic_auth";
+                rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
                 rules_key = "rules";
@@ -968,6 +1046,8 @@
                 op_type = "redirect";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+            } else if (type == "basic_auth") {
+                op_type = "basic_auth";
             } else if (type == "waf") {
                 op_type = "waf";
             } else if (type == "divide") {

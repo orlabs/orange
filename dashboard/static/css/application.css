@@ -664,3 +664,7 @@ tr.highlight{
 .extraction-default-hodler{
     padding-left:0px;padding-right:0px;
 }
+
+.form-group .control-label {
+    text-align: left;
+}
