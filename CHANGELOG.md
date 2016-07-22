@@ -1,4 +1,12 @@
-### v0.3.0
+### v0.4.0
+
+- 删除examples
+- TODO: 添加key auth插件
+- TODO: 限流插件
+- TODO: 防重提交机制
+- TODO: 补全新插件API文档
+
+### v0.3.0 2016.07.21
 
 - 添加HTTP Basic Auth插件
 
