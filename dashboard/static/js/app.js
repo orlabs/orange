@@ -22,38 +22,7 @@
             });
         },
 
-        //增加、删除credential按钮事件
-        initCredentialAddOrRemove: function () {
-
-            //点击“加号“添加新的输入行
-            $(document).on('click', '#credential-area .pair .btn-success', _this.addNewCredential);
-
-            //删除输入行
-            $(document).on('click', '#credential-area .pair .btn-danger', function (event) {
-                $(this).parents('.form-group').remove();//删除本行输入
-                _this.resetAddCredentialBtn();
-            });
-        },
-
-        initCredentialAddBtnEvent: function () {
-            $(document).on('click', '#add-credential-btn', function () {
-                var row;
-                var current_es = $('.credential-holder');
-                if (current_es && current_es.length) {
-                    row = current_es[current_es.length - 1];
-                }
-                if (row) {//至少存在了一个提取项
-                    var new_row = $(row).clone(true);
-                    $(new_row).find("label").text("");
-                    $("#credential-area").append($(new_row));
-                } else {//没有任何提取项，从模板创建一个
-                    var html = $("#single-credential-tmpl").html();
-                    $("#credential-area").append(html);
-                }
-
-                _this.resetAddCredentialBtn();
-            });
-        },
+        
 
         //变量提取器增加、删除按钮事件
         initExtractionAddOrRemove: function () {
@@ -425,33 +394,7 @@
             })
         },
 
-        addNewCredential: function (event) {
-            var self = $(this);
-            var row = self.parents('.credential-holder');
-            var new_row = row.clone(true);
-
-            $(new_row).find("input[name=rule-handle-credential-username]").val("");
-            $(new_row).find("input[name=rule-handle-credential-password]").val("");
-            $(new_row).find("label").text("");
-
-            $(new_row).insertAfter($(this).parents('.credential-holder'))
-            _this.resetAddCredentialBtn();
-        },
-
-        resetAddCredentialBtn: function () {
-            var l = $("#credential-area .pair").length;
-            var c = 0;
-            $("#credential-area .pair").each(function () {
-                c++;
-                if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
-                } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
-                }
-            })
-        },
+        
 
         addNewExtraction: function (event) {
             var self = $(this);
@@ -736,10 +679,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-
-                                            context.data.rules = result.data[rules_key];//重新设置数据
-                                            context.renderTable(result.data, context.data.rules[context.data.rules.length - 1].id);//渲染table
-
+                                            context.loadConfigs();
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
@@ -818,8 +758,7 @@
                                             dataType: 'json',
                                             success: function (r) {
                                                 if (r.success) {
-                                                    context.data.rules = result.data[rules_key];//重新设置数据
-                                                    context.renderTable(result.data);//渲染table
+                                                    context.loadConfigs();
                                                     return true;
                                                 } else {
                                                     L.Common.showErrorTip("提示", r.msg || "同步配置发生错误");
@@ -936,8 +875,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.renderTable(result.data, rule_id);//渲染table
-                                            context.data.rules = result.data[rules_key];//重新设置数据
+                                            context.loadConfigs();
 
                                             return true;
                                         } else {
@@ -1017,8 +955,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
-                                        context.renderTable(result.data);//渲染table
-                                        context.data.rules = result.data[rules_key];//重新设置数据
+                                        context.loadConfigs();
 
                                         return true;
                                     } else {
