@@ -653,3 +653,11 @@ tr.highlight{
 .form-group .control-label {
     text-align: left;
 }
+
+#node_tip {
+    display: none;
+}
+
+.head_title{
+    display:inline-block;
+}

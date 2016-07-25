@@ -13,7 +13,7 @@
     <div class="row" style="margin-top:-10px;margin-bottom:20px;">
         <div class="col-md-12">
             <div class="pull-left">
-                <h4>Orange概览</h4>
+                <h4 class="head_title">Orange概览</h4> <span id="node_tip">&raquo; 该节点启动于&nbsp;<span id="start_time_span"></span></span>
             </div>
 
             <div class="pull-right"></div>
@@ -66,5 +66,24 @@
 
 
 {(footer.html)}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $.ajax({
+            url : '/stat/status',
+            type : 'get',
+            cache: false,
+            data : {},
+            dataType : 'json',
+            success : function(result) {
+                if(result.success){
+                    $("#start_time_span").text(APP.Common.formatDate(new Date(result.data.start_time*1000)));
+                    $("#node_tip").show();
+                }
+            },
+            error : function() {}
+        });
+    });
+</script>
 </body>
 </html>
