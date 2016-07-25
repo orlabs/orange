@@ -8,21 +8,29 @@
             <span>
               <ul class="nav navbar-nav" id="main-nav-menu">
                   <li id="nav-index"><a href="/">概况</a></li>
-                  <li id="nav-monitor" class="dropdown">
+                  <li id="nav-status" class="nav_dropdown dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown">监控&nbsp;<span class="caret"></span></a>
                       <ul class="dropdown-menu">
-                          <li><a href="/status">全局统计</a></li>
-                          <li><a href="/monitor">自定义监控</a></li>
+                          <li id="nav-stat"><a href="/status">全局统计</a></li>
+                          <li id="nav-monitor"><a href="/monitor">自定义监控</a></li>
                       </ul>
                   </li>
-                  <li id="url-manage" class="dropdown">
+                  <li id="url-manage" class="nav_dropdown dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown">URL管理&nbsp;<span class="caret"></span></a>
                       <ul class="dropdown-menu">
                           <li id="nav-redirect"><a href="/redirect">URL重定向</a></li>
                           <li id="nav-rewrite"><a href="/rewrite">URI重写</a></li>
                       </ul>
                   </li>
-                  <li id="nav-basic-auth"><a href="/basic_auth">Basic Auth</a></li>
+
+                  <li id="nav-auth" class="nav_dropdown dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Auth&nbsp;<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                          <li id="nav-basic-auth"><a href="/basic_auth">Basic Auth</a></li>
+                          <li id="nav-key-auth"><a href="/key_auth">Key Auth</a></li>
+                      </ul>
+                  </li>
+
                   <li id="nav-waf"><a href="/waf">WAF</a></li>
                   <li id="nav-divide"><a href="/divide">分流</a></li>
               </ul>
@@ -33,7 +41,7 @@
                 {%
                     if locals and locals.login and locals.login == true then
                 %}
-                <li id="user-op" class="dropdown">
+                <li id="user-op" class="nav_dropdown dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ locals.username }} 
                     <span class="caret"></span>
                     </a>
