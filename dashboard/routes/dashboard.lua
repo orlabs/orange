@@ -3,10 +3,11 @@ local string_lower = string.lower
 local ipairs = ipairs
 local pairs = pairs
 local table_insert = table.insert
-local dashboard_router = lor:Router()
-local orange_db = require("orange.store.orange_db")
+
 
 return function(config, store)
+    local dashboard_router = lor:Router()
+    local orange_db = require("orange.store.orange_db")
     dashboard_router:get("/", function(req, res, next)
         --- 全局信息
         -- 当前加载的插件，开启与关闭情况
