@@ -66,7 +66,7 @@ return function(config, store)
     end)
 
     dashboard_router:get("/basic_auth", function(req, res, next)
-        res:render("basic_auth/basic_auth")
+        res:render("basic_auth")
     end)
 
     dashboard_router:get("/key_auth", function(req, res, next)
