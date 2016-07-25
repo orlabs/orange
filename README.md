@@ -18,6 +18,7 @@ Clone the repo to local. Check the sample config file `orange.conf` first:
         "redirect", 
         "rewrite", 
         "basic_auth",
+        "key_auth",
         "waf", 
         "divide"
     ],
