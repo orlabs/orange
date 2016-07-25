@@ -451,6 +451,9 @@
             } else if (type == "basic_auth") {
                 data = L.BasicAuth.data;
                 rules_key = "rules";
+            } else if (type == "key_auth") {
+                data = L.KeyAuth.data;
+                rules_key = "rules";
             } else if (type == "waf") {
                 data = L.WAF.data;
                 rules_key = "rules";
@@ -510,6 +513,8 @@
                 op_type = "rewrite";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
+            } else if (type == "key_auth") {
+                op_type = "key_auth";
             } else if (type == "waf") {
                 op_type = "waf";
             } else if (type == "divide") {
@@ -632,6 +637,9 @@
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
                 rules_key = "rules";
+            }  else if (type == "key_auth") {
+                op_type = "key_auth";
+                rules_key = "rules";
             }  else if (type == "waf") {
                 op_type = "waf";
                 rules_key = "rules";
@@ -649,7 +657,7 @@
                 var content = $("#add-tpl").html()
                 var d = dialog({
                     title: '添加规则',
-                    width: 680,
+                    width: 720,
                     content: content,
                     modal: true,
                     button: [{
@@ -716,6 +724,9 @@
                 rules_key = "rules";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
+                rules_key = "rules";
+            } else if (type == "key_auth") {
+                op_type = "key_auth";
                 rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
@@ -805,6 +816,9 @@
                 rules_key = "rules";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
+                rules_key = "rules";
+            } else if (type == "key_auth") {
+                op_type = "key_auth";
                 rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
@@ -915,6 +929,9 @@
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
                 rules_key = "rules";
+            } else if (type == "key_auth") {
+                op_type = "key_auth";
+                rules_key = "rules";
             } else if (type == "waf") {
                 op_type = "waf";
                 rules_key = "rules";
@@ -985,6 +1002,8 @@
                 op_type = "rewrite";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
+            } else if (type == "key_auth") {
+                op_type = "key_auth";
             } else if (type == "waf") {
                 op_type = "waf";
             } else if (type == "divide") {

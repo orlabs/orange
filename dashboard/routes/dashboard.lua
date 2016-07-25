@@ -69,6 +69,10 @@ return function(config, store)
         res:render("basic_auth")
     end)
 
+    dashboard_router:get("/key_auth", function(req, res, next)
+        res:render("key_auth/key_auth")
+    end)
+
     dashboard_router:get("/waf", function(req, res, next)
         res:render("waf")
     end)

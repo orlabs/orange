@@ -1,14 +1,6 @@
 local pairs = pairs
 local ipairs = ipairs
 local type = type
-
-local table_insert = table.insert
-local encode_base64 = ngx.encode_base64
-local string_lower = string.lower
-local string_format = string.format
-local string_sub = string.sub
-local string_gsub = string.gsub
-local string_len = string.len
 local string_find = string.find
 
 local utils = require("orange.utils.utils")
@@ -77,7 +69,7 @@ local function get_body(content_type)
         local is_multipart = string_find(content_type, "multipart")
         if is_multipart and is_multipart > 0 then
             return nil
-        else
+        end
     end
 
     local body
@@ -140,8 +132,8 @@ function KeyAuthHandler:access(conf)
             end
 
             -- handle阶段
-            local handle = rule.handle
             if pass then
+                local handle = rule.handle
                 if handle.credentials then
                     if handle.log == true then
                         ngx.log(ngx.INFO, "[KeyAuth-Pass-Rule] ", rule.name, " uri:", ngx_var.uri)
