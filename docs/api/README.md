@@ -87,6 +87,8 @@ URI                 | Method
 - [自定义监控插件monitor](./monitor_plugin.md)
 - [URL重定向插件redirect](./redirect_plugin.md)
 - [URI重写插件rewrite](./rewrite_plugin.md)
+- [鉴权插件basic_auth](./basic_auth_plugin.md)
+- [鉴权插件key_auth](./key_auth_plugin.md)
 - [WEB应用防火墙插件waf](./waf_plugin.md)
 - [分流/AB测试插件divide](./divide_plugin.md)
 
