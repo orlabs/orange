@@ -48,10 +48,6 @@ local function start_api_server(config, store)
         auth_failed(res)
     end)
 
-    app:get("/test", function(req, res, next)
-        res:html("test...")
-    end)
-
     -- routes
     app:use(router(config, store)())
 
