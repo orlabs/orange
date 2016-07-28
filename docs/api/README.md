@@ -62,6 +62,18 @@ URI                 | Method
                 "name": "rewrite",
                 "active_rule_count": 0
             },
+            "basic_auth": {//HTTP Basic Auth插件
+                "enable": true,
+                "inactive_rule_count": 0,
+                "name": "basic_auth",
+                "active_rule_count": 0
+            },
+            "key_auth": {//HTTP Key Auth插件
+                "enable": true,
+                "inactive_rule_count": 0,
+                "name": "key_auth",
+                "active_rule_count": 0
+            },
             "waf": {//WAF插件
                 "enable": true,
                 "inactive_rule_count": 0,
