@@ -88,7 +88,7 @@
                             }else{
                                 data0 = qpsOption.series[0].data;
                                 data0.shift();
-                                data0.push((data.total_count - lastTotalRequstCount)/_this.data.interval);
+                                data0.push((data.total_count - lastTotalRequstCount)/(_this.data.interval/1000));
                                 qpsOption.xAxis[0].data.shift();
                                 qpsOption.xAxis[0].data.push(axisData);
                                 _this.data.qpsChart.setOption(qpsOption);
