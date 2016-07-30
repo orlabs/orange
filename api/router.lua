@@ -45,10 +45,7 @@ return function(config, store)
         })
     end)
 
-    --- 全局统计信息
-    api_router:get("/stat/status", stat_api["/stat/status"])
-
-
+  
     --- 加载其他"可用"插件API
     local available_plugins = config.plugins
     if not available_plugins or type(available_plugins) ~= "table" or #available_plugins<1 then
