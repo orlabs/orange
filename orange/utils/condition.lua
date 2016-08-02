@@ -1,9 +1,15 @@
 local type = type
+local string_format = string.format
 local string_find = string.find
 local string_lower = string.lower
 local ngx_re_find = ngx.re.find
 
 local function assert_condition(real, operator, expected)
+    if not real then
+        ngx.log(ngx.ERR, string_format("assert_condition error: %s %s %s", real, operator, expected))
+        return false
+    end
+
     if operator == 'match' then
         if ngx_re_find(real, expected, 'isjo') ~= nil then
             return true
