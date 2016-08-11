@@ -67,6 +67,7 @@ local function extract_variable_for_template(extractions)
     for i, extraction in ipairs(extractions) do
         local etype = extraction.type
         if etype == "URI" then -- URI模式通过正则可以提取出N个值
+            result["uri"] = {} -- fixbug: nil `uri` variable for tempalte parse
             local uri = ngx_var.uri
             local m, err = ngx_re_match(uri, extraction.name)
             if not err and m and m[1] then
