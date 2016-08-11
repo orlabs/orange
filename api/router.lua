@@ -1,9 +1,33 @@
 local ipairs = ipairs
 local pairs = pairs
+local type = type
 local require = require
-local table_insert = table.insert
+local pcall = pcall
 local string_lower = string.lower
 local lor = require("lor.index")
+
+
+local function load_plugin_api(plugin, api_router, store)
+    local plugin_api_path = "orange.plugins." .. plugin .. ".api"
+    local ok, plugin_api = pcall(require, plugin_api_path)
+
+    if not ok or not plugin_api or type(plugin_api) ~= "table" then
+        ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path)
+        return
+    end
+
+    for uri, api_methods in pairs(plugin_api) do
+        ngx.log(ngx.INFO, "load route, uri:", uri)
+        if type(api_methods) == "table" then
+            for method, func in pairs(api_methods) do
+                local m = string_lower(method)
+                if m == "get" or m == "post" or m == "put" or m == "delete" then
+                    api_router[m](api_router, uri, func(store))
+                end
+            end
+        end
+    end
+end
 
 return function(config, store)
     local api_router = lor:Router()
@@ -53,34 +77,7 @@ return function(config, store)
     end
 
     for i, p in ipairs(available_plugins) do
-        local plugin_api_path = "orange.plugins." .. p .. ".api"
-        local ok, plugin_api = pcall(require, plugin_api_path)
-
-        if not ok then
-            ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path, ok)
-        else
-            if plugin_api and type(plugin_api) == "table" then
-                for uri, api_methods in pairs(plugin_api) do
-                    ngx.log(ngx.INFO, "load route, uri:", uri)
-
-                    if type(api_methods) == "table" then
-                        for method, func in pairs(api_methods) do
-                            local m = string_lower(method)
-
-                            if m == "get" then
-                                 api_router:get(uri, func(store))
-                            elseif m == "post" then
-                                api_router:post(uri, func(store))
-                            elseif m == "put" then
-                                api_router:put(uri, func(store))
-                            elseif m == "delete" then
-                                api_router:delete(uri, func(store))
-                            end
-                        end
-                    end
-                end
-            end
-        end
+        load_plugin_api(p, api_router, store)
     end
 
     return api_router
