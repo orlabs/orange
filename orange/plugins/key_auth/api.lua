@@ -188,7 +188,7 @@ API["/key_auth/configs"] = {
     end,
 
     -- new
-    PUT = function(store)
+    POST = function(store)
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
@@ -199,8 +199,8 @@ API["/key_auth/configs"] = {
             
             -- 插入到mysql
             local insert_result = store:insert({
-                sql = "insert into key_auth(`key`, `value`) values(?,?)",
-                params = { rule.id, cjson.encode(rule) }
+                sql = "insert into key_auth(`key`, `value`, `op_time`) values(?,?,?)",
+                params = { rule.id, cjson.encode(rule), rule.time }
             })
 
             -- 插入成功，则更新本地缓存
@@ -275,14 +275,15 @@ API["/key_auth/configs"] = {
     end,
 
     -- modify
-    POST = function(store)
+    PUT = function(store)
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
+            rule.time = utils.now()
 
             local update_result = store:delete({
-                sql = "update key_auth set `value`=? where `key`=?",
-                params = { cjson.encode(rule), rule.id }
+                sql = "update key_auth set `value`=?,`op_time`=? where `key`=?",
+                params = { cjson.encode(rule), rule.time, rule.id }
             })
 
             if update_result then
