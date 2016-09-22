@@ -186,7 +186,7 @@ API["/rewrite/configs"] = {
     end,
 
     -- new
-    PUT = function(store)
+    POST = function(store)
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
@@ -197,8 +197,8 @@ API["/rewrite/configs"] = {
            
             -- 插入到mysql
             local insert_result = store:insert({
-                sql = "insert into rewrite(`key`, `value`) values(?,?)",
-                params = { rule.id, cjson.encode(rule) }
+                sql = "insert into rewrite(`key`, `value`, `op_time`) values(?,?,?)",
+                params = { rule.id, cjson.encode(rule), rule.time }
             })
 
             -- 插入成功，则更新本地缓存
@@ -221,6 +221,7 @@ API["/rewrite/configs"] = {
             })
         end
     end,
+
     DELETE = function(store)
         return function(req, res, next)
             local rule_id = tostring(req.body.rule_id)
@@ -267,14 +268,15 @@ API["/rewrite/configs"] = {
     end,
     
     -- modify
-    POST = function(store)
+    PUT = function(store)
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
+            rule.time = utils.now()
 
             local update_result = store:delete({
-                sql = "update rewrite set `value`=? where `key`=?",
-                params = { cjson.encode(rule), rule.id }
+                sql = "update rewrite set `value`=?,`op_time`=? where `key`=?",
+                params = { cjson.encode(rule), rule.time, rule.id }
             })
 
             if update_result then

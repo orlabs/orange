@@ -448,6 +448,9 @@
             } else if (type == "rewrite") {
                 data = L.Rewrite.data;
                 rules_key = "rules";
+            } else if (type == "rate_limiting") {
+                data = L.RateLimiting.data;
+                rules_key = "rules";
             } else if (type == "basic_auth") {
                 data = L.BasicAuth.data;
                 rules_key = "rules";
@@ -511,6 +514,8 @@
                 op_type = "redirect";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+            } else if (type == "rate_limiting") {
+                op_type = "rate_limiting";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
             } else if (type == "key_auth") {
@@ -634,6 +639,9 @@
             } else if (type == "rewrite") {
                 op_type = "rewrite";
                 rules_key = "rules";
+            } else if (type == "rate_limiting") {
+                op_type = "rate_limiting";
+                rules_key = "rules";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
                 rules_key = "rules";
@@ -678,7 +686,7 @@
                             if (result.success == true) {
                                 $.ajax({
                                     url: '/' + op_type + '/configs',
-                                    type: 'put',
+                                    type: 'post',
                                     cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
@@ -721,6 +729,9 @@
                 rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+                rules_key = "rules";
+            } else if (type == "rate_limiting") {
+                op_type = "rate_limiting";
                 rules_key = "rules";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
@@ -814,6 +825,9 @@
             } else if (type == "rewrite") {
                 op_type = "rewrite";
                 rules_key = "rules";
+            } else if (type == "rate_limiting") {
+                op_type = "rate_limiting";
+                rules_key = "rules";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
                 rules_key = "rules";
@@ -880,7 +894,7 @@
                             if (result.success == true) {
                                 $.ajax({
                                     url: '/' + op_type + '/configs',
-                                    type: 'post',
+                                    type: 'put',
                                     cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
@@ -925,6 +939,9 @@
                 rules_key = "rules";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+                rules_key = "rules";
+            } else if (type == "rate_limiting") {
+                op_type = "rate_limiting";
                 rules_key = "rules";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
@@ -1000,6 +1017,8 @@
                 op_type = "redirect";
             } else if (type == "rewrite") {
                 op_type = "rewrite";
+            } else if (type == "rate_limiting") {
+                op_type = "rate_limiting";
             } else if (type == "basic_auth") {
                 op_type = "basic_auth";
             } else if (type == "key_auth") {

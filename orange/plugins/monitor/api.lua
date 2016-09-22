@@ -196,7 +196,8 @@ API["/monitor/configs"] = {
             })
         end
     end,
-    PUT = function(store) -- new
+
+    POST = function(store) -- new
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
@@ -206,8 +207,8 @@ API["/monitor/configs"] = {
             local success = false
             -- 插入到mysql
             local insert_result = store:insert({
-                sql = "insert into monitor(`key`, `value`) values(?,?)",
-                params = { rule.id, cjson.encode(rule) }
+                sql = "insert into monitor(`key`, `value`, `op_time`) values(?,?,?)",
+                params = { rule.id, cjson.encode(rule), rule.time }
             })
 
             -- 插入成功，则更新本地缓存
@@ -230,6 +231,7 @@ API["/monitor/configs"] = {
             })
         end
     end,
+
     DELETE = function(store)
         return function(req, res, next)
             local rule_id = tostring(req.body.rule_id)
@@ -275,14 +277,15 @@ API["/monitor/configs"] = {
         end
     end,
 
-    POST = function(store) -- modify
+    PUT = function(store) -- modify
         return function(req, res, next)
             local rule = req.body.rule
             rule = cjson.decode(rule)
+            rule.time = utils.now()
 
             local update_result = store:delete({
-                sql = "update monitor set `value`=? where `key`=?",
-                params ={cjson.encode(rule), rule.id}
+                sql = "update monitor set `value`=?,`op_time`=? where `key`=?",
+                params = { cjson.encode(rule), rule.time, rule.id }
             })
 
             if update_result then
