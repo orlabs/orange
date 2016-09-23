@@ -24,6 +24,49 @@ function _M.now()
     return result
 end
 
+function _M.current_timetable()
+    local n = date()
+    local yy, mm, dd = n:getdate()
+    local h = n:gethours()
+    local m = n:getminutes()
+    local s = n:getseconds()
+    local day = yy .. "-" .. mm .. "-" .. dd
+    local hour = day .. " " .. h
+    local minute = hour .. ":" .. m
+    local second = minute .. ":" .. s
+    
+    return {
+        day = day,
+        hour = hour,
+        minute = minute,
+        second = second
+    }
+end
+
+function _M.current_second()
+    local n = date()
+    local result = n:fmt("%Y-%m-%d %H:%M:%S")
+    return result
+end
+
+function _M.current_minute()
+    local n = date()
+    local result = n:fmt("%Y-%m-%d %H:%M")
+    return result
+end
+
+function _M.current_hour()
+    local n = date()
+    local result = n:fmt("%Y-%m-%d %H")
+    return result
+end
+
+function _M.current_day()
+    local n = date()
+    local result = n:fmt("%Y-%m-%d")
+    return result
+end
+
 function _M.table_is_array(t)
     if type(t) ~= "table" then return false end
     local i = 0
