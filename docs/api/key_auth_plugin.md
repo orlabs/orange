@@ -90,7 +90,7 @@ URI                 | Method
 
 URI                 | Method | 说明
 ------------------- | ------ | -----
-/key_auth/configs    | Put    | Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+/key_auth/configs    | Post    | Content-Type:application/x-www-form-urlencoded; charset=UTF-8
 
 
 **参数** 
@@ -155,7 +155,7 @@ rule | string | 指一条"规则"json格式的字符串
 
 URI                 | Method | 说明
 ------------------- | ------ | -----
-/key_auth/configs    | Post    | Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+/key_auth/configs    | Put    | Content-Type:application/x-www-form-urlencoded; charset=UTF-8
 
 
 **参数** 
