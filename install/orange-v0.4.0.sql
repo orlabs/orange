@@ -172,6 +172,21 @@ CREATE TABLE `key_auth` (
 
 
 
+# Dump of table rate_limiting
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `rate_limiting`;
+
+CREATE TABLE `rate_limiting` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_rate_limiting_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
