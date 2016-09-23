@@ -1,10 +1,10 @@
 ### v0.4.0
 
-- 删除examples
-- 添加key auth插件
-- TODO: 限流插件
-- TODO: 防重提交机制
-- 补全新插件API文档
+- [x] 删除examples
+- [x] 添加key auth插件
+- [x] 限流插件
+- [ ] 防重提交机制（delay）
+- [x] 补全新插件API文档
 
 ### v0.3.0 2016.07.21
 
