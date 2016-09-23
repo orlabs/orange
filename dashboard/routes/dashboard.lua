@@ -89,6 +89,10 @@ return function(config, store)
         res:render("redirect")
     end)
 
+    dashboard_router:get("/rate_limiting", function(req, res, next)
+        res:render("rate_limiting")
+    end)
+
     dashboard_router:get("/basic_auth", function(req, res, next)
         res:render("basic_auth/basic_auth")
     end)
