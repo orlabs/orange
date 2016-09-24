@@ -3,6 +3,14 @@ local resty_lock = require("resty.lock")
 local ngx_log = ngx.log
 local cache = ngx.shared.rate_limit
 
+-- default exprired time for different periods
+local EXPIRE_TIME = {
+  Second = 60, -- 59s+
+  Minute = 180, -- 120s+
+  Hour = 3720, -- 120s+
+  Day = 86520 -- 120s+
+}
+
 
 local _M = {}
 
@@ -31,7 +39,11 @@ function _M.set_json(key, value, expired)
     return _M.set(key, value, expired)
 end
 
-function _M.incr(key, value)
+function _M.incr(key, value, period)
+    local v = _M.get(key)
+    if not v then
+       _M.set(key, 0, EXPIRE_TIME[period])
+    end
     return cache:incr(key, value)
 end
 
