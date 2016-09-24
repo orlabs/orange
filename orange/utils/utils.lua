@@ -36,10 +36,10 @@ function _M.current_timetable()
     local second = minute .. ":" .. s
     
     return {
-        day = day,
-        hour = hour,
-        minute = minute,
-        second = second
+        Day = day,
+        Hour = hour,
+        Minute = minute,
+        Second = second
     }
 end
 

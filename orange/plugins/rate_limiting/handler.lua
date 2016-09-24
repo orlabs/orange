@@ -12,21 +12,21 @@ local function get_current_stat(limit_key)
     return counter.get(limit_key)
 end
 
-local function incr_stat(limit_key)
-    counter.incr(limit_key, 1)
+local function incr_stat(limit_key, limit_type)
+    counter.incr(limit_key, 1, limit_type)
 end
 
 local function get_limit_type(period)
     if not period then return nil end
 
     if period == 1 then
-        return "second"
+        return "Second"
     elseif period == 60 then
-        return "minute"
+        return "Minute"
     elseif period == 3600 then
-        return "hour"
+        return "Hour"
     elseif period == 86400 then
-        return "day"
+        return "Day"
     else
         return nil
     end
@@ -82,7 +82,7 @@ function RateLimitingHandler:access(conf)
                 if limit_type then
                     local current_timetable = utils.current_timetable()
                     local time_key = current_timetable[limit_type]
-                    local limit_key = rule.id .. time_key
+                    local limit_key = rule.id .. "#" .. time_key
                     local current_stat = get_current_stat(limit_key) or 0
                         
                     ngx.header["X-RateLimit-Limit" .. "-" .. limit_type] = handle.count
@@ -96,12 +96,12 @@ function RateLimitingHandler:access(conf)
                         return ngx.exit(429)
                     else
                         ngx.header["X-RateLimit-Remaining" .. "-" .. limit_type] = handle.count - current_stat - 1
-                        incr_stat(limit_key)
+                        incr_stat(limit_key, limit_type)
 
                         -- only for test, comment it in production
-                        if handle.log == true then
-                            ngx.log(ngx.INFO, "[RateLimiting-Rule] ", rule.name, " uri:", ngx_var.uri, " limit:", handle.count, " reached:", current_stat)
-                        end
+                        -- if handle.log == true then
+                        --     ngx.log(ngx.INFO, "[RateLimiting-Rule] ", rule.name, " uri:", ngx_var.uri, " limit:", handle.count, " reached:", current_stat + 1)
+                        -- end
                     end
                 end
             end -- end `pass`
