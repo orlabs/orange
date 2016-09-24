@@ -1,8 +1,8 @@
-### v0.4.0
+### v0.4.0 2016.09.24
 
 - [x] 删除examples
 - [x] 添加key auth插件
-- [x] 限流插件
+- [x] 限流插件rate limiting
 - [ ] 防重提交机制（delay）
 - [x] 补全新插件API文档
 
