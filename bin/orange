@@ -1,0 +1,6 @@
+#!/usr/bin/env resty
+
+-- just for development
+package.path="/data/workspace/lor/orange/?.lua;" .. package.path
+
+require("bin.main")(arg)

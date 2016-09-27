@@ -8,7 +8,6 @@ local cjson = require("cjson")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local orange_db = require("orange.store.orange_db")
-local logger = require("orange.utils.logger")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
