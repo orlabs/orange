@@ -67,7 +67,7 @@ function _M.execute(origin_args)
 
         local result = handler:start()
         if result == 0 then
-            logger:info("Orange started")
+            logger:success("Orange started.")
         end
     end, function(e)
         logger:error("Could not start Orange, stopping it")

@@ -33,9 +33,9 @@ end
 function Logger:success(format, ...)
     local v = {...}
     if format and next(v) then
-       self:print(colors.green("[OK] ").. string.format(format, ...))
+       self:print(colors.green("[SUCCESS] ").. string.format(format, ...))
     else
-       self:print(colors.green("[OK] ").. (format or ""))
+       self:print(colors.green("[SUCCESS] ").. (format or ""))
     end
 end
 

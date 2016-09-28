@@ -19,14 +19,16 @@ local function ngx_command(args)
     end
 
     local orange_conf, prefix, ngx_conf, ngx_signal = "", "", "", ""
-    if args.orange_conf ~= nil then orange_conf = "-g \"env ORANGE_CONF=" .. args.orange_conf .. ";\"" end
+    -- if args.orange_conf ~= nil then orange_conf = "-g \"env ORANGE_CONF=" .. args.orange_conf .. ";\"" end
+    if args.orange_conf ~= nil then orange_conf = "ORANGE_CONF=" .. args.orange_conf .. " " end
     if args.prefix then prefix = "-p " .. args.prefix end
     if args.ngx_conf then ngx_conf = "-c " .. args.ngx_conf end
     if args.ngx_signal then ngx_signal = "-s " .. args.ngx_signal end
 
 
-    local cmd = string.format("nginx %s %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
-    logger:info("[execute] %s", cmd)
+    -- local cmd = string.format("nginx %s %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
+    local cmd = string.format("%snginx %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
+    logger:info(cmd)
     return os.execute(cmd)
 end
 
@@ -46,7 +48,7 @@ function _M:new(args)
 end
 
 function _M:start()
-    logger:info("start orange command.")
+    logger:info("Start orange command execute.")
     create_dirs(self.necessary_dirs)
 
 
