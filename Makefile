@@ -22,6 +22,8 @@ install:
 	@echo "package.path=\"$(ORANGE_HOME)?.lua;;\"" >> $(ORANGE_BIN)
 	@echo "require(\"bin.main\")(arg)" >> $(ORANGE_BIN)
 	@chmod +x $(ORANGE_BIN)
+	@echo "Orange installed."
+	@orange help
 
 show:
 	@orange help
