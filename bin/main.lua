@@ -7,6 +7,7 @@ local cmds = {
     stop = "Stop current Orange",
     restart = "Restart Orange",
     reload = "Reload the config of Orange",
+    store = "Init/Update/Backup Orange store",
     version = "Show the version of Orange",
     help = "Show help tips"
 }
