@@ -1,7 +1,11 @@
 ### v0.5.0 
 
-- [ ] resty-cli支持
-- [ ] `规则`设计重构
+- 添加`Makefile`安装方式
+- 支持通过命令行`orange store`初始化数据库
+- 添加resty-cli支持
+    - 支持orange start/stop/restart/reload/store等命令
+- Break Change: 将*.conf配置移动到conf目录下
+
 
 ### v0.4.0 2016.09.24
 
