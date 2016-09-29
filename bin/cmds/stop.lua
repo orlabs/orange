@@ -1,6 +1,5 @@
 local ngx_handle = require("bin.utils.ngx_handle")
 local args_util = require("bin.utils.args_util")
-local command_util = require("bin.utils.command_util")
 local logger = require("bin.utils.logger")
 
 
