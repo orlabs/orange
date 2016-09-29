@@ -56,3 +56,8 @@ luac.out
 
 *.swp
 *.swo
+
+
+# Orange exclude
+bin/orange
+
