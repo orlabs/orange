@@ -28,7 +28,7 @@ Options:
  -h,--help (optional string) show help tips
 
 Examples:
- orange start  #use the current dir as workspace with `pwd`/conf/orange.conf & `pwd`/conf/nginx.conf
+ orange start  #use `/usr/local/orange` as workspace with `/usr/local/orange/conf/orange.conf` & `/usr/local/orange/conf/nginx.conf`
  orange start --prefix=/opt/orange  #use the `prefix` as workspace with ${prefix}/conf/orange.conf & ${prefix}/conf/nginx.conf
  orange start --orange_conf=/opt/orange/conf/orange.conf --prefix=/opt/orange --ngx_conf=/opt/orange/conf/nginx.conf
  orange start -h  #just show help tips
@@ -49,7 +49,8 @@ function _M.execute(origin_args)
     end
 
     -- use default args if not exist
-    if not args.prefix then args.prefix = command_util.pwd() end
+    -- if not args.prefix then args.prefix = command_util.pwd() end
+    if not args.prefix then args.prefix = "/usr/local/orange" end
     if not args.orange_conf then args.orange_conf = args.prefix .. "/conf/orange.conf" end
     if not args.ngx_conf then args.ngx_conf = args.prefix .. "/conf/nginx.conf" end
 
