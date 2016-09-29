@@ -6,7 +6,7 @@ local cmds = {
     start = "Start the Orange Gateway",
     stop = "Stop current Orange",
     restart = "Restart Orange",
-    reload = "Reload the config of Orange(Nginx)",
+    reload = "Reload the config of Orange",
     version = "Show the version of Orange",
     help = "Show help tips"
 }
@@ -28,8 +28,12 @@ The commands are:
 
 local function exec(args)
     local cmd = table.remove(args, 1)
-    if cmd == "help" then
+    if cmd == "help" or cmd == "-h" or cmd == "--help" then
         return logger:print(help)
+    end
+
+    if cmd == "version" or cmd == "-v" or cmd == "--version" then
+        return logger:print(version)
     end
 
     if not cmd then
