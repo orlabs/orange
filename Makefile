@@ -1,6 +1,6 @@
 VERSION = 0.5.0
 
-TO_INSTALL = api bin conf dashboard orange
+TO_INSTALL = api bin conf dashboard orange install
 ORANGE_HOME ?= /usr/local/orange/
 ORANGE_BIN ?= /usr/local/bin/orange
 
@@ -19,7 +19,7 @@ install:
 	done;
 
 	@echo "#!/usr/bin/env resty" >> $(ORANGE_BIN)
-	@echo "package.path=\"$(ORANGE_HOME)?.lua;;\"" >> $(ORANGE_BIN)
+	@echo "package.path=\"$(ORANGE_HOME)?.lua;;\" .. package.path" >> $(ORANGE_BIN)
 	@echo "require(\"bin.main\")(arg)" >> $(ORANGE_BIN)
 	@chmod +x $(ORANGE_BIN)
 	@echo "Orange installed."
