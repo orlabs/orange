@@ -3,74 +3,69 @@
 <a href="./README_zh.md" style="font-size:13px">中文</a> <a href="./README.md" style="font-size:13px">English</a> 
 
 
-API Gateway based on OpenResty.
+A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 
 
-### Install
+### Install & Usages
 
-Clone the repo to local. Check the sample config file `orange.conf` first:
+#### Requirements
 
-```javascript
-{
-    "plugins": [ //available plugins. remove one if you do not need it.
-        "stat", 
-        "monitor", 
-        "redirect", 
-        "rewrite",
-        "rate_limiting",
-        "basic_auth",
-        "key_auth",
-        "waf", 
-        "divide"
-    ],
+- MySQL v5.5+ 
+- OpenResty v1.9.7.3+ or Nginx+lua module
+- [Lor Framework](https://github.com/sumory) v0.1.4+
+- libuuid.so
 
-    "store": "mysql",//only support `mysql` for now
-    "store_mysql": { //config if you choose `mysql` store
-        "timeout": 5000,
-        "connect_config": {
-            "host": "127.0.0.1",
-            "port": 3306,
-            "database": "orange",
-            "user": "root",
-            "password": "",
-            "max_packet_size": 1048576
-        },
-        "pool_config": {
-            "max_idle_timeout": 10000,
-            "pool_size": 3
-        },
-        "desc": "mysql configuration"
-    },
+Import the SQL file(e.g. install/orange-v0.5.0.sql) which is adapted to your Orange version to MySQL database named `orange`.
 
-    "dashboard": {//dashboard config. if `store` is `mysql`, this will make sense
-        "auth": false, //the dashboard UI should be authorized or not
-        "session_secret": "y0ji4pdj61aaf3f11c2e65cd2263d3e7e5", // used to encrypt cookie
-        "whitelist": [//url list that needn't be authorized
-            "^/auth/login$",
-            "^/error/$"
-        ]
-    },
+#### Install
 
-    "api": {//api server authorization
-        "auth_enable": true,//API should be authroized or not
-        "credentials": [//HTTP Basic Auth config
-            {
-                "username":"api_username",
-                "password":"api_password"
-            }
-        ]
-    }
-}
+**1) version < 0.5.0**
+
+If you use Orange under v0.5.0, there is no need to `install`.
+
+**2) version >= 0.5.0**
+
+In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
+
+```
+cd orange
+make install
 ```
 
-Import `install/orange-${version}` to MySQL and modify `store_mysql` as you want before you start `Orange`.
+then, the Orange runtime lua module is installed in `/usr/local/orange` and an executable command named `/usr/local/bin/orange` is generated.
 
-Then just type `sh start.sh` to start Orange. Maybe you should check the start script and customize it for your own need.
+
+#### Usages
+
+Before starting Orange, you should ensure that the `orange.conf` and `nginx.conf` are redefined to satisfy the demands of your project.
+
+
+**1) version < 0.5.0**
+
+Just `sh start.sh` to start Orange. You could rewrite some other shell scripts as you need.
+
+**2) version >= 0.5.0**
+
+`orange help` to check usages:
+
+```
+Usage: orange COMMAND [OPTIONS]
+
+The commands are:
+
+start   Start the Orange Gateway
+stop    Stop current Orange
+reload  Reload the config of Orange
+restart Restart Orange
+store   Init/Update/Backup Orange store
+version Show the version of Orange
+help    Show help tips
+```
 
 
 ### Documents
 
-Find all about **Orange** on [Documents Website](http://orange.sumory.com/docs). There is only a Chinese version for now.
+Find more about Orange on its [website](http://orange.sumory.com/docs). There is only a Chinese version for now.
 
 
 ### Docker
@@ -85,7 +80,7 @@ Find all about **Orange** on [Documents Website](http://orange.sumory.com/docs).
 
 ### See also
 
-The architecture is highly inspired by [Kong](https://github.com/Mashape/kong).
+The plugin architecture is highly inspired by [Kong](https://github.com/Mashape/kong).
 
 
 ### License

@@ -3,19 +3,19 @@
 <a href="./README_zh.md" style="font-size:13px">中文</a> <a href="./README.md" style="font-size:13px">English</a> 
 
 
-Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还可用于API监控、访问控制(鉴权、WAF)、流量筛选、AB测试、动态分流等。它有以下特性：
+Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还可用于API监控、访问控制(鉴权、WAF)、流量筛选、访问限速、AB测试、动态分流等。它有以下特性：
 
 - 提供了一套默认的Dashboard用于动态管理各种功能和配置
 - 提供了API接口用于实现第三方服务(如个性化运维需求、第三方Dashboard等)
 - 可根据规范编写自定义插件扩展Orange功能
 
 
-### 安装
+### 使用
 
 #### 安装依赖
 
 - OpenResty: 版本应在1.9.7.3+
-- [lor](https://github.com/sumory/lor)框架: 版本在v0.1.0+
+- [lor](https://github.com/sumory/lor)框架: 版本在v0.1.4+
     - git clone https://github.com/sumory/lor
     - cd lor & sh install.sh
 - libuuid.so
@@ -27,11 +27,11 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.4.0.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.5.0.sql)导入到orange库中
 
 #### 修改配置文件
 
-Orange有**两个**配置文件，一个是`orange.conf`，用于配置插件、存储方式和内部集成的默认Dashboard，另一个是`conf/nginx.conf`用于配置Nginx(OpenResty).
+Orange有**两个**配置文件，一个是`conf/orange.conf`，用于配置插件、存储方式和内部集成的默认Dashboard，另一个是`conf/nginx.conf`用于配置Nginx(OpenResty).
 
 orange.conf的配置如下，请按需修改:
 
@@ -68,7 +68,7 @@ orange.conf的配置如下，请按需修改:
     },
 
     "dashboard": {//默认的Dashboard配置.
-        "auth": false, //设置为true，则需要用户名、密码才能登录Dashboard使用，默认的用户名和密码为admin/orange_admin
+        "auth": false, //设为true，则需用户名、密码才能登录Dashboard,默认的用户名和密码为admin/orange_admin
         "session_secret": "y0ji4pdj61aaf3f11c2e65cd2263d3e7e5", //加密cookie用的盐，自行修改即可
         "whitelist": [//不需要鉴权的uri，如登录页面，无需修改此值
             "^/auth/login$",
@@ -95,9 +95,39 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 - 各个server或是location的权限，如是否需要通过`allow/deny`指定配置黑白名单ip
 
 
+#### 安装
+
+如果使用的是v0.5.0以前的版本则无需安装， 只要将Orange下载下来放到合适的位置即可。
+
+如果使用的是v0.5.0及以上的版本， 可以通过`make install`将Orange安装到系统中。 执行此命令后， 以下两部分将被安装：
+
+```
+/usr/local/orange     #orange运行时需要的文件
+/usr/local/bin/orange #orange命令行工具
+```
+
 #### 启动
 
-执行`sh start.sh`即可启动orange.
+在v0.5.0以下版本中， 一个简单的shell脚本用来启动/重启orange, 执行`sh start.sh`即可。可以按需要仿照start.sh编写运维脚本， 本质上就是启动/关闭Nginx。
+
+除此之外， 从v0.5.0开始， 如果执行过`make install`将Orange安装到系统后， 还可以通过`orange`命令来管理， 执行`orange help`查看有哪些命令可以使用：
+
+```
+Usage: orange COMMAND [OPTIONS]
+
+The commands are:
+
+start   Start the Orange Gateway
+stop    Stop current Orange
+reload  Reload the config of Orange
+restart Restart Orange
+store   Init/Update/Backup Orange store
+version Show the version of Orange
+help    Show help tips
+```
+
+
+Orange启动成功后， dashboard和API server也随之启动：
 
 - 内置的Dashboard可通过`http://localhost:9999`访问
 - API Server默认在`7777`端口监听，如不需要API Server可删除nginx.conf里对应的配置
