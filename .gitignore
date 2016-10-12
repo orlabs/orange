@@ -60,4 +60,4 @@ luac.out
 
 # Orange exclude
 bin/orange
-
+.DS_Store
