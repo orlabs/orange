@@ -5,6 +5,7 @@ local require = require
 local pcall = pcall
 local string_lower = string.lower
 local lor = require("lor.index")
+local kvstore = require("orange.plugins.kvstore.api")
 
 
 local function load_plugin_api(plugin, api_router, store)
@@ -19,7 +20,7 @@ local function load_plugin_api(plugin, api_router, store)
     local ok, plugin_api, e
     ok = xpcall(function() 
         plugin_api = require(plugin_api_path)
-    end,  function()
+    end, function()
         e = debug.traceback()
     end)
     if not ok or not plugin_api or type(plugin_api) ~= "table" then
@@ -28,7 +29,7 @@ local function load_plugin_api(plugin, api_router, store)
     end
 
     for uri, api_methods in pairs(plugin_api) do
-        ngx.log(ngx.INFO, "load route, uri:", uri)
+        -- ngx.log(ngx.INFO, "load route, uri:", uri)
         if type(api_methods) == "table" then
             for method, func in pairs(api_methods) do
                 local m = string_lower(method)

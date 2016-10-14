@@ -9,18 +9,6 @@ local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local ngx_shared = ngx.shared
 
-local result_format = {
-    "json" = "json",
-    "text" = "text",
-    "html" = "html"
-}
-
-local default_value = {
-    "json" = nil,
-    "text" = "",
-    "html" = ""
-}
-
 local function send_err_result(res, format, err)
     if format == "json" then
         res:status(500):json({
@@ -41,9 +29,9 @@ local function send_result(res, format, value)
             data = value
         })
     elseif format == "text" then
-        res:send(value)
+        res:send(value or "")
     elseif format == "html" then
-        res:html(value)
+        res:html(value or "")
     end
 end
 
@@ -126,7 +114,7 @@ API["/kvstore/fetch_config"] = {
             end
 
             if conf and type(conf) == "table" and #conf == 1 then
-                data.conf = cjson.decode(conf[1].value))
+                data.conf = cjson.decode(conf[1].value)
             else
                 data.conf = {}
             end
@@ -176,7 +164,7 @@ API["/kvstore/sync"] = {
             end
 
             if conf and type(conf) == "table" and #conf == 1 then
-                data.conf = cjson.decode(conf[1].value))
+                data.conf = cjson.decode(conf[1].value)
             else
                 data.conf = {}
             end
@@ -288,7 +276,7 @@ API["/kvstore/get"] = {
             local dict = req.query.dict
             local key = req.query.key
             local format = req.query.format
-            if not format or not result_format[format] then 
+            if format ~= "html" and format ~= "text" and format ~= "json" then 
                 format = "json"
             end
 
@@ -330,13 +318,12 @@ API["/kvstore/get"] = {
                 return send_err_result(res, format, string_format("not allowed to get ngx.shared.%s[%s]", dict, key))
             end
 
-            local ngx_shared_dict = ngx_shared[dict]
+            local ngx_shared_dict = ngx.shared[dict]
             if not ngx_shared_dict then
                 return send_err_result(res, format, string_format("ngx.shared.%s not exists", dict))
             end
-
-            local value = ngx_shared_dict[key]
-            if value == nil then value = default_value[format] end
+            
+            local value = ngx_shared_dict:get(key)
             send_result(res, format, value)
         end
     end
