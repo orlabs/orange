@@ -25,7 +25,7 @@ local function load_node_plugins(config, store)
     for _, v in ipairs(plugins) do
         local loaded, plugin_handler = utils.load_module_if_exists("orange.plugins." .. v .. ".handler")
         if not loaded then
-            error("The following plugin is not installed: " .. v)
+            ngx.log(ngx.WARN, "The following plugin is not installed or has no handler: " .. v)
         else
             ngx.log(ngx.DEBUG, "Loading plugin: " .. v)
             table_insert(sorted_plugins, {

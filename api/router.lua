@@ -9,10 +9,21 @@ local lor = require("lor.index")
 
 local function load_plugin_api(plugin, api_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    local ok, plugin_api = pcall(require, plugin_api_path)
+    -- local ok, plugin_api = pcall(require, plugin_api_path)
 
+    -- if not ok or not plugin_api or type(plugin_api) ~= "table" then
+    --     ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path)
+    --     return
+    -- end
+
+    local ok, plugin_api, e
+    ok = xpcall(function() 
+        plugin_api = require(plugin_api_path)
+    end,  function()
+        e = debug.traceback()
+    end)
     if not ok or not plugin_api or type(plugin_api) ~= "table" then
-        ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path)
+        ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path, " error:", e)
         return
     end
 
