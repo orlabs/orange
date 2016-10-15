@@ -5,7 +5,7 @@ local tostring = tostring
 local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
 local counter = require("orange.plugins.rate_limiting.counter")
 
 local function get_current_stat(limit_key)

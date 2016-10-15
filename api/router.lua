@@ -28,7 +28,14 @@ local function load_plugin_api(plugin, api_router, store)
         return
     end
 
-    for uri, api_methods in pairs(plugin_api) do
+    local plugin_apis
+    if plugin_api.get_mode and plugin_api:get_mode() == 2 then
+        plugin_apis = plugin_api:get_apis()
+    else
+        plugin_apis = plugin_api
+    end
+
+    for uri, api_methods in pairs(plugin_apis) do
         -- ngx.log(ngx.INFO, "load route, uri:", uri)
         if type(api_methods) == "table" then
             for method, func in pairs(api_methods) do

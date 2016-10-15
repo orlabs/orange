@@ -14,7 +14,7 @@ local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local handle_util = require("orange.utils.handle")
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
 
 local function get_encoded_credential(origin)
     local result = string_gsub(origin, "^ *[B|b]asic *", "")

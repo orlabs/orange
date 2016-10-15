@@ -1,4 +1,4 @@
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
 local stat = require("orange.plugins.stat.stat")
 
 local StatHandler = BasePlugin:extend()

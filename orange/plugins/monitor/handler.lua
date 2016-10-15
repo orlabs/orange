@@ -4,7 +4,7 @@ local orange_db = require("orange.store.orange_db")
 local stat = require("orange.plugins.monitor.stat")
 local judge_util = require("orange.utils.judge")
 local handle_util = require("orange.utils.handle")
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
 
 local URLMonitorHandler = BasePlugin:extend()
 URLMonitorHandler.PRIORITY = 2000
