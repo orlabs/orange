@@ -8,7 +8,7 @@ local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
 
 
 local RedirectHandler = BasePlugin:extend()
