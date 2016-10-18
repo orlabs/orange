@@ -17,6 +17,8 @@ local function load_plugin_api(plugin, api_router, store)
     --     return
     -- end
 
+    ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
+
     local ok, plugin_api, e
     ok = xpcall(function() 
         plugin_api = require(plugin_api_path)
