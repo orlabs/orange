@@ -25,6 +25,32 @@ local function send_err_result(res, format, err)
     end
 end
 
+local function send_failed_result(res, format, err)
+    if format == "json" then
+        res:json({
+            success = false,
+            msg = err
+        })
+    elseif format == "text" then
+        res:send(err)
+    elseif format == "html" then
+        res:html(err)
+    end
+end
+
+local function send_success_result(res, format)
+    if format == "json" then
+        res:json({
+            success = true,
+            msg = "success"
+        })
+    elseif format == "text" then
+        res:send("success")
+    elseif format == "html" then
+        res:html("success")
+    end
+end
+
 local function send_result(res, format, value)
     if format == "json" then
         xpcall(function() 
@@ -328,8 +354,99 @@ end)
 
 API:post("/kvstore/set", function(store)
     return function(req, res, next)
+        local dict = req.body.dict
+        local key = req.body.key
+        local value = req.body.value
+        local exptime = req.body.exptime -- seconds
+        local vtype = req.body.vtype
+        local format = req.body.format
+        local log = req.body.log
+
+        if format ~= "html" and format ~= "text" and format ~= "json" then 
+            format = "json"
+        end
+
+        if exptime and tonumber(exptime) then
+            exptime = tonumber(exptime)
+        end
+
+        if vtype ~= "number" and vtype ~= "string" then 
+            vtype = "string"
+        end
+
+        if vtype == "number" then
+            value = tonumber(value)
+            if not value then
+                return send_failed_result(res, format, "value is nil or it's not a number.")
+            end
+        elseif type == "string" then
+            value = tostring(value)
+        end
+
+        if log == "true" then
+            log = true
+        end
+
+        if not dict or not key or dict == "" or key == "" then
+            return send_failed_result(res, format, "error params.")
+        end
+
+        local block = false
+
+        local conf = orange_db.get_json("kvstore.conf")
+        if conf then
+            local blacklist, whitelist = conf.blacklist, conf.whitelist
+            
+            if blacklist and next(blacklist) then
+                for _, v in ipairs(blacklist) do
+                    if v.dict == dict and v.key == key then
+                        block = true
+                        break
+                    end
+                end
+            end
+
+            local contains
+            if whitelist and next(whitelist) then
+                for _, v in ipairs(whitelist) do
+                    if v.dict == dict and v.key == key then
+                        contains = true
+                        break
+                    end
+                end
+            end
+
+            if contains then 
+                block = false
+            end
+        end
+
+        if block == true then
+            return send_failed_result(res, format, string_format("not allowed to set ngx.shared.%s[%s]", dict, key))
+        end
+
+        local ngx_shared_dict = ngx.shared[dict]
+        if not ngx_shared_dict then
+            return send_failed_result(res, format, string_format("ngx.shared.%s not exists", dict))
+        end
         
-        
+        local success, err, forcible
+
+        if exptime and exptime >= 0 then
+            success, err, forcible = ngx_shared_dict:set(key, value, exptime)
+        else
+            success, err, forcible = ngx_shared_dict:set(key, value)
+        end
+
+        if log then
+            ngx.log(ngx.INFO, string_format("kvstore-set, dict: %s, key: %s, value: [[%s]], success: %s", dict, key, value, success))
+        end
+
+        if success then
+            send_success_result(res, format)
+        else
+            send_failed_result(res, format, err)
+        end
     end
 end)
 
