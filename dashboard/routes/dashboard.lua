@@ -8,14 +8,27 @@ local lor = require("lor.index")
 
 local function load_plugin_api(plugin, dashboard_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    local ok, plugin_api = pcall(require, plugin_api_path)
+    ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
+    local ok, plugin_api, e
+    ok = xpcall(function() 
+        plugin_api = require(plugin_api_path)
+    end, function()
+        e = debug.traceback()
+    end)
     if not ok or not plugin_api or type(plugin_api) ~= "table" then
-        ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path)
+        ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path, " error:", e)
         return
     end
 
-    for uri, api_methods in pairs(plugin_api) do
+    local plugin_apis
+    if plugin_api.get_mode and plugin_api:get_mode() == 2 then
+        plugin_apis = plugin_api:get_apis()
+    else
+        plugin_apis = plugin_api
+    end
+
+    for uri, api_methods in pairs(plugin_apis) do
         ngx.log(ngx.INFO, "load route, uri:", uri)
         if type(api_methods) == "table" then
             for method, func in pairs(api_methods) do
@@ -41,21 +54,31 @@ return function(config, store)
 
         local plugin_configs = {}
         for i, v in ipairs(plugins) do
-            local tmp = {
-                enable =  orange_db.get(v .. ".enable"),
-                name = v,
-                active_rule_count = 0,
-                inactive_rule_count = 0
-            }
-            local plugin_rules = orange_db.get_json(v .. ".rules")
-            if plugin_rules then
-                for j, r in ipairs(plugin_rules) do
-                    if r.enable == true then
-                        tmp.active_rule_count = tmp.active_rule_count + 1
-                    else
-                        tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+            local tmp
+            if v ~= "kvstore" then
+                tmp = {
+                    enable =  orange_db.get(v .. ".enable"),
+                    name = v,
+                    active_rule_count = 0,
+                    inactive_rule_count = 0
+                }
+                local plugin_rules = orange_db.get_json(v .. ".rules")
+                if plugin_rules then
+                    for j, r in ipairs(plugin_rules) do
+                        if r.enable == true then
+                            tmp.active_rule_count = tmp.active_rule_count + 1
+                        else
+                            tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                        end
                     end
                 end
+                plugin_configs[v] = tmp
+            else
+                tmp = {
+                    enable =  orange_db.get(v .. ".enable"),
+                    name = v
+                }
+                
             end
             plugin_configs[v] = tmp
         end
@@ -107,6 +130,10 @@ return function(config, store)
 
     dashboard_router:get("/divide", function(req, res, next)
         res:render("divide")
+    end)
+
+    dashboard_router:get("/kvstore", function(req, res, next)
+        res:render("kvstore")
     end)
 
     dashboard_router:get("/help", function(req, res, next)

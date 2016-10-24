@@ -2,7 +2,6 @@
 -- from https://github.com/Mashape/kong/blob/master/kong/plugins/base_plugin.lua
 -- modified by sumory.wu
 
-local tonumber = tonumber
 local Object = require("orange.lib.classic")
 local BasePlugin = Object:extend()
 

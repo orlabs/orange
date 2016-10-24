@@ -1,5 +1,3 @@
-
-local table_insert = table.insert
 local ipairs = ipairs
 local type = type
 local tostring = tostring
@@ -7,10 +5,8 @@ local string_format = string.format
 local cjson = require("cjson")
 local xpcall = xpcall
 local traceback = debug.traceback
-local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local BaseAPI = require("orange.plugins.base_api")
-local ngx_shared = ngx.shared
 
 local function send_err_result(res, format, err)
     if format == "json" then
@@ -160,7 +156,7 @@ end)
 -- update the local cache to data stored in db
 API:post("/kvstore/sync", function(store)
     return function(req, res, next)
-        local success, data = false, {}
+        local data = {}
         -- 查找enable
         local enable, err1 = store:query({
             sql = "select `value` from meta where `key`=?",
@@ -198,7 +194,6 @@ API:post("/kvstore/sync", function(store)
             data.conf = {}
         end
 
-
         local ss, err3, forcible = orange_db.set("kvstore.enable", data.enable)
         if not ss or err3 then
             return res:json({
@@ -214,10 +209,8 @@ API:post("/kvstore/sync", function(store)
             })
         end
 
-        success = true
-
         res:json({
-            success = success
+            success = true
         })
     end
 end)
@@ -308,11 +301,9 @@ API:get("/kvstore/get", function(store)
         end
 
         local block = false
-
         local conf = orange_db.get_json("kvstore.conf")
         if conf then
             local blacklist, whitelist = conf.blacklist, conf.whitelist
-            
             if blacklist and next(blacklist) then
                 for _, v in ipairs(blacklist) do
                     if v.dict == dict and v.key == key then
@@ -392,11 +383,9 @@ API:post("/kvstore/set", function(store)
         end
 
         local block = false
-
         local conf = orange_db.get_json("kvstore.conf")
         if conf then
             local blacklist, whitelist = conf.blacklist, conf.whitelist
-            
             if blacklist and next(blacklist) then
                 for _, v in ipairs(blacklist) do
                     if v.dict == dict and v.key == key then
@@ -431,7 +420,6 @@ API:post("/kvstore/set", function(store)
         end
         
         local success, err, forcible
-
         if exptime and exptime >= 0 then
             success, err, forcible = ngx_shared_dict:set(key, value, exptime)
         else
