@@ -1,0 +1,16 @@
+{
+    "linters": {
+        "luacheck": {
+            "@disable": false,
+            "args": [],
+            "std": "ngx_lua",
+            "excludes": ["test/*", "resty", "bin"],
+            "globals": ["ngx"],
+            "ignore": [
+                "channel"
+            ],
+            "limit": null,
+            "only": []
+        }
+    }
+}
