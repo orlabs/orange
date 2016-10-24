@@ -10,13 +10,6 @@ local kvstore = require("orange.plugins.kvstore.api")
 
 local function load_plugin_api(plugin, api_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    -- local ok, plugin_api = pcall(require, plugin_api_path)
-
-    -- if not ok or not plugin_api or type(plugin_api) ~= "table" then
-    --     ngx.log(ngx.ERR, "[plugin's api load error], plugin_api_path:", plugin_api_path)
-    --     return
-    -- end
-
     ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
     local ok, plugin_api, e
@@ -62,23 +55,32 @@ return function(config, store)
 
         local plugins = {}
         for i, v in ipairs(available_plugins) do
-            local tmp = {
-                enable =  (v=="stat") and true or (orange_db.get(v .. ".enable") or false),
-                name = v,
-                active_rule_count = 0,
-                inactive_rule_count = 0
-            }
+            local tmp
+            if v ~= "kvstore" then
+                tmp = {
+                    enable =  (v=="stat") and true or (orange_db.get(v .. ".enable") or false),
+                    name = v,
+                    active_rule_count = 0,
+                    inactive_rule_count = 0
+                }
 
-            local plugin_rules = orange_db.get_json(v .. ".rules")
-            if plugin_rules then
-                for j, r in ipairs(plugin_rules) do
-                    if r.enable == true then
-                        tmp.active_rule_count = tmp.active_rule_count + 1
-                    else
-                        tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                local plugin_rules = orange_db.get_json(v .. ".rules")
+                if plugin_rules then
+                    for j, r in ipairs(plugin_rules) do
+                        if r.enable == true then
+                            tmp.active_rule_count = tmp.active_rule_count + 1
+                        else
+                            tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                        end
                     end
                 end
+            else
+                tmp = {
+                    enable =  (v=="stat") and true or (orange_db.get(v .. ".enable") or false),
+                    name = v
+                }
             end
+            
             plugins[v] = tmp
         end
 

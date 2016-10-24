@@ -35,20 +35,22 @@
 
                   <li id="nav-waf"><a href="/waf">WAF</a></li>
                   <li id="nav-divide"><a href="/divide">分流</a></li>
+
+                  <li id="nav-kvstore"><a href="/kvstore">KVStore</a></li>
               </ul>
             </span>
-           
+
 
             <ul class="nav user-bar navbar-nav navbar-right">
                 {%
                     if locals and locals.login and locals.login == true then
                 %}
                 <li id="user-op" class="nav_dropdown dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ locals.username }} 
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ locals.username }}
                     <span class="caret"></span>
                     </a>
- 
-                    <button class="navbar-toggle" type="button" data-toggle="dropdown" role="button" aria-expanded="false"> 
+
+                    <button class="navbar-toggle" type="button" data-toggle="dropdown" role="button" aria-expanded="false">
                         <span class="sr-only">Toggle</span>
                         <i class="fa fa-reorder"></i>
                     </button>

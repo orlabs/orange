@@ -195,9 +195,9 @@ function Orange.redirect()
         plugin.handler:redirect()
     end
 
-    local now = now()
-    ngx.ctx.ORANGE_REDIRECT_TIME = now - ngx.ctx.ORANGE_REDIRECT_START
-    ngx.ctx.ORANGE_REDIRECT_ENDED_AT = now
+    local now_time = now()
+    ngx.ctx.ORANGE_REDIRECT_TIME = now_time - ngx.ctx.ORANGE_REDIRECT_START
+    ngx.ctx.ORANGE_REDIRECT_ENDED_AT = now_time
 end
 
 function Orange.rewrite()
@@ -207,9 +207,9 @@ function Orange.rewrite()
         plugin.handler:rewrite()
     end
 
-    local now = now()
-    ngx.ctx.ORANGE_REWRITE_TIME = now - ngx.ctx.ORANGE_REWRITE_START
-    ngx.ctx.ORANGE_REWRITE_ENDED_AT = now
+    local now_time = now()
+    ngx.ctx.ORANGE_REWRITE_TIME = now_time - ngx.ctx.ORANGE_REWRITE_START
+    ngx.ctx.ORANGE_REWRITE_ENDED_AT = now_time
 end
 
 
@@ -220,10 +220,10 @@ function Orange.access()
         plugin.handler:access()
     end
 
-    local now = now()
-    ngx.ctx.ORANGE_ACCESS_TIME = now - ngx.ctx.ORANGE_ACCESS_START
-    ngx.ctx.ORANGE_ACCESS_ENDED_AT = now
-    ngx.ctx.ORANGE_PROXY_LATENCY = now - ngx.req.start_time() * 1000
+    local now_time = now()
+    ngx.ctx.ORANGE_ACCESS_TIME = now_time - ngx.ctx.ORANGE_ACCESS_START
+    ngx.ctx.ORANGE_ACCESS_ENDED_AT = now_time
+    ngx.ctx.ORANGE_PROXY_LATENCY = now_time - ngx.req.start_time() * 1000
     ngx.ctx.ACCESSED = true
 end
 
@@ -231,9 +231,9 @@ end
 function Orange.header_filter()
 
     if ngx.ctx.ACCESSED then
-        local now = now()
-        ngx.ctx.ORANGE_WAITING_TIME = now - ngx.ctx.ORANGE_ACCESS_ENDED_AT -- time spent waiting for a response from upstream
-        ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now
+        local now_time = now()
+        ngx.ctx.ORANGE_WAITING_TIME = now_time - ngx.ctx.ORANGE_ACCESS_ENDED_AT -- time spent waiting for a response from upstream
+        ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now_time
     end
 
     for _, plugin in ipairs(loaded_plugins) do
