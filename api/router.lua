@@ -2,10 +2,9 @@ local ipairs = ipairs
 local pairs = pairs
 local type = type
 local require = require
-local pcall = pcall
+local xpcall = xpcall
 local string_lower = string.lower
 local lor = require("lor.index")
-local kvstore = require("orange.plugins.kvstore.api")
 
 
 local function load_plugin_api(plugin, api_router, store)
