@@ -101,7 +101,7 @@
             $.ajax({
                 url: '/monitor/configs',
                 type: 'get',
-                cache:false,
+                cache: false,
                 data: {},
                 dataType: 'json',
                 success: function (result) {

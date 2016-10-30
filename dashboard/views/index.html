@@ -1,91 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - Help</title>
-    {(meta.html)}
+    {(common/meta.html)}
 </head>
-<body>
 
-{(header.html)}
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
 
-<div id="main" class="main-container container">
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
 
-    <div class="row" style="margin-top:-10px;margin-bottom:20px;">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <h4 class="head_title">Orange概览</h4> <span id="node_tip">&raquo; 该节点启动于&nbsp;<span id="start_time_span"></span></span>
-            </div>
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">Orange概览</h4> <span id="node_tip">&raquo; 该节点启动于&nbsp;<span id="start_time_span"></span></span>
+                        </div>
 
-            <div class="pull-right"></div>
-        </div>
-    </div>
+                        <div class="pull-right"></div>
+                    </div>
+                </div>
 
-    <div class="row">
-        <div class="col-md-12" style="padding:0;">
-            {% for i, v in ipairs(plugins) do %}
-            <div class="col-sm-6 col-md-3 plugin-item">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3>{{ v }}</h3>
-                        <p class="plugin-name">
-                            {%
-                            local plugin_config = plugin_configs[v]
-                            if v=="stat" or (plugin_config and plugin_config.enable==true) then
+                <div class="row">
+                    <div class="col-md-12" style="padding:0;">
+                        {% for i, v in ipairs(plugins) do %}
+                        <div class="col-sm-6 col-md-3 plugin-item text-center">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h3>{{ v }}</h3>
+                                    <p class="plugin-name">
+                                        {%
+                                            local plugin_config = plugin_configs[v]
+                                            if v=="stat" or (plugin_config and plugin_config.enable==true) then
+                                        %}
+                                            <span title="插件已被启用" class="badge on-badge">已启用</span>
+                                        {% else %}
+                                            <span title="插件已被停用" class="badge off-badge">已停用</span>
+                                        {% end %}
+                                    </p>
 
-                            %}
-                                <span title="插件已被启用" class="badge on-badge">已启用</span>
-                            {% else %}
-                                <span title="插件已被停用" class="badge off-badge">已停用</span>
-                            {% end %}
-                        </p>
+                                    {% if v~="stat" then %}
+                                    <p class="plugin-op">
+                                        <span href="javascript:void(0)" class="btn btn-primary" title="开启的规则条数为{{plugin_config.active_rule_count}}">On {{plugin_config.active_rule_count}}</span>
+                                        <span href="javascript:void(0)" class="btn btn-default" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}">Off {{plugin_config.inactive_rule_count}}</span>
+                                    </p>
+                                    {% else %}
+                                    <p class="plugin-op">
+                                        全局统计插件
+                                    </p>
+                                    {% end %}
+                                </div>
 
-                        {% if v == "kvstore" then%}
-                            <p class="plugin-op">
-                                <p class="center">kv store插件</p>
-                            </p>
-                        {% elseif v~="stat" then %}
-                            <p class="plugin-op">
-                                <span href="javascript:void(0)" class="btn btn-primary" title="开启的规则条数为{{plugin_config.active_rule_count}}">On {{plugin_config.active_rule_count}}</span>
-                                <span href="javascript:void(0)" class="btn btn-default" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}">Off {{plugin_config.inactive_rule_count}}</span>
-                            </p>
-                        {% else %}
-                            <p class="plugin-op">
-                                <p class="center">全局统计插件</p>
-                            </p>
+                            </div>
+                        </div>
+
                         {% end %}
                     </div>
-
                 </div>
             </div>
-
-            {% end %}
-        </div>
+        </div><!--右侧部分结束-->
 
     </div>
 
-
-</div>
-
-
-{(footer.html)}
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $.ajax({
-            url : '/stat/status',
-            type : 'get',
-            cache: false,
-            data : {},
-            dataType : 'json',
-            success : function(result) {
-                if(result.success){
-                    $("#start_time_span").text(APP.Common.formatDate(new Date(result.data.start_time*1000)));
-                    $("#node_tip").show();
-                }
-            },
-            error : function() {}
+    {(common/common_js.html)}<!-- 通用js -->
+    <script type="text/javascript">
+        APP.Common.resetNav("nav-index");
+        $(document).ready(function(){
+            $.ajax({
+                url : '/stat/status',
+                type : 'get',
+                cache: false,
+                data : {},
+                dataType : 'json',
+                success : function(result) {
+                    if(result.success){
+                        $("#start_time_span").text(APP.Common.formatDate(new Date(result.data.start_time*1000)));
+                        $("#node_tip").show();
+                    }
+                },
+                error : function() {}
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>

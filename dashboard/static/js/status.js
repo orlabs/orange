@@ -158,7 +158,7 @@
 	            title : {
 	                text: '请求统计',
 	                subtext: '',
-                    left:'10px'
+                    left:'10px',
 	            },
                 grid: {
                     left: '20px',

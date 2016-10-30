@@ -13,26 +13,26 @@
 
             //添加规则框里的事件
             //点击“加号“添加新的输入行
-            $(document).on('click', '#judge-area .pair .btn-success', _this.addNewCondition);
+            $(document).on('click', '#judge-area .pair .btn-add', _this.addNewCondition);
 
             //删除输入行
-            $(document).on('click', '#judge-area .pair .btn-danger', function (event) {
+            $(document).on('click', '#judge-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddConditionBtn();
             });
         },
 
-        
+
 
         //变量提取器增加、删除按钮事件
         initExtractionAddOrRemove: function () {
 
             //添加规则框里的事件
             //点击“加号“添加新的输入行
-            $(document).on('click', '#extractor-area .pair .btn-success', _this.addNewExtraction);
+            $(document).on('click', '#extractor-area .pair .btn-add', _this.addNewExtraction);
 
             //删除输入行
-            $(document).on('click', '#extractor-area .pair .btn-danger', function (event) {
+            $(document).on('click', '#extractor-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddExtractionBtn();
             });
@@ -104,11 +104,11 @@
 
                 if (has_default=="1") {
                     $(this).parents(".extraction-default-hodler").each(function () {
-                        $(this).find("input[name=rule-extractor-extraction-default]").show();
+                        $(this).find("div[name=rule-extractor-extraction-default]").show();
                     });
                 } else {
                     $(this).parents(".extraction-default-hodler").each(function () {
-                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                        $(this).find("div[name=rule-extractor-extraction-default]").hide();
                     });
                 }
             });
@@ -118,7 +118,7 @@
             $(document).on("change", 'select[name=rule-extractor-extraction-type]', function () {
                 var extraction_type = $(this).val();
 
-                if (extraction_type != "Header" && extraction_type != "Query" 
+                if (extraction_type != "Header" && extraction_type != "Query"
                     && extraction_type != "PostParams" && extraction_type != "URI") {
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find(".extraction-name-hodler").hide();
@@ -133,12 +133,12 @@
                 if(extraction_type=="URI"){
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find("select[name=rule-extractor-extraction-has-default]").hide();
-                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                        $(this).find("div[name=rule-extractor-extraction-default]").hide();
                     });
                 }else{
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find("select[name=rule-extractor-extraction-has-default]").val("0").show();
-                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                        $(this).find("div[name=rule-extractor-extraction-default]").hide();
                     });
                 }
             });
@@ -310,7 +310,7 @@
                 var allow_default = (type == "Header" || type == "Query" || type == "PostParams"|| type == "Host"|| type == "IP"|| type == "Method");
                 var has_default = self.find("select[name=rule-extractor-extraction-has-default]").val();
                 if (allow_default && has_default=="1") {//只有允许提取&&有默认值的才取默认值
-                    var default_value = self.find("input[name=rule-extractor-extraction-default]").val();
+                    var default_value = self.find("div[name=rule-extractor-extraction-default]>input").val();
                     if (!default_value) {
                         default_value = "";
                     }
@@ -385,16 +385,15 @@
             $("#judge-area .pair").each(function () {
                 c++;
                 if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").show();
+                    $(this).find(".btn-remove").show();
                 } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").hide();
+                    $(this).find(".btn-remove").show();
                 }
             })
         },
 
-        
 
         addNewExtraction: function (event) {
             var self = $(this);
@@ -429,11 +428,11 @@
             $("#extractor-area .pair").each(function () {
                 c++;
                 if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").show();
+                    $(this).find(".btn-remove").show();
                 } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").hide();
+                    $(this).find(".btn-remove").show();
                 }
             })
         },
@@ -441,31 +440,23 @@
         //数据/表格视图转换和下载事件
         initViewAndDownloadEvent: function (type) {
             var data = {};
-            var rules_key = "";
+            var rules_key = "rules";
             if (type == "redirect") {
                 data = L.Redirect.data;
-                rules_key = "rules";
             } else if (type == "rewrite") {
                 data = L.Rewrite.data;
-                rules_key = "rules";
             } else if (type == "rate_limiting") {
                 data = L.RateLimiting.data;
-                rules_key = "rules";
             } else if (type == "basic_auth") {
                 data = L.BasicAuth.data;
-                rules_key = "rules";
             } else if (type == "key_auth") {
                 data = L.KeyAuth.data;
-                rules_key = "rules";
             } else if (type == "waf") {
                 data = L.WAF.data;
-                rules_key = "rules";
             } else if (type == "divide") {
                 data = L.Divide.data;
-                rules_key = "rules";
             } else if (type == "monitor") {
                 data = L.Monitor.data;
-                rules_key = "rules";
             } else {
                 return;
             }
@@ -509,28 +500,9 @@
         },
 
         initSwitchBtn: function (type) {
-            var op_type = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-            } else if (type == "waf") {
-                op_type = "waf";
-            } else if (type == "divide") {
-                op_type = "divide";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-            } else {
-                return;
-            }
+            var op_type = type;
 
-            $("#switch-btn").click(function () {//是否开启redirect
+            $("#switch-btn").click(function () {//是否开启
                 var self = $(this);
                 var now_state = $(this).attr("data-on");
                 if (now_state == "yes") {//当前是开启状态，点击则“关闭”
@@ -629,37 +601,9 @@
             });
         },
 
-
         initRuleAddDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            }  else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            }  else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
+            var rules_key = "rules";
 
             $("#add-btn").click(function () {
                 var content = $("#add-tpl").html()
@@ -722,35 +666,8 @@
         },
 
         initSyncDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            } else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
+            var rules_key = "rules";
 
             $("#sync-btn").click(function () {
                 $.ajax({
@@ -812,40 +729,13 @@
                         return false;
                     }
                 });
-                
+
             });
         },
 
         initRuleEditDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            } else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
+            var rules_key = "rules";
 
             $(document).on("click", ".edit-btn", function () {
                 var tpl = $("#edit-tpl").html();
@@ -927,40 +817,15 @@
                 });
 
                 L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                L.Common.resetAddExtractionBtn();
+                context.resetAddCredentialBtn && context.resetAddCredentialBtn();
                 d.show();
             });
         },
 
         initRuleDeleteDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            } else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
+            var rules_key = "rules";
 
             $(document).on("click", ".delete-btn", function () {
 
@@ -1012,26 +877,7 @@
         },
 
         resetSwitchBtn: function (enable, type) {
-            var op_type = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-            } else if (type == "waf") {
-                op_type = "waf";
-            } else if (type == "divide") {
-                op_type = "divide";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-            } else {
-                return;
-            }
+            var op_type = type;
 
             var self = $("#switch-btn");
             if (enable == true) {//当前是开启状态，则应显示“关闭”按钮
@@ -1064,7 +910,6 @@
             d.show();
         },
 
-
         showTipDialog: function (title, content) {
             if (!content) {
                 content = title;
@@ -1082,12 +927,12 @@
         },
 
         resetNav: function (select) {
-            $("#main-nav-menu li").each(function () {
+            $("#side-menu li").each(function () {
                 $(this).removeClass("active")
             });
 
             if (select) {
-                $("#main-nav-menu li#" + select).addClass("active");
+                $("#side-menu li#" + select).addClass("active");
             }
         },
 

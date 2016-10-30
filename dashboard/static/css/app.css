@@ -1,0 +1,132 @@
+.plugin-item{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.plugin-item .thumbnail {
+    min-height: 160px;
+}
+
+.plugin-item .plugin-op{
+    margin-top:40px
+}
+.badge{
+    padding: 5px 14px 5px 14px;
+    color: #fff;
+}
+.off-badge{
+    background-color: #EB5424;
+}
+.on-badge{
+    background-color: #4cae4c;
+}
+#time-set a.active{
+    text-decoration: underline;
+}
+
+.J_mainContent{
+    margin:15px;
+}
+.content-header{
+    margin-top:0px;
+    margin-bottom:20px;
+}
+
+/* add/remove btn start */
+.input-group-btn .btn-remove{
+    color: #151414;
+
+    border-color: #FFFFFF;
+    outline:none;
+    box-shadow: none;
+}
+
+.input-group-btn .btn-add{
+    color: #151414;
+
+    border-color: #FFFFFF;
+    outline:none;
+    box-shadow: none;
+}
+/* add/remove btn start */
+
+/* rule table start */
+.single-rule-table {
+    margin-bottom: 0;
+}
+
+.single-rule-table > tbody > tr > td{
+    border-top:1px solid #fff;
+}
+
+td .edit-btn{
+    color:#000
+}
+
+td .delete-btn{
+    color:#EA8282
+}
+
+td.center {
+    text-align:center;
+}
+
+tr.highlight{
+    background-color: #FFFDDD;
+}
+
+.rule-enable-td{
+    width:80px;
+}
+.rule-name-td{
+    text-align：left;
+    width:100px;
+}
+.rule-condition-td{
+    width:170px;
+}
+.rule-extractor-td{
+    width: 200px;
+}
+.rule-credential-td{
+    width: 200px;
+}
+.rule-urltmpl-td{
+    width:180px;
+}
+
+.rule-op-td{
+    width:130px;
+}
+
+.rule-op-td a{
+    width:30px;
+    margin:2px auto;
+}
+
+.namep{
+    width: 100px;
+    display: inline-block;
+    overflow-wrap: break-word;
+}
+.conditionp{
+    width: 170px;
+    overflow-wrap: break-word;
+    margin-bottom: 3px;
+}
+.urltmplp{
+    width: 180px;
+    overflow-wrap: break-word;
+    margin-bottom: 3px;
+}
+
+.extractorp{
+    width: 200px;
+    overflow-wrap: break-word;
+    margin-bottom: 3px;
+}
+
+.agile-list li{
+    padding:2px;
+}
+/* rule table end */
