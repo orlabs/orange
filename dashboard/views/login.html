@@ -2,13 +2,19 @@
 <html>
 <head>
     <title>Orange Gateway - 登录</title>
-    {(meta.html)}
+    {(common/meta.html)}
 </head>
 <body>
-{(header.html)}
 
 <div id="main" class="main-container container">
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top: 100px; ">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="text-center" style="height:120px;">
+            {(common/logo.html)}
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-heading">登录</div>
@@ -36,8 +42,7 @@
     </div>
 </div>
 
-{(footer.html)}
-
+<script src="/static/js/libs/jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         $("#login-btn").click(function(){

@@ -15,7 +15,7 @@
                     {@/if}
                 </select>
             </div>
-            <div class="col-sm-1" style="line-height: 36px;">
+            <div class="col-sm-1" style="line-height: 30px;">
                 <a id="add-extraction-btn" class="btn btn-success" style="padding:0 5px;"><i class="fa fa-plus"></i></a>
             </div>
         </div>
@@ -37,37 +37,45 @@
                         <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option>
                     </select>
                 </div>
-                <div class="col-sm-2 extraction-name-hodler" {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams"&&c.type!="URI" } style="display:none;" {@/if}>
+                <div class="col-sm-2 extraction-name-hodler"
+                    {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams"&&c.type!="URI" } 
+                        style="display:none;padding-left:0px;" 
+                    {@else}
+                        style="padding-left:0px;" 
+                    {@/if}>
                     <input type="text" class="form-control" name="rule-extractor-extraction-name" placeholder="name" value="${c.name}">
                 </div>
 
                 <!-- URI提取不提供默认值功能-->
-                <div class="col-sm-5 extraction-default-hodler">
-                    <div class="col-sm-6">
+                <div class="col-sm-5 extraction-default-hodler" style="padding: 0px;">
+                    <div class="col-sm-6" style="padding-left: 0px;">
                         <select class="form-control" name="rule-extractor-extraction-has-default" {@if c.type=="URI"} style="display:none;" {@/if}>
                             {@if c.default || c.default=="" }
-                                <option value="0">No Default</option>
-                                <option value="1" selected>Has Default</option>
+                                <option value="0">无默认值</option>
+                                <option value="1" selected>有默认值</option>
                             {@/if}
 
                             {@if c.default!="" && !c.default }
-                                <option value="0" selected>No Default</option>
-                                <option value="1">Has Default</option>
+                                <option value="0" selected>无默认值</option>
+                                <option value="1">有默认值</option>
                             {@/if}
-                            
+
                         </select>
                     </div>
-                    <div class="col-sm-6" >
-                        <input type="text" {@if c.type=="URI" || c.default!="" && !c.default } style="display:none;" {@/if} class="form-control" name="rule-extractor-extraction-default" placeholder="default value" value="${c.default}">
+                    <div class="col-sm-6"
+                        {@if c.type=="URI" || c.default!="" && !c.default } style="padding-left: 0px;display:none;"
+                        {@else} style="padding-left: 0px;" {@/if}
+                     name="rule-extractor-extraction-default">
+                        <input type="text"  class="form-control"  placeholder="default value" value="${c.default}">
                     </div>
                 </div>
 
-                <div class="col-sm-1" style="margin-top:10px">
+                <div class="col-sm-1" style="margin-top:5px;float:right;margin-right: 50px;">
                     <span class="input-group-btn">
-                        <a class="btn btn-danger" style="padding:0 5px;">
+                        <a class="btn btn-remove" style="padding:0 5px;">
                             <i class="fa fa-remove"></i>
                         </a>
-                        <a class="btn btn-success" style="padding:0 5px;">
+                        <a class="btn btn-add" style="padding:0 5px;">
                             <i class="fa fa-plus"></i>
                         </a>
                     </span>

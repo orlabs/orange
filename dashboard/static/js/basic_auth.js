@@ -32,10 +32,10 @@
         initCredentialAddOrRemove: function () {
 
             //点击“加号“添加新的输入行
-            $(document).on('click', '#credential-area .pair .btn-success', _this.addNewCredential);
+            $(document).on('click', '#credential-area .pair .btn-add', _this.addNewCredential);
 
             //删除输入行
-            $(document).on('click', '#credential-area .pair .btn-danger', function (event) {
+            $(document).on('click', '#credential-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddCredentialBtn();
             });
@@ -81,11 +81,11 @@
             $("#credential-area .pair").each(function () {
                 c++;
                 if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").show();
+                    $(this).find(".btn-remove").show();
                 } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").hide();
+                    $(this).find(".btn-remove").show();
                 }
             })
         },
