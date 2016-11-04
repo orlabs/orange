@@ -876,6 +876,61 @@
             });
         },
 
+        initSelectorAddDialog: function (type, context) {
+            var op_type = type;
+
+            $("#add-selector-btn").click(function () {
+                var content = $("#add-selector-tpl").html()
+                var d = dialog({
+                    title: '添加选择器',
+                    width: 720,
+                    content: content,
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    },{
+                        value: '确定',
+                        autofocus: false,
+                        callback: function () {
+                            var result = "selector value";
+                            if (result) {
+                                $.ajax({
+                                    url: '/' + op_type + '/selector',
+                                    type: 'post',
+                                    cache:false,
+                                    data: {
+                                        rule: JSON.stringify(result.data)
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重新渲染规则
+                                            context.loadConfigs();
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "添加选择器发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "添加选择器请求发生异常");
+                                        return false;
+                                    }
+                                });
+
+                            } else {
+                                L.Common.showErrorTip("错误提示", result.data);
+                                return false;
+                            }
+                        }
+                    }
+                    ]
+                });
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                d.show();
+            });
+        },
+
         resetSwitchBtn: function (enable, type) {
             var op_type = type;
 
