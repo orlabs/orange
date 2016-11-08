@@ -993,6 +993,85 @@
             });
         },
 
+        initSelectorEditDialog: function(type, context){
+            var op_type = type;
+
+            $(document).on("click", ".edit-selector-btn", function () {
+                var tpl = $("#edit-selector-tpl").html();
+                var selector_id = $(this).attr("data-id");
+                var selectors = context.data.selectors;
+                selector = selectors[selector_id];
+                if (!selector_id || !selector) {
+                    L.Common.showErrorTip("提示", "要编辑的选择器不存在或者查找出错");
+                    return;
+                }
+
+
+                var html = juicer(tpl, {
+                    s: selector
+                });
+
+                var d = dialog({
+                    title: "编辑选择器",
+                    width: 680,
+                    content: html,
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '预览',
+                        autofocus: false,
+                        callback: function () {
+                            var s = _this.buildSelector();
+                            L.Common.showRulePreview(s);
+                            return false;
+                        }
+                    }, {
+                        value: '保存修改',
+                        autofocus: false,
+                        callback: function () {
+                            var result = _this.buildSelector();
+                            result.data.id = selector.id;//拼上要修改的id
+
+                            if (result.success == true) {
+                                $.ajax({
+                                    url: '/' + op_type + '/selectors',
+                                    type: 'put',
+                                    data: {
+                                        selector: JSON.stringify(result.data)
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重新渲染规则
+                                            context.loadConfigs();
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "编辑选择器发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "编辑选择器请求发生异常");
+                                        return false;
+                                    }
+                                });
+
+                            } else {
+                                L.Common.showErrorTip("错误提示", result.data);
+                                return false;
+                            }
+                        }
+                    }
+                    ]
+                });
+
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                L.Common.resetAddExtractionBtn();
+                d.show();
+            });
+        },
+
         resetSwitchBtn: function (enable, type) {
             var op_type = type;
 

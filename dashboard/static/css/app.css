@@ -142,6 +142,7 @@ tr.highlight{
 
 .selector-op{
     height:23px;
+    line-height: 23px;
     margin-top: 5px;
     font-size: 12px;
 }

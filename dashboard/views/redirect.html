@@ -52,28 +52,19 @@
                         <div class="ibox">
                             <div class="ibox-content">
                                 <h4>选择器列表</h4>
-                                <p class="small"><i class="fa fa-hand-o-up"></i> 上下拖动改变执行顺序</p>
-
+                                <div style="height:22px;line-height:22px;width:100%;">
+                                    <p class="small" style="float: left">
+                                        <i class="fa fa-hand-o-up"></i> 上下拖动改变执行顺序
+                                    </p>
+                                    <div style="float:right;">
+                                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="sort-btn">
+                                            <i class="fa fa-list-ol"></i>
+                                            <span>保存排序</span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <ul id="selector-list" class="sortable-list agile-list ui-sortable">
-                                    <li class="warning-element">
-                                        加强过程管理，及时统计教育经费使用情况，做到底码清楚，
-                                        <div class="selector-op">
-                                            <a href="javascript:void(0)" class="edit-selector-btn pull-right btn btn-xs btn-white">删除</a>
-                                            <a href="javascript:void(0)" class="delete-selector-btn pull-right btn btn-xs btn-white">编辑</a>
-                                        </div>
-                                    </li>
-                                    <li class="success-element">
-                                        支持财会人员的继续培训
-                                        <div class="selector-op">
-                                            <a href="#" class="pull-right btn btn-xs btn-white">标记</a>
-                                        </div>
-                                    </li>
-                                    <li class="info-element">
-                                        协同教导处搞好助学金、减免教科书费的工作。
-                                        <div class="selector-op">
-                                            <a href="#" class="pull-right btn btn-xs btn-white">标记</a>
-                                        </div>
-                                    </li>
+                                   
                                 </ul>
                             </div>
                         </div>
@@ -82,17 +73,16 @@
                         <div class="ibox">
                             <div class="ibox-content">
                                 <h4>选择器-规则列表</h4>
-                                <div style="height:30px;width:100%;">
-
+                                <div style="height:22px;line-height:22px;width:100%;">
                                     <p class="small" style="float: left">
                                         <i class="fa fa-hand-o-up"></i> 在列表之间拖动以改变规则顺序
                                     </p>
                                     <div style="float:right;">
-                                        <button class="btn btn-info btn-xs" href="javascript:void(0);" id="sort-btn">
+                                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="rule-sort-btn">
                                             <i class="fa fa-list-ol"></i>
                                             <span>保存排序</span>
                                         </button>
-                                        <button class="btn btn-info btn-xs" href="javascript:void(0);" id="add-btn">
+                                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="add-btn">
                                             <i class="fa fa-filter"></i>
                                             <span>添加新规则</span>
                                         </button>
@@ -364,7 +354,10 @@
     </script>
 
     {(common/extraction-tmpl.html)}
+
+    {(common/selector-item-tpl.html)}
     {(common/selector-add.html)}
+    {(common/selector-edit.html)}
 
     {(common/common_js.html)}<!-- 通用js -->
     <script src="/static/js/redirect.js"></script>

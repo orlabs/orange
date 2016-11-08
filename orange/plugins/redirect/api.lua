@@ -92,6 +92,78 @@ local function update_meta(store, meta)
     return result
 end
 
+local function update_selector(store, selector)
+    if not selector or type(selector) ~= "table" then 
+        return false
+    end
+
+    local selector_json_str = utils.json_encode(selector)
+    if not selector_json_str then
+        ngx.log(ngx.ERR, "encode error: selector to save is not json format.")
+        return false
+    end
+
+    local result = store:update({
+        sql = "update redirect set `value` = ? where `key`=? and `type` = ?",
+        params = {selector_json_str, selector.id, "selector"}
+    })
+
+    return result
+end
+
+local function update_local_meta(store)
+    local meta, err = store:query({
+        sql = "select * from redirect where `type` = ? limit 1",
+        params = {"meta"}
+    })
+
+    if err then
+        ngx.log(ngx.ERR, "error to find meta from storage when updating local meta, err:", err)
+        return false
+    end
+
+    if meta and type(meta) == "table" and #meta > 0 then
+        local success, err, forcible = orange_db.set("redirect.meta", meta[1].value or '{}')
+        if err or not success then
+            ngx.log(ngx.ERR, "update local redirect.meta error, err:", err)
+            return false
+        end
+    else
+        ngx.log(ngx.ERR, "can not find meta from storage when updating local meta")
+    end
+
+    return true
+end
+
+local function update_local_selectors(store)
+    local selectors, err = store:query({
+        sql = "select * from redirect where `type` = ?",
+        params = {"selector"}
+    })
+
+    if err then
+        ngx.log(ngx.ERR, "error to find selectors from storage when updating local selectors, err:", err)
+        return false
+    end
+
+    local to_update_selectors = {}
+    if selectors and type(selectors) == "table" and #selectors > 0 then
+        for _, s in ipairs(selectors) do
+            to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
+        end
+
+        local success, err, forcible = orange_db.set_json("redirect.selectors", to_update_selectors)
+        if err or not success then
+            ngx.log(ngx.ERR, "update local redirect.selectors error, err:", err)
+            return false
+        end
+    else
+        ngx.log(ngx.ERR, "can not find selectors from storage when updating local selectors")
+    end
+
+    return true
+end
+
 local API = BaseAPI:new("redirect-api", 2)
 
 API:post("/redirect/enable", function(store)
@@ -401,6 +473,7 @@ API:get("/redirect/selectors", function(store)
         res:json({
             success = true, 
             data = {
+                enable = orange_db.get("redirect.enable"),
                 meta = orange_db.get_json("redirect.meta"),
                 selectors = orange_db.get_json("redirect.selectors")
             }
@@ -483,9 +556,8 @@ API:delete("/redirect/selectors", function(store)
 
         -- update shared dict data
         --- update meta
-        local success, err, forcible = orange_db.set_json("redirect.meta", current_meta)
-        if err or not success then
-            ngx.log(ngx.ERR, "update local redirect.meta error when deleting selector:", err, ":", forcible)
+        local update_local_meta_result = update_local_meta(current_meta)
+        if not update_local_meta_result then
             return res:json({
                 success = false,
                 msg = "update local meta error when deleting"
@@ -493,21 +565,7 @@ API:delete("/redirect/selectors", function(store)
         end
         
         -- update selectors
-        local current_selectors = orange_db.get_json("redirect.selectors")
-        local new_selectors = {}
-        for s_id, s in pairs(current_selectors) do
-            if s_id ~= selector_id then
-                new_selectors[s_id] = s
-            end
-        end
-        success, err, forcible = orange_db.set_json("redirect.selectors", new_selectors)
-        if err or not success then
-            ngx.log(ngx.ERR, "update local redirect.selectors error when deleting selector:", err, ":", forcible)
-            return res:json({
-                success = false,
-                msg = "update local selectors error when deleting selector"
-            })
-        end
+        
 
         res:json({
             success = true,
@@ -525,37 +583,83 @@ API:post("/redirect/selectors", function(store)
         selector.time = utils.now()
 
         local success = false
-        -- 插入到mysql
+        -- create selector
         local insert_result = store:insert({
             sql = "insert into redirect(`key`, `value`, `type`, `op_time`) values(?,?,?,?)",
             params = { selector.id, cjson.encode(selector), "selector", selector.time }
         })
 
-        -- 插入成功，则更新本地缓存
-        if insert_result then
-            local selectors = orange_db.get_json("redirect.selectors") or {}
-            table_insert(selectors, selector)
-            local s, err, forcible = orange_db.set_json("redirect.selectors", selectors)
-            if s then
-                success = true
-            else
-                ngx.log(ngx.ERR, "update redirect selectors locally after creating error: ", err)
-            end
-        else
-            success = false
+        -- update meta
+        local meta = get_meta(store)
+        local current_meta = utils.json_decode(meta and meta.value or "{}")
+        if not meta or not current_meta then
+           return res:json({
+                success = false,
+                msg = "error: can not find meta when creating selector"
+            })
+        end
+        current_meta.selectors = current_meta.selectors or {}
+        table_insert(current_meta.selectors, selector.id)
+        local update_meta_result = update_meta(store, current_meta)
+        if not update_meta_result then
+            return res:json({
+                success = false,
+                msg = "error: update meta error when creating selector"
+            })
         end
 
-        res:json({
-            success = success,
-            msg = success and "ok" or "failed"
-        })
+        -- update local meta & selectors
+        if insert_result then
+            local update_local_meta_result = update_local_meta(store)
+            local update_local_selectors_result = update_local_selectors(store)
+            if update_local_meta_result and update_local_selectors_result then
+                return res:json({
+                    success = true,
+                    msg = "succeed to create selector"
+                })
+            else
+                ngx.log(ngx.ERR, "error to create selector, update_meta:", update_local_meta_result, " update_selectors:", update_local_selectors_result)
+                return res:json({
+                    success = false,
+                    msg = "error to udpate local data when creating selector"
+                })
+            end
+        else
+            return res:json({
+                success = false,
+                msg = "error to save data when creating selector"
+            })
+        end
     end
 end)
 
 -- update
 API:put("/redirect/selectors", function(store)
     return function(req, res, next)
+        local selector = req.body.selector
+        selector = cjson.decode(selector)
+        selector.time = utils.now()
         -- 更新selector
+        local update_selector_result = update_selector(store, selector)
+        if update_selector_result then
+            local update_local_selectors_result = update_local_selectors(store)
+            if not update_local_selectors_result then
+                return res:json({
+                    success = false,
+                    msg = "error to local selectors when updating selector"
+                })
+            end
+        else
+            return res:json({
+                success = false,
+                msg = "error to update selector"
+            })
+        end
+
+        return res:json({
+            success = true,
+            msg = "succeed to update selector"
+        })
     end
 end)
 
