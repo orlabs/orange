@@ -18,6 +18,7 @@
             L.Common.initRuleEditDialog("redirect", _this);//编辑规则对话框
 
             L.Common.initSelectorAddDialog("redirect", _this);
+            L.Common.initSelectorEditDialog("redirect", _this);
 
             L.Common.initSyncDialog("redirect", _this);//编辑规则对话框
 
@@ -107,9 +108,9 @@
 
         loadConfigs: function () {
             $.ajax({
-                url: '/redirect/configs',
+                url: '/redirect/selectors',
                 type: 'get',
-                cache:false,
+                cache: false,
                 data: {},
                 dataType: 'json',
                 success: function (result) {
@@ -117,9 +118,17 @@
                         L.Common.resetSwitchBtn(result.data.enable, "redirect");
                         $("#switch-btn").show();
                         $("#view-btn").show();
-                        _this.renderTable(result.data);//渲染table
-                        _this.data.enable = result.data.enable;
-                        _this.data.rules = result.data.rules;//重新设置数据
+
+                        var enable = result.data.enable;
+                        var meta = result.data.meta;
+                        var selectors = result.data.selectors;
+                        
+                        //重新设置数据
+                        _this.data.enable = enable;
+                        _this.data.meta = meta;
+                        _this.data.selectors = selectors;
+
+                        _this.renderSelectors(meta, selectors);
 
                     } else {
                         L.Common.showTipDialog("错误提示", "查询redirect配置请求发生错误");
@@ -131,7 +140,25 @@
             });
         },
 
+        renderSelectors: function(meta, selectors){
+            var tpl = $("#selector-item-tpl").html();
+            var to_render_selectors = [];
+            if(meta && selectors){
+                var to_render_ids = meta.selectors;
+                if(to_render_ids){
+                    for(var i = 0; i < to_render_ids.length; i++){
+                        if(selectors[to_render_ids[i]]){
+                            to_render_selectors.push(selectors[to_render_ids[i]]);
+                        }
+                    }
+                }
+            }
 
+            var html = juicer(tpl, {
+                selectors: to_render_selectors
+            });
+            $("#selector-list").html(html);
+        },
 
         renderTable: function (data, highlight_id) {
             highlight_id = highlight_id || 0;
