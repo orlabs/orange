@@ -112,8 +112,6 @@
         </div><!--右侧部分结束-->
     </div>
 
-    {(common/common_js.html)}<!-- 通用js -->
-
 
     <script id="rule-item-tpl" type="text/template">
         {@each rules as r, index}
@@ -366,10 +364,9 @@
     </script>
 
     {(common/extraction-tmpl.html)}
-
     {(common/selector-add.html)}
 
-
+    {(common/common_js.html)}<!-- 通用js -->
     <script src="/static/js/redirect.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {

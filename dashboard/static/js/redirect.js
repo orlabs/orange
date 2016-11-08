@@ -21,6 +21,7 @@
 
             L.Common.initSyncDialog("redirect", _this);//编辑规则对话框
 
+            L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
