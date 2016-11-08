@@ -34,6 +34,7 @@
                                 <span>添加选择器</span>
                             </a>
 
+
                             <a class="btn btn-default" href="javascript:void(0);" id="sync-btn">
                                 <i class="fa fa-refresh"></i>
                                 <span>同步配置</span>
@@ -82,6 +83,7 @@
                             <div class="ibox-content">
                                 <h4>选择器-规则列表</h4>
                                 <div style="height:30px;width:100%;">
+
                                     <p class="small" style="float: left">
                                         <i class="fa fa-hand-o-up"></i> 在列表之间拖动以改变规则顺序
                                     </p>
@@ -98,6 +100,7 @@
                                 </div>
 
                                 <ul id="rules"  class="sortable-list agile-list">
+
                                 </ul>
                             </div>
                         </div>
@@ -159,7 +162,6 @@
                             {@/each}
                         </td>
 
-
                         <td class="left rule-extractor-td">
                             <p class="extractorp">
                                 {@if r.extractor}
@@ -176,7 +178,6 @@
 
                             {@if r.extractor && r.extractor.extractions }
                                 {@each r.extractor.extractions as e, index}
-
                                     {@if !r.extractor.type || r.extractor.type==1 }
                                         {@if e.type!="URI" }
                                             <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
@@ -237,9 +238,7 @@
                             <br/>
                             <b>记录日志</b>: ${r.handle.log}
                         </td>
-
                         -->
-
 
                         <td class="left" title="变更时间">
                             <small>${r.time}</small>
