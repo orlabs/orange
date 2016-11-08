@@ -130,3 +130,18 @@ tr.highlight{
     padding:2px;
 }
 /* rule table end */
+
+
+.ibox-content{
+    padding:12px;
+}
+
+#selector-list li{
+    padding:6px;
+}
+
+.selector-op{
+    height:23px;
+    margin-top: 5px;
+    font-size: 12px;
+}
