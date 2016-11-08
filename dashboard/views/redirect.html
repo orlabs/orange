@@ -34,11 +34,6 @@
                                 <span>添加选择器</span>
                             </a>
 
-                            <a class="btn btn-default" href="javascript:void(0);" id="add-btn">
-                                <i class="fa fa-filter"></i>
-                                <span>添加新规则</span>
-                            </a>
-
                             <a class="btn btn-default" href="javascript:void(0);" id="sync-btn">
                                 <i class="fa fa-refresh"></i>
                                 <span>同步配置</span>
@@ -52,11 +47,41 @@
 
 
                 <div class="row" id="table-view">
-                    <div class="col-sm-12">
+                    <div class="col-sm-3" style="padding-right:0px;">
                         <div class="ibox">
                             <div class="ibox-content">
-                                <h4>规则列表</h4>
-                                <div style="height:30px;width:100%;line-height:30px;">
+                                <h4>选择器列表</h4>
+                                <p class="small"><i class="fa fa-hand-o-up"></i> 上下拖动改变执行顺序</p>
+
+                                <ul id="selector-list" class="sortable-list agile-list ui-sortable">
+                                    <li class="warning-element">
+                                        加强过程管理，及时统计教育经费使用情况，做到底码清楚，
+                                        <div class="selector-op">
+                                            <a href="javascript:void(0)" class="edit-selector-btn pull-right btn btn-xs btn-white">删除</a>
+                                            <a href="javascript:void(0)" class="delete-selector-btn pull-right btn btn-xs btn-white">编辑</a>
+                                        </div>
+                                    </li>
+                                    <li class="success-element">
+                                        支持财会人员的继续培训
+                                        <div class="selector-op">
+                                            <a href="#" class="pull-right btn btn-xs btn-white">标记</a>
+                                        </div>
+                                    </li>
+                                    <li class="info-element">
+                                        协同教导处搞好助学金、减免教科书费的工作。
+                                        <div class="selector-op">
+                                            <a href="#" class="pull-right btn btn-xs btn-white">标记</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <h4>选择器-规则列表</h4>
+                                <div style="height:30px;width:100%;">
                                     <p class="small" style="float: left">
                                         <i class="fa fa-hand-o-up"></i> 在列表之间拖动以改变规则顺序
                                     </p>
@@ -65,10 +90,14 @@
                                             <i class="fa fa-list-ol"></i>
                                             <span>保存排序</span>
                                         </button>
+                                        <button class="btn btn-info btn-xs" href="javascript:void(0);" id="add-btn">
+                                            <i class="fa fa-filter"></i>
+                                            <span>添加新规则</span>
+                                        </button>
                                     </div>
                                 </div>
 
-                                <ul id="rules"  class="sortable-list connectList agile-list">
+                                <ul id="rules"  class="sortable-list agile-list">
                                 </ul>
                             </div>
                         </div>
@@ -102,6 +131,8 @@
                         <td class="rule-name-td">
                             <b class="namep">${r.name}</b>
                         </td>
+
+                        <!--
                         <td class="left rule-condition-td">
                             <p>
                                 <b>类型</b>:
@@ -128,6 +159,7 @@
                             {@/each}
                         </td>
 
+
                         <td class="left rule-extractor-td">
                             <p class="extractorp">
                                 {@if r.extractor}
@@ -145,7 +177,7 @@
                             {@if r.extractor && r.extractor.extractions }
                                 {@each r.extractor.extractions as e, index}
 
-                                    {@if !r.extractor.type || r.extractor.type==1 }<!-- 索引式提取 -->
+                                    {@if !r.extractor.type || r.extractor.type==1 }
                                         {@if e.type!="URI" }
                                             <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
                                             ${e.type}{@if e.name }[${e.name}]{@/if}
@@ -163,7 +195,7 @@
                                         {@/if}
                                         <br/>
                                     {@/if}
-                                    {@if r.extractor.type==2 }<!-- 模板式提取 -->
+                                    {@if r.extractor.type==2 }
                                         {@if e.type!="URI" }
                                             <span>{</span><span>{</span>
                                             {@if e.type=="Query" }query.<span>${e.name}</span>{@/if}
@@ -205,6 +237,9 @@
                             <br/>
                             <b>记录日志</b>: ${r.handle.log}
                         </td>
+
+                        -->
+
 
                         <td class="left" title="变更时间">
                             <small>${r.time}</small>
@@ -341,9 +376,7 @@
         $(document).ready(function () {
             APP.Common.resetNav("nav-redirect");
             APP.Redirect.init();
-            $(".sortable-list").sortable({
-                connectWith: ".connectList"
-            }).disableSelection();
+            $(".sortable-list").sortable().disableSelection();
         });
     </script>
 </body>

@@ -97,7 +97,7 @@ function _M.incr(key, value)
 end
 
 function _M.delete(key)
-    orange_data:delete(key)
+    return orange_data:delete(key)
 end
 
 function _M.delete_all()
