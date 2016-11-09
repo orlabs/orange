@@ -44,7 +44,7 @@ function MySQLStore:query(opts)
         return nil
     end
 
-    if res and not err and type(res) == "table" and #res <= 0 then
+    if res and type(res) == "table" and #res <= 0 then
         ngx.log(ngx.WARN, "MySQLStore:query empty, sql:", sql)
     end
 

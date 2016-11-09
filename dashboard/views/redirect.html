@@ -19,26 +19,7 @@
                             <h4 class="head_title">URL Redirect</h4>
                         </div>
                         <div class="pull-right">
-                            <input id="rule-search" type="text" class="form-control" placeholder="  seach rules" style="width:150px;display: none;margin-right:10px;">
-                            <a id="view-btn" style="display:none;" data-type="table" class="btn btn-warning" rel="nofollow" href="javascript:void(0);">
-                                <i class="fa fa-database"></i>
-                                <span>数据视图</span>
-                            </a>
-                            <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
-                                <i class="fa fa-pause"></i>
-                                <span>停用redirect</span>
-                            </a>
-
-                            <a class="btn btn-default" href="javascript:void(0);" id="add-selector-btn">
-                                <i class="fa fa-sitemap"></i>
-                                <span>添加选择器</span>
-                            </a>
-
-
-                            <a class="btn btn-default" href="javascript:void(0);" id="sync-btn">
-                                <i class="fa fa-refresh"></i>
-                                <span>同步配置</span>
-                            </a>
+                             {(common/plugin-op.html)}
                         </div>
                     </div>
                 </div>
@@ -50,21 +31,21 @@
                 <div class="row" id="table-view">
                     <div class="col-sm-3" style="padding-right:0px;">
                         <div class="ibox">
-                            <div class="ibox-content">
+                            <div class="ibox-content" id="selector-section">
                                 <h4>选择器列表</h4>
-                                <div style="height:22px;line-height:22px;width:100%;">
+                                <div class="selector-section-header">
                                     <p class="small" style="float: left">
-                                        <i class="fa fa-hand-o-up"></i> 上下拖动改变执行顺序
+                                        <i class="fa fa-hand-o-up"></i> 拖动改变执行顺序
                                     </p>
                                     <div style="float:right;">
-                                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="sort-btn">
+                                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="selector-sort-btn">
                                             <i class="fa fa-list-ol"></i>
                                             <span>保存排序</span>
                                         </button>
                                     </div>
                                 </div>
                                 <ul id="selector-list" class="sortable-list agile-list ui-sortable">
-                                   
+
                                 </ul>
                             </div>
                         </div>
@@ -72,8 +53,8 @@
                     <div class="col-sm-9">
                         <div class="ibox">
                             <div class="ibox-content">
-                                <h4>选择器-规则列表</h4>
-                                <div style="height:22px;line-height:22px;width:100%;">
+                                <h4 id="rules-section-header">选择器-规则列表</h4>
+                                <div class="rule-section-header">
                                     <p class="small" style="float: left">
                                         <i class="fa fa-hand-o-up"></i> 在列表之间拖动以改变规则顺序
                                     </p>
@@ -105,9 +86,8 @@
 
     <script id="rule-item-tpl" type="text/template">
         {@each rules as r, index}
-        <li {@if r.enable==true } class="info-element"{@/if}
-            {@if r.enable!=true } class="warning-element"{@/if}
-            {@if highlight_id == r.id } class="highlight" {@/if}>
+        <li data-id="${r.id}" {@if r.enable==true } class="info-element"{@/if}
+            {@if r.enable!=true } class="warning-element"{@/if}>
             <table class="table table-hover single-rule-table">
                 <tbody>
                     <tr>
@@ -123,7 +103,7 @@
                             <b class="namep">${r.name}</b>
                         </td>
 
-                        <!--
+                        
                         <td class="left rule-condition-td">
                             <p>
                                 <b>类型</b>:
@@ -226,7 +206,6 @@
                             <br/>
                             <b>记录日志</b>: ${r.handle.log}
                         </td>
-                        -->
 
                         <td class="left" title="变更时间">
                             <small>${r.time}</small>

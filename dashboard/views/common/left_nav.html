@@ -1,6 +1,6 @@
  <!--左侧导航开始-->
-<nav class="navbar-default navbar-static-side" role="navigation">
-    <div class="nav-close"><i class="glyphicon glyphicon-transfer"></i>
+<nav id="nav-section" class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close" style="display: none"><i class="glyphicon glyphicon-transfer"></i>
     </div>
     <div class="sidebar-collapse">
         <ul class="nav" id="side-menu">
@@ -92,7 +92,7 @@
                 </a>
             </li>
 
-            
+
 
             {%
                 if locals and locals.login and locals.login == true then

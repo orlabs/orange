@@ -7,7 +7,7 @@
         },
 
         init: function () {
-            _this.loadConfigs();
+            _this.loadConfigs(true);
             _this.initEvents();
 
         },
@@ -18,7 +18,10 @@
             L.Common.initRuleEditDialog("redirect", _this);//编辑规则对话框
 
             L.Common.initSelectorAddDialog("redirect", _this);
+            L.Common.initSelectorDeleteDialog("redirect", _this);
             L.Common.initSelectorEditDialog("redirect", _this);
+            L.Common.initSelectorSortEvent("redirect", _this);
+            L.Common.initSelectorClickEvent("redirect", _this);
 
             L.Common.initSyncDialog("redirect", _this);//编辑规则对话框
 
@@ -106,7 +109,7 @@
             return result;
         },
 
-        loadConfigs: function () {
+        loadConfigs: function (page_load) {
             $.ajax({
                 url: '/redirect/selectors',
                 type: 'get',
@@ -122,7 +125,7 @@
                         var enable = result.data.enable;
                         var meta = result.data.meta;
                         var selectors = result.data.selectors;
-                        
+
                         //重新设置数据
                         _this.data.enable = enable;
                         _this.data.meta = meta;
@@ -130,12 +133,45 @@
 
                         _this.renderSelectors(meta, selectors);
 
+                        if(page_load){//第一次加载页面
+                            var selector_lis = $("#selector-list li");
+                            if(selector_lis && selector_lis.length>0){
+                                $(selector_lis[0]).click();
+                            }
+                        }
+
                     } else {
                         L.Common.showTipDialog("错误提示", "查询redirect配置请求发生错误");
                     }
                 },
                 error: function () {
                     L.Common.showTipDialog("提示", "查询redirect配置请求发生异常");
+                }
+            });
+        },
+
+        loadRules: function (selector_id) {
+            $.ajax({
+                url: '/redirect/selectors/' + selector_id + "/rules",
+                type: 'get',
+                cache: false,
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        $("#switch-btn").show();
+                        $("#view-btn").show();
+
+                        //重新设置数据
+                        _this.data.selector_rules = _this.data.selector_rules || {};
+                        _this.data.selector_rules[selector_id] = result.data.rules;
+                        _this.renderRules(result.data);
+                    } else {
+                        L.Common.showTipDialog("错误提示", "查询redirect规则发生错误");
+                    }
+                },
+                error: function () {
+                    L.Common.showTipDialog("提示", "查询redirect规则发生异常");
                 }
             });
         },
@@ -160,12 +196,18 @@
             $("#selector-list").html(html);
         },
 
-        renderTable: function (data, highlight_id) {
-            highlight_id = highlight_id || 0;
-            var tpl = $("#rule-item-tpl").html();
-            data.highlight_id = highlight_id;
-            var html = juicer(tpl, data);
-            $("#rules").html(html);
+        renderRules: function (data) {
+            data = data || {};
+            if(!data.rules || data.rules.length<1){
+                var html = '<div class="alert alert-warning" style="margin: 25px 0 10px 0;">'+
+                        '<p>该选择器下没有规则,请添加!</p>'+
+                '</div>';
+                $("#rules").html(html);
+            }else{
+                var tpl = $("#rule-item-tpl").html();
+                var html = juicer(tpl, data);
+                $("#rules").html(html);
+            }
         }
     };
 }(APP));
