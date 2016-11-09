@@ -117,6 +117,17 @@
             $('#content-main').css('overflow-y', 'auto');
         }
 
+        //nav close 事件
+        $("#nav-section").mouseenter(function(){
+          $(".nav-close").css("display","block");
+        });
+        $("#nav-section").mouseover(function(){
+          $(".nav-close").css("display","block");
+        });
+        $("#nav-section").mouseout(function(){
+          $(".nav-close").css("display","none");
+        });
+
     });
 
     $(window).bind("load resize", function () {

@@ -147,3 +147,55 @@ tr.highlight{
     font-size: 12px;
 }
 
+.selected-selector{
+    background-color: #fcf8e3;
+}
+
+.selector-section-header{
+    height:22px;line-height:22px;width:100%;
+}
+
+.rule-section-header{
+    height:22px;line-height:22px;width:100%;
+}
+
+@media screen and (max-width: 1160px) {  /*当屏幕尺寸小于X时，应用下面的CSS样式*/
+  #selector-section .selector-section-header p{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1300px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
+  #selector-section .selector-op i{
+    display: none;
+  }
+
+  #selector-section .selector-op span{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1600px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
+  .rule-extractor-td{
+    display: none;
+  }
+
+  .rule-urltmpl-td{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1000px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
+  .rule-condition-td{
+    display: none;
+  }
+
+  .rule-extractor-td{
+    display: none;
+  }
+
+  .rule-urltmpl-td{
+    display: none;
+  }
+}
+

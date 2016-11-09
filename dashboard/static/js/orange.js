@@ -8,8 +8,6 @@
 
         },
 
-
-
         //增加、删除条件按钮事件
         initConditionAddOrRemove: function () {
             //添加规则框里的事件
@@ -596,7 +594,7 @@
                                             self.attr("data-on", "no");
                                             self.removeClass("btn-danger").addClass("btn-info");
                                             self.find("i").removeClass("fa-pause").addClass("fa-play");
-                                            self.find("span").text("启用" + op_type);
+                                            self.find("span").text("启用该插件");
 
                                             return true;
                                         } else {
@@ -643,7 +641,7 @@
                                             self.attr("data-on", "yes");
                                             self.removeClass("btn-info").addClass("btn-danger");
                                             self.find("i").removeClass("fa-play").addClass("fa-pause");
-                                            self.find("span").text("停用" + op_type);
+                                            self.find("span").text("停用该插件");
 
                                             return true;
                                         } else {
@@ -669,7 +667,13 @@
             var op_type = type;
             var rules_key = "rules";
 
+
             $("#add-btn").click(function () {
+                var selector_id = $("#add-btn").attr("data-id");
+                if(!selector_id){
+                    L.Common.showErrorTip("错误提示", "添加规则前请先选择[选择器]!");
+                    return;
+                }
                 var content = $("#add-tpl").html()
                 var d = dialog({
                     title: '添加规则',
@@ -693,9 +697,8 @@
                             var result = context.buildRule();
                             if (result.success == true) {
                                 $.ajax({
-                                    url: '/' + op_type + '/configs',
+                                    url: '/' + op_type + '/selectors/' + selector_id + "/rules",
                                     type: 'post',
-                                    cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
                                     },
@@ -703,7 +706,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.loadConfigs();
+                                            context.loadRules(selector_id);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
@@ -889,13 +892,12 @@
 
         initRuleDeleteDialog: function (type, context) {
             var op_type = type;
-            var rules_key = "rules";
 
             $(document).on("click", ".delete-btn", function () {
-
                 var name = $(this).attr("data-name");
                 var rule_id = $(this).attr("data-id");
-                console.log("删除:" + name);
+                var selector_id = $("#add-btn").attr("data-id");
+
                 var d = dialog({
                     title: '提示',
                     width: 480,
@@ -908,9 +910,8 @@
                         autofocus: false,
                         callback: function () {
                             $.ajax({
-                                url: '/' + op_type + '/configs',
+                                url: '/' + op_type + '/selectors/' + selector_id + "/rules",
                                 type: 'delete',
-                                cache:false,
                                 data: {
                                     rule_id: rule_id
                                 },
@@ -918,8 +919,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
-                                        context.loadConfigs();
-
+                                        context.loadRules(selector_id);
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除规则发生错误");
@@ -932,8 +932,7 @@
                                 }
                             });
                         }
-                    }
-                    ]
+                    }]
                 });
 
                 d.show();
@@ -989,6 +988,53 @@
                     ]
                 });
                 L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                d.show();
+            });
+        },
+
+        initSelectorDeleteDialog: function (type, context) {
+            var op_type = type;
+            $(document).on("click", ".delete-selector-btn", function () {
+                var name = $(this).attr("data-name");
+                var selector_id = $(this).attr("data-id");
+                var d = dialog({
+                    title: '提示',
+                    width: 480,
+                    content: "确定要删除选择器【" + name + "】吗? 删除选择器将同时删除它的所有规则!",
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '确定',
+                        autofocus: false,
+                        callback: function () {
+                            $.ajax({
+                                url: '/' + op_type + '/selectors',
+                                type: 'delete',
+                                data: {
+                                    selector_id: selector_id
+                                },
+                                dataType: 'json',
+                                success: function (result) {
+                                    if (result.success) {
+                                        //重新渲染规则
+                                        context.loadConfigs();
+                                        return true;
+                                    } else {
+                                        L.Common.showErrorTip("提示", result.msg || "删除选择器发生错误");
+                                        return false;
+                                    }
+                                },
+                                error: function () {
+                                    L.Common.showErrorTip("提示", "删除选择器请求发生异常");
+                                    return false;
+                                }
+                            });
+                        }
+                    }
+                    ]
+                });
+
                 d.show();
             });
         },
@@ -1072,6 +1118,72 @@
             });
         },
 
+        initSelectorSortEvent: function (type, context){
+            var op_type = type;
+            $(document).on("click", "#selector-sort-btn", function () {
+                var d = dialog({
+                    title: "提示",
+                    content: "确定要保存新的选择器顺序吗？",
+                    width: 350,
+                    cancel: false,
+                    modal: true,
+                    ok: function () {
+                        var new_order = [];
+                        if($("#selector-list li")){
+                            $("#selector-list li").each(function(item){
+                                new_order.push($(this).attr("data-id"));
+                            });
+                        }
+
+                        console.log("new order:", new_order.join(","));
+
+                        $.ajax({
+                            url: '/' + op_type + '/selectors/order',
+                            type: 'put',
+                            data: {
+                                order: new_order.join(",")
+                            },
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.success) {
+                                    //重新渲染规则
+                                    context.loadConfigs();
+                                    return true;
+                                } else {
+                                    L.Common.showErrorTip("提示", result.msg || "保存排序发生错误");
+                                    return false;
+                                }
+                            },
+                            error: function () {
+                                L.Common.showErrorTip("提示", "保存排序请求发生异常");
+                                return false;
+                            }
+                        });
+                    }
+                });
+                d.show();
+            });
+        },
+
+        initSelectorClickEvent: function (type, context){
+            $(document).on("click", ".selector-item", function () {
+                var self = $(this);
+                var selector_id = self.attr("data-id");
+                var selector_name = self.attr("data-name");
+                if(selector_name){
+                    $("#rules-section-header").text("选择器[" + selector_name + "]-规则列表");
+                }
+
+                $(".selector-item").each(function(){
+                    $(this).removeClass("selected-selector");
+                })
+                self.addClass("selected-selector");
+
+                context.loadRules(selector_id);
+                $("#add-btn").attr("data-id", selector_id);
+            });
+        },
+
         resetSwitchBtn: function (enable, type) {
             var op_type = type;
 
@@ -1080,12 +1192,12 @@
                 self.attr("data-on", "yes");
                 self.removeClass("btn-info").addClass("btn-danger");
                 self.find("i").removeClass("fa-play").addClass("fa-pause");
-                self.find("span").text("停用" + op_type);
+                self.find("span").text("停用该插件");
             } else {
                 self.attr("data-on", "no");
                 self.removeClass("btn-danger").addClass("btn-info");
                 self.find("i").removeClass("fa-pause").addClass("fa-play");
-                self.find("span").text("启用" + op_type);
+                self.find("span").text("启用该插件");
             }
         },
 
