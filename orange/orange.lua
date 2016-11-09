@@ -1,3 +1,4 @@
+require "bit32"
 local ipairs = ipairs
 local table_insert = table.insert
 local table_sort = table.sort
@@ -8,6 +9,7 @@ local cjson = require("cjson")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local orange_db = require("orange.store.orange_db")
+local base_plugin = require("orange.plugins.base")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -15,6 +17,17 @@ local HEADERS = {
 }
 
 local loaded_plugins = {}
+local access_plugins = {}
+local redirect_plugins = {}
+local rewrite_plugins = {}
+local header_filter_plugins = {}
+local body_filter_plugins = {}
+
+local function plugin_priority_compare(a, b)
+    local priority_a = a.handler.PRIORITY or 0
+    local priority_b = b.handler.PRIORITY or 0
+    return priority_a > priority_b
+end
 
 local function load_node_plugins(config, store)
     ngx.log(ngx.DEBUG, "Discovering used plugins")
@@ -35,11 +48,7 @@ local function load_node_plugins(config, store)
         end
     end
 
-    table_sort(sorted_plugins, function(a, b)
-        local priority_a = a.handler.PRIORITY or 0
-        local priority_b = b.handler.PRIORITY or 0
-        return priority_a > priority_b
-    end)
+    table_sort(sorted_plugins, plugin_priority_compare)
 
     return sorted_plugins
 end
@@ -164,6 +173,31 @@ function Orange.init(options)
         config = config
     }
 
+    for _, plugin in ipairs(loaded_plugins) do
+        local tag = plugin.handler:get_tag()
+        if bin32.ban(tag, base_plugin.TAGS.REDIRECT) then
+            table_insert(redirect_plugins, plugin)
+        end
+        if bin32.ban(tag, base_plugin.TAGS.REWRITE) then
+            table_insert(rewrite_plugins, plugin)
+        end
+        if bin32.ban(tag, base_plugin.TAGS.ACCESS) then
+            table_insert(access_plugins, plugin)
+        end
+        if bin32.ban(tag, base_plugin.TAGS.HEADER_FILTER) then
+            table_insert(header_filter_plugins, plugin)
+        end
+        if bin32.ban(tag, base_plugin.TAGS.BODAY_FILTER) then
+            table_insert(body_filter_plugins, plugin)
+        end
+    end
+
+    table_sort(redirect_plugins, plugin_priority_compare)
+    table_sort(rewrite_plugins, plugin_priority_compare)
+    table_sort(access_plugins, plugin_priority_compare)
+    table_sort(header_filter_plugins, plugin_priority_compare)
+    table_sort(body_filter_plugins, plugin_priority_compare)
+
     return config, store
 end
 
@@ -191,7 +225,7 @@ end
 function Orange.redirect()
     ngx.ctx.ORANGE_REDIRECT_START = now()
 
-    for _, plugin in ipairs(loaded_plugins) do
+    for _, plugin in ipairs(redirect_plugins) do
         plugin.handler:redirect()
     end
 
@@ -203,7 +237,7 @@ end
 function Orange.rewrite()
     ngx.ctx.ORANGE_REWRITE_START = now()
 
-    for _, plugin in ipairs(loaded_plugins) do
+    for _, plugin in ipairs(rewrite_plugins) do
         plugin.handler:rewrite()
     end
 
@@ -216,7 +250,7 @@ end
 function Orange.access()
     ngx.ctx.ORANGE_ACCESS_START = now()
 
-    for _, plugin in ipairs(loaded_plugins) do
+    for _, plugin in ipairs(access_plugins) do
         plugin.handler:access()
     end
 
@@ -236,7 +270,7 @@ function Orange.header_filter()
         ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now
     end
 
-    for _, plugin in ipairs(loaded_plugins) do
+    for _, plugin in ipairs(header_filter_plugins) do
         plugin.handler:header_filter()
     end
 
@@ -247,7 +281,7 @@ function Orange.header_filter()
 end
 
 function Orange.body_filter()
-    for _, plugin in ipairs(loaded_plugins) do
+    for _, plugin in ipairs(body_filter_plugins) do
         plugin.handler:body_filter()
     end
 

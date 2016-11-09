@@ -43,6 +43,10 @@ end
 local BasicAuthHandler = BasePlugin:extend()
 BasicAuthHandler.PRIORITY = 2000
 
+function BasicAuthHandler:get_tag()
+    return BasePlugin.TAGS.ACCESS
+end
+
 function BasicAuthHandler:new(store)
     BasicAuthHandler.super.new(self, "basic_auth-plugin")
     self.store = store
@@ -50,7 +54,7 @@ end
 
 function BasicAuthHandler:access(conf)
     BasicAuthHandler.super.access(self)
-    
+
     local basic_auth_config = {
         enable = orange_db.get("basic_auth.enable"),
         rules = orange_db.get_json("basic_auth.rules")
@@ -65,7 +69,7 @@ function BasicAuthHandler:access(conf)
 
     local headers = ngx.req.get_headers()
     local authorization = headers and (headers["Authorization"] or headers["authorization"])
-    
+
     local ngx_var = ngx.var
     for i, rule in ipairs(rules) do
         local enable = rule.enable
