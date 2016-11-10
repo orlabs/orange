@@ -194,7 +194,7 @@ API["/redirect/configs"] = {
             local success = false
             -- 插入到mysql
             local insert_result = store:insert({
-                sql = "insert into redirect(`key`, `value, `op_time`) values(?,?,?)",
+                sql = "insert into redirect(`key`, `value`, `op_time`) values(?,?,?)",
                 params = { rule.id, cjson.encode(rule), rule.time }
             })
 
