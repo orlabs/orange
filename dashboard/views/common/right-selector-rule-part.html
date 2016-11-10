@@ -1,0 +1,49 @@
+<div class="row" id="table-view">
+    <div class="col-sm-3" style="padding-right:0px;">
+        <div class="ibox">
+            <div class="ibox-content" id="selector-section">
+                <h4>选择器列表</h4>
+                <div class="selector-section-header">
+                    <p class="small" style="float: left">
+                        <i class="fa fa-hand-o-up"></i> 拖动改变执行顺序
+                    </p>
+                    <div style="float:right;">
+                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="selector-sort-btn">
+                            <i class="fa fa-list-ol"></i>
+                            <span>保存排序</span>
+                        </button>
+                    </div>
+                </div>
+                <ul id="selector-list" class="sortable-list agile-list ui-sortable">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="ibox">
+            <div class="ibox-content">
+                <h4 id="rules-section-header">选择器-规则列表</h4>
+                <div class="rule-section-header">
+                    <p class="small" style="float: left">
+                        <i class="fa fa-hand-o-up"></i> 在列表之间拖动以改变规则顺序
+                    </p>
+                    <div style="float:right;">
+                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="rule-sort-btn">
+                            <i class="fa fa-list-ol"></i>
+                            <span>保存排序</span>
+                        </button>
+                        <button class="btn btn-default btn-xs" href="javascript:void(0);" id="add-btn">
+                            <i class="fa fa-filter"></i>
+                            <span>添加新规则</span>
+                        </button>
+                    </div>
+                </div>
+
+                <ul id="rules"  class="sortable-list agile-list">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

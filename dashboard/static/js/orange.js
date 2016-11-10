@@ -756,8 +756,7 @@
                                             }
                                         });
                                     }
-                                }
-                                ]
+                                }]
                             });
                             d.show();
 
@@ -1266,11 +1265,11 @@
                         }
 
                     } else {
-                        _this.showTipDialog("错误提示", "查询redirect配置请求发生错误");
+                        _this.showErrorTip("错误提示", "查询redirect配置请求发生错误");
                     }
                 },
                 error: function () {
-                    _this.showTipDialog("提示", "查询redirect配置请求发生异常");
+                    _this.showErrorTip("提示", "查询redirect配置请求发生异常");
                 }
             });
         },
@@ -1293,11 +1292,11 @@
                         context.data.selector_rules[selector_id] = result.data.rules;
                         _this.renderRules(result.data);
                     } else {
-                        _this.showTipDialog("错误提示", "查询redirect规则发生错误");
+                        _this.showErrorTip("错误提示", "查询redirect规则发生错误");
                     }
                 },
                 error: function () {
-                    _this.showTipDialog("提示", "查询redirect规则发生异常");
+                    _this.showErrorTip("提示", "查询redirect规则发生异常");
                 }
             });
         },

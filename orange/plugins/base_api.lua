@@ -10,7 +10,8 @@ local _METHODS = {
     GET = true,
     POST = true,
     PUT = true,
-    DELETE = true
+    DELETE = true,
+    PATCH = true
 }
 
 
@@ -60,9 +61,23 @@ end
 function BaseAPI:build_method()
     for m, v in pairs(_METHODS) do
         m = string_lower(m)
-        ngx.log(ngx.ERR, "attach method " .. m .. " to BaseAPI")
+        ngx.log(ngx.INFO, "attach method " .. m .. " to BaseAPI")
         BaseAPI[m] = function(myself, path, func)
             BaseAPI.set_api(myself, path, m, func)
+        end
+    end
+end
+
+function BaseAPI:merge_apis(apis)
+    if apis and type(apis) == "table" then
+        for path, methods in pairs(apis) do
+            if methods and type(methods) == "table" then
+                for m, func in pairs(methods) do
+                    m = string_lower(m)
+                    ngx.log(ngx.INFO, "merge method, path: ", path, " method:", m)
+                    self:set_api(path, m, func)
+                end
+            end
         end
     end
 end
