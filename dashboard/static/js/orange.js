@@ -413,8 +413,7 @@
                     callback: function () {
                         d.close().remove();
                     }
-                }
-                ]
+                }]
             });
             d.show();
 
@@ -500,28 +499,8 @@
         },
 
         //数据/表格视图转换和下载事件
-        initViewAndDownloadEvent: function (type) {
-            var data = {};
-            var rules_key = "rules";
-            if (type == "redirect") {
-                data = L.Redirect.data;
-            } else if (type == "rewrite") {
-                data = L.Rewrite.data;
-            } else if (type == "rate_limiting") {
-                data = L.RateLimiting.data;
-            } else if (type == "basic_auth") {
-                data = L.BasicAuth.data;
-            } else if (type == "key_auth") {
-                data = L.KeyAuth.data;
-            } else if (type == "waf") {
-                data = L.WAF.data;
-            } else if (type == "divide") {
-                data = L.Divide.data;
-            } else if (type == "monitor") {
-                data = L.Monitor.data;
-            } else {
-                return;
-            }
+        initViewAndDownloadEvent: function (type, context) {
+            var data = context.data;
 
             $("#view-btn").click(function () {//试图转换
                 var self = $(this);
@@ -533,7 +512,7 @@
 
                     var showData = {};
                     showData.enable = data.enable;
-                    showData[rules_key] = data.rules;
+                    showData.selectors = data.selectors;
                     jsonformat.format(JSON.stringify(showData));
                     $("#jfContent_pre").text(JSON.stringify(showData, null, 4));
                     $('pre').each(function () {
@@ -554,14 +533,14 @@
             $(document).on("click", "#btnDownload", function () {//规则json下载
                 var downloadData = {};
                 downloadData.enable = data.enable;
-                downloadData[rules_key] = data.rules;
+                downloadData.selectors = data.selectors;
                 var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "data.json");
             });
 
         },
 
-        initSwitchBtn: function (type) {
+        initSwitchBtn: function (type, context) {
             var op_type = type;
 
             $("#switch-btn").click(function () {//是否开启
@@ -590,7 +569,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重置按钮
-                                            _this.data.enable = false;
+                                            context.data.enable = false;
                                             self.attr("data-on", "no");
                                             self.removeClass("btn-danger").addClass("btn-info");
                                             self.find("i").removeClass("fa-pause").addClass("fa-play");
@@ -636,7 +615,7 @@
                                     dataType: 'json',
                                     success: function (result) {
                                         if (result.success) {
-                                            _this.data.enable = true;
+                                            context.data.enable = true;
                                             //重置按钮
                                             self.attr("data-on", "yes");
                                             self.removeClass("btn-info").addClass("btn-danger");
@@ -706,7 +685,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.loadRules(selector_id);
+                                            _this.loadRules(op_type, context, selector_id);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
@@ -764,15 +743,15 @@
                                             dataType: 'json',
                                             success: function (r) {
                                                 if (r.success) {
-                                                    context.loadConfigs();
+                                                    _this.loadConfigs(op_type, context);
                                                     return true;
                                                 } else {
-                                                    L.Common.showErrorTip("提示", r.msg || "同步配置发生错误");
+                                                    _this.showErrorTip("提示", r.msg || "同步配置发生错误");
                                                     return false;
                                                 }
                                             },
                                             error: function () {
-                                                L.Common.showErrorTip("提示", "同步配置请求发生异常");
+                                                _this.showErrorTip("提示", "同步配置请求发生异常");
                                                 return false;
                                             }
                                         });
@@ -802,13 +781,14 @@
 
         initRuleEditDialog: function (type, context) {
             var op_type = type;
-            var rules_key = "rules";
 
             $(document).on("click", ".edit-btn", function () {
+                var selector_id = $("#add-btn").attr("data-id");
+
                 var tpl = $("#edit-tpl").html();
                 var rule_id = $(this).attr("data-id");
                 var rule = {};
-                var rules = context.data.rules;
+                var rules = context.data.selector_rules[selector_id];
                 for (var i = 0; i < rules.length; i++) {
                     var r = rules[i];
                     if (r.id == rule_id) {
@@ -820,7 +800,6 @@
                     L.Common.showErrorTip("提示", "要编辑的规则不存在或者查找出错");
                     return;
                 }
-
 
                 var html = juicer(tpl, {
                     r: rule
@@ -850,9 +829,8 @@
 
                             if (result.success == true) {
                                 $.ajax({
-                                    url: '/' + op_type + '/configs',
+                                    url: '/' + op_type + '/selectors/' + selector_id + "/rules",
                                     type: 'put',
-                                    cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
                                     },
@@ -860,8 +838,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.loadConfigs();
-
+                                            _this.loadRules(op_type, context, selector_id);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "编辑规则发生错误");
@@ -919,7 +896,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
-                                        context.loadRules(selector_id);
+                                        _this.loadRules(op_type, context, selector_id);
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除规则发生错误");
@@ -935,6 +912,56 @@
                     }]
                 });
 
+                d.show();
+            });
+        },
+
+        initRuleSortEvent: function (type, context){
+            var op_type = type;
+            $(document).on("click", "#rule-sort-btn", function () {
+                var d = dialog({
+                    title: "提示",
+                    content: "确定要保存新的规则顺序吗？",
+                    width: 350,
+                    modal: true,
+                    cancel: function(){},
+                    cancelValue: "取消",
+                    okValue: "确定",
+                    ok: function () {
+                        var selector_id = $("#add-btn").attr("data-id");
+                        var new_order = [];
+                        if($("#rules li")){
+                            $("#rules li").each(function(item){
+                                new_order.push($(this).attr("data-id"));
+                            });
+                        }
+
+                        console.log("new order:", new_order.join(","));
+
+                        $.ajax({
+                            url: '/' + op_type + '/selectors/' +selector_id + '/rules/order',
+                            type: 'put',
+                            data: {
+                                order: new_order.join(",")
+                            },
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.success) {
+                                    //重新渲染规则
+                                    _this.loadRules(op_type, context, selector_id);
+                                    return true;
+                                } else {
+                                    L.Common.showErrorTip("提示", result.msg || "保存排序发生错误");
+                                    return false;
+                                }
+                            },
+                            error: function () {
+                                L.Common.showErrorTip("提示", "保存排序请求发生异常");
+                                return false;
+                            }
+                        });
+                    }
+                });
                 d.show();
             });
         },
@@ -966,7 +993,7 @@
                                     dataType: 'json',
                                     success: function (result) {
                                         if (result.success) {
-                                            context.loadConfigs();//重新渲染
+                                            _this.loadConfigs(op_type, context);//重新渲染
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加选择器发生错误");
@@ -994,7 +1021,8 @@
 
         initSelectorDeleteDialog: function (type, context) {
             var op_type = type;
-            $(document).on("click", ".delete-selector-btn", function () {
+            $(document).on("click", ".delete-selector-btn", function (e) {
+                e.stopPropagation();// 阻止冒泡
                 var name = $(this).attr("data-name");
                 var selector_id = $(this).attr("data-id");
                 var d = dialog({
@@ -1018,7 +1046,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
-                                        context.loadConfigs();
+                                        _this.loadConfigs(op_type, context);
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除选择器发生错误");
@@ -1042,7 +1070,8 @@
         initSelectorEditDialog: function(type, context){
             var op_type = type;
 
-            $(document).on("click", ".edit-selector-btn", function () {
+            $(document).on("click", ".edit-selector-btn", function (e) {
+                e.stopPropagation();// 阻止冒泡
                 var tpl = $("#edit-selector-tpl").html();
                 var selector_id = $(this).attr("data-id");
                 var selectors = context.data.selectors;
@@ -1090,7 +1119,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.loadConfigs();
+                                            _this.loadConfigs(op_type, context);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "编辑选择器发生错误");
@@ -1125,8 +1154,10 @@
                     title: "提示",
                     content: "确定要保存新的选择器顺序吗？",
                     width: 350,
-                    cancel: false,
                     modal: true,
+                    cancel: function(){},
+                    cancelValue: "取消",
+                    okValue: "确定",
                     ok: function () {
                         var new_order = [];
                         if($("#selector-list li")){
@@ -1147,7 +1178,7 @@
                             success: function (result) {
                                 if (result.success) {
                                     //重新渲染规则
-                                    context.loadConfigs();
+                                    _this.loadConfigs(op_type, context);
                                     return true;
                                 } else {
                                     L.Common.showErrorTip("提示", result.msg || "保存排序发生错误");
@@ -1166,12 +1197,13 @@
         },
 
         initSelectorClickEvent: function (type, context){
+            var op_type = type;
             $(document).on("click", ".selector-item", function () {
                 var self = $(this);
                 var selector_id = self.attr("data-id");
                 var selector_name = self.attr("data-name");
                 if(selector_name){
-                    $("#rules-section-header").text("选择器[" + selector_name + "]-规则列表");
+                    $("#rules-section-header").text("选择器【" + selector_name + "】规则列表");
                 }
 
                 $(".selector-item").each(function(){
@@ -1179,7 +1211,7 @@
                 })
                 self.addClass("selected-selector");
 
-                context.loadRules(selector_id);
+                _this.loadRules(op_type, context, selector_id);
                 $("#add-btn").attr("data-id", selector_id);
             });
         },
@@ -1201,37 +1233,145 @@
             }
         },
 
-        showErrorTip: function (title, content) {
-            var d = dialog({
-                title: title,
-                width: 300,
-                content: content,
-                modal: true,
-                button: [{
-                    value: '返回',
-                    callback: function () {
-                        d.close().remove();
+        loadConfigs: function (type, context, page_load) {
+            var op_type = type;
+            $.ajax({
+                url: '/' + op_type + '/selectors',
+                type: 'get',
+                cache: false,
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        _this.resetSwitchBtn(result.data.enable, op_type);
+                        $("#switch-btn").show();
+                        $("#view-btn").show();
+
+                        var enable = result.data.enable;
+                        var meta = result.data.meta;
+                        var selectors = result.data.selectors;
+
+                        //重新设置数据
+                        context.data.enable = enable;
+                        context.data.meta = meta;
+                        context.data.selectors = selectors;
+
+                        _this.renderSelectors(meta, selectors);
+
+                        if(page_load){//第一次加载页面
+                            var selector_lis = $("#selector-list li");
+                            if(selector_lis && selector_lis.length>0){
+                                $(selector_lis[0]).click();
+                            }
+                        }
+
+                    } else {
+                        _this.showTipDialog("错误提示", "查询redirect配置请求发生错误");
+                    }
+                },
+                error: function () {
+                    _this.showTipDialog("提示", "查询redirect配置请求发生异常");
+                }
+            });
+        },
+
+        loadRules: function (type, context, selector_id) {
+            var op_type = type;
+            $.ajax({
+                url: '/' + op_type + '/selectors/' + selector_id + "/rules",
+                type: 'get',
+                cache: false,
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        $("#switch-btn").show();
+                        $("#view-btn").show();
+
+                        //重新设置数据
+                        context.data.selector_rules = context.data.selector_rules || {};
+                        context.data.selector_rules[selector_id] = result.data.rules;
+                        _this.renderRules(result.data);
+                    } else {
+                        _this.showTipDialog("错误提示", "查询redirect规则发生错误");
+                    }
+                },
+                error: function () {
+                    _this.showTipDialog("提示", "查询redirect规则发生异常");
+                }
+            });
+        },
+
+        renderSelectors: function(meta, selectors){
+            var tpl = $("#selector-item-tpl").html();
+            var to_render_selectors = [];
+            if(meta && selectors){
+                var to_render_ids = meta.selectors;
+                if(to_render_ids){
+                    for(var i = 0; i < to_render_ids.length; i++){
+                        if(selectors[to_render_ids[i]]){
+                            to_render_selectors.push(selectors[to_render_ids[i]]);
+                        }
                     }
                 }
-                ]
+            }
+
+            var html = juicer(tpl, {
+                selectors: to_render_selectors
             });
-            d.show();
+            $("#selector-list").html(html);
+        },
+
+        renderRules: function (data) {
+            data = data || {};
+            if(!data.rules || data.rules.length<1){
+                var html = '<div class="alert alert-warning" style="margin: 25px 0 10px 0;">'+
+                        '<p>该选择器下没有规则,请添加!</p>'+
+                '</div>';
+                $("#rules").html(html);
+            }else{
+                var tpl = $("#rule-item-tpl").html();
+                var html = juicer(tpl, data);
+                $("#rules").html(html);
+            }
+        },
+
+        showErrorTip: function (title, content) {
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "onclick": null,
+              "showDuration": "400",
+              "hideDuration": "10000",
+              "timeOut": "7000",
+              "extendedTimeOut": "10000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            }
+            toastr.error(content,title || "错误提示");
         },
 
         showTipDialog: function (title, content) {
-            if (!content) {
-                content = title;
-                title = "Tips";
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "onclick": null,
+              "showDuration": "400",
+              "hideDuration": "3000",
+              "timeOut": "7000",
+              "extendedTimeOut": "3000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
             }
-            var d = dialog({
-                title: title || 'Tips',
-                content: content,
-                width: 350,
-                cancel: false,
-                ok: function () {
-                }
-            });
-            d.show();
+            toastr.success(content, title || "提示");
         },
 
         resetNav: function (select) {

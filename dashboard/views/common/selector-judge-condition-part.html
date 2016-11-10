@@ -1,0 +1,45 @@
+<div class="form-group pair condition-holder">
+    <label class="col-sm-1 control-label"></label>
+
+    <div class="col-sm-2">
+        <select class="form-control" name="rule-judge-condition-type">
+            <option value="URI">URI</option>
+            <option value="Header">Header</option>
+            <option value="Query">Query</option>
+            <option value="PostParams">PostParams</option>
+            <option value="IP">IP</option>
+            <option value="UserAgent">UserAgent</option>
+            <!-- <option value="Method">Method</option> -->
+            <option value="Host">Host</option>
+            <option value="Referer">Referer</option>
+        </select>
+    </div>
+    <div class="col-sm-2 condition-name-hodler" style="display:none;padding-left:0px;">
+        <input type="text" class="form-control" name="rule-judge-condition-name" placeholder="name">
+    </div>
+    <div class="col-sm-3" style="padding: 0px;">
+        <select class="form-control"  name="rule-judge-condition-operator">
+            <option value="match">Match</option>
+            <option value="not_match">Not Match</option>
+            <option value="=">=</option>
+            <option value="!=">!=</option>
+            <option value=">">&gt;</option>
+            <option value=">=">&ge;</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&le;</option>
+        </select>
+    </div>
+    <div class="col-sm-3">
+        <input type="text" class="form-control" name="rule-judge-condition-value" placeholder="value">
+    </div>
+    <div class="col-sm-1" style="margin-top:5px">
+        <span class="input-group-btn">
+            <a class="btn btn-remove" style="padding:0 5px;">
+                <i class="fa fa-remove"></i>
+            </a>
+            <a class="btn btn-add" style="padding:0 5px;">
+                <i class="fa fa-plus"></i>
+            </a>
+        </span>
+    </div>
+</div>
