@@ -5,6 +5,7 @@
 
 <script src="/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/static/js/plugins/toastr/toastr.min.js"></script>
 
 <script src="/static/js/libs/juicer-min.js"></script>
 <script src="/static/js/libs/dialog-min.js"></script>
@@ -16,6 +17,7 @@
 <!-- 自定义js -->
 <script type="text/javascript">
     var APP = APP || {};
+
 
     function NavToggle() {
         $('.navbar-minimalize').trigger('click');
@@ -138,3 +140,6 @@
     });
 </script>
 <script src="/static/js/orange.js"></script>
+<script type="text/javascript">
+    APP.Common.init();
+</script>

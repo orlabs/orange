@@ -371,7 +371,6 @@ API:post("/redirect/selectors/:id/rules", function(store)
         rule.id = utils.new_id()
         rule.time = utils.now()
 
-        local success = false
         -- 插入到mysql
         local insert_result = store:insert({
             sql = "insert into redirect(`key`, `value`, `op_time`, `type`) values(?,?,?,?)",
@@ -439,17 +438,18 @@ end)
  -- modify
 API:put("/redirect/selectors/:id/rules", function(store)
     return function(req, res, next)
+        local selector_id = req.params.id
         local rule = req.body.rule
-        rule = cjson.decode(rule)
+        rule = utils.json_decode(rule)
         rule.time = utils.now()
     
         local update_result = store:delete({
-            sql = "update redirect set `value`=?,`op_time`=? where `key`=?",
-            params = { cjson.encode(rule), rule.time, rule.id }
+            sql = "update redirect set `value`=?,`op_time`=? where `key`=? and `type`=?",
+            params = { cjson.encode(rule), rule.time, rule.id, "rule" }
         })
 
         if update_result then
-            local old_rules = orange_db.get_json("redirect.rules") or {}
+            local old_rules = orange_db.get_json("redirect.selector." .. selector_id .. ".rules") or {}
             local new_rules = {}
             for i, v in ipairs(old_rules) do
                 if v.id == rule.id then
@@ -460,7 +460,7 @@ API:put("/redirect/selectors/:id/rules", function(store)
                 end
             end
 
-            local success, err, forcible = orange_db.set_json("redirect.rules", new_rules)
+            local success, err, forcible = orange_db.set_json("redirect.selector." .. selector_id .. ".rules", new_rules)
             if err or forcible then
                 ngx.log(ngx.ERR, "update local rules error when modifing:", err, ":", forcible)
                 return res:json({
@@ -469,16 +469,16 @@ API:put("/redirect/selectors/:id/rules", function(store)
                 })
             end
 
-            res:json({
+            return res:json({
                 success = success,
                 msg = success and "ok" or "failed"
             })
-        else
-            res:json({
-                success = false,
-                msg = "update rule to db error"
-            })
         end
+
+        res:json({
+            success = false,
+            msg = "update rule to db error"
+        })
     end
 end)
 
@@ -501,7 +501,6 @@ API:delete("/redirect/selectors/:id/rules", function(store)
                 msg = "selector could not be decoded when deleting rule"
             })
         end
-
 
         local rule_id = tostring(req.body.rule_id)
         if not rule_id or rule_id == "" then
@@ -566,6 +565,62 @@ API:delete("/redirect/selectors/:id/rules", function(store)
     end
 end)
 
+-- update rules order
+API:put("/redirect/selectors/:id/rules/order", function(store)
+    return function(req, res, next)
+        local selector_id = req.params.id
+
+        local new_order = req.body.order
+        if not new_order or new_order == "" then
+            return res:json({
+                success = false, 
+                msg = "error params"
+            })
+        end
+
+        local tmp = stringy.split(new_order, ",")
+        local rules = {}
+        if tmp and type(tmp) == "table" and #tmp > 0 then
+            for _, t in ipairs(tmp) do
+                table_insert(rules, t)
+            end
+        end
+
+        local update_selector_result, update_local_selectors_result, update_local_selector_rules_result
+        local selector = get_selector(store, selector_id)
+        if not selector or not selector.value then 
+            ngx.log(ngx.ERR, "error to find selector when resorting rules of it")
+            return res:json({
+                success = true, 
+                msg = "error to find selector when resorting rules of it"
+            })
+        else
+            local new_selector = utils.json_decode(selector.value) or {}
+            new_selector.rules = rules
+            update_selector_result = update_selector(store, new_selector)
+            if update_selector_result then
+                update_local_selectors_result = update_local_selectors(store)
+            end
+        end
+
+        if update_selector_result and update_local_selectors_result then
+            update_local_selector_rules_result = update_local_selector_rules(store, selector_id)
+            if update_local_selector_rules_result then
+                return res:json({
+                    success = true,
+                    msg = "succeed to resort rules"
+                })
+            end
+        end
+
+        ngx.log(ngx.ERR, "error to update local data when resorting rules, update_selector_result:", update_selector_result, " update_local_selectors_result:", update_local_selectors_result, " update_local_selector_rules_result:", update_local_selector_rules_result)
+        res:json({
+            success = false,
+            msg = "fail to resort rules"
+        })
+    end
+end)
+
 
 
 -- get selectors
@@ -583,11 +638,10 @@ API:get("/redirect/selectors", function(store)
 end)
 
 -- delete selector
---- 1) delete selector
---- 2) delete rules of it
---- 3) update meta
---- 4) update local meta & selectors
 API:delete("/redirect/selectors", function(store)
+    --- 2) delete rules of it
+    --- 3) update meta
+    --- 4) update local meta & selectors
     return function(req, res, next)
 
         local selector_id = tostring(req.body.selector_id)
@@ -761,7 +815,6 @@ API:put("/redirect/selectors", function(store)
     end
 end)
 
-
 -- update selectors order
 API:put("/redirect/selectors/order", function(store)
     return function(req, res, next)
@@ -812,5 +865,6 @@ API:put("/redirect/selectors/order", function(store)
         end
     end
 end)
+
 
 return API
