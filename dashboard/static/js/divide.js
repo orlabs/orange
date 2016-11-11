@@ -3,21 +3,27 @@
     L.Divide = L.Divide || {};
     _this = L.Divide = {
         data: {
-            rules: {},
         },
 
         init: function () {
-            _this.loadConfigs();
+            L.Common.loadConfigs("divide", _this, true);
             _this.initEvents();
-
         },
 
         initEvents: function () {
-            L.Common.initRuleAddDialog("divide", _this);//添加规则对话框
-            L.Common.initRuleDeleteDialog("divide", _this);//删除规则对话框
-            L.Common.initRuleEditDialog("divide", _this);//编辑规则对话框
-            L.Common.initSyncDialog("divide", _this);//编辑规则对话框
+            var op_type = "divide";
+            L.Common.initRuleAddDialog(op_type, _this);//添加规则对话框
+            L.Common.initRuleDeleteDialog(op_type, _this);//删除规则对话框
+            L.Common.initRuleEditDialog(op_type, _this);//编辑规则对话框
+            L.Common.initRuleSortEvent(op_type, _this);
 
+            L.Common.initSelectorAddDialog(op_type, _this);
+            L.Common.initSelectorDeleteDialog(op_type, _this);
+            L.Common.initSelectorEditDialog(op_type, _this);
+            L.Common.initSelectorSortEvent(op_type, _this);
+            L.Common.initSelectorClickEvent(op_type, _this);
+
+            L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
@@ -27,9 +33,9 @@
             L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
             L.Common.initExtractionHasDefaultValueOrNotEvent();//提取项是否有默认值选择事件
 
-            L.Common.initViewAndDownloadEvent("divide");
-
-            L.Common.initSwitchBtn("divide");//divide关闭、开启
+            L.Common.initViewAndDownloadEvent(op_type, _this);
+            L.Common.initSwitchBtn(op_type, _this);//redirect关闭、开启
+            L.Common.initSyncDialog(op_type, _this);//编辑规则对话框
         },
 
 
@@ -88,41 +94,5 @@
             result.success = true;
             return result;
         },
-
-        loadConfigs: function () {
-            $.ajax({
-                url: '/divide/configs',
-                type: 'get',
-                cache:false,
-                data: {},
-                dataType: 'json',
-                success: function (result) {
-                    if (result.success) {
-                        L.Common.resetSwitchBtn(result.data.enable, "divide");
-                        $("#switch-btn").show();
-                        $("#view-btn").show();
-                        _this.renderTable(result.data);//渲染table
-                        _this.data.enable = result.data.enable;
-                        _this.data.rules = result.data.rules;//重新设置数据
-
-                    } else {
-                        L.Common.showTipDialog("错误提示", "查询divide配置请求发生错误");
-                    }
-                },
-                error: function () {
-                    L.Common.showTipDialog("提示", "查询divide配置请求发生异常");
-                }
-            });
-        },
-
-
-        renderTable: function (data, highlight_id) {
-            highlight_id = highlight_id || 0;
-            var tpl = $("#rule-item-tpl").html();
-            data.highlight_id = highlight_id;
-            var html = juicer(tpl, data);
-            $("#rules").html(html);
-        },
-
     };
 }(APP));

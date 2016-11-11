@@ -9,12 +9,21 @@ local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
 
 local function delete_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "string" then 
+    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then 
+        return true
+    end
+
+    local to_concat = {}
+    for _, r in ipairs(rule_ids) do
+        table_insert(to_concat, "'" .. r .. "'")
+    end
+    local to_delete_rules_ids = table_concat(to_concat, ",")
+    if not to_delete_rules_ids or to_delete_rules_ids == "" then
         return true
     end
 
     local delete_result = store:delete({
-        sql = "delete from " .. plugin .. " where `key` in (" .. rule_ids .. ") and `type`=?",
+        sql = "delete from " .. plugin .. " where `key` in (" .. to_delete_rules_ids .. ") and `type`=?",
         params = { "rule" }
     })
     if delete_result then
@@ -211,7 +220,7 @@ local function update_local_selectors(plugin, store)
     end
 
     local to_update_selectors = {}
-    if selectors and type(selectors) == "table" and #selectors > 0 then
+    if selectors and type(selectors) == "table" then
         for _, s in ipairs(selectors) do
             to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
         end
@@ -222,7 +231,12 @@ local function update_local_selectors(plugin, store)
             return false
         end
     else
-        ngx.log(ngx.ERR, "can not find selectors from storage when updating local selectors")
+        ngx.log(ngx.ERR, "the size of selectors from storage is 0 when updating local selectors")
+        local success, err, forcible = orange_db.set_json(plugin .. ".selectors", {})
+        if err or not success then
+            ngx.log(ngx.ERR, "update local plugin's selectors error, err:", err)
+            return false
+        end
     end
 
     return true
@@ -669,6 +683,7 @@ return function(plugin)
         end,
 
         DELETE = function(store) -- delete selector
+            --- 1) delete selector
             --- 2) delete rules of it
             --- 3) update meta
             --- 4) update local meta & selectors
@@ -700,8 +715,9 @@ return function(plugin)
                     })
                 end
 
-                local to_del_rules_ids = table_concat(to_del_selector.rules or {}, ",")
-                delete_rules_of_selector(plugin, store, to_del_rules_ids)
+                local to_del_rules_ids = to_del_selector.rules or {}
+                local d_result = delete_rules_of_selector(plugin, store, to_del_rules_ids)
+                ngx.log(ngx.ERR, "delete rules of selector:", d_result)
 
                 -- update meta
                 local meta = get_meta(plugin, store)

@@ -16,73 +16,27 @@
                 <div class="row content-header">
                     <div class="col-md-12">
                         <div class="pull-left">
-                            <h4 class="head_title">Rate Limiting访问限速</h4>
+                            <h4 class="head_title">Rate Limiting 访问限速</h4>
                         </div>
                         <div class="pull-right">
-                            <input id="rule-search" type="text" class="form-control" placeholder="  seach rules" style="width:150px;display: none;margin-right:10px;">
-                            <a id="view-btn" style="display:none;" data-type="table" class="btn btn-warning" rel="nofollow" href="javascript:void(0);">
-                                <i class="fa fa-database"></i>
-                                <span>数据视图</span>
-                            </a>
-                            <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
-                                <i class="fa fa-pause"></i>
-                                <span>停用访问限速</span>
-                            </a>
-
-                            <a class="btn btn-default" href="javascript:void(0);" id="add-btn">
-                                <i class="fa fa-filter"></i>
-                                <span>添加新规则</span>
-                            </a>
-
-                            <a class="btn btn-default" href="javascript:void(0);" id="sync-btn">
-                                <i class="fa fa-refresh"></i>
-                                <span>同步配置</span>
-                            </a>
+                             {(common/plugin-op.html)}
                         </div>
                     </div>
                 </div>
-
 
                 {(common/data-view-part.html)}
-
-
-                <div class="row" id="table-view">
-                    <div class="col-sm-12">
-                        <div class="ibox">
-                            <div class="ibox-content">
-                                <h4>规则列表</h4>
-                                <div style="height:30px;width:100%;line-height:30px;">
-                                    <p class="small" style="float: left">
-                                        <i class="fa fa-hand-o-up"></i> 在列表之间拖动以改变规则顺序
-                                    </p>
-                                    <div style="float:right;">
-                                        <button class="btn btn-info btn-xs" href="javascript:void(0);" id="sort-btn">
-                                            <i class="fa fa-list-ol"></i>
-                                            <span>保存排序</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <ul id="rules"  class="sortable-list connectList agile-list">
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                {(common/right-selector-rule-part.html)}
             <!-- content end -->
             </div>
         </div><!--右侧部分结束-->
-    </div>
 
-    {(common/common_js.html)}<!-- 通用js -->
+    </div>
 
 
     <script id="rule-item-tpl" type="text/template">
         {@each rules as r, index}
-        <li {@if r.enable==true } class="info-element"{@/if}
-            {@if r.enable!=true } class="warning-element"{@/if}
-            {@if highlight_id == r.id } class="highlight" {@/if}>
+        <li data-id="${r.id}" {@if r.enable==true } class="info-element"{@/if}
+            {@if r.enable!=true } class="warning-element"{@/if}>
             <table class="table table-hover single-rule-table">
                 <tbody>
                     <tr>
@@ -123,7 +77,7 @@
                             {@/each}
                         </td>
 
-                        <td class="left">
+                        <td class="left rule-urltmpl-td">
                             间隔: ${r.handle.period}<br/>
                             最多次数: ${r.handle.count}<br/>
                             记录日志: ${r.handle.log}
@@ -240,16 +194,22 @@
             </form>
         </div>
     </script>
+
+
     {(common/extraction-tmpl.html)}
 
-   <script src="/static/js/rate_limiting.js"></script>
+    {(common/selector-item-tpl.html)}
+    {(common/selector-add.html)}
+    {(common/selector-edit.html)}
+
+    {(common/common_js.html)}<!-- 通用js -->
+
+    <script src="/static/js/rate_limiting.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             APP.Common.resetNav("nav-rate-limiting");
             APP.RateLimiting.init();
-            $(".sortable-list").sortable({
-                connectWith: ".connectList"
-            }).disableSelection();
+            $(".sortable-list").sortable().disableSelection();
         });
     </script>
 </body>
