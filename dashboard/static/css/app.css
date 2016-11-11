@@ -10,16 +10,11 @@
 .plugin-item .plugin-op{
     margin-top:40px
 }
-.badge{
-    padding: 5px 14px 5px 14px;
-    color: #fff;
+
+.rule-badge{
+    font-weight:400;background-color: #fff;color: #777;border: 0px solid #ddd;
 }
-.off-badge{
-    background-color: #EB5424;
-}
-.on-badge{
-    background-color: #4cae4c;
-}
+
 #time-set a.active{
     text-decoration: underline;
 }
