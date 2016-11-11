@@ -42,8 +42,8 @@
 
                                     {% if v~="stat" then %}
                                     <p class="plugin-op">
-                                        <span href="javascript:void(0)" class="label label-info" title="开启的规则条数为{{plugin_config.active_rule_count}}">On {{plugin_config.active_rule_count}}</span>
-                                        <span href="javascript:void(0)" class="label label-dafault" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}" style="background-color:#646b71;color:#fff">Off {{plugin_config.inactive_rule_count}}</span>
+                                        <span href="javascript:void(0)" class="label rule-badge" title="开启的规则条数为{{plugin_config.active_rule_count}}"><i class="glyphicon glyphicon-ok-circle"></i> {{plugin_config.active_rule_count}}</span>
+                                        <span href="javascript:void(0)" class="label rule-badge" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}"><i class="glyphicon glyphicon-remove-circle"></i> {{plugin_config.inactive_rule_count}}</span>
                                     </p>
                                     {% else %}
                                     <p class="plugin-op">
