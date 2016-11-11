@@ -1,6 +1,6 @@
 # Orange
 
-<a href="./README_zh.md" style="font-size:13px">中文</a> | <a href="./README.md" style="font-size:13px">English</a> | <a href="http://orange.sumory.com" style="font-size:13px">Website</a> 
+<a href="./README_zh.md" style="font-size:13px">中文</a> | <a href="./README.md" style="font-size:13px">English</a> | <a href="http://orange.sumory.com" style="font-size:13px">Website</a>
 
 Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还可用于API监控、访问控制(鉴权、WAF)、流量筛选、访问限速、AB测试、动态分流等。它有以下特性：
 
@@ -16,7 +16,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 - OpenResty: 版本应在1.9.7.3+
 - [lor](https://github.com/sumory/lor)框架: 版本在v0.1.4+
     - git clone https://github.com/sumory/lor
-    - cd lor & sh install.sh
+    - cd lor && sh install.sh
 - libuuid.so
     - Orange依赖libuuid生成uuid
     - centos用户可通过命令`yum install libuuid-devel`安装，其它情况请自行google
@@ -26,7 +26,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.5.0.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.5.1.sql)导入到orange库中
 
 #### 修改配置文件
 
@@ -37,14 +37,14 @@ orange.conf的配置如下，请按需修改:
 ```javascript
 {
     "plugins": [ //可用的插件列表，若不需要可从中删除，系统将自动加载这些插件的开放API并在7777端口暴露
-        "stat", 
-        "monitor", 
-        "redirect", 
+        "stat",
+        "monitor",
+        "redirect",
         "rewrite",
         "rate_limiting",
         "basic_auth",
         "key_auth",
-        "waf", 
+        "waf",
         "divide"
     ],
 
