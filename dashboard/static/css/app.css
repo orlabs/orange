@@ -183,6 +183,10 @@ tr.highlight{
   .rule-urltmpl-td{
     display: none;
   }
+
+  .rule-credential-td{
+    display: none;
+  }
 }
 
 @media screen and (max-width: 1000px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
@@ -195,6 +199,10 @@ tr.highlight{
   }
 
   .rule-urltmpl-td{
+    display: none;
+  }
+
+  .rule-credential-td{
     display: none;
   }
 }

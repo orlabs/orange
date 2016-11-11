@@ -650,7 +650,7 @@
             $("#add-btn").click(function () {
                 var selector_id = $("#add-btn").attr("data-id");
                 if(!selector_id){
-                    L.Common.showErrorTip("错误提示", "添加规则前请先选择[选择器]!");
+                    L.Common.showErrorTip("错误提示", "添加规则前请先选择【选择器】!");
                     return;
                 }
                 var content = $("#add-tpl").html()
@@ -918,6 +918,25 @@
         initRuleSortEvent: function (type, context){
             var op_type = type;
             $(document).on("click", "#rule-sort-btn", function () {
+                var new_order = [];
+                if($("#rules li")){
+                    $("#rules li").each(function(item){
+                        new_order.push($(this).attr("data-id"));
+                    });
+                }
+
+                var new_order_str = new_order.join(",");
+                if(!new_order_str||new_order_str==""){
+                    L.Common.showErrorTip("提示", "规则列表为空， 无需排序");
+                    return;
+                }
+
+                var selector_id = $("#add-btn").attr("data-id");
+                if(!selector_id || selector_id==""){
+                    L.Common.showErrorTip("提示", "操作异常， 未选中选择器， 无法排序");
+                    return;
+                }
+
                 var d = dialog({
                     title: "提示",
                     content: "确定要保存新的规则顺序吗？",
@@ -927,21 +946,11 @@
                     cancelValue: "取消",
                     okValue: "确定",
                     ok: function () {
-                        var selector_id = $("#add-btn").attr("data-id");
-                        var new_order = [];
-                        if($("#rules li")){
-                            $("#rules li").each(function(item){
-                                new_order.push($(this).attr("data-id"));
-                            });
-                        }
-
-                        console.log("new order:", new_order.join(","));
-
                         $.ajax({
                             url: '/' + op_type + '/selectors/' +selector_id + '/rules/order',
                             type: 'put',
                             data: {
-                                order: new_order.join(",")
+                                order: new_order_str
                             },
                             dataType: 'json',
                             success: function (result) {
@@ -968,6 +977,12 @@
         initSelectorAddDialog: function (type, context) {
             var op_type = type;
             $("#add-selector-btn").click(function () {
+                var current_selected_id;
+                var current_selected_selector = $("#selector-list li.selected-selector");
+                if(current_selected_selector){
+                    current_selected_id = $(current_selected_selector[0]).attr("data-id");
+                }
+
                 var content = $("#add-selector-tpl").html()
                 var d = dialog({
                     title: '添加选择器',
@@ -992,7 +1007,10 @@
                                     dataType: 'json',
                                     success: function (result) {
                                         if (result.success) {
-                                            _this.loadConfigs(op_type, context);//重新渲染
+                                            //重新渲染
+                                            _this.loadConfigs(op_type, context, false, function(){
+                                                $("#selector-list li[data-id=" + current_selected_id+"]").addClass("selected-selector");
+                                            });
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加选择器发生错误");
@@ -1024,6 +1042,17 @@
                 e.stopPropagation();// 阻止冒泡
                 var name = $(this).attr("data-name");
                 var selector_id = $(this).attr("data-id");
+                if(!selector_id){
+                    L.Common.showErrorTip("提示", "参数错误，要删除的选择器不存在！");
+                    return;
+                }
+
+                var current_selected_id;
+                var current_selected_selector = $("#selector-list li.selected-selector");
+                if(current_selected_selector){
+                    current_selected_id = $(current_selected_selector[0]).attr("data-id");
+                }
+
                 var d = dialog({
                     title: '提示',
                     width: 480,
@@ -1045,7 +1074,24 @@
                                 success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
-                                        _this.loadConfigs(op_type, context);
+                                        _this.loadConfigs(op_type, context, false, function(){
+                                            //删除的是原先选中的选择器, 重新选中第一个
+                                            if(current_selected_id == selector_id){ 
+                                                var selector_list = $("#selector-list li");
+                                                if(selector_list && selector_list.length>0){
+                                                    $(selector_list[0]).click();
+                                                }else{
+                                                    _this.emptyRules();
+                                                }
+                                            }else{
+                                                if(current_selected_id){
+                                                    $("#selector-list li[data-id=" + current_selected_id+"]").addClass("selected-selector");
+                                                }else{
+                                                    _this.emptyRules();
+                                                }
+                                            }
+                                        });
+                                        
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除选择器发生错误");
@@ -1149,6 +1195,25 @@
         initSelectorSortEvent: function (type, context){
             var op_type = type;
             $(document).on("click", "#selector-sort-btn", function () {
+                var new_order = [];
+                if($("#selector-list li")){
+                    $("#selector-list li").each(function(item){
+                        new_order.push($(this).attr("data-id"));
+                    });
+                }
+
+                var new_order_str = new_order.join(",");
+                if(!new_order_str||new_order_str==""){
+                    L.Common.showErrorTip("提示", "选择器列表为空， 无需排序");
+                    return;
+                }
+
+                var current_selected_id;
+                var current_selected_selector = $("#selector-list li.selected-selector");
+                if(current_selected_selector){
+                    current_selected_id = $(current_selected_selector[0]).attr("data-id");
+                }
+
                 var d = dialog({
                     title: "提示",
                     content: "确定要保存新的选择器顺序吗？",
@@ -1158,26 +1223,21 @@
                     cancelValue: "取消",
                     okValue: "确定",
                     ok: function () {
-                        var new_order = [];
-                        if($("#selector-list li")){
-                            $("#selector-list li").each(function(item){
-                                new_order.push($(this).attr("data-id"));
-                            });
-                        }
-
-                        console.log("new order:", new_order.join(","));
-
                         $.ajax({
                             url: '/' + op_type + '/selectors/order',
                             type: 'put',
                             data: {
-                                order: new_order.join(",")
+                                order: new_order_str
                             },
                             dataType: 'json',
                             success: function (result) {
                                 if (result.success) {
                                     //重新渲染规则
-                                    _this.loadConfigs(op_type, context);
+                                    _this.loadConfigs(op_type, context, false, function(){
+                                        if(current_selected_id){//高亮原来选中的li
+                                            $("#selector-list li[data-id=" + current_selected_id+"]").addClass("selected-selector");
+                                        }
+                                    });
                                     return true;
                                 } else {
                                     L.Common.showErrorTip("提示", result.msg || "保存排序发生错误");
@@ -1210,8 +1270,8 @@
                 })
                 self.addClass("selected-selector");
 
-                _this.loadRules(op_type, context, selector_id);
                 $("#add-btn").attr("data-id", selector_id);
+                _this.loadRules(op_type, context, selector_id);
             });
         },
 
@@ -1232,7 +1292,7 @@
             }
         },
 
-        loadConfigs: function (type, context, page_load) {
+        loadConfigs: function (type, context, page_load, callback) {
             var op_type = type;
             $.ajax({
                 url: '/' + op_type + '/selectors',
@@ -1264,12 +1324,13 @@
                             }
                         }
 
+                        callback && callback();
                     } else {
-                        _this.showErrorTip("错误提示", "查询redirect配置请求发生错误");
+                        _this.showErrorTip("错误提示", "查询" + op_type + "配置请求发生错误");
                     }
                 },
                 error: function () {
-                    _this.showErrorTip("提示", "查询redirect配置请求发生异常");
+                    _this.showErrorTip("提示", "查询" + op_type + "配置请求发生异常");
                 }
             });
         },
@@ -1292,13 +1353,19 @@
                         context.data.selector_rules[selector_id] = result.data.rules;
                         _this.renderRules(result.data);
                     } else {
-                        _this.showErrorTip("错误提示", "查询redirect规则发生错误");
+                        _this.showErrorTip("错误提示", "查询" + op_type + "规则发生错误");
                     }
                 },
                 error: function () {
-                    _this.showErrorTip("提示", "查询redirect规则发生异常");
+                    _this.showErrorTip("提示", "查询" + op_type + "规则发生异常");
                 }
             });
+        },
+
+        emptyRules: function(){
+            $("#rules-section-header").text("选择器-规则列表");
+            $("#rules").html("");
+            $("#add-btn").removeAttr("data-id");
         },
 
         renderSelectors: function(meta, selectors){
