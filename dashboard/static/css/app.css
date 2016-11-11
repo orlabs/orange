@@ -11,6 +11,10 @@
     margin-top:40px
 }
 
+.badge{
+  padding:6px 10px 6px 10px;
+  border-radius: 16px;
+}
 .rule-badge{
     font-weight:400;background-color: #fff;color: #777;border: 0px solid #ddd;
 }
