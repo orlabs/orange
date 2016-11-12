@@ -162,7 +162,7 @@ local function update_selector(plugin, store, selector)
 end
 
 local function update_local_enable(plugin, store)
-     -- 查找enable
+    -- 查找enable
     local enable, err = store:query({
         sql = "select `value` from meta where `key`=?",
         params = { plugin .. ".enable" }

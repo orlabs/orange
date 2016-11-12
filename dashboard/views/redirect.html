@@ -152,6 +152,8 @@
                             <p class="urltmplp">${r.handle.url_tmpl}</p>
                             <b>清除Query</b>: ${r.handle.trim_qs}
                             <br/>
+                            <b>状态码</b>: ${r.handle.redirect_status}
+                            <br/>
                             <b>记录日志</b>: ${r.handle.log}
                         </td>
 
@@ -199,6 +201,12 @@
                         <select class="form-control" id="rule-handle-trim-qs">
                             <option value="true">清除Query</option>
                             <option value="false" selected>不清除Query</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-redirect-status">
+                            <option value="301">301</option>
+                            <option value="302">302</option>
                         </select>
                     </div>
                     <div class="col-sm-3">
@@ -256,6 +264,12 @@
                         <select class="form-control" id="rule-handle-trim-qs">
                             <option value="true" {@if r.handle.trim_qs==true} selected {@/if}>清除Query</option>
                             <option value="false" {@if r.handle.trim_qs==false} selected {@/if}>不清除Query</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-redirect-status">
+                            <option value="301" {@if r.handle.redirect_status=="301"} selected {@/if}>301</option>
+                            <option value="302" {@if r.handle.redirect_status=="302"} selected {@/if}>302</option>
                         </select>
                     </div>
                     <div class="col-sm-3">

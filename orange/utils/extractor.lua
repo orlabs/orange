@@ -155,4 +155,19 @@ function _M.extract(extractor_type, extractions)
     return result
 end
 
+function _M.extract_variables(extractor)
+    if not extractor then return {} end
+    
+    local extractor_type = extractor.type
+    local extractions = extractor and extractor.extractions
+    local variables
+    if extractions then
+        variables = _M.extract(extractor_type, extractions)
+    end
+
+    return variables
+end
+
+
+
 return _M
