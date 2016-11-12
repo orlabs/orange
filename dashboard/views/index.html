@@ -67,6 +67,235 @@
 
     </div>
 
+
+    <script id="status-tpl" type="text/template">
+        <div class="container">
+            <div class="b-section-data" style="display:block">
+                <div class="row">
+                    <div class="col col-1">
+                        <div class="col-data col-data__200">
+                            <table class="dashboard-table">
+                                <tbody>
+                                    <tr>
+                                        <td>Version</td>
+                                        <td><strong>${status.nginx_version}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Address</td>
+                                        <td><strong>${status.address}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PID</td>
+                                        <td><strong></strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Uptime</td>
+                                        <td><span id="t-uptime" data-id="25"><strong>${status.load_timestamp}</strong></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col col-3">
+                        <div class="col-data col-data__200">
+                            <div class="col-subtitle">
+                                <div class="col-subtitle-toggle noselect"><span class="active">Connections</span>
+                                </div>
+                                <div class="col-subtitle-toggle"><span class=""></span>
+                                </div> <span class="col-subtitle__gray pull-right">Accepted: </span>
+                            </div>
+                            <table class="dashboard-horizontal-table full-width">
+                                <thead>
+                                    <tr>
+                                        <th>Current</th>
+                                        <th>Accepted/s</th>
+                                        <th>Active</th>
+                                        <th>Idle</th>
+                                        <th class="">Dropped</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${status.connections.current}</td>
+                                        <td>--</td>
+                                        <td>${status.connections.active}</td>
+                                        <td>${status.connections.idle}</td>
+                                        <td class="">--</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__200">
+                            <div class="col-subtitle"><strong>Requests</strong>  <span class="col-subtitle__gray">Total: ${status.requests.total}</span>
+                            </div>
+                            <table class="dashboard-horizontal-table full-width">
+                                <colgroup>
+                                    <col width="50%">
+                                        <col width="50%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>Current</th>
+                                        <th>Req/s</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${status.requests.current}</td>
+                                        <td>--</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">Server zones <span class="summary_success col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Problems</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color ">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Traffic</strong>
+                                </div>
+                                <div>In: -- KiB/s</div>
+                                <div>Out: -- KiB/s</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">Upstreams <span class="summary_danger col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Alerts</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color cell-red">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Servers</strong>
+                                </div>
+                                <div>All: -- / Up: --</div>
+                                <div class="red-text">Failed: --</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">TCP/UDP Zones <span class="summary_success col-header__status"></span>
+                            </div>
+                            <div class="tcp-counters">
+                                <div>Conn total: --</div>
+                                <div>Conn current: --</div>
+                                <div>Conn/s: --</div>
+                            </div>
+                            <div class="col-counters">
+                                <div><strong>Traffic</strong>
+                                </div>
+                                <div>In: -- B/s</div>
+                                <div>Out: -- KiB/s</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">TCP/UDP Upstreams <span class="summary_success col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Problems</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color ">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Servers</strong>
+                                </div>
+                                <div>All: -- / Up: --</div>
+                                <div class="">Failed: --</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">Caches <span class="summary_warning col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Warnings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color cell-yellow">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Caches states</strong>
+                                </div>
+                                <div>Warm: --</div>
+                                <div>Cold: --</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </script>
+
+
     {(common/common_js.html)}<!-- 通用js -->
     <script type="text/javascript">
         APP.Common.resetNav("nav-index");

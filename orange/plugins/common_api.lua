@@ -35,7 +35,7 @@ local function delete_rules_of_selector(plugin, store, rule_ids)
 end
 
 local function get_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then 
+    if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then 
         return {}
     end
 
@@ -44,6 +44,9 @@ local function get_rules_of_selector(plugin, store, rule_ids)
         table_insert(to_concat, "'" .. r .. "'")
     end
     local to_get_rules_ids = table_concat(to_concat, ",")
+    if not to_get_rules_ids or to_get_rules_ids == "" then
+        return {}
+    end
 
     local rules, err = store:query({
         sql = "select * from " .. plugin .. " where `key` in ( " .. to_get_rules_ids .. ") and `type`=?",

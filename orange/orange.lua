@@ -7,6 +7,7 @@ local require = require
 local cjson = require("cjson")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
+local data_loader = require("orange.data_loader")
 local orange_db = require("orange.store.orange_db")
 
 local HEADERS = {
@@ -85,53 +86,6 @@ local function iter_plugins_for_req(loaded_plugins, is_access)
     end
 end
 
-local function load_data_by_file()
-end
-
---- load data for orange and its plugins from MySQL
--- ${plugin}.enable
--- ${plugin}.rules
-local function load_data_by_mysql(store, config)
-    -- 查找enable
-    local enables, err = store:query({
-        sql = "select `key`, `value` from meta where `key` like \"%.enable\""
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "Load Meta Data error: ", err)
-        os.exit(1)
-    end
-
-    if enables and type(enables) == "table" and #enables > 0 then
-        for i, v in ipairs(enables) do
-            orange_db.set(v.key, v.value == "1")
-        end
-    end
-
-    local available_plugins = config.plugins
-    for i, v in ipairs(available_plugins) do
-        if v ~= "stat" then
-            local rules, err = store:query({
-                sql = "select `value` from " .. v .. " order by id asc"
-            })
-
-            if err then
-                ngx.log(ngx.ERR, "Load Plugin Rules Data error: ", err)
-                os.exit(1)
-            end
-
-            if rules and type(rules) == "table" and #rules > 0 then
-                local format_rules = {}
-                for i, v in ipairs(rules) do
-                    table_insert(format_rules, cjson.decode(v.value))
-                end
-                orange_db.set_json(v .. ".rules", format_rules)
-            end
-        end
-    end
-end
-
-
 
 -- ########################### Orange #############################
 local Orange = {}
@@ -173,7 +127,10 @@ function Orange.init_worker()
         local worker_id = ngx.worker.id()
         if worker_id == 0 then
             local ok, err = ngx.timer.at(0, function(premature, store, config)
-                load_data_by_mysql(store, config)
+                local available_plugins = config.plugins
+                for i, v in ipairs(available_plugins) do
+                    data_loader.load_data_by_mysql(store, v)
+                end
             end, Orange.data.store, Orange.data.config)
             if not ok then
                 ngx.log(ngx.ERR, "failed to create the timer: ", err)
