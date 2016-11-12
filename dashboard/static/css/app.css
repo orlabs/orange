@@ -41,6 +41,9 @@
 #time-set a.active{
     text-decoration: underline;
 }
+#view-set a.active{
+    text-decoration: underline;
+}
 
 .J_mainContent{
     margin:15px;

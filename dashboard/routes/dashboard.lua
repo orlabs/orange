@@ -1,7 +1,7 @@
 local ipairs = ipairs
 local pairs = pairs
 local type = type
-local pcall = pcall
+local xpcall = xpcall
 local string_lower = string.lower
 local lor = require("lor.index")
 

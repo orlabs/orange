@@ -70,6 +70,15 @@ end
 
 local API = BaseAPI:new("kvstore-api", 2)
 
+API:get("/kvstore/configs", function(store)
+    res:json({
+        success = true, 
+        data = {
+            enable = orange_db.get("kvstore.enable")
+        }
+    })
+end)
+
 API:post("/kvstore/enable", function(store)
     return function(req, res, next)
         local enable = req.body.enable
