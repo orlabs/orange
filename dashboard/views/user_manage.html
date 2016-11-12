@@ -27,20 +27,16 @@
                     </div>
                 </div>
 
-
-                {(common/data-view-part.html)}
-
-
                 <div class="row" id="table-view">
                     <div class="col-md-12">
                         <table id="operable-table" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th width="60px">序号</th>
-                                    <th width="40px">启用</th>
-                                    <th width="150px">用户名</th>
-                                    <th width="120px">创建/变更时间</th>
-                                    <th width="150px">操作</th>
+                                    <th class="center" width="60px">序号</th>
+                                    <th class="center" width="40px">启用</th>
+                                    <th class="center" width="150px">用户名</th>
+                                    <th class="center" width="120px">创建/变更时间</th>
+                                    <th class="center" width="150px">操作</th>
                                 </tr>
                             </thead>
                             <tbody id="users" class="list"></tbody>
@@ -53,7 +49,7 @@
         </div><!--右侧部分结束-->
     </div>
 
-    {(common/common_js.html)}<!-- 通用js -->
+    
 
     <script id="user-item-tpl" type="text/template">
         {@each users as u, index}
@@ -61,10 +57,10 @@
             <td class="center">${parseInt(index)+1}</td>
             <td class="center">
                 {@if u.enable==1 }
-                    已启用
+                    <span class="label label-primary">已启用</span>
                 {@/if}
                 {@if u.enable!=1 }
-                    已禁用
+                    <span class="label label-warning">已禁用</span>
                 {@/if}
             </td>
             <td class="center">${u.username}</td>
@@ -72,7 +68,10 @@
             <td class="center do">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-default edit-user-btn" data-id="${u.id}" data-name="${u.username}" data-enable="${u.enable}"><i title="修改密码" class="fa fa-pencil"></i></button>
+
+                    {@if u.is_admin!=1 }
                     <button type="button" class="btn btn-default delete-user-btn" data-id="${u.id}" data-name="${u.username}"><i title="删除" class="fa fa-trash" style="color:#EA8282"></i></button>
+                    {@/if}
                 </div>
             </td>
         </tr>
@@ -139,7 +138,7 @@
         </div>
     </script>
 
-    
+    {(common/common_js.html)}<!-- 通用js -->
     <script src="/static/js/user_manage.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {

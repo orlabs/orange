@@ -17,7 +17,7 @@ return function(config)
     end
 
     function user_model:query_all()
-        local result, err =  db:query("select * from dashboard_user order by id asc")
+        local result, err =  db:query("select id, username, is_admin, create_time, enable from dashboard_user order by id asc")
         if not result or err or type(result) ~= "table" or #result < 1 then
             return nil, err
         else
@@ -62,7 +62,7 @@ return function(config)
         end
     end
 
-     function user_model:delete(userid)
+    function user_model:delete(userid)
         local res, err = db:query("delete from dashboard_user where id=?", {tonumber(userid)})
         if not res or err then
             return false
@@ -70,7 +70,6 @@ return function(config)
             return true
         end
     end
-
 
     return user_model
 end

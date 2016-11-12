@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col-md-12" style="padding:0;">
                         {% for i, v in ipairs(plugins) do %}
-                        <div class="col-sm-6 col-md-3 plugin-item text-center">
+                        <div data-uri="/{{v}}" class="col-sm-6 col-md-3 plugin-item text-center">
                             <div class="thumbnail">
                                 <div class="caption">
                                     <h3>{{ v }}</h3>
@@ -40,15 +40,19 @@
                                         {% end %}
                                     </p>
 
-                                    {% if v~="stat" then %}
-                                    <p class="plugin-op">
-                                        <span href="javascript:void(0)" class="label rule-badge" title="开启的规则条数为{{plugin_config.active_rule_count}}"><i class="glyphicon glyphicon-ok-circle"></i> {{plugin_config.active_rule_count}}</span>
-                                        <span href="javascript:void(0)" class="label rule-badge" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}"><i class="glyphicon glyphicon-remove-circle"></i> {{plugin_config.inactive_rule_count}}</span>
-                                    </p>
+                                    {% if v=="stat" then %}
+                                        <p class="plugin-op">
+                                            全局统计插件
+                                        </p>
+                                    {% elseif v=="kvstore" then %}
+                                        <p class="plugin-op">
+                                            
+                                        </p>
                                     {% else %}
-                                    <p class="plugin-op">
-                                        全局统计插件
-                                    </p>
+                                        <p class="plugin-op">
+                                            <span href="javascript:void(0)" class="label rule-badge" title="开启的规则条数为{{plugin_config.active_rule_count}}"><i class="glyphicon glyphicon-ok-circle"></i> {{plugin_config.active_rule_count}}</span>
+                                            <span href="javascript:void(0)" class="label rule-badge" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}"><i class="glyphicon glyphicon-remove-circle"></i> {{plugin_config.inactive_rule_count}}</span>
+                                        </p>
                                     {% end %}
                                 </div>
 
@@ -67,6 +71,13 @@
     <script type="text/javascript">
         APP.Common.resetNav("nav-index");
         $(document).ready(function(){
+            $(document).on('click', '.plugin-item', function(){
+                var uri =  $(this).attr("data-uri");
+                if(uri){
+                    if(uri=="/stat") uri="/status";
+                    window.location.href = uri;
+                }
+            });
             $.ajax({
                 url : '/stat/status',
                 type : 'get',
