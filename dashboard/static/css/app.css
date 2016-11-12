@@ -1,14 +1,33 @@
+.center{
+ text-align: center;
+}
+
 .plugin-item{
+    width:23%;
+    padding:0;
     text-align: center;
     margin-bottom: 20px;
+    margin-left:1%;
+    margin-right: 1%;
+}
+
+.plugin-item:hover{
+    cursor: pointer;
+    background-color:#efefef;
 }
 
 .plugin-item .thumbnail {
     min-height: 160px;
+    margin:0;
+    background-color: transparent;
 }
 
 .plugin-item .plugin-op{
     margin-top:40px
+}
+
+.plugin-item h3{
+    margin:10px 0 20px 0;
 }
 
 .badge{

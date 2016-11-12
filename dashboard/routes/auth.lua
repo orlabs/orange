@@ -28,7 +28,7 @@ return function(config, store)
     end)
 
     auth_router:post("/login", function(req, res, next)
-        local username = req.body.username 
+        local username = req.body.username
         local password = req.body.password
 
         if not username or not password or username == "" or password == "" then
