@@ -2,14 +2,15 @@ local pairs = pairs
 local ipairs = ipairs
 local ngx_re_sub = ngx.re.sub
 local ngx_re_find = ngx.re.find
-local string_len = string.len
 local string_sub = string.sub
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
 local BasePlugin = require("orange.plugins.base_handler")
-
+local ngx_set_uri = ngx.req.set_uri
+local ngx_set_uri_args = ngx.req.set_uri_args
+local ngx_decode_args = ngx.decode_args
 
 
 local function filter_rules(sid, plugin, ngx_var_uri)
@@ -17,10 +18,6 @@ local function filter_rules(sid, plugin, ngx_var_uri)
     if not rules or type(rules) ~= "table" or #rules <= 0 then
         return false
     end
-
-    local ngx_set_uri = ngx.req.set_uri
-local ngx_set_uri_args = ngx.req.set_uri_args
-local ngx_decode_args = ngx.decode_args
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
