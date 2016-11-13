@@ -1,16 +1,15 @@
 local ipairs = ipairs
 local table_insert = table.insert
-
-local _M = {}
 local status = ngx.shared.waf_status
 
+
+local _M = {}
 
 function _M.get_one(key)
     local value, flags = status:get(key)
     local count = value or 0
     return count
 end
-
 
 function _M.count(key, value)
     if not key then
@@ -48,6 +47,5 @@ function _M.get_all(max_count)
 
     return result
 end
-
 
 return _M

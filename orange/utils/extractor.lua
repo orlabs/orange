@@ -55,14 +55,12 @@ local function extract_variable(extraction)
     return result
 end
 
-
 local function extract_variable_for_template(extractions)
     if not extractions then
         return {}
     end
 
     local result = {}
-
     local ngx_var = ngx.var
     for i, extraction in ipairs(extractions) do
         local etype = extraction.type
@@ -167,7 +165,5 @@ function _M.extract_variables(extractor)
 
     return variables
 end
-
-
 
 return _M
