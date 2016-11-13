@@ -39,8 +39,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
     end
 
     for i, rule in ipairs(rules) do
-        local enable = rule.enable
-        if enable == true then
+        if rule.enable == true then
             -- judge阶段
             local pass = judge_util.judge_rule(rule, plugin)
 

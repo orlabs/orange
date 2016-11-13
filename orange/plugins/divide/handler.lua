@@ -37,6 +37,7 @@ local function filter_rules(sid, plugin, ngx_var, ngx_var_uri, ngx_var_host)
                     ngx.log(ngx.INFO, "[Divide-Match-Rule] ", rule.name, " host:", ngx_var_host, " uri:", ngx_var_uri)
                 end
 
+                local extractor_type = rule.extractor.type
                 if rule.upstream_url then
                     if not rule.upstream_host or rule.upstream_host=="" then -- host默认取请求的host
                         ngx_var.upstream_host = ngx_var_host
