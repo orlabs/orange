@@ -18,7 +18,7 @@ local function filter_rules(sid, plugin, ngx_var_uri, ngx_var_host, ngx_var_sche
     for j, rule in ipairs(rules) do
         if rule.enable == true then
             -- judge阶段
-            local pass = judge_util.judge_rule(rule, "redirect")
+            local pass = judge_util.judge_rule(rule, plugin)
             -- extract阶段
             local variables = extractor_util.extract_variables(rule.extractor)
 
