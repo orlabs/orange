@@ -55,13 +55,14 @@
         </div><!--右侧部分结束-->
     </div>
 
+    <input type="hidden" id="rule-id-input" value="{{rule_id}}"/>
     {(common/common_js.html)}<!-- 通用js -->
     <script src="/static/js/echarts3/echarts.common.min.js"></script>
-    <script src="/static/js/status.js"></script>
+    <script src="/static/js/monitor_stat.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             APP.Common.resetNav("nav-monitor");
-            APP.Status.init();
+            APP.MonitorStat.init();
         });
     </script>
 </body>
