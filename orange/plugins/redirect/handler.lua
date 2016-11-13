@@ -26,7 +26,7 @@ local function filter_rules(sid, plugin, ngx_var_uri, ngx_var_host, ngx_var_sche
             if pass then
                 local handle = rule.handle
                 if handle and handle.url_tmpl then
-                    local to_redirect = handle_util.build_url(extractor_type, handle.url_tmpl, variables, plugin)
+                    local to_redirect = handle_util.build_url(rule.extractor.type, handle.url_tmpl, variables)
                     if to_redirect and to_redirect ~= ngx_var_uri then
                         local redirect_status = tonumber(handle.redirect_status)
                         if redirect_status ~= 301 and redirect_status ~= 302 then

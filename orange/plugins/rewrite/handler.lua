@@ -30,7 +30,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
             if pass then
                 local handle = rule.handle
                 if handle and handle.uri_tmpl then
-                    local to_rewrite = handle_util.build_uri(extractor_type, handle.uri_tmpl, variables, plugin)
+                    local to_rewrite = handle_util.build_uri(rule.extractor.type, handle.uri_tmpl, variables)
                     if to_rewrite and to_rewrite ~= ngx_var_uri then
                         if handle.log == true then
                             ngx.log(ngx.INFO, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)
