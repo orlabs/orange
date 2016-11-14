@@ -1,14 +1,13 @@
-local pairs = pairs
 local ipairs = ipairs
 local type = type
 local tonumber = tonumber
 local tostring = tostring
 local loadstring = loadstring
 local table_insert = table.insert
-local table_concat = table.concat
 local string_gsub = string.gsub
 local utils = require("orange.utils.utils")
 local condition = require("orange.utils.condition")
+
 
 local _M = {}
 

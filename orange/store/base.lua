@@ -1,4 +1,4 @@
-local Object = require "orange.lib.classic"
+local Object = require("orange.lib.classic")
 local Store = Object:extend()
 
 function Store:new(name)
@@ -16,7 +16,5 @@ function Store:get(k)
 
     ngx.log(ngx.DEBUG, " store \"" .. self._name .. "\" set:" .. k, " v:", v)
 end
-
-
 
 return Store

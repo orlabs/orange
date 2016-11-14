@@ -1,10 +1,8 @@
 local type = type
 local ipairs = ipairs
-local pairs = pairs
 local string_find = string.find
 local string_lower = string.lower
 local table_insert = table.insert
-local ngx_re_find = ngx.re.find
 local ngx_re_match = ngx.re.match
 
 local function extract_variable(extraction)

@@ -1,14 +1,13 @@
 -- just copy from orange/orange/store/mysql_db.lua
-local sgsub = string.gsub
 local tinsert = table.insert
 local type = type
 local ipairs = ipairs
-local pairs = pairs
 local setmetatable = setmetatable
 local ngx_quote_sql_str = ngx.quote_sql_str
 local mysql = require("resty.mysql")
-local cjson = require("cjson")
 local utils = require("orange.utils.utils")
+
+
 local DB = {}
 
 function DB:new(conf)
@@ -114,7 +113,7 @@ function DB:parse_sql(sql, params)
     end
 
     local new_params = {}
-    for i, v in ipairs(params) do
+    for _, v in ipairs(params) do
         if v and type(v) == "string" then
             v = ngx_quote_sql_str(v)
         end
@@ -123,9 +122,9 @@ function DB:parse_sql(sql, params)
     end
 
     local t = split(sql,"?")
-    local sql = compose(t, new_params)
-
-    return sql
+    local new_sql = compose(t, new_params)
+    return new_sql
 end
+
 
 return DB
