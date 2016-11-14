@@ -1,4 +1,4 @@
 std = "ngx_lua"
-globals = {}
+globals = {"ngx"}
 
 exclude_files = {"test/*", "resty", "bin"}
