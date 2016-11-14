@@ -1,5 +1,3 @@
-VERSION = 0.5.1
-
 TO_INSTALL = api bin conf dashboard orange install
 ORANGE_HOME ?= /usr/local/orange/
 ORANGE_BIN ?= /usr/local/bin/orange
