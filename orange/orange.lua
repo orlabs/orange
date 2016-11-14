@@ -2,13 +2,10 @@ local ipairs = ipairs
 local table_insert = table.insert
 local table_sort = table.sort
 local pcall = pcall
-local type = type
 local require = require
-local cjson = require("cjson")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local data_loader = require("orange.data_loader")
-local orange_db = require("orange.store.orange_db")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -49,43 +46,6 @@ end
 local function now()
     return ngx.now() * 1000
 end
-
----
--- modified usage: the origin is from `Kong`
--- @Deprecated
-local function iter_plugins_for_req(loaded_plugins, is_access)
-    if not ngx.ctx.plugin_conf_for_request then
-        ngx.ctx.plugin_conf_for_request = {}
-    end
-
-    local i = 0
-    local function get_next_plugin()
-        i = i + 1
-        return loaded_plugins[i]
-    end
-
-    local function get_next()
-        local plugin = get_next_plugin()
-        if plugin then
-            if is_access then
-                -- 根据是否是全局插件或者匹配的某个请求、用户插件加载不同配置
-                ngx.ctx.plugin_conf_for_request[plugin.name] = {}
-            end
-
-            -- Return the configuration
-            if ngx.ctx.plugin_conf_for_request[plugin.name] then
-                return plugin, ngx.ctx.plugin_conf_for_request[plugin.name]
-            end
-
-            return get_next() -- Load next plugin
-        end
-    end
-
-    return function()
-        return get_next()
-    end
-end
-
 
 -- ########################### Orange #############################
 local Orange = {}
