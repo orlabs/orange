@@ -1076,7 +1076,7 @@
                                         //重新渲染规则
                                         _this.loadConfigs(op_type, context, false, function(){
                                             //删除的是原先选中的选择器, 重新选中第一个
-                                            if(current_selected_id == selector_id){ 
+                                            if(current_selected_id == selector_id){
                                                 var selector_list = $("#selector-list li");
                                                 if(selector_list && selector_list.length>0){
                                                     $(selector_list[0]).click();
@@ -1091,7 +1091,7 @@
                                                 }
                                             }
                                         });
-                                        
+
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除选择器发生错误");
@@ -1126,7 +1126,6 @@
                     return;
                 }
 
-
                 var html = juicer(tpl, {
                     s: selector
                 });
@@ -1152,6 +1151,7 @@
                         callback: function () {
                             var result = _this.buildSelector();
                             result.data.id = selector.id;//拼上要修改的id
+                            result.data.rules = selector.rules;//拼上已有的rules
 
                             if (result.success == true) {
                                 $.ajax({
