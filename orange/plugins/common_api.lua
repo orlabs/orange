@@ -400,7 +400,6 @@ return function(plugin)
         end
     }
 
-
     API["/" .. plugin .. "/selectors/:id/rules"] = {
         POST = function(store) -- create
             return function(req, res, next)
@@ -670,7 +669,6 @@ return function(plugin)
         end
     }
 
-
     API["/" .. plugin .. "/selectors"] = {
         GET = function(store) -- get selectors
             return function(req, res, next)
@@ -859,8 +857,6 @@ return function(plugin)
             end
         end
     }
-
-
 
     -- update selectors order
     API["/" .. plugin .. "/selectors/order"] = {
