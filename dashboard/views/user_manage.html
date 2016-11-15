@@ -1,140 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - Dashboard用户管理</title>
-    {(meta.html)}
+    {(common/meta.html)}
 </head>
-<body>
 
-{(header.html)}<!-- header end -->
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
 
-<div id="main" class="main-container container">
-    <div class="row" style="margin-bottom:20px">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <h4>Dashboard用户管理</h4>
-            </div>
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
 
-            <div class="pull-right">
-           
-                <a class="btn btn-primary" href="javascript:void(0);" id="add-user-btn">
-                    <i class="fa fa-filter"></i>
-                    <span>添加新用户</span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row" id="table-view">
-        <div class="col-md-12">
-            <table id="operable-table" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th width="60px">序号</th>
-                        <th width="40px">启用</th>
-                        <th width="150px">用户名</th>
-                        <th width="120px">创建/变更时间</th>
-                        <th width="150px">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="users" class="list"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-<script id="user-item-tpl" type="text/template">
-    {@each users as u, index}
-    <tr>
-        <td class="center">${parseInt(index)+1}</td>
-        <td class="center">
-            {@if u.enable==1 }
-                已启用
-            {@/if}
-            {@if u.enable!=1 }
-                已禁用
-            {@/if}
-        </td>
-        <td class="center">${u.username}</td>
-        <td class="center">${u.create_time}</td>
-        <td class="center do">
-            <div class="btn-group" role="group" aria-label="...">
-                <button type="button" class="btn btn-default edit-user-btn" data-id="${u.id}" data-name="${u.username}" data-enable="${u.enable}"><i title="修改密码" class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-default delete-user-btn" data-id="${u.id}" data-name="${u.username}"><i title="删除" class="fa fa-trash" style="color:#EA8282"></i></button>
-            </div>
-        </td>
-    </tr>
-    {@/each}
-</script>
-
-<script id="add-user-tpl" type="application/template">
-    <div>
-        <form id="add-user-form" class="form-horizontal">
-            <div class="form-group">
-                <label for="input-name" class="col-sm-2 control-label">用户名</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="username-input" name="username" placeholder="4~50位, 只能输入字母、下划线、数字，必须以字母开头">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="input-name" class="col-sm-2 control-label">密码</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="username-input" name="password" placeholder="密码长度须为6~50位">
-                </div>
-            </div>
-
-             <div class="form-group">
-                <div class="col-sm-offset-1 col-sm-11">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" name="enable"> 启用
-                        </label>
+                <!-- content start -->
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">Dashboard用户管理</h4>
+                        </div>
+                        <div class="pull-right">
+                            <a class="btn btn-primary" href="javascript:void(0);" id="add-user-btn">
+                                <i class="fa fa-filter"></i>
+                                <span>添加新用户</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
-</script>
 
-<script id="edit-user-tpl" type="application/template">
-    <div>
-        <form id="edit-user-form" class="form-horizontal">
-            <div class="form-group">
-                <label for="input-name" class="col-sm-2 control-label">用户名</label>
-                <div class="col-sm-10">
-                    <input readonly type="text" class="form-control" value="${u.username}" name="username" placeholder="4~50位, 只能输入字母、下划线、数字，必须以字母开头">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="input-name" class="col-sm-2 control-label">密码</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="password" placeholder="输入新密码，密码长度须为6~50位，不需修改时请勿输入任何字符">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-offset-1 col-sm-11">
-                    <div class="checkbox">
-                        <label>
-                            <input {@if u.enable==1} checked {@/if} type="checkbox" name="enable"> 启用
-                        </label>
+                <div class="row" id="table-view">
+                    <div class="col-md-12">
+                        <table id="operable-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="center" width="60px">序号</th>
+                                    <th class="center" width="40px">启用</th>
+                                    <th class="center" width="150px">用户名</th>
+                                    <th class="center" width="120px">创建/变更时间</th>
+                                    <th class="center" width="150px">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users" class="list"></tbody>
+                        </table>
                     </div>
                 </div>
+
+            <!-- content end -->
             </div>
-        </form>
+        </div><!--右侧部分结束-->
     </div>
-</script>
 
+    
 
-<script src="/orange/static/js/user_manage.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        APP.UserManage.init();
-    });
-</script>
+    <script id="user-item-tpl" type="text/template">
+        {@each users as u, index}
+        <tr>
+            <td class="center">${parseInt(index)+1}</td>
+            <td class="center">
+                {@if u.enable==1 }
+                    <span class="label label-primary">已启用</span>
+                {@/if}
+                {@if u.enable!=1 }
+                    <span class="label label-warning">已禁用</span>
+                {@/if}
+            </td>
+            <td class="center">${u.username}</td>
+            <td class="center">${u.create_time}</td>
+            <td class="center do">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default edit-user-btn" data-id="${u.id}" data-name="${u.username}" data-enable="${u.enable}"><i title="修改密码" class="fa fa-pencil"></i></button>
 
-{(footer.html)}
+                    {@if u.is_admin!=1 }
+                    <button type="button" class="btn btn-default delete-user-btn" data-id="${u.id}" data-name="${u.username}"><i title="删除" class="fa fa-trash" style="color:#EA8282"></i></button>
+                    {@/if}
+                </div>
+            </td>
+        </tr>
+        {@/each}
+    </script>
+
+    <script id="add-user-tpl" type="application/template">
+        <div>
+            <form id="add-user-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">用户名</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="username-input" name="username" placeholder="4~50位, 只能输入字母、下划线、数字，必须以字母开头">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">密码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="username-input" name="password" placeholder="密码长度须为6~50位">
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="enable"> 启用
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
+
+    <script id="edit-user-tpl" type="application/template">
+        <div>
+            <form id="edit-user-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">用户名</label>
+                    <div class="col-sm-10">
+                        <input readonly type="text" class="form-control" value="${u.username}" name="username" placeholder="4~50位, 只能输入字母、下划线、数字，必须以字母开头">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">密码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="password" placeholder="输入新密码，密码长度须为6~50位，不需修改时请勿输入任何字符">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label>
+                                <input {@if u.enable==1} checked {@/if} type="checkbox" name="enable"> 启用
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
+
+    {(common/common_js.html)}<!-- 通用js -->
+    <script src="/static/js/user_manage.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            APP.UserManage.init();
+        });
+    </script>
 </body>
 </html>

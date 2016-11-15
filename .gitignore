@@ -64,4 +64,4 @@ bin/orange
 new_plugin.sh
 test_conf
 test_start.sh
-
+fix_name.sh

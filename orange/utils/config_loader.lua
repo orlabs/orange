@@ -1,12 +1,5 @@
-local type = type
-local ipairs = ipairs
-local pairs = pairs
-local tonumber = tonumber
-local tostring = tostring
 local cjson = require("cjson")
 local IO = require("orange.utils.io")
-
-
 
 local _M = {}
 

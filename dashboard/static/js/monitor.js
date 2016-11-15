@@ -2,34 +2,35 @@
     var _this = null;
     L.Monitor = L.Monitor || {};
     _this = L.Monitor = {
-         data: {
-            rules: {},
+        data: {
         },
 
         init: function () {
-            _this.loadConfigs();
+            L.Common.loadConfigs("monitor", _this, true);
             _this.initEvents();
-
         },
 
         initEvents: function(){
-            L.Common.initRuleAddDialog("monitor", _this);//添加规则对话框
-            L.Common.initRuleDeleteDialog("monitor", _this);//删除规则对话框
-            L.Common.initRuleEditDialog("monitor", _this);//编辑规则对话框
-            L.Common.initSyncDialog("monitor", _this);//编辑规则对话框
+            var op_type = "monitor";
+            L.Common.initRuleAddDialog(op_type, _this);//添加规则对话框
+            L.Common.initRuleDeleteDialog(op_type, _this);//删除规则对话框
+            L.Common.initRuleEditDialog(op_type, _this);//编辑规则对话框
+            L.Common.initRuleSortEvent(op_type, _this);
 
+            L.Common.initSelectorAddDialog(op_type, _this);
+            L.Common.initSelectorDeleteDialog(op_type, _this);
+            L.Common.initSelectorEditDialog(op_type, _this);
+            L.Common.initSelectorSortEvent(op_type, _this);
+            L.Common.initSelectorClickEvent(op_type, _this);
+
+            L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
 
-            L.Common.initExtractionAddOrRemove();//添加或删除条件
-            L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
-            L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
-            L.Common.initExtractionHasDefaultValueOrNotEvent();//提取项是否有默认值选择事件
-
-            L.Common.initViewAndDownloadEvent("monitor");
-
-            L.Common.initSwitchBtn("monitor");//redirect关闭、开启
+            L.Common.initViewAndDownloadEvent(op_type, _this);
+            L.Common.initSwitchBtn(op_type, _this);//redirect关闭、开启
+            L.Common.initSyncDialog(op_type, _this);//编辑规则对话框
 
             _this.initStatisticBtnEvent();
         },
@@ -73,7 +74,6 @@
             return result;
         },
 
-
         buildHandle: function(){
             var result = {};
             var handle = {};
@@ -95,42 +95,6 @@
                 window.location.href = "/monitor/rule/statistic?rule_id="+rule_id+"&rule_name="+encodeURI(rule_name);
             });
 
-        },
-
-        loadConfigs: function () {
-            $.ajax({
-                url: '/monitor/configs',
-                type: 'get',
-                cache:false,
-                data: {},
-                dataType: 'json',
-                success: function (result) {
-                    if (result.success) {
-                        if(result.data){
-                            L.Common.resetSwitchBtn(result.data.enable, "monitor");
-                            $("#switch-btn").show();
-                            $("#view-btn").show();
-                            _this.renderTable(result.data);//渲染table
-                            _this.data.enable = result.data.enable;
-                            _this.data.rules = result.data.rules;//重新设置数据
-                        }
-
-                    }else{
-                        L.Common.showTipDialog("错误提示", "查询自定义监控配置请求发生错误");
-                    }
-                },
-                error: function () {
-                    L.Common.showTipDialog("提示", "查询自定义监控配置请求发生异常");
-                }
-            });
-        },
-
-        renderTable: function(data, highlight_id){
-            highlight_id = highlight_id || 0;
-            var tpl = $("#rule-item-tpl").html();
-            data.highlight_id = highlight_id;
-            var html = juicer(tpl, data);
-            $("#rules").html(html);
         }
     };
 }(APP));

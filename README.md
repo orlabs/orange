@@ -15,7 +15,7 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 - [Lor Framework](https://github.com/sumory) v0.1.4+
 - libuuid.so
 
-Import the SQL file(e.g. install/orange-v0.5.1.sql) which is adapted to your Orange version to MySQL database named `orange`.
+Import the SQL file(e.g. install/orange-v0.6.0.sql) which is adapted to your Orange version to MySQL database named `orange`.
 
 #### Install
 

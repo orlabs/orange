@@ -53,6 +53,7 @@ function _M.endswith(str, substr)
     end
 end
 
+return _M
 
 --
 --local a = _M.strip(" abc a    ")

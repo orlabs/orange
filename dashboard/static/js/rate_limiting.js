@@ -3,28 +3,34 @@
     L.RateLimiting = L.RateLimiting || {};
     _this = L.RateLimiting = {
         data: {
-            rules: {},
         },
 
         init: function () {
-            _this.loadConfigs();
+            L.Common.loadConfigs("rate_limiting", _this, true);
             _this.initEvents();
-
         },
 
         initEvents: function(){
-            L.Common.initRuleAddDialog("rate_limiting", _this);//添加规则对话框
-            L.Common.initRuleDeleteDialog("rate_limiting", _this);//删除规则对话框
-            L.Common.initRuleEditDialog("rate_limiting", _this);//编辑规则对话框
-            L.Common.initSyncDialog("rate_limiting", _this);//编辑规则对话框
+            var op_type = "rate_limiting";
+            L.Common.initRuleAddDialog(op_type, _this);//添加规则对话框
+            L.Common.initRuleDeleteDialog(op_type, _this);//删除规则对话框
+            L.Common.initRuleEditDialog(op_type, _this);//编辑规则对话框
+            L.Common.initRuleSortEvent(op_type, _this);
 
+            L.Common.initSelectorAddDialog(op_type, _this);
+            L.Common.initSelectorDeleteDialog(op_type, _this);
+            L.Common.initSelectorEditDialog(op_type, _this);
+            L.Common.initSelectorSortEvent(op_type, _this);
+            L.Common.initSelectorClickEvent(op_type, _this);
+
+            L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
 
-            L.Common.initViewAndDownloadEvent("rate_limiting");
-
-            L.Common.initSwitchBtn("rate_limiting");//redirect关闭、开启
+            L.Common.initViewAndDownloadEvent(op_type, _this);
+            L.Common.initSwitchBtn(op_type, _this);//redirect关闭、开启
+            L.Common.initSyncDialog(op_type, _this);//编辑规则对话框
         },
 
         buildRule: function(){
@@ -66,7 +72,6 @@
             return result;
         },
 
-
         buildHandle: function(){
             var result = {};
             var handle = {};
@@ -95,41 +100,5 @@
             result.handle = handle;
             return result;
         },
-
-        loadConfigs: function () {
-            $.ajax({
-                url: '/rate_limiting/configs',
-                type: 'get',
-                cache:false,
-                data: {},
-                dataType: 'json',
-                success: function (result) {
-                    if (result.success) {
-                        if(result.data){
-                            L.Common.resetSwitchBtn(result.data.enable, "rate_limiting");
-                            $("#switch-btn").show();
-                            $("#view-btn").show();
-                            _this.renderTable(result.data);//渲染table
-                            _this.data.enable = result.data.enable;
-                            _this.data.rules = result.data.rules;//重新设置数据
-                        }
-
-                    }else{
-                        L.Common.showTipDialog("错误提示", "查询访问限速配置请求发生错误");
-                    }
-                },
-                error: function () {
-                    L.Common.showTipDialog("提示", "查询访问限速配置请求发生异常");
-                }
-            });
-        },
-
-        renderTable: function(data, highlight_id){
-            highlight_id = highlight_id || 0;
-            var tpl = $("#rule-item-tpl").html();
-            data.highlight_id = highlight_id;
-            var html = juicer(tpl, data);
-            $("#rules").html(html);
-        }
     };
 }(APP));

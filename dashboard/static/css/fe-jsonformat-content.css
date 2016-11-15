@@ -118,3 +118,8 @@ html body {
     border:none;
     padding:10px;
 }
+
+#modJsonResult{
+    margin-left: 12px;
+    margin-right: 15px;
+}

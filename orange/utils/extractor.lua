@@ -1,10 +1,8 @@
 local type = type
 local ipairs = ipairs
-local pairs = pairs
 local string_find = string.find
 local string_lower = string.lower
 local table_insert = table.insert
-local ngx_re_find = ngx.re.find
 local ngx_re_match = ngx.re.match
 
 local function extract_variable(extraction)
@@ -55,14 +53,12 @@ local function extract_variable(extraction)
     return result
 end
 
-
 local function extract_variable_for_template(extractions)
     if not extractions then
         return {}
     end
 
     local result = {}
-
     local ngx_var = ngx.var
     for i, extraction in ipairs(extractions) do
         local etype = extraction.type
@@ -153,6 +149,19 @@ function _M.extract(extractor_type, extractions)
     -- end
 
     return result
+end
+
+function _M.extract_variables(extractor)
+    if not extractor then return {} end
+    
+    local extractor_type = extractor.type
+    local extractions = extractor and extractor.extractions
+    local variables
+    if extractions then
+        variables = _M.extract(extractor_type, extractions)
+    end
+
+    return variables
 end
 
 return _M

@@ -1,20 +1,15 @@
---- 
--- from https://github.com/Mashape/kong/blob/master/kong/tools/utils.lua
--- modified by sumory.wu
-
 -- general utility functions.
+-- some functions is from [kong](getkong.org)
+local require = require
 local uuid = require("orange.lib.uuid")
 local date = require("orange.lib.date")
+local json = require("cjson")
 local type = type
+local pcall = pcall
 local pairs = pairs
-local ipairs = ipairs
 local tostring = tostring
-local table_sort = table.sort
-local table_concat = table.concat
-local table_insert = table.insert
 local string_gsub = string.gsub
 local string_find = string.find
-local string_format = string.format
 
 local _M = {}
 
@@ -87,7 +82,6 @@ function _M.get_hostname()
     return hostname
 end
 
-
 --- Generates a random unique string
 -- @return string  The random string (a uuid without hyphens)
 function _M.random_string()
@@ -98,6 +92,30 @@ function _M.new_id()
     return uuid()
 end
 
+function _M.json_encode(data, empty_table_as_object)
+    if not data then return nil end
+
+    local json_value
+    if json.encode_empty_table_as_object then
+        json.encode_empty_table_as_object(empty_table_as_object or false) -- 空的table默认为array
+    end
+    if require("ffi").os ~= "Windows" then
+        json.encode_sparse_array(true)
+    end
+
+    pcall(function(d) json_value = json.encode(d) end, data)
+    return json_value
+end
+
+function _M.json_decode(str)
+    if not str then return nil end
+    local json_object
+    pcall(function(data)
+        json_object = json.decode(data)
+    end, str)
+
+    return json_object
+end
 
 --- Calculates a table size.
 -- All entries both in array and hash part.
@@ -170,30 +188,6 @@ function _M.deep_copy(orig)
         copy = orig
     end
     return copy
-end
-
-local err_list_mt = {}
-
---- Add an error message to a key/value table.
--- If the key already exists, a sub table is created with the original and the new value.
--- @param errors (Optional) Table to attach the error to. If `nil`, the table will be created.
--- @param k Key on which to insert the error in the `errors` table.
--- @param v Value of the error
--- @return The `errors` table with the new error inserted.
-function _M.add_error(errors, k, v)
-    if not errors then errors = {} end
-
-    if errors and errors[k] then
-        if getmetatable(errors[k]) ~= err_list_mt then
-            errors[k] = setmetatable({errors[k]}, err_list_mt)
-        end
-
-        table_insert(errors[k], v)
-    else
-        errors[k] = v
-    end
-
-    return errors
 end
 
 --- Try to load a module.

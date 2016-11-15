@@ -1,62 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - Monitor &raquo; Rule Statistic</title>
-    {(meta.html)}
+    {(common/meta.html)}
 </head>
-<body>
 
-{(header.html)}<!-- header end -->
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
 
-<div id="main" class="main-container container">
-    <div class="row" style="margin-bottom:20px">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <h4>自定义监控 &raquo; {{rule_name}}</h4>
-                <input type="hidden" id="rule-id-input" value="{{rule_id}}"/>
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">自定义监控</h4>
+                        </div>
+
+                        <div class="pull-right" id="time-set">
+                            <span class="l">时间间隔:</span>
+                            <a href="javascript:void(0);" class="timer_interval" data-interval="1000">1s</a> /
+                            <a href="javascript:void(0);" class="active timer_interval" data-interval="3000">3s</a> /
+                            <a href="javascript:void(0);" class="timer_interval" data-interval="5000">5s</a>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                     <div style="height:400px;padding-top:20px;" id="request-area"></div>
+                     </div>
+                </div>
+                <div class="row">
+                    <div style="height:400px;padding-top:20px;" id="qps-area"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div style="height:400px;padding-top:20px;" id="response-area"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="height:400px;padding-top:20px;" id="traffic-area"></div>
+                    </div>
+                </div>
+            <!-- content end -->
             </div>
-
-            <div class="pull-right" id="time-set">
-                <span class="l">时间间隔:</span>
-                <a href="javascript:void(0);" class="timer_interval" data-interval="1000">1s</a> /
-                <a href="javascript:void(0);" class="active timer_interval" data-interval="3000">3s</a> /
-                <a href="javascript:void(0);" class="timer_interval" data-interval="5000">5s</a>
-            </div>
-
-        </div>
+        </div><!--右侧部分结束-->
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div style="height:400px;padding-top:20px;" id="request-area"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div style="height:400px;padding-top:20px;" id="qps-area"></div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div style="height:400px;padding-top:20px;" id="response-area"></div>
-        </div>
-        <div class="col-md-6">
-            <div style="height:400px;padding-top:20px;" id="traffic-area"></div>
-        </div>
-    </div>
-
-    <!-- <div class="row">
-        <div style="height:400px;padding-top:20px;" id="status-area"></div>
-    </div> -->
-</div>
-
-<script src="/orange/static/js/monitor_stat.js"></script>
-<script type="text/javascript">
-    $(document).ready(function(){
-        APP.Common.resetNav("nav-monitor");
-        APP.MonitorStat.init();
-    });
-</script>
-
-{(footer.html)}
+    <input type="hidden" id="rule-id-input" value="{{rule_id}}"/>
+    {(common/common_js.html)}<!-- 通用js -->
+    <script src="/static/js/echarts3/echarts.common.min.js"></script>
+    <script src="/static/js/monitor_stat.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            APP.Common.resetNav("nav-monitor");
+            APP.MonitorStat.init();
+        });
+    </script>
 </body>
 </html>

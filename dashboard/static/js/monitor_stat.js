@@ -49,7 +49,7 @@
                 $.ajax({
                     url : '/monitor/stat',
                     type : 'get',
-                    cache:false,
+                    cache: false,
                     data : {
                         rule_id: $("#rule-id-input").val()
                     },

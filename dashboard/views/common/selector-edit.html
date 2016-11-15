@@ -1,0 +1,133 @@
+<script id="edit-selector-tpl" type="application/template">
+    <div id="selector-edit-area">
+        <form id="edit-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="selector-name" value="${s.name}" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">类型</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="selector-type">
+                        <option {@if s.type == 0} selected {@/if} value="0">全流量</option>
+                        <option {@if s.type == 1} selected {@/if} value="1">自定义流量</option>
+                    </select>
+                </div>
+            </div><!-- type -->
+
+            <!-- edit - 条件编辑器模板 start -->
+            <div id="judge-area" {@if s.type == 0 } style="display: none;" {@/if} >
+                <div class="form-group">
+                    <label for="input-judge-type" class="col-sm-1 control-label">规则</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-judge-type">
+                            <option value="0" {@if s.judge.type==0 } selected {@/if}>单一条件匹配</option>
+                            <option value="1" {@if s.judge.type==1 } selected {@/if}>and匹配</option>
+                            <option value="2" {@if s.judge.type==2 } selected {@/if}>or匹配</option>
+                            <option value="3" {@if s.judge.type==3 } selected {@/if}>复杂匹配</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-8" id="expression-area" {@if s.judge.type != "3" } style="display:none;" {@/if}>
+                         <input type="text" class="form-control" id="rule-judge-expression" value="${s.judge.expression}" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
+                    </div>
+                </div><!-- 类型 -->
+
+                {@if s.judge.conditions && s.judge.conditions.length>0 }
+                    {@each s.judge.conditions as c, index}
+                        <div class="form-group pair condition-holder">
+                            <label class="col-sm-1 control-label"></label>
+
+                            <div class="col-sm-2">
+                                <select class="form-control" name="rule-judge-condition-type">
+                                    <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
+                                    <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
+                                    <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
+                                    <option value="PostParams" {@if c.type == "PostParams" } selected {@/if}>PostParams</option>
+                                    <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
+                                    <option value="UserAgent" {@if c.type == "UserAgent" } selected {@/if}>UserAgent</option>
+                                    <!-- <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option> -->
+                                    <option value="Host" {@if c.type == "Host" } selected {@/if}>Host</option>
+                                    <option value="Referer" {@if c.type == "Referer" } selected {@/if}>Referer</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2 condition-name-hodler"
+                                {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" }
+                                    style="display:none;padding-left:0px;"
+                                {@else}
+                                    style="padding-left:0px;"
+                                {@/if}>
+                                <input type="text" class="form-control" name="rule-judge-condition-name" placeholder="name" value="${c.name}">
+                            </div>
+                            <div class="col-sm-3" style="padding:0px;">
+                                <select class="form-control"  name="rule-judge-condition-operator">
+                                    <option value="match" {@if c.operator=="match" } selected {@/if}>Match</option>
+                                    <option value="not_match" {@if c.operator=="not_match" } selected {@/if}>Not Match</option>
+                                    <option value="=" {@if c.operator=="="} selected {@/if}>=</option>
+                                    <option value="!=" {@if c.operator=="!="} selected {@/if}>!=</option>
+                                    <option value=">" {@if c.operator==">" } selected {@/if}>&gt;</option>
+                                    <option value=">=" {@if c.operator==">=" } selected {@/if}>&ge;</option>
+                                    <option value="<" {@if c.operator=="<"} selected {@/if}>&lt;</option>
+                                    <option value="<=" {@if c.operator=="<="} selected {@/if}>&le;</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" name="rule-judge-condition-value" placeholder="value" value="${c.value}">
+                            </div>
+                            <div class="col-sm-1" style="margin-top: 5px">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-remove" style="padding:0 5px;">
+                                        <i class="fa fa-remove"></i>
+                                    </a>
+                                    <a class="btn btn-add" style="padding:0 5px;">
+                                        <i class="fa fa-plus"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    {@/each}
+                {@/if}
+
+                {@if !s.judge.conditions || s.judge.conditions.length<1 }
+                    {(common/selector-judge-condition-part.html)}<!-- 条件编辑共用部分 -->
+                {@/if}
+            </div>
+            <!-- judge -->
+
+            <!-- edit - 条件编辑器模板 end -->
+
+
+
+
+             <div class="form-group">
+                <label class="col-sm-1 control-label">处理</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="selector-continue">
+                        <option {@if s.handle.continue == true } selected {@/if} value="true">继续后续选择器</option>
+                        <option {@if s.handle.continue == false } selected {@/if} value="false">略过后续选择器</option>
+                    </select>
+                </div>
+                <div class="col-sm-3" style="padding-left:0;">
+                    <select class="form-control" id="selector-log">
+                        <option {@if s.handle.log == false } selected {@/if} value="false" selected>不记录日志</option>
+                        <option {@if s.handle.log == true } selected {@/if} value="true">记录日志</option>
+                    </select>
+                </div>
+            </div><!-- handle log-->
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input {@if s.enable==true} checked {@/if} type="checkbox" id="selector-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>

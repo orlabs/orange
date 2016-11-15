@@ -33,10 +33,15 @@
                     <option value="Referer" {@if c.type == "Referer" } selected {@/if}>Referer</option>
                 </select>
             </div>
-            <div class="col-sm-2 condition-name-hodler" {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" } style="display:none;" {@/if}>
+            <div class="col-sm-2 condition-name-hodler"
+                {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" } 
+                    style="display:none;padding-left:0px;" 
+                {@else}
+                    style="padding-left:0px;" 
+                {@/if}>
                 <input type="text" class="form-control" name="rule-judge-condition-name" placeholder="name" value="${c.name}">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3" style="padding:0px;">
                 <select class="form-control"  name="rule-judge-condition-operator">
                     <option value="match" {@if c.operator=="match" } selected {@/if}>Match</option>
                     <option value="not_match" {@if c.operator=="not_match" } selected {@/if}>Not Match</option>
@@ -51,12 +56,12 @@
             <div class="col-sm-3">
                 <input type="text" class="form-control" name="rule-judge-condition-value" placeholder="value" value="${c.value}">
             </div>
-            <div class="col-sm-1" style="margin-top:10px">
+            <div class="col-sm-1" style="margin-top: 5px">
                 <span class="input-group-btn">
-                    <a class="btn btn-danger" style="padding:0 5px;">
+                    <a class="btn btn-remove" style="padding:0 5px;">
                         <i class="fa fa-remove"></i>
                     </a>
-                    <a class="btn btn-success" style="padding:0 5px;">
+                    <a class="btn btn-add" style="padding:0 5px;">
                         <i class="fa fa-plus"></i>
                     </a>
                 </span>

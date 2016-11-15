@@ -1,67 +1,326 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - Status</title>
-    {(meta.html)}
+    {(common/meta.html)}
+    <style>
+    .widget{
+        height:140px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .status-row{
+        margin-left:0;
+        margin-right:0;
+    }
+
+    .status-row .col-sm-2, .status-row .col-sm-3,  .status-row .col-sm-6, .status-row .col-sm-12{
+        padding-left:0;
+    }
+
+    .status-row i{
+        height:50px;
+        line-height: 50px;
+    }
+
+    .status-row span{
+        color:#aaa;
+    }
+
+    .status-row h1{
+        color:#555;
+        font-weight: 200;
+        font-size: 20px;
+    }
+
+    </style>
 </head>
-<body>
 
-{(header.html)}
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
 
-<div id="main" class="main-container container">
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">全局统计</h4>
+                        </div>
 
 
-    <div class="row" style="margin-top:-10px;margin-bottom:20px;margin-right:10px;">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <h4>全局统计</h4>
+                        <div class="pull-right" id="time-set">
+                            <span class="l">时间间隔:</span>
+                            <a href="javascript:void(0);" class="timer_interval" data-interval="1000">1s</a> /
+                            <a href="javascript:void(0);" class="active timer_interval" data-interval="3000">3s</a> /
+                            <a href="javascript:void(0);" class="timer_interval" data-interval="5000">5s</a>
+                        </div>
+
+                        <div class="pull-right" id="view-set">
+                            <span class="l">数据:</span>
+                            <a href="javascript:void(0);" class="chart-view">图表视图</a> /
+                            <a href="javascript:void(0);" class="active data-view">数据视图</a>
+                            &nbsp;&nbsp;
+                        </div>
+
+                        <div class="pull-right" id="tip-section" style="display:none;">
+                            <span class="l">上次更新时间戳:</span>
+                            &nbsp;&nbsp;
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="data-section">
+                    
+
+                </div>
+
+                <div id="chart-section" style="display:none;">
+                    <div class="row">
+                        <div class="col-md-12">
+                         <div style="height:400px;padding-top:20px;" id="request-area"></div>
+                         </div>
+                    </div>
+                    <div class="row">
+                        <div style="height:400px;padding-top:20px;" id="qps-area"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div style="height:400px;padding-top:20px;" id="response-area"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="height:400px;padding-top:20px;" id="traffic-area"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div style="height:400px;padding-top:20px;" id="status-area"></div>
+                    </div>
+                </div>
+            
+            </div><!-- content end -->
+        </div><!--右侧部分结束-->
+    </div>
+
+
+    <script id="status-tpl" type="text/template">
+            <div id="basic-info-section" class="row status-row">
+                <div class="col-sm-2">
+                    <div class="widget text-center">
+                        <div class="m-b-md">
+                            <i class="fa fa-circle-o-notch fa-3x"></i>
+                            <h1 class="m-xs">${status.nginx_version}</h1>
+                            <span class="no-margins">
+                                    OpenResty
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="widget text-center">
+                        <div class="m-b-md">
+                            <i class="fa fa-shield fa-3x"></i>
+                            <h1 class="m-xs">${status.ngx_lua_version}</h1>
+                            <span class="no-margins">
+                                    ngx_lua
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="widget text-center">
+                        <div class="m-b-md">
+                            <i class="fa fa-gears fa-3x"></i>
+                            <h1 class="m-xs">${status.worker_count}</h1>
+                            <span class="no-margins">
+                                    Workers
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="widget text-center">
+                        <div class="m-b-md">
+                            <i class="fa fa-at fa-3x"></i>
+                            <h1 class="m-xs">${status.address}</h1>
+                            <span class="no-margins">
+                                    Address
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="widget text-center">
+                        <div class="m-b-md">
+                            <i class="glyphicon glyphicon-time fa-3x"></i>
+                            <h1 class="m-xs">${status.load_timestamp}</h1>
+                            <span class="no-margins">
+                                    Uptime
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="pull-right" id="time-set">
-                <span class="l">时间间隔:</span>
-                <a href="javascript:void(0);" class="timer_interval" data-interval="1000">1s</a> /
-                <a href="javascript:void(0);" class="active timer_interval" data-interval="3000">3s</a> /
-                <a href="javascript:void(0);" class="timer_interval" data-interval="5000">5s</a>
-
+            <div id="request-section" class="row status-row">
+                <div class="col-sm-6">
+                    <div class="widget text-center" style="width:100%;display:inline-block">
+                        <div class="m-b-md" style="display:inline-block;width:29%;">
+                            <i class="fa fa-ellipsis-h fa-4x"></i>
+                            <h1 class="m-xs">${status.total_count}</h1>
+                            <span class="no-margins">
+                                    Total Requests
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:28%;">
+                            <i class="fa fa-check-circle fa-3x"></i>
+                            <h1 class="m-xs">${status.total_success_count}</h1>
+                            <span class="no-margins">
+                                    Success
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:28%;">
+                            <i class="fa fa-hourglass-2 fa-3x"></i>
+                            <h1 class="m-xs">${parseInt(status.qps)}</h1>
+                            <span class="no-margins">
+                                    Req/s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="widget text-center" style="width:100%;display:inline-block">
+                        <div class="m-b-md" style="display:inline-block;width:23%;">
+                            <i class="fa fa-check fa-3x" style="color: #3c763d;"></i>
+                            <h1 class="m-xs">${status.request_2xx}</h1>
+                            <span class="no-margins">
+                                    2xx Req
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:24%;">
+                            <i class="fa fa-check fa-3x"></i>
+                            <h1 class="m-xs">${status.request_3xx}</h1>
+                            <span class="no-margins">
+                                    3xx Req
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:24%;">
+                            <i class="glyphicon glyphicon-alert fa-2x" style="color: #ed5565;"></i>
+                            <h1 class="m-xs">${status.request_4xx}</h1>
+                            <span class="no-margins">
+                                    4xx Req
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:24%;">
+                            <i class="fa fa-close fa-3x" style="color: #ed9855;"></i>
+                            <h1 class="m-xs">${status.request_5xx}</h1>
+                            <span class="no-margins">
+                                    5xx Req
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
+            <div id="global-section" class="row status-row">
+                <div class="col-sm-12">
+                    <div class="widget text-center" style="width:100%;display:inline-block">
+                        <div class="m-b-md" style="display:inline-block;width:28%;">
+                            <i class="fa fa-clock-o fa-3x"></i>
+                            <h1 class="m-xs">${status.total_request_time}</h1>
+                            <span class="no-margins">
+                                    Total Request Time(seconds)
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:29%;">
+                            <i class="fa fa-arrow-down fa-3x"></i>
+                            <h1 class="m-xs">${parseInt(status.traffic_read/1024/1024)}</h1>
+                            <span class="no-margins">
+                                    Total Read Traffic(mbytes)
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:29%;">
+                            <i class="fa fa-arrow-up fa-3x"></i>
+                            <h1 class="m-xs">${parseInt(status.traffic_write/1024/1024)}</h1>
+                            <span class="no-margins">
+                                    Total Write Traffic(mbytes)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-12">
-         <div style="height:400px;padding-top:20px;" id="request-area"></div>
-         </div>
-    </div>
-    <div class="row">
-        <div style="height:400px;padding-top:20px;" id="qps-area"></div>
-    </div>
+            <div id="conn-section" class="row status-row">
+                <div class="col-sm-12">
+                    <div class="widget text-center" style="width:100%;display:inline-block">
+                        <div class="m-b-md" style="display:inline-block;width:23%;">
+                            <i class="fa fa-circle fa-3x"></i>
+                            <h1 class="m-xs">${status.con_active}</h1>
+                            <span class="no-margins">
+                                    Conn Active
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:24%;">
+                            <i class="fa fa-circle-o fa-3x"></i>
+                            <h1 class="m-xs">${status.con_idle}</h1>
+                            <span class="no-margins">
+                                    Conn Idle
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:24%;">
+                            <i class="fa fa-arrow-circle-down fa-3x"></i>
+                            <h1 class="m-xs">${status.con_reading}</h1>
+                            <span class="no-margins">
+                                    Conn Reading
+                            </span>
+                        </div>
+                    
+                        <div class="m-b-md" style="display:inline-block;width:24%;">
+                            <i class="fa fa-arrow-circle-up fa-3x"></i>
+                            <h1 class="m-xs">${status.con_writing}</h1>
+                            <span class="no-margins">
+                                    Conn Writing
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div style="height:400px;padding-top:20px;" id="response-area"></div>
-        </div>
-        <div class="col-md-6">
-            <div style="height:400px;padding-top:20px;" id="traffic-area"></div>
-        </div>
-    </div>
+            <div id="other-section" class="row status-row">
+                <div class="col-sm-12">
+                    <div class="widget text-center">
+                        <div class="m-b-md">
+                            <i class="fa fa-folder-open-o fa-4x"></i>
+                            <h1 class="m-xs">${status.ngx_prefix}</h1>
+                            <span class="no-margins">
+                                    Nginx Prefix
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </script>
 
-    <div class="row">
-        <div style="height:400px;padding-top:20px;" id="status-area"></div>
-    </div>
-
-    
-</div>
-
-
-<script src="/orange/static/js/status.js"></script>
-<script type="text/javascript">
-    $(document).ready(function(){
-        APP.Common.resetNav("nav-stat");
-        APP.Status.init();
-    });
-</script>
-
-{(footer.html)}
+    {(common/common_js.html)}<!-- 通用js -->
+    <script src="/static/js/echarts3/echarts.common.min.js"></script>
+    <script src="/static/js/status.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            APP.Common.resetNav("nav-status");
+            APP.Status.init();
+        });
+    </script>
 </body>
 </html>

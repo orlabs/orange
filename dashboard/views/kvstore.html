@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {(common/meta.html)}
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
+
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
+
+                <!-- content start -->
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">KV Store</h4>
+                        </div>
+                        <div id="op-part" style="display:none;" class="pull-right">
+                            <a id="view-btn" data-type="table" class="btn btn-default" rel="nofollow" href="javascript:void(0);">
+                                <i class="fa fa-database"></i>
+                                <span>数据视图</span>
+                            </a>
+                            <a id="switch-btn" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                                <i class="fa fa-pause"></i>
+                                <span>停用该插件</span>
+                            </a>
+                            <a class="btn btn-default" href="javascript:void(0);" id="sync-btn">
+                                <i class="fa fa-refresh"></i>
+                                <span>同步配置</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div  id="table-view" class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">说明</div>
+                            <div class="panel-body">
+                               <div class="panel-body">
+                                   <p>KV Store插件用于存取Shared Dict数据，暂时无更多个性化配置，请直接使用<b>API</b>操作即可。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {(common/data-view-part.html)}
+                <!--  content end -->
+            </div>
+        </div><!--右侧部分结束-->
+    </div>
+
+    {(common/common_js.html)}<!-- 通用js -->
+    <script src="/static/js/kvstore.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            APP.Common.resetNav("nav-kvstore");
+            APP.KVStore.init();
+        });
+    </script>
+</body>
+</html>

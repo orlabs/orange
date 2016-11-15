@@ -2,76 +2,35 @@ local pairs = pairs
 local ipairs = ipairs
 local ngx_re_sub = ngx.re.sub
 local ngx_re_find = ngx.re.find
-local string_len = string.len
 local string_sub = string.sub
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
 local handle_util = require("orange.utils.handle")
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
+local ngx_set_uri = ngx.req.set_uri
+local ngx_set_uri_args = ngx.req.set_uri_args
+local ngx_decode_args = ngx.decode_args
 
 
-local RewriteHandler = BasePlugin:extend()
-RewriteHandler.PRIORITY = 2000
-
-function RewriteHandler:new(store)
-    RewriteHandler.super.new(self, "rewrite-plugin")
-    self.store = store
-end
-
-function RewriteHandler:rewrite(conf)
-    RewriteHandler.super.rewrite(self)
-
-    local rewrite_config = {
-        enable = orange_db.get("rewrite.enable"),
-        rules = orange_db.get_json("rewrite.rules")
-    }
-    
-    if not rewrite_config or rewrite_config.enable ~= true then
-        return
+local function filter_rules(sid, plugin, ngx_var_uri)
+    local rules = orange_db.get_json(plugin .. ".selector." .. sid .. ".rules")
+    if not rules or type(rules) ~= "table" or #rules <= 0 then
+        return false
     end
 
-    local ngx_var_uri = ngx.var.uri
-    local ngx_set_uri = ngx.req.set_uri
-    local ngx_set_uri_args = ngx.req.set_uri_args
-    local ngx_decode_args = ngx.decode_args
-
-    local rules = rewrite_config.rules
-    if not rules or type(rules) ~= "table" or #rules<=0 then
-        return
-    end
-    
     for i, rule in ipairs(rules) do
-        local enable = rule.enable
-        if enable == true then
-
+        if rule.enable == true then
             -- judge阶段
-            local judge = rule.judge
-            local judge_type = judge.type
-            local conditions = judge.conditions
-            local pass = false
-            if judge_type == 0 or judge_type == 1 then
-                pass = judge_util.filter_and_conditions(conditions)
-            elseif judge_type == 2 then
-                pass = judge_util.filter_or_conditions(conditions)
-            elseif judge_type == 3 then
-                pass = judge_util.filter_complicated_conditions(judge.expression, conditions, self:get_name())
-            end
-
+            local pass = judge_util.judge_rule(rule, "rewrite")
             -- extract阶段
-            local extractor = rule.extractor
-            local extractor_type = extractor.type
-            local extractions = extractor and extractor.extractions
-            local variables
-            if extractions then
-                variables = extractor_util.extract(extractor_type, extractions)
-            end
+            local variables = extractor_util.extract_variables(rule.extractor)
 
             -- handle阶段
             if pass then
                 local handle = rule.handle
                 if handle and handle.uri_tmpl then
-                    local to_rewrite = handle_util.build_uri(extractor_type, handle.uri_tmpl, variables, self:get_name())
+                    local to_rewrite = handle_util.build_uri(rule.extractor.type, handle.uri_tmpl, variables)
                     if to_rewrite and to_rewrite ~= ngx_var_uri then
                         if handle.log == true then
                             ngx.log(ngx.INFO, "[Rewrite] ", ngx_var_uri, " to:", to_rewrite)
@@ -88,12 +47,70 @@ function RewriteHandler:rewrite(conf)
                                 end
                             end
                         end
-
                         ngx_set_uri(to_rewrite, true)
                     end
                 end
 
-                return
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+local RewriteHandler = BasePlugin:extend()
+RewriteHandler.PRIORITY = 2000
+
+function RewriteHandler:new(store)
+    RewriteHandler.super.new(self, "rewrite-plugin")
+    self.store = store
+end
+
+function RewriteHandler:rewrite(conf)
+    RewriteHandler.super.rewrite(self)
+
+    local enable = orange_db.get("rewrite.enable")
+    local meta = orange_db.get_json("rewrite.meta")
+    local selectors = orange_db.get_json("rewrite.selectors")
+    local ordered_selectors = meta and meta.selectors
+    
+    if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
+        return
+    end
+
+    local ngx_var_uri = ngx.var.uri
+    for i, sid in ipairs(ordered_selectors) do
+        ngx.log(ngx.INFO, "==[Rewrite][PASS THROUGH SELECTOR:", sid, "]")
+        local selector = selectors[sid]
+        if selector and selector.enable == true then
+            local selector_pass 
+            if selector.type == 0 then -- 全流量选择器
+                selector_pass = true
+            else
+                selector_pass = judge_util.judge_selector(selector, "rewrite")-- selector judge
+            end
+
+            if selector_pass then
+                if selector.handle and selector.handle.log == true then
+                    ngx.log(ngx.INFO, "[Rewrite][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                end
+
+                local stop = filter_rules(sid, "rewrite", ngx_var_uri)
+                if stop then -- 不再执行此插件其他逻辑
+                    return
+                end
+            else
+                if selector.handle and selector.handle.log == true then
+                    ngx.log(ngx.INFO, "[Rewrite][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                end
+            end
+
+            -- if continue or break the loop
+            if selector.handle and selector.handle.continue == true then
+                -- continue next selector
+            else
+                break
             end
         end
     end

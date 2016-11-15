@@ -2,7 +2,7 @@
 -- from https://github.com/Mashape/kong/blob/master/kong/plugins/base_plugin.lua
 -- modified by sumory.wu
 
-local Object = require "orange.lib.classic"
+local Object = require("orange.lib.classic")
 local BasePlugin = Object:extend()
 
 function BasePlugin:new(name)

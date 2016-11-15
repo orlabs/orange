@@ -3,11 +3,10 @@
     L.BasicAuth = L.BasicAuth || {};
     _this = L.BasicAuth = {
         data: {
-            rules: {}
         },
 
         init: function () {
-            _this.loadConfigs();
+            L.Common.loadConfigs("basic_auth", _this, true);
             _this.initEvents();
         },
 
@@ -15,8 +14,15 @@
             L.Common.initRuleAddDialog("basic_auth", _this);//添加规则对话框
             L.Common.initRuleDeleteDialog("basic_auth", _this);//删除规则对话框
             L.Common.initRuleEditDialog("basic_auth", _this);//编辑规则对话框
-            L.Common.initSyncDialog("basic_auth", _this);//编辑规则对话框
+            L.Common.initRuleSortEvent("basic_auth", _this);
 
+            L.Common.initSelectorAddDialog("basic_auth", _this);
+            L.Common.initSelectorDeleteDialog("basic_auth", _this);
+            L.Common.initSelectorEditDialog("basic_auth", _this);
+            L.Common.initSelectorSortEvent("basic_auth", _this);
+            L.Common.initSelectorClickEvent("basic_auth", _this);
+
+            L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
@@ -24,18 +30,19 @@
             _this.initCredentialAddOrRemove();//添加或删除credential
             _this.initCredentialAddBtnEvent();
 
-            L.Common.initViewAndDownloadEvent("basic_auth");
-            L.Common.initSwitchBtn("basic_auth");//redirect关闭、开启
+            L.Common.initViewAndDownloadEvent("basic_auth", _this);
+            L.Common.initSwitchBtn("basic_auth", _this);//redirect关闭、开启
+            L.Common.initSyncDialog("basic_auth", _this);//编辑规则对话框
         },
 
         //增加、删除credential按钮事件
         initCredentialAddOrRemove: function () {
 
             //点击“加号“添加新的输入行
-            $(document).on('click', '#credential-area .pair .btn-success', _this.addNewCredential);
+            $(document).on('click', '#credential-area .pair .btn-add', _this.addNewCredential);
 
             //删除输入行
-            $(document).on('click', '#credential-area .pair .btn-danger', function (event) {
+            $(document).on('click', '#credential-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddCredentialBtn();
             });
@@ -81,11 +88,11 @@
             $("#credential-area .pair").each(function () {
                 c++;
                 if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").show();
+                    $(this).find(".btn-remove").show();
                 } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").hide();
+                    $(this).find(".btn-remove").show();
                 }
             })
         },
@@ -201,39 +208,5 @@
             result.success = true;
             return result;
         },
-
-        loadConfigs: function (highlight_id) {
-            $.ajax({
-                url: '/basic_auth/configs',
-                type: 'get',
-                cache:false,
-                data: {},
-                dataType: 'json',
-                success: function (result) {
-                    if (result.success) {
-                        L.Common.resetSwitchBtn(result.data.enable, "basic_auth");
-                        $("#switch-btn").show();
-                        $("#view-btn").show();
-                        _this.renderTable(result.data, highlight_id);//渲染table
-                        _this.data.enable = result.data.enable;
-                        _this.data.rules = result.data.rules;//重新设置数据
-
-                    } else {
-                        L.Common.showTipDialog("错误提示", "查询Basic Auth配置请求发生错误");
-                    }
-                },
-                error: function () {
-                    L.Common.showTipDialog("提示", "查询Basic Auth配置请求发生异常");
-                }
-            });
-        },
-
-        renderTable: function (data, highlight_id) {
-            highlight_id = highlight_id || 0;
-            var tpl = $("#rule-item-tpl").html();
-            data.highlight_id = highlight_id;
-            var html = juicer(tpl, data);
-            $("#rules").html(html);
-        }
     };
 }(APP));
