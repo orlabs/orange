@@ -60,16 +60,26 @@ return function(config, store)
                 tmp = {
                     enable =  orange_db.get(v .. ".enable"),
                     name = v,
+                    active_selector_count = 0,
+                    inactive_selector_count = 0,
                     active_rule_count = 0,
                     inactive_rule_count = 0
                 }
-                local plugin_rules = orange_db.get_json(v .. ".rules")
-                if plugin_rules then
-                    for j, r in ipairs(plugin_rules) do
-                        if r.enable == true then
-                            tmp.active_rule_count = tmp.active_rule_count + 1
+                local plugin_selectors = orange_db.get_json(v .. ".selectors")
+                if plugin_selectors then
+                    for sid, s in pairs(plugin_selectors) do
+                        if s.enable == true then
+                            tmp.active_selector_count = tmp.active_selector_count + 1
+                            local selector_rules = orange_db.get_json(v .. ".selector." .. sid .. ".rules")
+                            for _, r in ipairs(selector_rules) do
+                                if r.enable == true then
+                                    tmp.active_rule_count = tmp.active_rule_count + 1
+                                else
+                                    tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                                end
+                            end
                         else
-                            tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                            tmp.inactive_selector_count = tmp.inactive_selector_count + 1
                         end
                     end
                 end
