@@ -54,10 +54,20 @@
             });
 
         	$(document).on("click", ".timer_interval", function(){
-        		var interval  = parseInt($(this).attr("data-interval"));
+        		var interval  = parseInt($(this).attr("data-interval"), 10);
         		_this.data.interval = interval;
         		_this.startTimer(interval);
         	});
+        },
+
+        renderTimestamp: function(loadTimestamp){
+            var timemiles = (new Date()).getTime() - loadTimestamp * 1000;
+            var days = Math.floor(timemiles / (1000 * 3600 * 24));
+            timemiles -= days * 1000 * 3600 * 24;
+            var hours = Math.floor(timemiles / (1000 * 3600))
+            timemiles -= hours * 1000 * 3600;
+            var minutes = Math.floor(timemiles / 1000 / 60);
+            return days + "天 " + hours + "小时 " + minutes + "分";
         },
 
         renderDataView: function(data){
@@ -65,6 +75,7 @@
             var qps = (data.total_count - _this.data.lastTotalRequstCount)/(_this.data.interval/1000)
             _this.data.lastTotalRequstCount = data.total_count;
             data.qps = qps;
+            data.load_timestamp = _this.renderTimestamp(data.load_timestamp);
             var html = juicer(tpl, {
                 status: data
             });
