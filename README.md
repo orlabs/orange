@@ -12,6 +12,7 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 
 - MySQL v5.5+
 - OpenResty v1.9.7.3+ or Nginx+lua module
+    - install OpenResty with `--with-http_stub_status_module` option
 - [Lor Framework](https://github.com/sumory) v0.1.4+
 - libuuid.so
 
