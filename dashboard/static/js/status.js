@@ -61,12 +61,12 @@
         },
 
         renderTimestamp: function(loadTimestamp){
-            var timemiles = (new Date()).getTime() - loadTimestamp * 1000;
-            var days = Math.floor(timemiles / (1000 * 3600 * 24));
-            timemiles -= days * 1000 * 3600 * 24;
-            var hours = Math.floor(timemiles / (1000 * 3600))
-            timemiles -= hours * 1000 * 3600;
-            var minutes = Math.floor(timemiles / 1000 / 60);
+            var timemiles = (new Date()).getTime() / 1000 - loadTimestamp;
+            var days = Math.floor(timemiles / (3600 * 24));
+            timemiles -= days * 3600 * 24;
+            var hours = Math.floor(timemiles / 3600)
+            timemiles -= hours * 3600;
+            var minutes = Math.floor(timemiles / 60);
             return days + "天 " + hours + "小时 " + minutes + "分";
         },
 
