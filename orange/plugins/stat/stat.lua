@@ -69,7 +69,7 @@ function _M.stat()
     local result = {
         nginx_version = ngx.var.nginx_version,
         ngx_lua_version = math.floor(ngx_lua_version / 1000000) .. '.' .. math.floor(ngx_lua_version / 1000) ..'.' .. math.floor(ngx_lua_version % 1000),
-        address = ngx.var.server_addr .. ":" .. ngx.var.server_port,
+        address = ngx.var.server_addr,
         worker_count = ngx.worker.count(),
         timestamp = ngx.time(),
         load_timestamp = status:get(KEY_START_TIME),
