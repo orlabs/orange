@@ -88,13 +88,17 @@ function Orange.init_worker()
         if worker_id == 0 then
             local ok, err = ngx.timer.at(0, function(premature, store, config)
                 local available_plugins = config.plugins
-                for i, v in ipairs(available_plugins) do
-                    data_loader.load_data_by_mysql(store, v)
+                for _, v in ipairs(available_plugins) do
+                    local load_success = data_loader.load_data_by_mysql(store, v)
+                    if not load_success then
+                        os.exit(1)
+                    end
                 end
             end, Orange.data.store, Orange.data.config)
+            
             if not ok then
                 ngx.log(ngx.ERR, "failed to create the timer: ", err)
-                return
+                return os.exit(1)
             end
         end
     end
