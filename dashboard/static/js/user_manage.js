@@ -45,7 +45,7 @@
                             }else{
                                 enable = 0;
                             }
-                       
+
                             $.ajax({
                                 url: '/admin/user/new',
                                 type: 'post',
@@ -83,7 +83,7 @@
             $(document).on("click", ".delete-user-btn", function(){
                 var user_id = $(this).attr("data-id");
                 var name = $(this).attr("data-name");
-                if(username=="admin"){
+                if(name=="admin"){
                     L.Common.showErrorTip("提示", "不得删除admin用户!");
                     return false;
                 }
@@ -207,8 +207,8 @@
                 d.show();
             });
         },
-       
-  
+
+
         loadUsers: function () {
             $.ajax({
                 url: '/admin/users',
