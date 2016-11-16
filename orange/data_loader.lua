@@ -175,6 +175,99 @@ local function init_selectors_of_plugin(plugin, store)
     return true
 end
 
+local function compose_plugin_data(store, plugin)
+    local data = {}
+    local ok, e
+    ok = xpcall(function() 
+        -- get enable
+        local enables, err = store:query({
+            sql = "select `key`, `value` from meta where `key`=?",
+            params = {plugin .. ".enable"}
+        })
+
+        if err then
+            ngx.log(ngx.ERR, "Load `enable` of plugin[" .. plugin .. "], error: ", err)
+            return false
+        end
+
+        if enables and type(enables) == "table" and #enables > 0 then
+            data[plugin .. ".enable"] = (enables[1].value == "1")
+        else
+            data[plugin .. ".enable"] = false
+        end
+
+        -- get meta
+        local meta, err = store:query({
+            sql = "select * from " .. plugin .. " where `type` = ? limit 1",
+            params = {"meta"}
+        })
+
+        if err then
+            ngx.log(ngx.ERR, "error to find meta from storage when fetching data of plugin[" .. plugin .. "], err:", err)
+            return false
+        end
+
+        if meta and type(meta) == "table" and #meta > 0 then
+            data[plugin .. ".meta"] = utils.json_decode(meta[1].value) or {}
+        else
+            ngx.log(ngx.ERR, "can not find meta from storage when fetching data of plugin[" .. plugin .. "]")
+            return false
+        end
+
+        -- get selectors and its rules
+        local selectors, err = store:query({
+            sql = "select * from " .. plugin .. " where `type` = ?",
+            params = {"selector"}
+        })
+
+        if err then
+            ngx.log(ngx.ERR, "error to find selectors from storage when fetching data of plugin[" .. plugin .. "], err:", err)
+            return false
+        end
+
+        local to_update_selectors = {}
+        if selectors and type(selectors) == "table" then
+            for _, s in ipairs(selectors) do
+                to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
+
+                -- init this selector's rules local cache
+                local selector_id = s.id
+                if not selector_id then
+                    ngx.log(ngx.ERR, "error: selector_id is nil")
+                    return false
+                end
+
+                local selector = get_selector(plugin, store, selector_id)
+                if not selector or not selector.value then
+                    ngx.log(ngx.ERR, "error to find selector from storage when fetch plugin[" .. plugin .. "] selector rules, selector_id:", selector_id)
+                    return false
+                end
+
+                selector = utils.json_decode(selector.value)
+                local rules_ids = selector.rules or {}
+                local rules = get_rules_of_selector(plugin, store, rules_ids)
+                data[plugin .. ".selector." .. selector_id .. ".rules"] = rules
+            end
+
+            data[plugin .. ".selectors"]= to_update_selectors
+        else
+            ngx.log(ngx.ERR, "the size of selectors from storage is 0 when fetching data of plugin[" .. plugin .. "] selectors")
+            data[plugin .. ".selectors"] = {}
+        end
+
+        return true, data
+    end, function()
+        e = debug.traceback()
+    end)
+
+    if not ok or e then
+        ngx.log(ngx.ERR, "[fetch plugin's data error], plugin:", plugin, " error:", e)
+        return false
+    end
+
+    return true, data
+end
+
 --- load plugin's config from mysql
 local function load_data_by_mysql(store, plugin)
     local ok, e
@@ -219,5 +312,6 @@ local function load_data_by_mysql(store, plugin)
 end
 
 return {
-    load_data_by_mysql = load_data_by_mysql
+    load_data_by_mysql = load_data_by_mysql,
+    compose_plugin_data = compose_plugin_data
 }

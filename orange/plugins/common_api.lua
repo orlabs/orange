@@ -7,6 +7,7 @@ local cjson = require("cjson")
 local orange_db = require("orange.store.orange_db")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
+local data_loader = require("orange.data_loader")
 
 local function delete_rules_of_selector(plugin, store, rule_ids)
     if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then 
@@ -349,30 +350,20 @@ return function(plugin)
     API["/" .. plugin .. "/fetch_config"] = {
         GET = function(store)
             return function(req, res, next)
-                local success, data = false, {}
-                -- 查找enable
-                local enable, err = get_enable(plugin, store)
-
-                if err then
+                local success, data =  data_loader.compose_plugin_data(store, plugin)
+                if success then
+                    return res:json({
+                        success = true,
+                        msg = "succeed to fetch config from store",
+                        data = data
+                    })
+                else
+                    ngx.log(ngx.ERR, "error to fetch plugin[" .. plugin .. "] config from store")
                     return res:json({
                         success = false,
-                        msg = "get enable error"
+                        msg = "error to fetch config from store"
                     })
                 end
-
-                if enable and type(enable) == "table" and #enable == 1 and enable[1].value == "1" then
-                    data.enable = true
-                else
-                    data.enable = false
-                end
-
-                -- 查找meta
-                data.meta = get_meta(plugin, store) or {}
-
-                res:json({
-                    success = success,
-                    data = data
-                })
             end
         end
     }
@@ -381,16 +372,14 @@ return function(plugin)
     API["/" .. plugin .. "/sync"] = {
         POST = function(store)
             return function(req, res, next)
-                local update_enable_result = update_local_enable(plugin, store)
-                local update_meta_result = update_local_meta(plugin, store)
-                local update_selectors_result = update_local_selectors(plugin, store)
-                if update_enable_result and update_meta_result and update_selectors_result then
+                local load_success = data_loader.load_data_by_mysql(store, plugin)
+                if load_success then
                     return res:json({
                         success = true,
                         msg = "succeed to load config from store"
                     })
                 else
-                    ngx.log(ngx.ERR, "error to load config from store, update_enable:", update_enable_result, " update_meta:", update_meta_result, " update_selectors:", update_selectors_result)
+                    ngx.log(ngx.ERR, "error to load plugin[" .. plugin .. "] config from store")
                     return res:json({
                         success = false,
                         msg = "error to load config from store"
