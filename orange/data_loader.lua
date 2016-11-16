@@ -182,7 +182,7 @@ local function load_data_by_mysql(store, plugin)
         local v = plugin
         if not v or v == "" then
             ngx.log(ngx.ERR, "params error, the `plugin` is nil")
-            os.exit(1)
+            return false
         end
 
         if v == "stat" then
@@ -191,7 +191,7 @@ local function load_data_by_mysql(store, plugin)
             local init_enable = init_enable_of_plugin(v, store)
             if not init_enable then
                 ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable)
-                os.exit(1)
+                return false
             else
                 ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] success")
             end
