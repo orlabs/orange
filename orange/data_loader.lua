@@ -231,7 +231,7 @@ local function compose_plugin_data(store, plugin)
                 to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
 
                 -- init this selector's rules local cache
-                local selector_id = s.id
+                local selector_id = s.key
                 if not selector_id then
                     ngx.log(ngx.ERR, "error: selector_id is nil")
                     return false
