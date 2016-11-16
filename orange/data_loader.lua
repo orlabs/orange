@@ -201,7 +201,7 @@ local function load_data_by_mysql(store, plugin)
             local init_selectors_and_rules = init_selectors_of_plugin(v, store)
             if not init_enable or not init_meta or not init_selectors_and_rules then
                 ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable, " init_meta:", init_meta, " init_selectors_and_rules:", init_selectors_and_rules)
-                os.exit(1)
+                return false
             else
                 ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] success")
             end
@@ -212,8 +212,10 @@ local function load_data_by_mysql(store, plugin)
 
     if not ok or e then
         ngx.log(ngx.ERR, "[load plugin's data error], plugin:", plugin, " error:", e)
-        os.exit(1)
+        return false
     end
+
+    return true
 end
 
 return {
