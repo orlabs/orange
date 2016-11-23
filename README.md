@@ -77,6 +77,7 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 ### Contributors
 
 - 雨帆([@syhily](https://github.com/syhily))
+- lhmwzy([@lhmwzy](https://github.com/lhmwzy))
 
 
 ### See also
