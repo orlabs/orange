@@ -148,6 +148,7 @@ Orange启动成功后， dashboard和API server也随之启动：
 ### 贡献者
 
 - 雨帆([@syhily](https://github.com/syhily))
+- lhmwzy([@lhmwzy](https://github.com/lhmwzy))
 
 
 ### See also
