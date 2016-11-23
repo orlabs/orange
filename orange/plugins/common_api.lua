@@ -2,312 +2,11 @@ local ipairs = ipairs
 local type = type
 local tostring = tostring
 local table_insert = table.insert
-local table_concat = table.concat
 local cjson = require("cjson")
 local orange_db = require("orange.store.orange_db")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
-local data_loader = require("orange.data_loader")
-
-local function delete_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then 
-        return true
-    end
-
-    local to_concat = {}
-    for _, r in ipairs(rule_ids) do
-        table_insert(to_concat, "'" .. r .. "'")
-    end
-    local to_delete_rules_ids = table_concat(to_concat, ",")
-    if not to_delete_rules_ids or to_delete_rules_ids == "" then
-        return true
-    end
-
-    local delete_result = store:delete({
-        sql = "delete from " .. plugin .. " where `key` in (" .. to_delete_rules_ids .. ") and `type`=?",
-        params = { "rule" }
-    })
-    if delete_result then
-        return true
-    else
-        ngx.log(ngx.ERR, "delete rules of selector err, ", rule_ids)
-        return false
-    end
-end
-
-local function get_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then 
-        return {}
-    end
-
-    local to_concat = {}
-    for _, r in ipairs(rule_ids) do
-        table_insert(to_concat, "'" .. r .. "'")
-    end
-    local to_get_rules_ids = table_concat(to_concat, ",")
-    if not to_get_rules_ids or to_get_rules_ids == "" then
-        return {}
-    end
-
-    local rules, err = store:query({
-        sql = "select * from " .. plugin .. " where `key` in ( " .. to_get_rules_ids .. ") and `type`=?",
-        params = {"rule" }
-    })
-    if err then
-        ngx.log(ngx.ERR, "error to get rules of selector, err:", err)
-        return {}
-    end
-
-    if rules and type(rules) == "table" and #rules > 0 then
-        local format_rules = {}
-
-        -- reorder the rules as the order stored in selector
-        for _, rule_id in ipairs(rule_ids) do
-            for _, r in ipairs(rules) do
-                local tmp = utils.json_decode(r.value)
-                if tmp and tmp.id == rule_id then
-                    table_insert(format_rules, tmp)
-                end
-            end
-        end
-        return format_rules
-    else
-        return {}
-    end
-end
-
-local function delete_selector(plugin, store, selector_id)
-    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then 
-        return true
-    end
-
-    local delete_result = store:delete({
-        sql = "delete from " .. plugin .. " where `key` = ? and `type` = ?",
-        params = { selector_id, "selector" }
-    })
-    if delete_result then
-        return true
-    else
-        ngx.log(ngx.ERR, "delete selector err, ", selector_id)
-        return false
-    end
-end
-
-local function get_selector(plugin, store, selector_id)
-    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then 
-        return nil
-    end
-
-    local selector, err = store:query({
-        sql = "select * from " .. plugin .. " where `key` = ? and `type` = ? limit 1",
-        params = { selector_id, "selector" }
-    })
-
-    if not err and selector and type(selector) == "table" and #selector > 0 then
-        return selector[1]
-    end
-
-    return nil
-end
-
-local function get_meta(plugin, store)
-    local meta, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ? limit 1",
-        params = {"meta"}
-    })
-
-    if not err and meta and type(meta) == "table" and #meta > 0 then
-        return meta[1]
-    else
-        ngx.log(ngx.ERR, "[FATAL ERROR]meta not found while it must exist.")
-        return nil
-    end
-end
-
-local function update_meta(plugin, store, meta)
-    if not meta or type(meta) ~= "table" then 
-        return false
-    end
-
-    local meta_json_str = utils.json_encode(meta)
-    if not meta_json_str then
-        ngx.log(ngx.ERR, "encode error: meta to save is not json format.")
-        return false
-    end
-
-    local result = store:update({
-        sql = "update " .. plugin .. " set `value` = ? where `type` = ?",
-        params = {meta_json_str, "meta"}
-    })
-
-    return result
-end
-
-local function update_selector(plugin, store, selector)
-    if not selector or type(selector) ~= "table" then 
-        return false
-    end
-
-    local selector_json_str = utils.json_encode(selector)
-    if not selector_json_str then
-        ngx.log(ngx.ERR, "encode error: selector to save is not json format.")
-        return false
-    end
-
-    local result = store:update({
-        sql = "update " .. plugin .. " set `value` = ? where `key`=? and `type` = ?",
-        params = {selector_json_str, selector.id, "selector"}
-    })
-
-    return result
-end
-
-local function update_local_enable(plugin, store)
-    -- 查找enable
-    local enable, err = store:query({
-        sql = "select `value` from meta where `key`=?",
-        params = { plugin .. ".enable" }
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "error to find plugin's enable from storage when updating local enable, err:", err)
-        return false
-    end
-
-    local real_enable = false
-    if enable and type(enable) == "table" and #enable == 1 and enable[1].value == "1" then
-        real_enable = true
-    end
-
-    local success, err, forcible = orange_db.set(plugin .. ".enable", real_enable)
-    if err or not success then
-        ngx.log(ngx.ERR, "update local plugin's enable error, err:", err)
-        return false
-    end
-
-    return true
-end
-
-local function update_local_meta(plugin, store)
-    local meta, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ? limit 1",
-        params = {"meta"}
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "error to find meta from storage when updating local meta, err:", err)
-        return false
-    end
-
-    if meta and type(meta) == "table" and #meta > 0 then
-        local success, err, forcible = orange_db.set(plugin .. ".meta", meta[1].value or '{}')
-        if err or not success then
-            ngx.log(ngx.ERR, "update local plugin's meta error, err:", err)
-            return false
-        end
-    else
-        ngx.log(ngx.ERR, "can not find meta from storage when updating local meta")
-    end
-
-    return true
-end
-
-local function update_local_selectors(plugin, store)
-    local selectors, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ?",
-        params = {"selector"}
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "error to find selectors from storage when updating local selectors, err:", err)
-        return false
-    end
-
-    local to_update_selectors = {}
-    if selectors and type(selectors) == "table" then
-        for _, s in ipairs(selectors) do
-            to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
-        end
-
-        local success, err, forcible = orange_db.set_json(plugin .. ".selectors", to_update_selectors)
-        if err or not success then
-            ngx.log(ngx.ERR, "update local plugin's selectors error, err:", err)
-            return false
-        end
-    else
-        ngx.log(ngx.ERR, "the size of selectors from storage is 0 when updating local selectors")
-        local success, err, forcible = orange_db.set_json(plugin .. ".selectors", {})
-        if err or not success then
-            ngx.log(ngx.ERR, "update local plugin's selectors error, err:", err)
-            return false
-        end
-    end
-
-    return true
-end
-
-local function update_local_selector_rules(plugin, store, selector_id)
-    if not selector_id then
-        ngx.log(ngx.ERR, "error to find selector from storage when updating local selector rules, selector_id is nil")
-        return false
-    end
-
-    local selector = get_selector(plugin, store, selector_id)
-    if not selector or not selector.value then
-        ngx.log(ngx.ERR, "error to find selector from storage when updating local selector rules, selector_id:", selector_id)
-        return false
-    end
-
-    selector = utils.json_decode(selector.value)
-    local rules_ids = selector.rules or {}
-    local rules = get_rules_of_selector(plugin, store, rules_ids)
-
-    local success, err, forcible = orange_db.set_json(plugin .. ".selector." .. selector_id .. ".rules", rules)
-    if err or not success then
-        ngx.log(ngx.ERR, "update local rules of selector error, err:", err)
-        return false
-    end
-    
-    return true
-end
-
-local function create_selector(plugin, store, selector)
-    return store:insert({
-        sql = "insert into " .. plugin .. "(`key`, `value`, `type`, `op_time`) values(?,?,?,?)",
-        params = { selector.id, cjson.encode(selector), "selector", selector.time }
-    })
-end
-
-local function update_rule(plugin, store, rule)
-    return store:update({
-        sql = "update " .. plugin .. " set `value`=?,`op_time`=? where `key`=? and `type`=?",
-        params = { cjson.encode(rule), rule.time, rule.id, "rule" }
-    })
-end
-
-local function create_rule(plugin, store, rule)
-    return store:insert({
-        sql = "insert into " .. plugin .. "(`key`, `value`, `op_time`, `type`) values(?,?,?,?)",
-        params = { rule.id, utils.json_encode(rule), rule.time, "rule" }
-    })
-end
-
-local function get_enable(plugin, store)
-    return store:query({
-        sql = "select `value` from meta where `key`=?",
-        params = { plugin .. ".enable" }
-    })
-end
-
-local function update_enable(plugin, store, enable)
-    return store:update({
-        sql = "replace into meta SET `key`=?, `value`=?",
-        params = { plugin .. ".enable", enable }
-    })
-end
-
-
-
+local dao = require("orange.store.dao")
 
 -- build common apis
 return function(plugin)
@@ -319,30 +18,24 @@ return function(plugin)
                 local enable = req.body.enable
                 if enable == "1" then enable = true else enable = false end
 
-                local result = false
-                
                 local plugin_enable = "0"
                 if enable then plugin_enable = "1" end
-                local update_result = update_enable(plugin, store, plugin_enable)
+                local update_result = dao.update_enable(plugin, store, plugin_enable)
 
                 if update_result then
-                    local success, err, forcible = orange_db.set(plugin .. ".enable", enable)
-                    result = success
-                else
-                    result = false
+                    local success, _, _ = orange_db.set(plugin .. ".enable", enable)
+                    if success then
+                        return res:json({
+                            success = true ,
+                            msg = (enable == true and "succeed to enable plugin" or "succeed to disable plugin")
+                        })
+                    end
                 end
 
-                if result then
-                    res:json({
-                        success = true,
-                        msg = (enable == true and "开启插件成功" or "关闭插件成功")
-                    })
-                else
-                    res:json({
-                        success = false,
-                        msg = (enable == true and "开启插件失败" or "关闭插件失败")
-                    })
-                end
+                res:json({
+                    success = false,
+                    msg = (enable == true and "failed to enable plugin" or "failed to disable plugin")
+                })  
             end
         end
     }
@@ -350,7 +43,7 @@ return function(plugin)
     API["/" .. plugin .. "/fetch_config"] = {
         GET = function(store)
             return function(req, res, next)
-                local success, data =  data_loader.compose_plugin_data(store, plugin)
+                local success, data =  dao.compose_plugin_data(store, plugin)
                 if success then
                     return res:json({
                         success = true,
@@ -372,7 +65,7 @@ return function(plugin)
     API["/" .. plugin .. "/sync"] = {
         POST = function(store)
             return function(req, res, next)
-                local load_success = data_loader.load_data_by_mysql(store, plugin)
+                local load_success = dao.load_data_by_mysql(store, plugin)
                 if load_success then
                     return res:json({
                         success = true,
@@ -393,7 +86,7 @@ return function(plugin)
         POST = function(store) -- create
             return function(req, res, next)
                 local selector_id = req.params.id
-                local selector = get_selector(plugin, store, selector_id)
+                local selector = dao.get_selector(plugin, store, selector_id)
                 if not selector or not selector.value then
                     return res:json({
                         success = false,
@@ -415,14 +108,14 @@ return function(plugin)
                 rule.time = utils.now()
 
                 -- 插入到mysql
-                local insert_result = create_rule(plugin, store, rule)
+                local insert_result = dao.create_rule(plugin, store, rule)
 
                 -- 插入成功
                 if insert_result then
                     -- update selector
                     current_selector.rules = current_selector.rules or {}
                     table_insert(current_selector.rules, rule.id)
-                    local update_selector_result = update_selector(plugin, store, current_selector)
+                    local update_selector_result = dao.update_selector(plugin, store, current_selector)
                     if not update_selector_result then
                         return res:json({
                             success = false,
@@ -431,7 +124,7 @@ return function(plugin)
                     end
 
                     -- update local selectors
-                    local update_local_selectors_result = update_local_selectors(plugin, store)
+                    local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if not update_local_selectors_result then
                         return res:json({
                             success = false,
@@ -439,7 +132,7 @@ return function(plugin)
                         })
                     end
 
-                    local update_local_selector_rules_result = update_local_selector_rules(plugin, store, selector_id)
+                    local update_local_selector_rules_result = dao.update_local_selector_rules(plugin, store, selector_id)
                     if not update_local_selector_rules_result then
                         return res:json({
                             success = false,
@@ -481,12 +174,12 @@ return function(plugin)
                 rule = utils.json_decode(rule)
                 rule.time = utils.now()
             
-                local update_result = update_rule(plugin, store, rule)
+                local update_result = dao.update_rule(plugin, store, rule)
 
                 if update_result then
                     local old_rules = orange_db.get_json(plugin .. ".selector." .. selector_id .. ".rules") or {}
                     local new_rules = {}
-                    for i, v in ipairs(old_rules) do
+                    for _, v in ipairs(old_rules) do
                         if v.id == rule.id then
                             rule.time = utils.now()
                             table_insert(new_rules, rule)
@@ -520,7 +213,7 @@ return function(plugin)
         DELETE = function(store)
             return function(req, res, next)
                 local selector_id = req.params.id
-                local selector = get_selector(plugin, store, selector_id)
+                local selector = dao.get_selector(plugin, store, selector_id)
                 if not selector or not selector.value then
                     return res:json({
                         success = false,
@@ -560,7 +253,7 @@ return function(plugin)
                     end
                     current_selector.rules = new_rules_ids
 
-                    local update_selector_result = update_selector(plugin, store, current_selector)
+                    local update_selector_result = dao.update_selector(plugin, store, current_selector)
                     if not update_selector_result then
                         return res:json({
                             success = false,
@@ -569,7 +262,7 @@ return function(plugin)
                     end
 
                     -- update local selectors
-                    local update_local_selectors_result = update_local_selectors(plugin, store)
+                    local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if not update_local_selectors_result then
                         return res:json({
                             success = false,
@@ -578,7 +271,7 @@ return function(plugin)
                     end
 
                     -- update local rules of selector
-                    local update_local_selector_rules_result = update_local_selector_rules(plugin, store, selector_id)
+                    local update_local_selector_rules_result = dao.update_local_selector_rules(plugin, store, selector_id)
                     if not update_local_selector_rules_result then
                         return res:json({
                             success = false,
@@ -623,7 +316,7 @@ return function(plugin)
                 end
 
                 local update_selector_result, update_local_selectors_result, update_local_selector_rules_result
-                local selector = get_selector(plugin, store, selector_id)
+                local selector = dao.get_selector(plugin, store, selector_id)
                 if not selector or not selector.value then 
                     ngx.log(ngx.ERR, "error to find selector when resorting rules of it")
                     return res:json({
@@ -633,14 +326,14 @@ return function(plugin)
                 else
                     local new_selector = utils.json_decode(selector.value) or {}
                     new_selector.rules = rules
-                    update_selector_result = update_selector(plugin, store, new_selector)
+                    update_selector_result = dao.update_selector(plugin, store, new_selector)
                     if update_selector_result then
-                        update_local_selectors_result = update_local_selectors(plugin, store)
+                        update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     end
                 end
 
                 if update_selector_result and update_local_selectors_result then
-                    update_local_selector_rules_result = update_local_selector_rules(plugin, store, selector_id)
+                    update_local_selector_rules_result = dao.update_local_selector_rules(plugin, store, selector_id)
                     if update_local_selector_rules_result then
                         return res:json({
                             success = true,
@@ -688,7 +381,7 @@ return function(plugin)
                 end
 
                 -- get selector
-                local selector = get_selector(plugin, store, selector_id)
+                local selector = dao.get_selector(plugin, store, selector_id)
                 if not selector or not selector.value then
                     return res:json({
                         success = false,
@@ -706,11 +399,11 @@ return function(plugin)
                 end
 
                 local to_del_rules_ids = to_del_selector.rules or {}
-                local d_result = delete_rules_of_selector(plugin, store, to_del_rules_ids)
+                local d_result = dao.delete_rules_of_selector(plugin, store, to_del_rules_ids)
                 ngx.log(ngx.ERR, "delete rules of selector:", d_result)
 
                 -- update meta
-                local meta = get_meta(plugin, store)
+                local meta = dao.get_meta(plugin, store)
                 local current_meta = utils.json_decode(meta.value)
                 if not meta or not current_meta then
                    return res:json({
@@ -728,7 +421,7 @@ return function(plugin)
                 end
                 current_meta.selectors = new_selectors_ids
 
-                local update_meta_result = update_meta(plugin, store, current_meta)
+                local update_meta_result = dao.update_meta(plugin, store, current_meta)
                 if not update_meta_result then
                     return res:json({
                         success = false,
@@ -737,7 +430,7 @@ return function(plugin)
                 end
 
                 -- delete the very selector
-                local delete_selector_result = delete_selector(plugin, store, selector_id)
+                local delete_selector_result = dao.delete_selector(plugin, store, selector_id)
                 if not delete_selector_result then
                     return res:json({
                         success = false,
@@ -746,8 +439,8 @@ return function(plugin)
                 end
 
                 -- update local meta & selectors
-                local update_local_meta_result = update_local_meta(plugin, store)
-                local update_local_selectors_result = update_local_selectors(plugin, store)
+                local update_local_meta_result = dao.update_local_meta(plugin, store)
+                local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                 if update_local_meta_result and update_local_selectors_result then
                     return res:json({
                         success = true,
@@ -771,10 +464,10 @@ return function(plugin)
                 selector.time = utils.now()
 
                 -- create selector
-                local insert_result = create_selector(plugin, store, selector)
+                local insert_result = dao.create_selector(plugin, store, selector)
 
                 -- update meta
-                local meta = get_meta(plugin, store)
+                local meta = dao.get_meta(plugin, store)
                 local current_meta = utils.json_decode(meta and meta.value or "{}")
                 if not meta or not current_meta then
                    return res:json({
@@ -784,7 +477,7 @@ return function(plugin)
                 end
                 current_meta.selectors = current_meta.selectors or {}
                 table_insert(current_meta.selectors, selector.id)
-                local update_meta_result = update_meta(plugin, store, current_meta)
+                local update_meta_result = dao.update_meta(plugin, store, current_meta)
                 if not update_meta_result then
                     return res:json({
                         success = false,
@@ -794,8 +487,8 @@ return function(plugin)
 
                 -- update local meta & selectors
                 if insert_result then
-                    local update_local_meta_result = update_local_meta(plugin, store)
-                    local update_local_selectors_result = update_local_selectors(plugin, store)
+                    local update_local_meta_result = dao.update_local_meta(plugin, store)
+                    local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if update_local_meta_result and update_local_selectors_result then
                         return res:json({
                             success = true,
@@ -823,9 +516,9 @@ return function(plugin)
                 selector = cjson.decode(selector)
                 selector.time = utils.now()
                 -- 更新selector
-                local update_selector_result = update_selector(plugin, store, selector)
+                local update_selector_result = dao.update_selector(plugin, store, selector)
                 if update_selector_result then
-                    local update_local_selectors_result = update_local_selectors(plugin, store)
+                    local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if not update_local_selectors_result then
                         return res:json({
                             success = false,
@@ -868,7 +561,7 @@ return function(plugin)
                 end
 
                 local update_meta_result, update_local_meta_result
-                local meta = get_meta(plugin, store)
+                local meta = dao.get_meta(plugin, store)
                 if not meta or not meta.value then 
                     ngx.log(ngx.ERR, "error to find meta when resorting selectors")
                     return res:json({
@@ -878,9 +571,9 @@ return function(plugin)
                 else
                     local new_meta = utils.json_decode(meta.value) or {}
                     new_meta.selectors = selectors
-                    update_meta_result = update_meta(plugin, store, new_meta)
+                    update_meta_result = dao.update_meta(plugin, store, new_meta)
                     if update_meta_result then
-                        update_local_meta_result = update_local_meta(plugin, store)
+                        update_local_meta_result = dao.update_local_meta(plugin, store)
                     end
                 end
 

@@ -2,7 +2,6 @@ local type = type
 local mysql_db = require("orange.store.mysql_db")
 local Store = require("orange.store.base")
 
-
 local MySQLStore = Store:extend()
 
 function MySQLStore:new(options)

@@ -5,7 +5,7 @@ local pcall = pcall
 local require = require
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
-local data_loader = require("orange.data_loader")
+local dao = require("orange.store.dao")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -89,7 +89,7 @@ function Orange.init_worker()
             local ok, err = ngx.timer.at(0, function(premature, store, config)
                 local available_plugins = config.plugins
                 for _, v in ipairs(available_plugins) do
-                    local load_success = data_loader.load_data_by_mysql(store, v)
+                    local load_success = dao.load_data_by_mysql(store, v)
                     if not load_success then
                         os.exit(1)
                     end
