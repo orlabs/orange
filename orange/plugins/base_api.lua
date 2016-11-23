@@ -59,7 +59,7 @@ function BaseAPI:set_api(path, method, func)
 end
 
 function BaseAPI:build_method()
-    for m, v in pairs(_METHODS) do
+    for m, _ in pairs(_METHODS) do
         m = string_lower(m)
         ngx.log(ngx.INFO, "attach method " .. m .. " to BaseAPI")
         BaseAPI[m] = function(myself, path, func)

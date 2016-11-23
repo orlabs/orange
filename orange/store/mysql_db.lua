@@ -122,5 +122,4 @@ function DB:parse_sql(sql, params)
     return sql
 end
 
-
 return DB
