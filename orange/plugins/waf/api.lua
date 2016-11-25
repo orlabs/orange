@@ -1,5 +1,6 @@
 local BaseAPI = require("orange.plugins.base_api")
 local common_api = require("orange.plugins.common_api")
+local table_insert = table.insert
 local stat = require("orange.plugins.waf.stat")
 
 local api = BaseAPI:new("waf-api", 2)
