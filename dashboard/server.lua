@@ -47,6 +47,14 @@ function _M:build_app()
         app:use(check_is_admin_middleware())
         -- admin router
         app:use("admin", admin_router(config)())
+
+        -- update session expiredtime 
+        app:use(function(req,res,next) 
+                if req and req.session and req.session.get("user") then 
+                        req.session.update() 
+                end 
+                next() 
+        end)
     end
 
     -- routes
