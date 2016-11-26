@@ -18,6 +18,7 @@ local function load_plugin_api(plugin, api_router, store)
 
     for uri, api_methods in pairs(plugin_api) do
         ngx.log(ngx.INFO, "load route, uri:", uri)
+
         if type(api_methods) == "table" then
             for method, func in pairs(api_methods) do
                 local m = string_lower(method)
