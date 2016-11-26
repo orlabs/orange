@@ -14,7 +14,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 安装依赖
 
 - OpenResty: 版本应在1.9.7.3+
-- [lor](https://github.com/sumory/lor)框架: 版本在v0.1.4+
+- [lor](https://github.com/sumory/lor)框架: 版本在v0.2.5+
     - git clone https://github.com/sumory/lor
     - cd lor && sh install.sh
 - libuuid.so
