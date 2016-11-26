@@ -36,7 +36,8 @@ function _M:build_app()
     if config.dashboard and config.dashboard.auth and config.dashboard.auth == true then
         -- session support
         app:use(session_middleware({
-            secret = config.dashboard.session_secret or "default_session_secret"
+            secret = config.dashboard.session_secret or "default_session_secret",
+            timeout = config.dashboard.session_timeout or 3600 -- default session timeout is 3600 seconds
         }))
         -- intercepter: login or not
         app:use(check_login_middleware(config.dashboard.whitelist))
@@ -47,14 +48,6 @@ function _M:build_app()
         app:use(check_is_admin_middleware())
         -- admin router
         app:use("admin", admin_router(config)())
-
-        -- update session expiredtime 
-        app:use(function(req,res,next) 
-                if req and req.session and req.session.get("user") then 
-                        req.session.update() 
-                end 
-                next() 
-        end)
     end
 
     -- routes
