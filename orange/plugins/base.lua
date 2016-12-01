@@ -2,15 +2,25 @@
 -- from https://github.com/Mashape/kong/blob/master/kong/plugins/base_plugin.lua
 -- modified by sumory.wu
 
+require "bit32"
+
 local Object = require "orange.lib.classic"
 local BasePlugin = Object:extend()
+
+BasePlugin.TAGS = {
+    REDIRECT        = 0x00000001
+    REWRITE         = 0x00000002
+    ACCESS          = 0x00000004
+    HEADER_FILTER   = 0x00000008
+    BODAY_FILTER    = 0x00000010
+}
 
 function BasePlugin:new(name)
     self._name = name
 end
 
-function BasePlugin:get_name()
-    return self._name
+function BasePlugin:get_tag()
+    return bit32.bor(TAGS.REDIRECT,TAGS.REWRITE,TAGS.ACCESS,TAGS.HEADER_FILTER,TAGS.BODAY_FILTER)
 end
 
 function BasePlugin:init_worker()
