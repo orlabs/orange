@@ -17,6 +17,10 @@ install:
 	@for item in $(TO_INSTALL) ; do \
 		cp -a $$item $(ORANGE_HOME); \
 	done;
+	
+	@cat $(ORANGE_HOME)/conf/nginx.conf | sed "s/..\/\?.lua;\/usr\/local\/lor\/\?.lua;;/\/usr\/local\/orange\/\?.lua;\/usr\/local\/lor\/?.lua;;/" > $(ORANGE_HOME)/conf/new_nginx.conf
+	@rm $(ORANGE_HOME)/conf/nginx.conf
+	@mv $(ORANGE_HOME)/conf/new_nginx.conf $(ORANGE_HOME)/conf/nginx.conf
 
 	@echo "#!/usr/bin/env resty" >> $(ORANGE_BIN)
 	@echo "package.path=\"$(ORANGE_HOME)?.lua;;\" .. package.path" >> $(ORANGE_BIN)
