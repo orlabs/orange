@@ -1,4 +1,3 @@
-local pairs = pairs
 local ipairs = ipairs
 local type = type
 local string_find = string.find
@@ -7,7 +6,7 @@ local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local handle_util = require("orange.utils.handle")
-local BasePlugin = require("orange.plugins.base")
+local BasePlugin = require("orange.plugins.base_handler")
 
 
 local function is_credential_in_header(headers, key, target_value)
@@ -85,6 +84,48 @@ local function get_body(content_type)
     return body
 end
 
+local function filter_rules(sid, plugin, ngx_var_uri, headers, body, query)
+    local rules = orange_db.get_json(plugin .. ".selector." .. sid .. ".rules")
+    if not rules or type(rules) ~= "table" or #rules <= 0 then
+        return false
+    end
+
+    for i, rule in ipairs(rules) do
+        local enable = rule.enable
+        if enable == true then
+            -- judge阶段
+            local pass = judge_util.judge_rule(rule, plugin)
+
+            -- handle阶段
+            if pass then
+                local handle = rule.handle
+                if handle.credentials then
+                    if handle.log == true then
+                        ngx.log(ngx.INFO, "[KeyAuth-Pass-Rule] ", rule.name, " uri:", ngx_var_uri)
+                    end
+
+                    local authorized = is_authorized(handle.credentials, headers, query, body)
+                    if authorized then
+                        return true
+                    else
+                        ngx.exit(tonumber(handle.code) or 401)
+                        return true
+                    end
+                else
+                    if handle.log == true then
+                        ngx.log(ngx.INFO, "[KeyAuth-Forbidden-Rule] ", rule.name, " uri:", ngx_var_uri)
+                    end
+                    ngx.exit(tonumber(handle.code) or 401)
+
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
 
 local KeyAuthHandler = BasePlugin:extend()
 KeyAuthHandler.PRIORITY = 2000
@@ -97,15 +138,12 @@ end
 function KeyAuthHandler:access(conf)
     KeyAuthHandler.super.access(self)
     
-    local key_auth_config = {
-        enable = orange_db.get("key_auth.enable"),
-        rules = orange_db.get_json("key_auth.rules")
-    }
-    if not key_auth_config or key_auth_config.enable ~= true then
-        return
-    end
-    local rules = key_auth_config.rules
-    if not rules or type(rules) ~= "table" or #rules<=0 then
+    local enable = orange_db.get("key_auth.enable")
+    local meta = orange_db.get_json("key_auth.meta")
+    local selectors = orange_db.get_json("key_auth.selectors")
+    local ordered_selectors = meta and meta.selectors
+    
+    if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
         return
     end
 
@@ -113,47 +151,43 @@ function KeyAuthHandler:access(conf)
     local content_type = headers['Content-Type']
     local body = get_body(content_type)
     local query = ngx.req.get_uri_args()
-    
-    local ngx_var = ngx.var
-    for i, rule in ipairs(rules) do
-        local enable = rule.enable
-        if enable == true then
-            -- judge阶段
-            local judge = rule.judge
-            local judge_type = judge.type
-            local conditions = judge.conditions
-            local pass = false
-            if judge_type == 0 or judge_type == 1 then
-                pass = judge_util.filter_and_conditions(conditions)
-            elseif judge_type == 2 then
-                pass = judge_util.filter_or_conditions(conditions)
-            elseif judge_type == 3 then
-                pass = judge_util.filter_complicated_conditions(judge.expression, conditions)
+    local ngx_var_uri = ngx.var.uri
+
+    for i, sid in ipairs(ordered_selectors) do
+        ngx.log(ngx.INFO, "==[KeyAuth][PASS THROUGH SELECTOR:", sid, "]")
+        local selector = selectors[sid]
+        if selector and selector.enable == true then
+            local selector_pass 
+            if selector.type == 0 then -- 全流量选择器
+                selector_pass = true
+            else
+                selector_pass = judge_util.judge_selector(selector, "key_auth")-- selector judge
             end
 
-            -- handle阶段
-            if pass then
-                local handle = rule.handle
-                if handle.credentials then
-                    if handle.log == true then
-                        ngx.log(ngx.INFO, "[KeyAuth-Pass-Rule] ", rule.name, " uri:", ngx_var.uri)
-                    end
-
-                    local authorized = is_authorized(handle.credentials, headers, query, body)
-                    if authorized then
-                        return
-                    else
-                        return ngx.exit(tonumber(handle.code) or 401)
-                    end
-                else
-                    if handle.log == true then
-                        ngx.log(ngx.INFO, "[KeyAuth-Forbidden-Rule] ", rule.name, " uri:", ngx_var.uri)
-                    end
-                    return ngx.exit(tonumber(handle.code) or 401)
+            if selector_pass then
+                if selector.handle and selector.handle.log == true then
+                    ngx.log(ngx.INFO, "[KeyAuth][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
+
+                local stop = filter_rules(sid, "key_auth", ngx_var_uri, headers, body, query)
+                if stop then -- 不再执行此插件其他逻辑
+                    return
+                end
+            else
+                if selector.handle and selector.handle.log == true then
+                    ngx.log(ngx.INFO, "[KeyAuth][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                end
+            end
+
+            -- if continue or break the loop
+            if selector.handle and selector.handle.continue == true then
+                -- continue next selector
+            else
+                break
             end
         end
     end
+    
 end
 
 return KeyAuthHandler

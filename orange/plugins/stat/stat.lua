@@ -65,24 +65,35 @@ function _M.log()
 end
 
 function _M.stat()
+    local ngx_lua_version = ngx.config.ngx_lua_version
     local result = {
+        nginx_version = ngx.var.nginx_version,
+        ngx_lua_version = math.floor(ngx_lua_version / 1000000) .. '.' .. math.floor(ngx_lua_version / 1000) ..'.' .. math.floor(ngx_lua_version % 1000),
+        address = ngx.var.server_addr,
+        worker_count = ngx.worker.count(),
+        timestamp = ngx.time(),
+        load_timestamp = status:get(KEY_START_TIME),
+        ngx_prefix = ngx.config.prefix(),
+
+
+
         start_time = status:get(KEY_START_TIME),
         total_count = status:get(KEY_TOTAL_COUNT),
         total_success_count = status:get(KEY_TOTAL_SUCCESS_COUNT),
         traffic_read = status:get(KEY_TRAFFIC_READ),
         traffic_write = status:get(KEY_TRAFFIC_WRITE),
-        total_request_time = status:get(KEY_TOTAL_REQUEST_TIME),
+        total_request_time = math.floor(status:get(KEY_TOTAL_REQUEST_TIME)),
 
         request_2xx = status:get(KEY_REQUEST_2XX),
         request_3xx = status:get(KEY_REQUEST_3XX),
         request_4xx = status:get(KEY_REQUEST_4XX),
         request_5xx = status:get(KEY_REQUEST_5XX),
 
-
         con_active = ngx.var.connections_active,
+        con_rw = ngx.var.connections_reading + ngx.var.connections_writing,
         con_reading = ngx.var.connections_reading,
         con_writing = ngx.var.connections_writing,
-        con_waiting = ngx.var.connections_waiting
+        con_idle = ngx.var.connections_waiting
     }
 
     return result

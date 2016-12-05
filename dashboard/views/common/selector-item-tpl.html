@@ -1,0 +1,17 @@
+
+
+<script id="selector-item-tpl" type="text/template">
+    {@each selectors as s, index}
+    <li data-id="${s.id}" data-name="${s.name}" {@if s.enable==true } class="selector-item info-element"{@/if}
+        {@if s.enable!=true } class="selector-item warning-element"{@/if}>
+
+        ${s.name}
+        <div class="selector-op">
+            <a href="javascript:void(0)" data-name="${s.name}" data-id="${s.id}" class="edit-selector-btn pull-right btn btn-xs btn-white">编辑</a>
+            <a href="javascript:void(0)" data-name="${s.name}" data-id="${s.id}" class="delete-selector-btn pull-right btn btn-xs btn-white">删除</a>
+
+            <i class="fa fa-clock-o"></i><span class="small"> ${s.time}</span>
+        </div>
+    </li>
+    {@/each}
+</script>

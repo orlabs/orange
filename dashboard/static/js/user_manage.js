@@ -45,7 +45,7 @@
                             }else{
                                 enable = 0;
                             }
-                       
+
                             $.ajax({
                                 url: '/admin/user/new',
                                 type: 'post',
@@ -83,6 +83,11 @@
             $(document).on("click", ".delete-user-btn", function(){
                 var user_id = $(this).attr("data-id");
                 var name = $(this).attr("data-name");
+                if(name=="admin"){
+                    L.Common.showErrorTip("提示", "不得删除admin用户!");
+                    return false;
+                }
+
                 var d = dialog({
                     title: '提示',
                     width: 480,
@@ -132,7 +137,6 @@
                 var username = $(this).attr("data-name");
                 var enable = $(this).attr("data-enable");
 
-
                 var html = juicer(tpl, {
                     u: {
                         username:username,
@@ -154,7 +158,7 @@
                             var new_pwd = $("input[name=password]").val();
 
                             if(!new_pwd || new_pwd==""){
-                               new_pwd=""
+                               new_pwd = "";
                             }else{
                                 if(new_pwd.length<6 || new_pwd.length>50){
                                     L.Common.showErrorTip("提示", "新密码长度须为6~50位!");
@@ -203,8 +207,8 @@
                 d.show();
             });
         },
-       
-  
+
+
         loadUsers: function () {
             $.ajax({
                 url: '/admin/users',

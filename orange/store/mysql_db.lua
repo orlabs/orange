@@ -1,13 +1,12 @@
-local sgsub = string.gsub
 local tinsert = table.insert
 local type = type
 local ipairs = ipairs
-local pairs = pairs
 local setmetatable = setmetatable
 local ngx_quote_sql_str = ngx.quote_sql_str
 local mysql = require("resty.mysql")
-local cjson = require("cjson")
 local utils = require("orange.utils.utils")
+
+
 local DB = {}
 
 function DB:new(conf)
@@ -47,8 +46,6 @@ function DB:exec(sql)
 
     return res, err, errno, sqlstate
 end
-
-
 
 function DB:query(sql, params)
     sql = self:parse_sql(sql, params)
@@ -93,7 +90,6 @@ local function split(str, delimiter)
     return result
 end
 
-
 local function compose(t, params)
     if t==nil or params==nil or type(t)~="table" or type(params)~="table" or #t~=#params+1 or #t==0 then
         return nil
@@ -105,7 +101,6 @@ local function compose(t, params)
         return result
     end
 end
-
 
 function DB:parse_sql(sql, params)
     if not params or not utils.table_is_array(params) or #params == 0 then

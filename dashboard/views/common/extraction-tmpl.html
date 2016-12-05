@@ -13,26 +13,26 @@
                 <option value="Method">Method</option>
             </select>
         </div>
-        <div class="col-sm-2 extraction-name-hodler">
+        <div class="col-sm-2 extraction-name-hodler" style="padding:0;">
             <input type="text" class="form-control" name="rule-extractor-extraction-name" placeholder="name">
         </div>
         <div class="col-sm-5 extraction-default-hodler">
-            <div class="col-sm-6">
+            <div class="col-sm-6" style="padding:0;">
                 <select class="form-control" name="rule-extractor-extraction-has-default">
-                    <option value="0" selected="">No Default</option>
-                    <option value="1">Has Default</option>
+                    <option value="0" selected="">无默认值</option>
+                    <option value="1">有默认值</option>
                 </select>
             </div>
-            <div class="col-sm-6">
-                <input type="text" class="form-control" name="rule-extractor-extraction-default" placeholder="default value" style="display:none;">
+            <div class="col-sm-6" style="display:none;" name="rule-extractor-extraction-default">
+                <input type="text" class="form-control" placeholder="default value">
             </div>
         </div>
-        <div class="col-sm-1" style="margin-top:10px">
+        <div class="col-sm-1" style="margin-top:5px;float:right;margin-right: 50px;">
             <span class="input-group-btn">
-                <a class="btn btn-danger" style="padding:0 5px;">
+                <a class="btn btn-remove" style="padding:0 5px;">
                     <i class="fa fa-remove"></i>
                 </a>
-                <a class="btn btn-success" style="padding:0 5px;">
+                <a class="btn btn-add" style="padding:0 5px;">
                     <i class="fa fa-plus"></i>
                 </a>
             </span>

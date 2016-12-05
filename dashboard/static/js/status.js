@@ -9,19 +9,16 @@
         	responseChart: null,
         	trafficChart: null,
         	stateChart: [],
-        	interval: 3000
+        	interval: 3000,
+
+            lastTotalRequstCount: 0,
+            is_first_request: true,
+            try_times: 5
         },
  
         init: function () {
-        	_this.initRequestStatus();
-        	_this.initQPSStatus();
-        	_this.initReponseStatus();
-        	_this.initTrafficStatus();
-        	_this.initStateStatus("2xx");
-        	_this.initStateStatus("3xx");
-        	_this.initStateStatus("4xx");
-        	_this.initStateStatus("5xx");
-
+        	
+            _this.getData();
         	_this.startTimer();
 
         	$("#time-set a").click(function(){
@@ -30,13 +27,128 @@
 	            });
 
 	            $(this).addClass("active");
-        	})
+        	});
+
+            $("#view-set a").click(function(){
+                $("#view-set a").each(function(){
+                    $(this).removeClass("active")
+                });
+
+                $(this).addClass("active");
+                if($(this).hasClass("data-view")){
+                    $("#data-section").css("display", "block");
+                    $("#chart-section").css("display", "none");
+                }else if($(this).hasClass("chart-view")){
+                    $("#data-section").css("display", "none");
+                    $("#chart-section").css("display", "block");
+
+                    _this.initRequestStatus();
+                    _this.initQPSStatus();
+                    _this.initReponseStatus();
+                    _this.initTrafficStatus();
+                    _this.initStateStatus("2xx");
+                    _this.initStateStatus("3xx");
+                    _this.initStateStatus("4xx");
+                    _this.initStateStatus("5xx");
+                }
+            });
 
         	$(document).on("click", ".timer_interval", function(){
-        		var interval  = parseInt($(this).attr("data-interval"));
+        		var interval  = parseInt($(this).attr("data-interval"), 10);
         		_this.data.interval = interval;
         		_this.startTimer(interval);
         	});
+        },
+
+        renderTimestamp: function(loadTimestamp){
+            var timemiles = (new Date()).getTime() / 1000 - loadTimestamp;
+            var days = Math.floor(timemiles / (3600 * 24));
+            timemiles -= days * 3600 * 24;
+            var hours = Math.floor(timemiles / 3600)
+            timemiles -= hours * 3600;
+            var minutes = Math.floor(timemiles / 60);
+            return days + "天 " + hours + "小时 " + minutes + "分";
+        },
+
+        renderDataView: function(data){
+            var tpl = $("#status-tpl").html();
+            var qps = (data.total_count - _this.data.lastTotalRequstCount)/(_this.data.interval/1000)
+            _this.data.lastTotalRequstCount = data.total_count;
+            data.qps = qps;
+            data.load_timestamp = _this.renderTimestamp(data.load_timestamp);
+            var html = juicer(tpl, {
+                status: data
+            });
+            $("#data-section").html(html);
+        },
+
+        renderChartView: function(data){
+            var axisData = APP.Common.formatTime();
+            //request 统计
+            var requestOption = _this.data.requestChart.getOption();
+            var data0 = requestOption.series[0].data;
+            var data1 = requestOption.series[1].data;
+            data0.shift();
+            data0.push(data.total_count);
+            data1.shift();
+            data1.push(data.total_count - data.total_success_count);
+            requestOption.xAxis[0].data.shift();
+            requestOption.xAxis[0].data.push(axisData);
+            _this.data.requestChart.setOption(requestOption);
+
+            //qps统计
+            var qpsOption = _this.data.qpsChart.getOption();
+            if(_this.data.is_first_request){
+                _this.data.is_first_request=false;
+            }else{
+                data0 = qpsOption.series[0].data;
+                data0.shift();
+                data0.push((data.total_count - _this.data.lastTotalRequstCount)/(_this.data.interval/1000));
+                qpsOption.xAxis[0].data.shift();
+                qpsOption.xAxis[0].data.push(axisData);
+                _this.data.qpsChart.setOption(qpsOption);
+            }
+            _this.data.lastTotalRequstCount = data.total_count;
+
+            //请求时间统计
+            var responseOption = _this.data.responseChart.getOption();
+            data0 = responseOption.series[0].data;
+            data0.shift();
+            data0.push(data.total_request_time);
+            responseOption.xAxis[0].data.shift();
+            responseOption.xAxis[0].data.push(axisData);
+            _this.data.responseChart.setOption(responseOption);
+
+            //流量统计
+            var trafficOption = _this.data.trafficChart.getOption();
+            var data0 = trafficOption.series[0].data;
+            var data1 = trafficOption.series[1].data;
+            data0.shift();
+            data0.push(Math.round(data.traffic_read/1024/1024));
+            data1.shift();
+            data1.push(Math.round(data.traffic_write/1024/1024));
+            trafficOption.xAxis[0].data.shift();
+            trafficOption.xAxis[0].data.push(axisData);
+            _this.data.trafficChart.setOption(trafficOption);
+
+            //HTTP status统计
+            var stateOption = _this.data.stateChart.getOption();
+            data0 = stateOption.series[0].data;
+            data0.shift();
+            data0.push( data["request_2xx"]);
+
+            data1 = stateOption.series[1].data;
+            data1.shift();
+            data1.push( data["request_3xx"]);
+
+            var data2 = stateOption.series[2].data;
+            data2.shift();
+            data2.push( data["request_4xx"]);
+
+            var data3 = stateOption.series[3].data;
+            data3.shift();
+            data3.push( data["request_5xx"]);
+            _this.data.stateChart.setOption(stateOption);
         },
 
        	startTimer:function(interval){
@@ -45,112 +157,54 @@
 	        	clearInterval(_this.data.timer);
 	        }
 
-	        var try_times = 5;
-	        var lastTotalRequstCount = 0;
-	        var is_first_request = true;
+	        _this.data.try_times = 5;
+	        _this.data.lastTotalRequstCount = 0;
+	        _this.data.is_first_request = true;
 	        _this.data.timer =  setInterval(function (){
-	        	
-	        	$.ajax({
-	                url : '/stat/status',
-	                type : 'get',
-	                cache:false,
-	                data : {},
-	                dataType : 'json',
-	                success : function(result) {
-	                    if(result.success){
-	                    	var axisData = APP.Common.formatTime();
-	            			var data = result.data || {};
-
-                            //request 统计
-				            var requestOption = _this.data.requestChart.getOption();
-				            var data0 = requestOption.series[0].data;
-    						var data1 = requestOption.series[1].data;
-    						data0.shift();
-						    data0.push(data.total_count);
-						    data1.shift();
-						    data1.push(data.total_count - data.total_success_count);
-						    requestOption.xAxis[0].data.shift();
-    						requestOption.xAxis[0].data.push(axisData);
-                            _this.data.requestChart.setOption(requestOption);
-
-                            //qps统计
-                            var qpsOption = _this.data.qpsChart.getOption();
-                            if(is_first_request){
-                                is_first_request=false;
-                            }else{
-                                data0 = qpsOption.series[0].data;
-                                data0.shift();
-                                data0.push((data.total_count - lastTotalRequstCount)/(_this.data.interval/1000));
-                                qpsOption.xAxis[0].data.shift();
-                                qpsOption.xAxis[0].data.push(axisData);
-                                _this.data.qpsChart.setOption(qpsOption);
-                            }
-                            lastTotalRequstCount = data.total_count;
-
-                            //请求时间统计
-                            var responseOption = _this.data.responseChart.getOption();
-                            data0 = responseOption.series[0].data;
-                            data0.shift();
-                            data0.push(data.total_request_time);
-                            responseOption.xAxis[0].data.shift();
-                            responseOption.xAxis[0].data.push(axisData);
-                            _this.data.responseChart.setOption(responseOption);
-
-                            //流量统计
-                            var trafficOption = _this.data.trafficChart.getOption();
-                            var data0 = trafficOption.series[0].data;
-                            var data1 = trafficOption.series[1].data;
-                            data0.shift();
-                            data0.push(Math.round(data.traffic_read/1024/1024));
-                            data1.shift();
-                            data1.push(Math.round(data.traffic_write/1024/1024));
-                            trafficOption.xAxis[0].data.shift();
-                            trafficOption.xAxis[0].data.push(axisData);
-                            _this.data.trafficChart.setOption(trafficOption);
-
-                            //HTTP status统计
-                            var stateOption = _this.data.stateChart.getOption();
-                            data0 = stateOption.series[0].data;
-                            data0.shift();
-                            data0.push( data["request_2xx"]);
-
-                            data1 = stateOption.series[1].data;
-                            data1.shift();
-                            data1.push( data["request_3xx"]);
-
-                            var data2 = stateOption.series[2].data;
-                            data2.shift();
-                            data2.push( data["request_4xx"]);
-
-                            var data3 = stateOption.series[3].data;
-                            data3.shift();
-                            data3.push( data["request_5xx"]);
-                            _this.data.stateChart.setOption(stateOption);
-
-
-	                    }else{
-	                        APP.Common.showTipDialog("错误提示", result.msg);
-	                        try_times--;
-	                		if(try_times<0){
-	                			clearInterval(_this.data.timer);
-	                			APP.Common.showTipDialog("错误提示", "查询请求发生错误次数太多，停止查询");
-		                	}
-		                }
-	                },
-	                error : function() {
-	                	try_times--;
-	                	if(try_times<0){
-	                		clearInterval(_this.data.timer);
-	                		APP.Common.showTipDialog("错误提示", "查询请求发生异常次数太多，停止查询");
-
-	                	}else{
-							APP.Common.showTipDialog("提示", "查询请求发生异常");
-	                	}
-	                    
-	                }
-	            });
+            	_this.getData();
 	        }, interval);
+        },
 
+        getData: function(){
+            $.ajax({
+                url : '/stat/status',
+                type : 'get',
+                cache: false,
+                data : {},
+                dataType : 'json',
+                success : function(result) {
+                    if(result.success){
+                        $("#tip-section span").text("上次更新时间戳: " + L.Common.formatTime());
+                        $("#tip-section").css("display", "block");
+
+                        var data = result.data || {};
+
+                        if($("#view-set .data-view").hasClass("active")){
+                            _this.renderDataView(data);
+                        }else if($("#view-set .chart-view").hasClass("active")){
+                            _this.renderChartView(data);
+                        }
+                    }else{
+                        APP.Common.showErrorTip("错误提示", result.msg);
+                        _this.data.try_times--;
+                        if(_this.data.try_times<0){
+                            clearInterval(_this.data.timer);
+                            APP.Common.showErrorTip("错误提示", "查询请求发生错误次数太多，停止查询");
+                        }
+                    }
+                },
+                error : function() {
+                    _this.data.try_times--;
+                    if(_this.data.try_times<0){
+                        clearInterval(_this.data.timer);
+                        APP.Common.showErrorTip("错误提示", "查询请求发生异常次数太多，停止查询");
+
+                    }else{
+                        APP.Common.showErrorTip("提示", "查询请求发生异常");
+                    }
+                    
+                }
+            });
         },
 
         initRequestStatus: function(){
@@ -158,7 +212,7 @@
 	            title : {
 	                text: '请求统计',
 	                subtext: '',
-                    left:'10px'
+                    left:'10px',
 	            },
                 grid: {
                     left: '20px',

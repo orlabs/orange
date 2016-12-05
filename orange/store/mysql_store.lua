@@ -1,10 +1,8 @@
 local type = type
-local ipairs = ipairs
-local tonumber = tonumber
 local mysql_db = require("orange.store.mysql_db")
 local Store = require("orange.store.base")
-local MySQLStore = Store:extend()
 
+local MySQLStore = Store:extend()
 
 function MySQLStore:new(options)
     self._name = options.name or "mysql-store"
@@ -15,17 +13,6 @@ function MySQLStore:new(options)
     self.data = {}
     self.db = mysql_db:new(options)
 end
-
-
-function MySQLStore:find_all()
-    return nil
-end
-
-function MySQLStore:find_page()
-    return nil
-end
-
-
 
 function MySQLStore:query(opts)
     if not opts or opts == "" then return nil end
@@ -44,7 +31,7 @@ function MySQLStore:query(opts)
         return nil
     end
 
-    if res and not err and type(res) == "table" and #res <= 0 then
+    if res and type(res) == "table" and #res <= 0 then
         ngx.log(ngx.WARN, "MySQLStore:query empty, sql:", sql)
     end
 

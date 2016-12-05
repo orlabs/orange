@@ -1,210 +1,200 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - URL Monitor</title>
-    {(meta.html)}
+    {(common/meta.html)}
 </head>
-<body>
 
-{(header.html)}<!-- header end -->
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
 
-<div id="main" class="main-container container">
-    <div class="row" style="margin-bottom:20px">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <h4>自定义监控</h4>
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
+
+                <!-- content start -->
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">自定义监控</h4>
+                        </div>
+                        <div class="pull-right">
+                             {(common/plugin-op.html)}
+                        </div>
+                    </div>
+                </div>
+
+                {(common/data-view-part.html)}
+                {(common/right-selector-rule-part.html)}
+                <!-- content end -->
             </div>
-
-            <div class="pull-right">
-                <input id="rule-search" type="text" class="form-control" placeholder="  seach rules" style="width:150px;display: none;margin-right:10px;">
-                <a id="view-btn" style="display:none;" data-type="table" class="btn btn-warning" rel="nofollow" href="javascript:void(0);">
-                    <i class="fa fa-database"></i>
-                    <span>数据视图</span>
-                </a>
-                <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
-                    <i class="fa fa-pause"></i>
-                    <span>停用所有自定义监控</span>
-                </a>
-
-                <a class="btn btn-primary" href="javascript:void(0);" id="add-btn">
-                    <i class="fa fa-filter"></i>
-                    <span>添加新规则</span>
-                </a>
-
-                 <a class="btn btn-danger" href="javascript:void(0);" id="sync-btn">
-                    <i class="fa fa-refresh"></i>
-                    <span>同步配置</span>
-                </a>
-            </div>
-
-        </div>
+        </div><!--右侧部分结束-->
     </div>
-    <div class="row" id="table-view">
-        <div class="col-md-12">
-            <table  id="operable-table" class="table table-bordered  table-hover">
-                <thead>
-                <tr>
-                    <th width="60px">序号</th>
-                    <th width="40px">启用</th>
-                    <th width="160px">名称</th>
-                    <th>匹配规则</th>
-                    <th>监控项</th>
-                    <th width="120px">创建/变更时间</th>
-                    <th width="150px">操作</th>
-                </tr>
-                </thead>
 
-                <tbody id="rules" class="list">
+    <script id="rule-item-tpl" type="text/template">
+    {@each rules as r, index}
+        <li data-id="${r.id}" {@if r.enable==true } class="info-element"{@/if}
+            {@if r.enable!=true } class="warning-element"{@/if}>
+            <table class="table table-hover single-rule-table">
+                <tbody>
+                    <tr>
+                        <td class="center rule-enable-td">
+                            {@if r.enable==true }
+                                <span class="label label-primary">已启用</span>
+                            {@/if}
+                            {@if r.enable!=true }
+                                <span class="label label-warning">已禁用</span>
+                            {@/if}
+                        </td>
+                        <td class="rule-name-td">
+                            <b class="namep">${r.name}</b>
+                        </td>
+                        <td class="left rule-condition-td">
+                            <p>
+                                <b>类型</b>:
+                                {@if r.judge.type==0 }
+                                    单一条件匹配
+                                {@/if}
+                                {@if r.judge.type==1 }
+                                    and匹配
+                                {@/if}
+                                {@if r.judge.type==2 }
+                                    or匹配
+                                {@/if}
+                                {@if r.judge.type==3 }
+                                    复杂匹配
+                                {@/if}
 
+                                &nbsp;
+                                {@if r.judge.type==3 }
+                                    <b>表达式</b>: ${r.judge.expression}
+                                {@/if}
+                            </p>
+                            {@each r.judge.conditions as c, index}
+                                <p class="conditionp">${c.type}: ${c.name} ${c.operator} ${c.value}</p>
+                            {@/each}
+                        </td>
+                        <td class="left rule-urltmpl-td">
+                            继续匹配: ${r.handle.continue}<br/>
+                            记录日志: ${r.handle.log}
+                        </td>
+                        <td class="left" title="变更时间">
+                            <small>${r.time}</small>
+                        </td>
+                        <td class="center rule-op-td">
+                            <a class="btn btn-white btn-sm edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i> </a>
+                            <a class="btn btn-white btn-sm statistic-btn" data-id="${r.id}" data-name="${r.name}"><i title="查看统计" class="fa fa-bar-chart"></i> </a>
+                            <a class="btn btn-white btn-sm delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-
-        </div>
-    </div>
-
-    {(data-view-part.html)}
-</div>
-
-
-<script id="rule-item-tpl" type="text/template">
-    {@each rules as r, index}
-    <tr {@if highlight_id == r.id } class="highlight" {@/if} >
-        <td class="center">${parseInt(index)+1}</td>
-        <td class="center">
-            {@if r.enable==true }
-            <input type="checkbox" disabled checked="checked"/>
-            {@/if}
-
-            {@if r.enable!=true }
-            <input type="checkbox" disabled/>
-            {@/if}
-        </td>
-        <td class="center"><p class="namep">${r.name}</p></td>
-        <td class="left">
-            <p>
-                <b>Type</b>: ${r.judge.type}
-                &nbsp;
-                {@if r.judge.type==3 }
-                    <b>Expression</b>: ${r.judge.expression}
-                {@/if}
-            </p>
-            {@each r.judge.conditions as c, index}
-                <p class="conditionp">${c.type}: ${c.name} ${c.operator} ${c.value}</p>
-            {@/each}
-        </td>
-        <td class="left handle">
-            continue: ${r.handle.continue}<br/>
-            log: ${r.handle.log}
-        </td>
-        <td class="center">${r.time}</td>
-        <td class="center do">
-            <div class="btn-group" role="group" aria-label="...">
-              <button type="button" class="btn btn-default edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i></button>
-              <button type="button" class="btn btn-default delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></button>
-              <button type="button" class="btn btn-default statistic-btn" data-id="${r.id}" data-name="${r.name}"><i title="查看统计" class="fa fa-bar-chart"></i></button>
-            </div>
-        </td>
-    </tr>
+        </li>
     {@/each}
-</script>
+    </script>
 
-<script id="add-tpl" type="application/template">
-    <div id="rule-edit-area">
-        <form id="add-rule-form" class="form-horizontal">
-            <div class="form-group">
-                <label for="input-name" class="col-sm-1 control-label">名称</label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-name" placeholder="名称">
-                </div>
-            </div><!-- name -->
+    <script id="add-tpl" type="application/template">
+        <div id="rule-edit-area">
+            <form id="add-rule-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-1 control-label">名称</label>
+                    <div class="col-sm-11">
+                        <input type="text" class="form-control" id="rule-name" placeholder="名称">
+                    </div>
+                </div><!-- name -->
 
-            <!-- add - 条件编辑器模板 start -->
-            {(condition-add.html)}
-            <!-- add - 条件编辑器模板 end -->
+                <!-- add - 条件编辑器模板 start -->
+                {(common/condition-add.html)}
+                <!-- add - 条件编辑器模板 end -->
 
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">处理</label>
-                <div class="col-sm-3">
-                    <select class="form-control" id="rule-handle-continue">
-                        <option value="true">Continue</option>
-                        <option value="false">Stop</option>
-                    </select>
-                </div>
-                <div class="col-sm-3">
-                    <select class="form-control" id="rule-handle-log">
-                        <option value="true">Log</option>
-                        <option value="false" selected>Not Log</option>
-                    </select>
-                </div>
-            </div><!-- handle log-->
+                <div class="form-group handle-holder">
+                    <label class="col-sm-1 control-label">处理</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-continue">
+                            <option value="true">继续匹配</option>
+                            <option value="false">停止匹配</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-log">
+                            <option value="true">记录日志</option>
+                            <option value="false" selected>不记录日志</option>
+                        </select>
+                    </div>
+                </div><!-- handle log-->
 
-            <div class="form-group">
-                <div class="col-sm-offset-1 col-sm-11">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" id="rule-enable"> 启用
-                        </label>
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="rule-enable"> 启用
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </form>
-    </div>
-</script>
+            </form>
+        </div>
+    </script>
 
-<script id="edit-tpl" type="application/template">
-    <div id="rule-edit-area">
-        <form id="edit-rule-form" class="form-horizontal">
-            <div class="form-group">
-                <label for="input-name" class="col-sm-1 control-label">名称</label>
-                <div class="col-sm-11">
-                    <input type="text" class="form-control" id="rule-name" value="${r.name}" placeholder="名称">
-                </div>
-            </div><!-- name -->
+    <script id="edit-tpl" type="application/template">
+        <div id="rule-edit-area">
+            <form id="edit-rule-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-1 control-label">名称</label>
+                    <div class="col-sm-11">
+                        <input type="text" class="form-control" id="rule-name" value="${r.name}" placeholder="名称"/>
+                    </div>
+                </div><!-- name -->
 
-            <!-- edit - 条件编辑器模板 start -->
-            {(condition-edit.html)}
-            <!-- edit - 条件编辑器模板 end -->
+                <!-- edit - 条件编辑器模板 start -->
+                {(common/condition-edit.html)}
+                <!-- edit - 条件编辑器模板 end -->
 
-            <div class="form-group handle-holder">
-                <label class="col-sm-1 control-label">处理</label>
-                <div class="col-sm-3">
-                    <select class="form-control" id="rule-handle-continue">
-                        <option value="true" {@if r.handle.continue==true} selected {@/if}>Continue</option>
-                        <option value="false" {@if r.handle.continue==false} selected {@/if}>Stop</option>
-                    </select>
-                </div>
-                <div class="col-sm-3">
-                    <select class="form-control" id="rule-handle-log">
-                        <option value="true" {@if r.handle.log==true} selected {@/if}>Log</option>
-                        <option value="false" {@if r.handle.log==false} selected {@/if}>Not Log</option>
-                    </select>
-                </div>
-            </div><!-- handle log-->
+                <div class="form-group handle-holder">
+                    <label class="col-sm-1 control-label">处理</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-continue">
+                            <option value="true" {@if r.handle.continue==true} selected {@/if}>继续匹配</option>
+                            <option value="false" {@if r.handle.continue==false} selected {@/if}>停止匹配</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-log">
+                            <option value="true" {@if r.handle.log==true} selected {@/if}>记录日志</option>
+                            <option value="false" {@if r.handle.log==false} selected {@/if}>不记录日志</option>
+                        </select>
+                    </div>
+                </div><!-- handle log-->
 
 
-            <div class="form-group">
-                <div class="col-sm-offset-1 col-sm-11">
-                    <div class="checkbox">
-                        <label>
-                            <input {@if r.enable==true} checked {@/if} type="checkbox" id="rule-enable"> 启用
-                        </label>
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label>
+                                <input {@if r.enable==true} checked {@/if} type="checkbox" id="rule-enable"> 启用
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </form>
-    </div>
-</script>
+            </form>
+        </div>
+    </script>
 
-<script src="/orange/static/js/monitor.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        APP.Common.resetNav("nav-monitor");
-        APP.Monitor.init();
-    });
-</script>
 
-{(footer.html)}
+    {(common/selector-item-tpl.html)}
+    {(common/selector-add.html)}
+    {(common/selector-edit.html)}
+
+    {(common/common_js.html)}<!-- 通用js -->
+    <script src="/static/js/monitor.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            APP.Common.resetNav("nav-monitor");
+            APP.Monitor.init();
+            $(".sortable-list").sortable().disableSelection();
+        });
+    </script>
 </body>
 </html>

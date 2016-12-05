@@ -10,29 +10,26 @@
 
         //增加、删除条件按钮事件
         initConditionAddOrRemove: function () {
-
             //添加规则框里的事件
             //点击“加号“添加新的输入行
-            $(document).on('click', '#judge-area .pair .btn-success', _this.addNewCondition);
+            $(document).on('click', '#judge-area .pair .btn-add', _this.addNewCondition);
 
             //删除输入行
-            $(document).on('click', '#judge-area .pair .btn-danger', function (event) {
+            $(document).on('click', '#judge-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddConditionBtn();
             });
         },
-
-        
 
         //变量提取器增加、删除按钮事件
         initExtractionAddOrRemove: function () {
 
             //添加规则框里的事件
             //点击“加号“添加新的输入行
-            $(document).on('click', '#extractor-area .pair .btn-success', _this.addNewExtraction);
+            $(document).on('click', '#extractor-area .pair .btn-add', _this.addNewExtraction);
 
             //删除输入行
-            $(document).on('click', '#extractor-area .pair .btn-danger', function (event) {
+            $(document).on('click', '#extractor-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
                 _this.resetAddExtractionBtn();
             });
@@ -62,6 +59,17 @@
             });
         },
 
+        //selector类型选择事件
+        initSelectorTypeChangeEvent: function () {
+            $(document).on("change", '#selector-type', function () {
+                var selector_type = $(this).val();
+                if (selector_type == "1") {
+                    $("#judge-area").show();
+                } else {
+                    $("#judge-area").hide();
+                }
+            });
+        },
 
         //judge类型选择事件
         initJudgeTypeChangeEvent: function () {
@@ -104,11 +112,11 @@
 
                 if (has_default=="1") {
                     $(this).parents(".extraction-default-hodler").each(function () {
-                        $(this).find("input[name=rule-extractor-extraction-default]").show();
+                        $(this).find("div[name=rule-extractor-extraction-default]").show();
                     });
                 } else {
                     $(this).parents(".extraction-default-hodler").each(function () {
-                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                        $(this).find("div[name=rule-extractor-extraction-default]").hide();
                     });
                 }
             });
@@ -118,7 +126,7 @@
             $(document).on("change", 'select[name=rule-extractor-extraction-type]', function () {
                 var extraction_type = $(this).val();
 
-                if (extraction_type != "Header" && extraction_type != "Query" 
+                if (extraction_type != "Header" && extraction_type != "Query"
                     && extraction_type != "PostParams" && extraction_type != "URI") {
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find(".extraction-name-hodler").hide();
@@ -133,33 +141,88 @@
                 if(extraction_type=="URI"){
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find("select[name=rule-extractor-extraction-has-default]").hide();
-                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                        $(this).find("div[name=rule-extractor-extraction-default]").hide();
                     });
                 }else{
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find("select[name=rule-extractor-extraction-has-default]").val("0").show();
-                        $(this).find("input[name=rule-extractor-extraction-default]").hide();
+                        $(this).find("div[name=rule-extractor-extraction-default]").hide();
                     });
                 }
             });
         },
 
-        buildJudge: function () {
+        buildSelector: function(){
             var result = {
                 success: false,
                 data: {
                     name: null,
+                    type: 0,
+                    judge: {},
+                    handle: {}
+                }
+            };
+
+            // build name
+            var name = $("#selector-name").val();
+            if (!name) {
+                result.success = false;
+                result.data = "名称不能为空";
+                return result;
+            }
+            result.data.name = name;
+
+            // build type
+            var type = $("#selector-type").val();
+            if (!type) {
+                result.success = false;
+                result.data = "类型不能为空";
+                return result;
+            }
+            result.data.type = parseInt(type);
+
+            //build judge
+            if(type==1){
+                var buildJudgeResult = L.Common.buildJudge(true);
+                if (buildJudgeResult.success == true) {
+                    result.data.judge = buildJudgeResult.data.judge;
+                } else {
+                    result.success = false;
+                    result.data = buildJudgeResult.data;
+                    return result;
+                }
+            }
+
+            //build handle
+            result.data.handle.continue = ($("#selector-continue").val() === "true");
+            result.data.handle.log = ($("#selector-log").val() === "true");
+
+            //enable or not
+            var enable = $('#selector-enable').is(':checked');
+            result.data.enable = enable;
+
+            result.success = true;
+            return result;
+        },
+
+        buildJudge: function (ignore_name) {
+            var result = {
+                success: false,
+                data: {
                     judge: {}
                 }
             };
-            var name = $("#rule-name").val();
-            if (!name) {
-                result.success = false;
-                result.data = "规则名称不能为空";
-                return result;
-            }
 
-            result.data.name = name;
+            if(ignore_name != true){
+                var name = $("#rule-name").val();
+                if (!name) {
+                    result.success = false;
+                    result.data = "规则名称不能为空";
+                    return result;
+                }
+
+                result.data.name = name;
+            }
 
 
             var judge_type = parseInt($("#rule-judge-type").val());
@@ -265,7 +328,6 @@
             return result;
         },
 
-
         buildExtractor: function () {
             var result = {
                 success: false,
@@ -310,7 +372,7 @@
                 var allow_default = (type == "Header" || type == "Query" || type == "PostParams"|| type == "Host"|| type == "IP"|| type == "Method");
                 var has_default = self.find("select[name=rule-extractor-extraction-has-default]").val();
                 if (allow_default && has_default=="1") {//只有允许提取&&有默认值的才取默认值
-                    var default_value = self.find("input[name=rule-extractor-extraction-default]").val();
+                    var default_value = self.find("div[name=rule-extractor-extraction-default]>input").val();
                     if (!default_value) {
                         default_value = "";
                     }
@@ -351,8 +413,7 @@
                     callback: function () {
                         d.close().remove();
                     }
-                }
-                ]
+                }]
             });
             d.show();
 
@@ -385,16 +446,15 @@
             $("#judge-area .pair").each(function () {
                 c++;
                 if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").show();
+                    $(this).find(".btn-remove").show();
                 } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").hide();
+                    $(this).find(".btn-remove").show();
                 }
             })
         },
 
-        
 
         addNewExtraction: function (event) {
             var self = $(this);
@@ -429,46 +489,18 @@
             $("#extractor-area .pair").each(function () {
                 c++;
                 if (c == l) {
-                    $(this).find(".btn-success").show();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").show();
+                    $(this).find(".btn-remove").show();
                 } else {
-                    $(this).find(".btn-success").hide();
-                    $(this).find(".btn-danger").show();
+                    $(this).find(".btn-add").hide();
+                    $(this).find(".btn-remove").show();
                 }
             })
         },
 
         //数据/表格视图转换和下载事件
-        initViewAndDownloadEvent: function (type) {
-            var data = {};
-            var rules_key = "";
-            if (type == "redirect") {
-                data = L.Redirect.data;
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                data = L.Rewrite.data;
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                data = L.RateLimiting.data;
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                data = L.BasicAuth.data;
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                data = L.KeyAuth.data;
-                rules_key = "rules";
-            } else if (type == "waf") {
-                data = L.WAF.data;
-                rules_key = "rules";
-            } else if (type == "divide") {
-                data = L.Divide.data;
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                data = L.Monitor.data;
-                rules_key = "rules";
-            } else {
-                return;
-            }
+        initViewAndDownloadEvent: function (type, context) {
+            var data = context.data;
 
             $("#view-btn").click(function () {//试图转换
                 var self = $(this);
@@ -480,7 +512,7 @@
 
                     var showData = {};
                     showData.enable = data.enable;
-                    showData[rules_key] = data.rules;
+                    showData.selectors = data.selectors;
                     jsonformat.format(JSON.stringify(showData));
                     $("#jfContent_pre").text(JSON.stringify(showData, null, 4));
                     $('pre').each(function () {
@@ -501,36 +533,17 @@
             $(document).on("click", "#btnDownload", function () {//规则json下载
                 var downloadData = {};
                 downloadData.enable = data.enable;
-                downloadData[rules_key] = data.rules;
+                downloadData.selectors = data.selectors;
                 var blob = new Blob([JSON.stringify(downloadData, null, 4)], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "data.json");
             });
 
         },
 
-        initSwitchBtn: function (type) {
-            var op_type = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-            } else if (type == "waf") {
-                op_type = "waf";
-            } else if (type == "divide") {
-                op_type = "divide";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-            } else {
-                return;
-            }
+        initSwitchBtn: function (type, context) {
+            var op_type = type;
 
-            $("#switch-btn").click(function () {//是否开启redirect
+            $("#switch-btn").click(function () {//是否开启
                 var self = $(this);
                 var now_state = $(this).attr("data-on");
                 if (now_state == "yes") {//当前是开启状态，点击则“关闭”
@@ -556,11 +569,11 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重置按钮
-                                            _this.data.enable = false;
+                                            context.data.enable = false;
                                             self.attr("data-on", "no");
                                             self.removeClass("btn-danger").addClass("btn-info");
                                             self.find("i").removeClass("fa-pause").addClass("fa-play");
-                                            self.find("span").text("启用" + op_type);
+                                            self.find("span").text("启用该插件");
 
                                             return true;
                                         } else {
@@ -602,12 +615,12 @@
                                     dataType: 'json',
                                     success: function (result) {
                                         if (result.success) {
-                                            _this.data.enable = true;
+                                            context.data.enable = true;
                                             //重置按钮
                                             self.attr("data-on", "yes");
                                             self.removeClass("btn-info").addClass("btn-danger");
                                             self.find("i").removeClass("fa-play").addClass("fa-pause");
-                                            self.find("span").text("停用" + op_type);
+                                            self.find("span").text("停用该插件");
 
                                             return true;
                                         } else {
@@ -629,39 +642,17 @@
             });
         },
 
-
         initRuleAddDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            }  else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            }  else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
+            var rules_key = "rules";
+
 
             $("#add-btn").click(function () {
+                var selector_id = $("#add-btn").attr("data-id");
+                if(!selector_id){
+                    L.Common.showErrorTip("错误提示", "添加规则前请先选择【选择器】!");
+                    return;
+                }
                 var content = $("#add-tpl").html()
                 var d = dialog({
                     title: '添加规则',
@@ -685,9 +676,8 @@
                             var result = context.buildRule();
                             if (result.success == true) {
                                 $.ajax({
-                                    url: '/' + op_type + '/configs',
+                                    url: '/' + op_type + '/selectors/' + selector_id + "/rules",
                                     type: 'post',
-                                    cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
                                     },
@@ -695,7 +685,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.loadConfigs();
+                                            _this.loadRules(op_type, context, selector_id);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
@@ -722,35 +712,8 @@
         },
 
         initSyncDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            } else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
+            var rules_key = "rules";
 
             $("#sync-btn").click(function () {
                 $.ajax({
@@ -780,21 +743,20 @@
                                             dataType: 'json',
                                             success: function (r) {
                                                 if (r.success) {
-                                                    context.loadConfigs();
+                                                    _this.loadConfigs(op_type, context);
                                                     return true;
                                                 } else {
-                                                    L.Common.showErrorTip("提示", r.msg || "同步配置发生错误");
+                                                    _this.showErrorTip("提示", r.msg || "同步配置发生错误");
                                                     return false;
                                                 }
                                             },
                                             error: function () {
-                                                L.Common.showErrorTip("提示", "同步配置请求发生异常");
+                                                _this.showErrorTip("提示", "同步配置请求发生异常");
                                                 return false;
                                             }
                                         });
                                     }
-                                }
-                                ]
+                                }]
                             });
                             d.show();
 
@@ -812,46 +774,20 @@
                         return false;
                     }
                 });
-                
+
             });
         },
 
         initRuleEditDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            } else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
 
             $(document).on("click", ".edit-btn", function () {
+                var selector_id = $("#add-btn").attr("data-id");
+
                 var tpl = $("#edit-tpl").html();
                 var rule_id = $(this).attr("data-id");
                 var rule = {};
-                var rules = context.data.rules;
+                var rules = context.data.selector_rules[selector_id];
                 for (var i = 0; i < rules.length; i++) {
                     var r = rules[i];
                     if (r.id == rule_id) {
@@ -863,7 +799,6 @@
                     L.Common.showErrorTip("提示", "要编辑的规则不存在或者查找出错");
                     return;
                 }
-
 
                 var html = juicer(tpl, {
                     r: rule
@@ -893,9 +828,8 @@
 
                             if (result.success == true) {
                                 $.ajax({
-                                    url: '/' + op_type + '/configs',
+                                    url: '/' + op_type + '/selectors/' + selector_id + "/rules",
                                     type: 'put',
-                                    cache:false,
                                     data: {
                                         rule: JSON.stringify(result.data)
                                     },
@@ -903,8 +837,7 @@
                                     success: function (result) {
                                         if (result.success) {
                                             //重新渲染规则
-                                            context.loadConfigs();
-
+                                            _this.loadRules(op_type, context, selector_id);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "编辑规则发生错误");
@@ -927,46 +860,20 @@
                 });
 
                 L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                L.Common.resetAddExtractionBtn();
+                context.resetAddCredentialBtn && context.resetAddCredentialBtn();
                 d.show();
             });
         },
 
         initRuleDeleteDialog: function (type, context) {
-            var op_type = "";
-            var rules_key = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-                rules_key = "rules";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-                rules_key = "rules";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-                rules_key = "rules";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-                rules_key = "rules";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-                rules_key = "rules";
-            } else if (type == "waf") {
-                op_type = "waf";
-                rules_key = "rules";
-            } else if (type == "divide") {
-                op_type = "divide";
-                rules_key = "rules";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-                rules_key = "rules";
-            } else {
-                return;
-            }
+            var op_type = type;
 
             $(document).on("click", ".delete-btn", function () {
-
                 var name = $(this).attr("data-name");
                 var rule_id = $(this).attr("data-id");
-                console.log("删除:" + name);
+                var selector_id = $("#add-btn").attr("data-id");
+
                 var d = dialog({
                     title: '提示',
                     width: 480,
@@ -979,9 +886,8 @@
                         autofocus: false,
                         callback: function () {
                             $.ajax({
-                                url: '/' + op_type + '/configs',
+                                url: '/' + op_type + '/selectors/' + selector_id + "/rules",
                                 type: 'delete',
-                                cache:false,
                                 data: {
                                     rule_id: rule_id
                                 },
@@ -989,8 +895,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
-                                        context.loadConfigs();
-
+                                        _this.loadRules(op_type, context, selector_id);
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除规则发生错误");
@@ -1003,6 +908,202 @@
                                 }
                             });
                         }
+                    }]
+                });
+
+                d.show();
+            });
+        },
+
+        initRuleSortEvent: function (type, context){
+            var op_type = type;
+            $(document).on("click", "#rule-sort-btn", function () {
+                var new_order = [];
+                if($("#rules li")){
+                    $("#rules li").each(function(item){
+                        new_order.push($(this).attr("data-id"));
+                    });
+                }
+
+                var new_order_str = new_order.join(",");
+                if(!new_order_str||new_order_str==""){
+                    L.Common.showErrorTip("提示", "规则列表为空， 无需排序");
+                    return;
+                }
+
+                var selector_id = $("#add-btn").attr("data-id");
+                if(!selector_id || selector_id==""){
+                    L.Common.showErrorTip("提示", "操作异常， 未选中选择器， 无法排序");
+                    return;
+                }
+
+                var d = dialog({
+                    title: "提示",
+                    content: "确定要保存新的规则顺序吗？",
+                    width: 350,
+                    modal: true,
+                    cancel: function(){},
+                    cancelValue: "取消",
+                    okValue: "确定",
+                    ok: function () {
+                        $.ajax({
+                            url: '/' + op_type + '/selectors/' +selector_id + '/rules/order',
+                            type: 'put',
+                            data: {
+                                order: new_order_str
+                            },
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.success) {
+                                    //重新渲染规则
+                                    _this.loadRules(op_type, context, selector_id);
+                                    return true;
+                                } else {
+                                    L.Common.showErrorTip("提示", result.msg || "保存排序发生错误");
+                                    return false;
+                                }
+                            },
+                            error: function () {
+                                L.Common.showErrorTip("提示", "保存排序请求发生异常");
+                                return false;
+                            }
+                        });
+                    }
+                });
+                d.show();
+            });
+        },
+
+        initSelectorAddDialog: function (type, context) {
+            var op_type = type;
+            $("#add-selector-btn").click(function () {
+                var current_selected_id;
+                var current_selected_selector = $("#selector-list li.selected-selector");
+                if(current_selected_selector){
+                    current_selected_id = $(current_selected_selector[0]).attr("data-id");
+                }
+
+                var content = $("#add-selector-tpl").html()
+                var d = dialog({
+                    title: '添加选择器',
+                    width: 720,
+                    content: content,
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    },{
+                        value: '确定',
+                        autofocus: false,
+                        callback: function () {
+                            var result = _this.buildSelector();
+                            console.log(result);
+                            if (result.success) {
+                                $.ajax({
+                                    url: '/' + op_type + '/selectors',
+                                    type: 'post',
+                                    data: {
+                                        selector: JSON.stringify(result.data)
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重新渲染
+                                            _this.loadConfigs(op_type, context, false, function(){
+                                                $("#selector-list li[data-id=" + current_selected_id+"]").addClass("selected-selector");
+                                            });
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "添加选择器发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "添加选择器请求发生异常");
+                                        return false;
+                                    }
+                                });
+
+                            } else {
+                                L.Common.showErrorTip("错误提示", result.data);
+                                return false;
+                            }
+                        }
+                    }
+                    ]
+                });
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                d.show();
+            });
+        },
+
+        initSelectorDeleteDialog: function (type, context) {
+            var op_type = type;
+            $(document).on("click", ".delete-selector-btn", function (e) {
+                e.stopPropagation();// 阻止冒泡
+                var name = $(this).attr("data-name");
+                var selector_id = $(this).attr("data-id");
+                if(!selector_id){
+                    L.Common.showErrorTip("提示", "参数错误，要删除的选择器不存在！");
+                    return;
+                }
+
+                var current_selected_id;
+                var current_selected_selector = $("#selector-list li.selected-selector");
+                if(current_selected_selector){
+                    current_selected_id = $(current_selected_selector[0]).attr("data-id");
+                }
+
+                var d = dialog({
+                    title: '提示',
+                    width: 480,
+                    content: "确定要删除选择器【" + name + "】吗? 删除选择器将同时删除它的所有规则!",
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '确定',
+                        autofocus: false,
+                        callback: function () {
+                            $.ajax({
+                                url: '/' + op_type + '/selectors',
+                                type: 'delete',
+                                data: {
+                                    selector_id: selector_id
+                                },
+                                dataType: 'json',
+                                success: function (result) {
+                                    if (result.success) {
+                                        //重新渲染规则
+                                        _this.loadConfigs(op_type, context, false, function(){
+                                            //删除的是原先选中的选择器, 重新选中第一个
+                                            if(current_selected_id == selector_id){
+                                                var selector_list = $("#selector-list li");
+                                                if(selector_list && selector_list.length>0){
+                                                    $(selector_list[0]).click();
+                                                }else{
+                                                    _this.emptyRules();
+                                                }
+                                            }else{
+                                                if(current_selected_id){
+                                                    $("#selector-list li[data-id=" + current_selected_id+"]").addClass("selected-selector");
+                                                }else{
+                                                    _this.emptyRules();
+                                                }
+                                            }
+                                        });
+
+                                        return true;
+                                    } else {
+                                        L.Common.showErrorTip("提示", result.msg || "删除选择器发生错误");
+                                        return false;
+                                    }
+                                },
+                                error: function () {
+                                    L.Common.showErrorTip("提示", "删除选择器请求发生异常");
+                                    return false;
+                                }
+                            });
+                        }
                     }
                     ]
                 });
@@ -1011,83 +1112,341 @@
             });
         },
 
+        initSelectorEditDialog: function(type, context){
+            var op_type = type;
+
+            $(document).on("click", ".edit-selector-btn", function (e) {
+                e.stopPropagation();// 阻止冒泡
+                var tpl = $("#edit-selector-tpl").html();
+                var selector_id = $(this).attr("data-id");
+                var selectors = context.data.selectors;
+                selector = selectors[selector_id];
+                if (!selector_id || !selector) {
+                    L.Common.showErrorTip("提示", "要编辑的选择器不存在或者查找出错");
+                    return;
+                }
+
+                var html = juicer(tpl, {
+                    s: selector
+                });
+
+                var d = dialog({
+                    title: "编辑选择器",
+                    width: 680,
+                    content: html,
+                    modal: true,
+                    button: [{
+                        value: '取消'
+                    }, {
+                        value: '预览',
+                        autofocus: false,
+                        callback: function () {
+                            var s = _this.buildSelector();
+                            L.Common.showRulePreview(s);
+                            return false;
+                        }
+                    }, {
+                        value: '保存修改',
+                        autofocus: false,
+                        callback: function () {
+                            var result = _this.buildSelector();
+                            result.data.id = selector.id;//拼上要修改的id
+                            result.data.rules = selector.rules;//拼上已有的rules
+
+                            if (result.success == true) {
+                                $.ajax({
+                                    url: '/' + op_type + '/selectors',
+                                    type: 'put',
+                                    data: {
+                                        selector: JSON.stringify(result.data)
+                                    },
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.success) {
+                                            //重新渲染规则
+                                            _this.loadConfigs(op_type, context);
+                                            return true;
+                                        } else {
+                                            L.Common.showErrorTip("提示", result.msg || "编辑选择器发生错误");
+                                            return false;
+                                        }
+                                    },
+                                    error: function () {
+                                        L.Common.showErrorTip("提示", "编辑选择器请求发生异常");
+                                        return false;
+                                    }
+                                });
+
+                            } else {
+                                L.Common.showErrorTip("错误提示", result.data);
+                                return false;
+                            }
+                        }
+                    }
+                    ]
+                });
+
+                L.Common.resetAddConditionBtn();//删除增加按钮显示与否
+                L.Common.resetAddExtractionBtn();
+                d.show();
+            });
+        },
+
+        initSelectorSortEvent: function (type, context){
+            var op_type = type;
+            $(document).on("click", "#selector-sort-btn", function () {
+                var new_order = [];
+                if($("#selector-list li")){
+                    $("#selector-list li").each(function(item){
+                        new_order.push($(this).attr("data-id"));
+                    });
+                }
+
+                var new_order_str = new_order.join(",");
+                if(!new_order_str||new_order_str==""){
+                    L.Common.showErrorTip("提示", "选择器列表为空， 无需排序");
+                    return;
+                }
+
+                var current_selected_id;
+                var current_selected_selector = $("#selector-list li.selected-selector");
+                if(current_selected_selector){
+                    current_selected_id = $(current_selected_selector[0]).attr("data-id");
+                }
+
+                var d = dialog({
+                    title: "提示",
+                    content: "确定要保存新的选择器顺序吗？",
+                    width: 350,
+                    modal: true,
+                    cancel: function(){},
+                    cancelValue: "取消",
+                    okValue: "确定",
+                    ok: function () {
+                        $.ajax({
+                            url: '/' + op_type + '/selectors/order',
+                            type: 'put',
+                            data: {
+                                order: new_order_str
+                            },
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.success) {
+                                    //重新渲染规则
+                                    _this.loadConfigs(op_type, context, false, function(){
+                                        if(current_selected_id){//高亮原来选中的li
+                                            $("#selector-list li[data-id=" + current_selected_id+"]").addClass("selected-selector");
+                                        }
+                                    });
+                                    return true;
+                                } else {
+                                    L.Common.showErrorTip("提示", result.msg || "保存排序发生错误");
+                                    return false;
+                                }
+                            },
+                            error: function () {
+                                L.Common.showErrorTip("提示", "保存排序请求发生异常");
+                                return false;
+                            }
+                        });
+                    }
+                });
+                d.show();
+            });
+        },
+
+        initSelectorClickEvent: function (type, context){
+            var op_type = type;
+            $(document).on("click", ".selector-item", function () {
+                var self = $(this);
+                var selector_id = self.attr("data-id");
+                var selector_name = self.attr("data-name");
+                if(selector_name){
+                    $("#rules-section-header").text("选择器【" + selector_name + "】规则列表");
+                }
+
+                $(".selector-item").each(function(){
+                    $(this).removeClass("selected-selector");
+                })
+                self.addClass("selected-selector");
+
+                $("#add-btn").attr("data-id", selector_id);
+                _this.loadRules(op_type, context, selector_id);
+            });
+        },
+
         resetSwitchBtn: function (enable, type) {
-            var op_type = "";
-            if (type == "redirect") {
-                op_type = "redirect";
-            } else if (type == "rewrite") {
-                op_type = "rewrite";
-            } else if (type == "rate_limiting") {
-                op_type = "rate_limiting";
-            } else if (type == "basic_auth") {
-                op_type = "basic_auth";
-            } else if (type == "key_auth") {
-                op_type = "key_auth";
-            } else if (type == "waf") {
-                op_type = "waf";
-            } else if (type == "divide") {
-                op_type = "divide";
-            } else if (type == "monitor") {
-                op_type = "monitor";
-            } else {
-                return;
-            }
+            var op_type = type;
 
             var self = $("#switch-btn");
             if (enable == true) {//当前是开启状态，则应显示“关闭”按钮
                 self.attr("data-on", "yes");
                 self.removeClass("btn-info").addClass("btn-danger");
                 self.find("i").removeClass("fa-play").addClass("fa-pause");
-                self.find("span").text("停用" + op_type);
+                self.find("span").text("停用该插件");
             } else {
                 self.attr("data-on", "no");
                 self.removeClass("btn-danger").addClass("btn-info");
                 self.find("i").removeClass("fa-pause").addClass("fa-play");
-                self.find("span").text("启用" + op_type);
+                self.find("span").text("启用该插件");
+            }
+        },
+
+        loadConfigs: function (type, context, page_load, callback) {
+            var op_type = type;
+            $.ajax({
+                url: '/' + op_type + '/selectors',
+                type: 'get',
+                cache: false,
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        _this.resetSwitchBtn(result.data.enable, op_type);
+                        $("#switch-btn").show();
+                        $("#view-btn").show();
+
+                        var enable = result.data.enable;
+                        var meta = result.data.meta;
+                        var selectors = result.data.selectors;
+
+                        //重新设置数据
+                        context.data.enable = enable;
+                        context.data.meta = meta;
+                        context.data.selectors = selectors;
+
+                        _this.renderSelectors(meta, selectors);
+
+                        if(page_load){//第一次加载页面
+                            var selector_lis = $("#selector-list li");
+                            if(selector_lis && selector_lis.length>0){
+                                $(selector_lis[0]).click();
+                            }
+                        }
+
+                        callback && callback();
+                    } else {
+                        _this.showErrorTip("错误提示", "查询" + op_type + "配置请求发生错误");
+                    }
+                },
+                error: function () {
+                    _this.showErrorTip("提示", "查询" + op_type + "配置请求发生异常");
+                }
+            });
+        },
+
+        loadRules: function (type, context, selector_id) {
+            var op_type = type;
+            $.ajax({
+                url: '/' + op_type + '/selectors/' + selector_id + "/rules",
+                type: 'get',
+                cache: false,
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        $("#switch-btn").show();
+                        $("#view-btn").show();
+
+                        //重新设置数据
+                        context.data.selector_rules = context.data.selector_rules || {};
+                        context.data.selector_rules[selector_id] = result.data.rules;
+                        _this.renderRules(result.data);
+                    } else {
+                        _this.showErrorTip("错误提示", "查询" + op_type + "规则发生错误");
+                    }
+                },
+                error: function () {
+                    _this.showErrorTip("提示", "查询" + op_type + "规则发生异常");
+                }
+            });
+        },
+
+        emptyRules: function(){
+            $("#rules-section-header").text("选择器-规则列表");
+            $("#rules").html("");
+            $("#add-btn").removeAttr("data-id");
+        },
+
+        renderSelectors: function(meta, selectors){
+            var tpl = $("#selector-item-tpl").html();
+            var to_render_selectors = [];
+            if(meta && selectors){
+                var to_render_ids = meta.selectors;
+                if(to_render_ids){
+                    for(var i = 0; i < to_render_ids.length; i++){
+                        if(selectors[to_render_ids[i]]){
+                            to_render_selectors.push(selectors[to_render_ids[i]]);
+                        }
+                    }
+                }
+            }
+
+            var html = juicer(tpl, {
+                selectors: to_render_selectors
+            });
+            $("#selector-list").html(html);
+        },
+
+        renderRules: function (data) {
+            data = data || {};
+            if(!data.rules || data.rules.length<1){
+                var html = '<div class="alert alert-warning" style="margin: 25px 0 10px 0;">'+
+                        '<p>该选择器下没有规则,请添加!</p>'+
+                '</div>';
+                $("#rules").html(html);
+            }else{
+                var tpl = $("#rule-item-tpl").html();
+                var html = juicer(tpl, data);
+                $("#rules").html(html);
             }
         },
 
         showErrorTip: function (title, content) {
-            var d = dialog({
-                title: title,
-                width: 300,
-                content: content,
-                modal: true,
-                button: [{
-                    value: '返回',
-                    callback: function () {
-                        d.close().remove();
-                    }
-                }
-                ]
-            });
-            d.show();
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "onclick": null,
+              "showDuration": "400",
+              "hideDuration": "10000",
+              "timeOut": "7000",
+              "extendedTimeOut": "10000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            }
+            toastr.error(content,title || "错误提示");
         },
 
-
         showTipDialog: function (title, content) {
-            if (!content) {
-                content = title;
-                title = "Tips";
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "onclick": null,
+              "showDuration": "400",
+              "hideDuration": "3000",
+              "timeOut": "7000",
+              "extendedTimeOut": "3000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
             }
-            var d = dialog({
-                title: title || 'Tips',
-                content: content,
-                width: 350,
-                cancel: false,
-                ok: function () {
-                }
-            });
-            d.show();
+            toastr.success(content, title || "提示");
         },
 
         resetNav: function (select) {
-            $("#main-nav-menu li").each(function () {
+            $("#side-menu li").each(function () {
                 $(this).removeClass("active")
             });
 
             if (select) {
-                $("#main-nav-menu li#" + select).addClass("active");
+                $("#side-menu li#" + select).addClass("active");
             }
         },
 

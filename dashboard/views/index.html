@@ -1,89 +1,327 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Orange Gateway - Help</title>
-    {(meta.html)}
+    {(common/meta.html)}
 </head>
-<body>
 
-{(header.html)}
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
 
-<div id="main" class="main-container container">
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
 
-    <div class="row" style="margin-top:-10px;margin-bottom:20px;">
-        <div class="col-md-12">
-            <div class="pull-left">
-                <h4 class="head_title">Orange概览</h4> <span id="node_tip">&raquo; 该节点启动于&nbsp;<span id="start_time_span"></span></span>
-            </div>
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">Orange概览</h4> <span id="node_tip">&raquo; 该节点启动于&nbsp;<span id="start_time_span"></span></span>
+                        </div>
 
-            <div class="pull-right"></div>
-        </div>
-    </div>
+                        <div class="pull-right"></div>
+                    </div>
+                </div>
 
-    <div class="row">
-        <div class="col-md-12" style="padding:0;">
-            {% for i, v in ipairs(plugins) do %}
-            <div class="col-sm-6 col-md-3 plugin-item">
-                <div class="thumbnail">
-                    <div class="caption">
-                        <h3>{{ v }}</h3>
-                        <p class="plugin-name">
-                            {%
-                            local plugin_config = plugin_configs[v]
-                            if v=="stat" or (plugin_config and plugin_config.enable==true) then
+                <div class="row">
+                    <div class="col-md-12" style="padding:0;">
+                        {% for i, v in ipairs(plugins) do %}
+                        <div data-uri="/{{v}}" class="col-sm-6 col-md-3 plugin-item text-center">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h3>{{ v }}</h3>
+                                    <p class="plugin-name">
+                                        {%
+                                            local plugin_config = plugin_configs[v]
+                                            if v=="stat" or (plugin_config and plugin_config.enable==true) then
+                                        %}
+                                            <span title="插件已被启用" class="badge badge-primary">已启用</span>
+                                        {% else %}
+                                            <span title="插件已被停用" class="badge badge-danger">已停用</span>
+                                        {% end %}
+                                    </p>
 
-                            %}
-                                <span title="插件已被启用" class="badge on-badge">已启用</span>
-                            {% else %}
-                                <span title="插件已被停用" class="badge off-badge">已停用</span>
-                            {% end %}
-                        </p>
+                                    {% if v=="stat" then %}
+                                        <p class="plugin-op">
+                                            全局统计插件
+                                        </p>
+                                    {% elseif v=="kvstore" then %}
+                                        <p class="plugin-op">
+                                            shared dict存取插件
+                                        </p>
+                                    {% else %}
+                                        <p class="plugin-op">
+                                            <span href="javascript:void(0)" class="label rule-badge" title="开启的规则条数为{{plugin_config.active_rule_count}}"><i class="glyphicon glyphicon-ok-circle"></i> {{plugin_config.active_rule_count}}</span>
+                                            <span href="javascript:void(0)" class="label rule-badge" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}"><i class="glyphicon glyphicon-remove-circle"></i> {{plugin_config.inactive_rule_count}}</span>
+                                        </p>
+                                    {% end %}
+                                </div>
 
-                        {%
-                        if v~="stat" then
-                        %}
-                        <p class="plugin-op">
-                            <span href="javascript:void(0)" class="btn btn-primary" title="开启的规则条数为{{plugin_config.active_rule_count}}">On {{plugin_config.active_rule_count}}</span>
-                            <span href="javascript:void(0)" class="btn btn-default" title="关闭的规则条数为{{plugin_config.inactive_rule_count}}">Off {{plugin_config.inactive_rule_count}}</span>
-                        </p>
-                        {% else %}
-                        <p class="plugin-op">
-                            <p class="center">全局统计插件</p>
-                        </p>
+                            </div>
+                        </div>
+
                         {% end %}
                     </div>
-
                 </div>
             </div>
-
-            {% end %}
-        </div>
+        </div><!--右侧部分结束-->
 
     </div>
 
 
-</div>
+    <script id="status-tpl" type="text/template">
+        <div class="container">
+            <div class="b-section-data" style="display:block">
+                <div class="row">
+                    <div class="col col-1">
+                        <div class="col-data col-data__200">
+                            <table class="dashboard-table">
+                                <tbody>
+                                    <tr>
+                                        <td>Version</td>
+                                        <td><strong>${status.nginx_version}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Address</td>
+                                        <td><strong>${status.address}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PID</td>
+                                        <td><strong></strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Uptime</td>
+                                        <td><span id="t-uptime" data-id="25"><strong>${status.load_timestamp}</strong></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col col-3">
+                        <div class="col-data col-data__200">
+                            <div class="col-subtitle">
+                                <div class="col-subtitle-toggle noselect"><span class="active">Connections</span>
+                                </div>
+                                <div class="col-subtitle-toggle"><span class=""></span>
+                                </div> <span class="col-subtitle__gray pull-right">Accepted: </span>
+                            </div>
+                            <table class="dashboard-horizontal-table full-width">
+                                <thead>
+                                    <tr>
+                                        <th>Current</th>
+                                        <th>Accepted/s</th>
+                                        <th>Active</th>
+                                        <th>Idle</th>
+                                        <th class="">Dropped</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${status.connections.current}</td>
+                                        <td>--</td>
+                                        <td>${status.connections.active}</td>
+                                        <td>${status.connections.idle}</td>
+                                        <td class="">--</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__200">
+                            <div class="col-subtitle"><strong>Requests</strong>  <span class="col-subtitle__gray">Total: ${status.requests.total}</span>
+                            </div>
+                            <table class="dashboard-horizontal-table full-width">
+                                <colgroup>
+                                    <col width="50%">
+                                        <col width="50%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>Current</th>
+                                        <th>Req/s</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${status.requests.current}</td>
+                                        <td>--</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">Server zones <span class="summary_success col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Problems</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color ">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Traffic</strong>
+                                </div>
+                                <div>In: -- KiB/s</div>
+                                <div>Out: -- KiB/s</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">Upstreams <span class="summary_danger col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Alerts</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color cell-red">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Servers</strong>
+                                </div>
+                                <div>All: -- / Up: --</div>
+                                <div class="red-text">Failed: --</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">TCP/UDP Zones <span class="summary_success col-header__status"></span>
+                            </div>
+                            <div class="tcp-counters">
+                                <div>Conn total: --</div>
+                                <div>Conn current: --</div>
+                                <div>Conn/s: --</div>
+                            </div>
+                            <div class="col-counters">
+                                <div><strong>Traffic</strong>
+                                </div>
+                                <div>In: -- B/s</div>
+                                <div>Out: -- KiB/s</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">TCP/UDP Upstreams <span class="summary_success col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Problems</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color ">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Servers</strong>
+                                </div>
+                                <div>All: -- / Up: --</div>
+                                <div class="">Failed: --</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-1">
+                        <div class="col-data col-data__300">
+                            <div class="col-header">Caches <span class="summary_warning col-header__status"></span>
+                            </div>
+                            <table class="dashboard-horizontal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        <th>Warnings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>--</td>
+                                        <td>/</td>
+                                        <td><span class="cell-color cell-yellow">--</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-counters">
+                                <div><strong>Caches states</strong>
+                                </div>
+                                <div>Warm: --</div>
+                                <div>Cold: --</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </script>
 
 
-{(footer.html)}
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $.ajax({
-            url : '/stat/status',
-            type : 'get',
-            cache: false,
-            data : {},
-            dataType : 'json',
-            success : function(result) {
-                if(result.success){
-                    $("#start_time_span").text(APP.Common.formatDate(new Date(result.data.start_time*1000)));
-                    $("#node_tip").show();
+    {(common/common_js.html)}<!-- 通用js -->
+    <script type="text/javascript">
+        APP.Common.resetNav("nav-index");
+        $(document).ready(function(){
+            $(document).on('click', '.plugin-item', function(){
+                var uri =  $(this).attr("data-uri");
+                if(uri){
+                    if(uri=="/stat") uri="/status";
+                    window.location.href = uri;
                 }
-            },
-            error : function() {}
+            });
+            $.ajax({
+                url : '/stat/status',
+                type : 'get',
+                cache: false,
+                data : {},
+                dataType : 'json',
+                success : function(result) {
+                    if(result.success){
+                        $("#start_time_span").text(APP.Common.formatDate(new Date(result.data.start_time*1000)));
+                        $("#node_tip").show();
+                    }
+                },
+                error : function() {}
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>

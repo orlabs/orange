@@ -14,6 +14,8 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 安装依赖
 
 - OpenResty: 版本应在1.9.7.3+
+    - Orange的监控插件需要统计http的某些状态数据，所以需要编译OpenResty时添加`--with-http_stub_status_module`
+    - 由于使用了*_block指令，所以OpenResty的版本最好在1.9.7.3以上.
 - [lor](https://github.com/sumory/lor)框架: 版本在v0.2.5+
     - git clone https://github.com/sumory/lor
     - cd lor && sh install.sh
@@ -26,7 +28,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.5.1.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.0.sql)导入到orange库中
 
 #### 修改配置文件
 
@@ -146,6 +148,7 @@ Orange启动成功后， dashboard和API server也随之启动：
 ### 贡献者
 
 - 雨帆([@syhily](https://github.com/syhily))
+- lhmwzy([@lhmwzy](https://github.com/lhmwzy))
 
 
 ### See also

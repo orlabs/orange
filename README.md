@@ -12,10 +12,11 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 
 - MySQL v5.5+
 - OpenResty v1.9.7.3+ or Nginx+lua module
-- [Lor Framework](https://github.com/sumory) v0.1.4+
+    - install OpenResty with `--with-http_stub_status_module` option
+- [Lor Framework](https://github.com/sumory) v0.2.5+
 - libuuid.so
 
-Import the SQL file(e.g. install/orange-v0.5.1.sql) which is adapted to your Orange version to MySQL database named `orange`.
+Import the SQL file(e.g. install/orange-v0.6.0.sql) which is adapted to your Orange version to MySQL database named `orange`.
 
 #### Install
 
@@ -76,6 +77,7 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 ### Contributors
 
 - 雨帆([@syhily](https://github.com/syhily))
+- lhmwzy([@lhmwzy](https://github.com/lhmwzy))
 
 
 ### See also

@@ -2,29 +2,37 @@
 <html>
 <head>
     <title>Orange Gateway - Help</title>
-      {(meta.html)}
+    {(common/meta.html)}
 </head>
-<body>
 
-{(header.html)}
-
-<div class="main-container container">
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-body help-content">
-            
-                <p>You can find more details about <b>Orange</b> on the project website: <a href="http://orange.sumory.com">Orange Documents & News</a></p>
-                
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}<!-- 左侧导航 -->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row J_mainContent">
+                <div class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">帮助</div>
+                            <div class="panel-body">
+                               <div class="panel-body">
+                                   <p>更多关于<b>Orange</b>的信息请参看官网<a href="http://orange.sumory.com">Orange Documents & News</a> 和 <a href="https://github.com/sumory/orange">Github</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
             </div>
-        </div>
+        </div><!--右侧部分结束-->
     </div>
 
-    
-</div>
-
-
-
-{(footer.html)}
+    {(common/common_js.html)}<!-- 通用js -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            APP.Common.resetNav("nav-help");
+        });
+    </script>
 </body>
 </html>

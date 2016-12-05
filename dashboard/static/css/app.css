@@ -1,0 +1,230 @@
+.center{
+ text-align: center;
+}
+
+.plugin-item{
+    width:23%;
+    padding:0;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-left:1%;
+    margin-right: 1%;
+}
+
+.plugin-item:hover{
+    cursor: pointer;
+    background-color:#efefef;
+}
+
+.plugin-item .thumbnail {
+    min-height: 160px;
+    margin:0;
+    background-color: transparent;
+}
+
+.plugin-item .plugin-op{
+    margin-top:40px
+}
+
+.plugin-item h3{
+    margin:10px 0 20px 0;
+}
+
+.badge{
+  padding:6px 10px 6px 10px;
+  border-radius: 16px;
+}
+.rule-badge{
+    font-weight:400;background-color: #fff;color: #777;border: 0px solid #ddd;
+}
+
+#time-set a.active{
+    text-decoration: underline;
+}
+#view-set a.active{
+    text-decoration: underline;
+}
+
+.J_mainContent{
+    margin:15px;
+}
+.content-header{
+    margin-top:0px;
+    margin-bottom:20px;
+}
+
+/* add/remove btn start */
+.input-group-btn .btn-remove{
+    color: #151414;
+
+    border-color: #FFFFFF;
+    outline:none;
+    box-shadow: none;
+}
+
+.input-group-btn .btn-add{
+    color: #151414;
+
+    border-color: #FFFFFF;
+    outline:none;
+    box-shadow: none;
+}
+/* add/remove btn start */
+
+/* rule table start */
+.single-rule-table {
+    margin-bottom: 0;
+}
+
+.single-rule-table > tbody > tr > td{
+    border-top:1px solid #fff;
+}
+
+td .edit-btn{
+    color:#000
+}
+
+td .delete-btn{
+    color:#EA8282
+}
+
+td.center {
+    text-align:center;
+}
+
+tr.highlight{
+    background-color: #FFFDDD;
+}
+
+.rule-enable-td{
+    width:80px;
+}
+.rule-name-td{
+    text-align：left;
+    width:100px;
+}
+.rule-condition-td{
+    width:170px;
+}
+.rule-extractor-td{
+    width: 200px;
+}
+.rule-credential-td{
+    width: 200px;
+}
+.rule-urltmpl-td{
+    width:180px;
+}
+
+.rule-op-td{
+    width:130px;
+}
+
+.rule-op-td a{
+    width:30px;
+    margin:2px auto;
+}
+
+.namep{
+    width: 100px;
+    display: inline-block;
+    overflow-wrap: break-word;
+}
+.conditionp{
+    width: 170px;
+    overflow-wrap: break-word;
+    margin-bottom: 3px;
+}
+.urltmplp{
+    width: 180px;
+    overflow-wrap: break-word;
+    margin-bottom: 3px;
+}
+
+.extractorp{
+    width: 200px;
+    overflow-wrap: break-word;
+    margin-bottom: 3px;
+}
+
+.agile-list li{
+    padding:2px;
+}
+/* rule table end */
+
+
+.ibox-content{
+    padding:12px;
+}
+
+#selector-list li{
+    padding:6px;
+}
+
+.selector-op{
+    height:23px;
+    line-height: 23px;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.selected-selector{
+    background-color: #fcf8e3;
+}
+
+.selector-section-header{
+    height:22px;line-height:22px;width:100%;
+}
+
+.rule-section-header{
+    height:22px;line-height:22px;width:100%;
+}
+
+@media screen and (max-width: 1160px) {  /*当屏幕尺寸小于X时，应用下面的CSS样式*/
+  #selector-section .selector-section-header p{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1300px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
+  #selector-section .selector-op i{
+    display: none;
+  }
+
+  #selector-section .selector-op span{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1600px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
+  .rule-extractor-td{
+    display: none;
+  }
+
+  .rule-urltmpl-td{
+    display: none;
+  }
+
+  .rule-credential-td{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1000px) {  /*当屏幕尺寸小于Xs时，应用下面的CSS样式*/
+  .rule-condition-td{
+    display: none;
+  }
+
+  .rule-extractor-td{
+    display: none;
+  }
+
+  .rule-urltmpl-td{
+    display: none;
+  }
+
+  .rule-credential-td{
+    display: none;
+  }
+}
+

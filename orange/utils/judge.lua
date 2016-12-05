@@ -1,14 +1,13 @@
-local pairs = pairs
 local ipairs = ipairs
 local type = type
 local tonumber = tonumber
 local tostring = tostring
 local loadstring = loadstring
 local table_insert = table.insert
-local table_concat = table.concat
 local string_gsub = string.gsub
 local utils = require("orange.utils.utils")
 local condition = require("orange.utils.condition")
+
 
 local _M = {}
 
@@ -100,6 +99,43 @@ function _M.filter_complicated_conditions(expression, conditions, plugin_name)
     pass = func()
     if pass then
         ngx.log(ngx.INFO, "[", plugin_name or "", "]filter_complicated_conditions: ", expression)
+    end
+
+    return pass
+end
+
+function _M.judge_selector(selector, plugin_name)
+    if not selector or not selector.judge then return false end
+
+    local selector_judge = selector.judge
+    local judge_type = selector_judge.type
+    local conditions = selector_judge.conditions
+
+    local selector_pass = false
+    if judge_type == 0 or judge_type == 1 then
+        selector_pass = _M.filter_and_conditions(conditions)
+    elseif judge_type == 2 then
+        selector_pass = _M.filter_or_conditions(conditions)
+    elseif judge_type == 3 then
+        selector_pass = _M.filter_complicated_conditions(selector_judge.expression, conditions, plugin_name)
+    end
+
+    return selector_pass
+end
+
+function _M.judge_rule(rule, plugin_name)
+    if not rule or not rule.judge then return false end
+
+    local judge = rule.judge
+    local judge_type = judge.type
+    local conditions = judge.conditions
+    local pass = false
+    if judge_type == 0 or judge_type == 1 then
+        pass = _M.filter_and_conditions(conditions)
+    elseif judge_type == 2 then
+        pass = _M.filter_or_conditions(conditions)
+    elseif judge_type == 3 then
+        pass = _M.filter_complicated_conditions(judge.expression, conditions, plugin_name)
     end
 
     return pass

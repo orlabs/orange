@@ -2,12 +2,10 @@ local ipairs = ipairs
 local table_insert = table.insert
 local table_sort = table.sort
 local pcall = pcall
-local type = type
 local require = require
-local cjson = require("cjson")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
-local orange_db = require("orange.store.orange_db")
+local dao = require("orange.store.dao")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -25,7 +23,7 @@ local function load_node_plugins(config, store)
     for _, v in ipairs(plugins) do
         local loaded, plugin_handler = utils.load_module_if_exists("orange.plugins." .. v .. ".handler")
         if not loaded then
-            error("The following plugin is not installed: " .. v)
+            ngx.log(ngx.WARN, "The following plugin is not installed or has no handler: " .. v)
         else
             ngx.log(ngx.DEBUG, "Loading plugin: " .. v)
             table_insert(sorted_plugins, {
@@ -48,90 +46,6 @@ end
 local function now()
     return ngx.now() * 1000
 end
-
----
--- modified usage: the origin is from `Kong`
--- @Deprecated
-local function iter_plugins_for_req(loaded_plugins, is_access)
-    if not ngx.ctx.plugin_conf_for_request then
-        ngx.ctx.plugin_conf_for_request = {}
-    end
-
-    local i = 0
-    local function get_next_plugin()
-        i = i + 1
-        return loaded_plugins[i]
-    end
-
-    local function get_next()
-        local plugin = get_next_plugin()
-        if plugin then
-            if is_access then
-                -- 根据是否是全局插件或者匹配的某个请求、用户插件加载不同配置
-                ngx.ctx.plugin_conf_for_request[plugin.name] = {}
-            end
-
-            -- Return the configuration
-            if ngx.ctx.plugin_conf_for_request[plugin.name] then
-                return plugin, ngx.ctx.plugin_conf_for_request[plugin.name]
-            end
-
-            return get_next() -- Load next plugin
-        end
-    end
-
-    return function()
-        return get_next()
-    end
-end
-
-local function load_data_by_file()
-end
-
---- load data for orange and its plugins from MySQL
--- ${plugin}.enable
--- ${plugin}.rules
-local function load_data_by_mysql(store, config)
-    -- 查找enable
-    local enables, err = store:query({
-        sql = "select `key`, `value` from meta where `key` like \"%.enable\""
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "Load Meta Data error: ", err)
-        os.exit(1)
-    end
-
-    if enables and type(enables) == "table" and #enables > 0 then
-        for i, v in ipairs(enables) do
-            orange_db.set(v.key, v.value == "1")
-        end
-    end
-
-    local available_plugins = config.plugins
-    for i, v in ipairs(available_plugins) do
-        if v ~= "stat" then
-            local rules, err = store:query({
-                sql = "select `value` from " .. v .. " order by id asc"
-            })
-
-            if err then
-                ngx.log(ngx.ERR, "Load Plugin Rules Data error: ", err)
-                os.exit(1)
-            end
-
-            if rules and type(rules) == "table" and #rules > 0 then
-                local format_rules = {}
-                for i, v in ipairs(rules) do
-                    table_insert(format_rules, cjson.decode(v.value))
-                end
-                orange_db.set_json(v .. ".rules", format_rules)
-            end
-        end
-    end
-end
-
-
 
 -- ########################### Orange #############################
 local Orange = {}
@@ -173,11 +87,18 @@ function Orange.init_worker()
         local worker_id = ngx.worker.id()
         if worker_id == 0 then
             local ok, err = ngx.timer.at(0, function(premature, store, config)
-                load_data_by_mysql(store, config)
+                local available_plugins = config.plugins
+                for _, v in ipairs(available_plugins) do
+                    local load_success = dao.load_data_by_mysql(store, v)
+                    if not load_success then
+                        os.exit(1)
+                    end
+                end
             end, Orange.data.store, Orange.data.config)
+            
             if not ok then
                 ngx.log(ngx.ERR, "failed to create the timer: ", err)
-                return
+                return os.exit(1)
             end
         end
     end
@@ -195,9 +116,9 @@ function Orange.redirect()
         plugin.handler:redirect()
     end
 
-    local now = now()
-    ngx.ctx.ORANGE_REDIRECT_TIME = now - ngx.ctx.ORANGE_REDIRECT_START
-    ngx.ctx.ORANGE_REDIRECT_ENDED_AT = now
+    local now_time = now()
+    ngx.ctx.ORANGE_REDIRECT_TIME = now_time - ngx.ctx.ORANGE_REDIRECT_START
+    ngx.ctx.ORANGE_REDIRECT_ENDED_AT = now_time
 end
 
 function Orange.rewrite()
@@ -207,9 +128,9 @@ function Orange.rewrite()
         plugin.handler:rewrite()
     end
 
-    local now = now()
-    ngx.ctx.ORANGE_REWRITE_TIME = now - ngx.ctx.ORANGE_REWRITE_START
-    ngx.ctx.ORANGE_REWRITE_ENDED_AT = now
+    local now_time = now()
+    ngx.ctx.ORANGE_REWRITE_TIME = now_time - ngx.ctx.ORANGE_REWRITE_START
+    ngx.ctx.ORANGE_REWRITE_ENDED_AT = now_time
 end
 
 
@@ -220,10 +141,10 @@ function Orange.access()
         plugin.handler:access()
     end
 
-    local now = now()
-    ngx.ctx.ORANGE_ACCESS_TIME = now - ngx.ctx.ORANGE_ACCESS_START
-    ngx.ctx.ORANGE_ACCESS_ENDED_AT = now
-    ngx.ctx.ORANGE_PROXY_LATENCY = now - ngx.req.start_time() * 1000
+    local now_time = now()
+    ngx.ctx.ORANGE_ACCESS_TIME = now_time - ngx.ctx.ORANGE_ACCESS_START
+    ngx.ctx.ORANGE_ACCESS_ENDED_AT = now_time
+    ngx.ctx.ORANGE_PROXY_LATENCY = now_time - ngx.req.start_time() * 1000
     ngx.ctx.ACCESSED = true
 end
 
@@ -231,9 +152,9 @@ end
 function Orange.header_filter()
 
     if ngx.ctx.ACCESSED then
-        local now = now()
-        ngx.ctx.ORANGE_WAITING_TIME = now - ngx.ctx.ORANGE_ACCESS_ENDED_AT -- time spent waiting for a response from upstream
-        ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now
+        local now_time = now()
+        ngx.ctx.ORANGE_WAITING_TIME = now_time - ngx.ctx.ORANGE_ACCESS_ENDED_AT -- time spent waiting for a response from upstream
+        ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = now_time
     end
 
     for _, plugin in ipairs(loaded_plugins) do

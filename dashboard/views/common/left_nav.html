@@ -1,0 +1,136 @@
+ <!--左侧导航开始-->
+<nav id="nav-section" class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close" style="display: none"><i class="glyphicon glyphicon-transfer"></i>
+    </div>
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                        <p>
+                            <span style="display: inline-block;height: 50px;width:50px;line-height: 50px;vertical-align: middle;margin-left: -6px;padding-top: 10px;">{(common/logo.html)}</span>
+                            <span style="display: inline-block;height: 50px;line-height: 50px;vertical-align: middle;color: #fff;padding-top:6px;font-size: 18px;padding-left: 10px;"><strong class="font-bold">Orange</strong></span>
+                        </p>
+                </div>
+                <div class="logo-element">
+                     <span style="display: inline-block;height: 50px;width:50px;line-height: 50px;vertical-align: middle;margin-left: -6px;padding-top: 10px;">{(common/logo.html)}</span>
+                </div>
+            </li>
+            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                <span class="ng-scope">概览</span>
+            </li>
+            <li id="nav-index">
+                <a class="J_menuItem" href="/">
+                    <i class="fa fa-home"></i>
+                    <span class="nav-label">概况</span>
+                </a>
+            </li>
+            <li id="nav-status">
+                <a href="/status">
+                    <i class="fa fa fa-bar-chart-o"></i>
+                    <span class="nav-label">全局统计</span>
+                </a>
+            </li>
+
+            <li class="line dk"></li>
+
+
+            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                <span class="ng-scope">插件</span>
+            </li>
+            <li id="nav-monitor">
+                <a href="/monitor">
+                    <i class="fa fa-desktop"></i>
+                    <span class="nav-label">自定义监控</span>
+                </a>
+            </li>
+            <li id="nav-redirect">
+                <a href="/redirect">
+                    <i class="fa fa-random"></i>
+                    <span class="nav-label">URL重定向</span>
+                </a>
+            </li>
+            <li id="nav-rewrite">
+                <a href="/rewrite">
+                    <i class="fa fa-pencil-square-o"></i>
+                    <span class="nav-label">URI重写</span>
+                </a>
+            </li>
+            <li id="nav-basic-auth">
+                <a href="/basic_auth">
+                    <i class="fa fa-ban"></i>
+                    <span class="nav-label">Basic Auth</span>
+                </a>
+            </li>
+            <li id="nav-key-auth">
+                <a href="/key_auth">
+                    <i class="fa fa-key"></i>
+                    <span class="nav-label">Key Auth</span>
+                </a>
+            </li>
+            <li id="nav-rate-limiting">
+                <a href="/rate_limiting">
+                    <i class="fa fa-filter"></i>
+                    <span class="nav-label">Rate Limiting</span>
+                </a>
+            </li>
+            <li id="nav-waf">
+                <a href="/waf">
+                    <i class="fa fa-warning"></i>
+                    <span class="nav-label">WAF</span>
+                </a>
+            </li>
+            <li id="nav-divide">
+                <a href="/divide">
+                    <i class="fa fa-arrows"></i>
+                    <span class="nav-label">代理&分流</span>
+                </a>
+            </li>
+            <li id="nav-kvstore">
+                <a href="/kvstore">
+                    <i class="fa fa-th"></i>
+                    <span class="nav-label">KVStore</span>
+                </a>
+            </li>
+
+
+
+            {%
+                if locals and locals.login and locals.login == true then
+            %}
+            <li class="line dk"></li>
+            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                <span class="ng-scope">管理</span>
+            </li>
+            {%
+            	if locals.is_admin then
+            %}
+            <li id="nav-user-manage">
+                <a href="/admin/user/manage">
+                    <i class="fa fa-user"></i>
+                    <span class="nav-label">用户管理</span>
+                </a>
+            </li>
+            {% end %}
+            <li>
+                <a href="/auth/logout">
+                    <i class="fa fa-sign-out"></i>
+                    <span class="nav-label">退出</span>
+                </a>
+            </li>
+            {% end %}
+
+
+            <li class="line dk"></li>
+            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                <span class="ng-scope">其它</span>
+            </li>
+            <li id="nav-help">
+                <a href="/help">
+                    <i class="fa fa-life-ring"></i>
+                    <span class="nav-label">帮助</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!--左侧导航结束-->

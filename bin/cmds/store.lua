@@ -14,7 +14,7 @@ Init/Update/Backup Orange store.
 Options:
  -t,--type store type, only support `mysql` now.
  -d,--db database name, e.g. `orange`
- -h,--host database host, e.g. `127.0.0.1`
+ -hh,--host database host, e.g. `127.0.0.1`
  -pp,--port database port, e.g. `3306`
  -u,--user username for store
  -p,--pwd password for store
@@ -43,7 +43,7 @@ function _M.execute(origin_args)
     for i, v in pairs(origin_args) do
         if i == "t" and not args.store_type then args.store_type = v end
         if i == "d" and not args.db then args.db = v end
-        if i == "h" and not args.host then args.host = v end
+        if i == "hh" and not args.host then args.host = v end
         if i == "pp" and not args.port then args.port = v end
         if i == "u" and not args.user then args.user = v end
         if i == "p" and not args.pwd then args.pwd = v end
