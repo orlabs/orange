@@ -3,6 +3,7 @@ local table_insert = table.insert
 local table_sort = table.sort
 local pcall = pcall
 local require = require
+require("orange.lib.globalpatches")()
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
@@ -82,6 +83,8 @@ function Orange.init(options)
 end
 
 function Orange.init_worker()
+    -- 仅在 init_worker 阶段调用，初始化随机因子，仅允许调用一次
+    math.randomseed()
     -- 初始化定时器，清理计数器等
     if Orange.data and Orange.data.store and Orange.data.config.store == "mysql" then
         local worker_id = ngx.worker.id()
@@ -95,7 +98,7 @@ function Orange.init_worker()
                     end
                 end
             end, Orange.data.store, Orange.data.config)
-            
+
             if not ok then
                 ngx.log(ngx.ERR, "failed to create the timer: ", err)
                 return os.exit(1)
