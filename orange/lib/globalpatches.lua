@@ -18,6 +18,7 @@ return function(opts)
                 ngx.log(ngx.ERR, "The seed random number generator seed has already seeded with: " .. seed .. "\n")
             end
             randomseed(seed)
+            return seed
         end
     end
 end
