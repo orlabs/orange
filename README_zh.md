@@ -14,6 +14,8 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 安装依赖
 
 - OpenResty: 版本应在1.9.7.3+
+	- 特别注意: 当OpenResty安装完成后，请在命令行输入nginx -v、resty -v命令, 若能正确输出，则表示OpenResty已经正确安装，可以进行后续安装操作；若出现错误，请检查OpenResty的安装过程。
+
 - [lor](https://github.com/sumory/lor)框架: 版本在v0.1.4+
     - git clone https://github.com/sumory/lor
     - cd lor && sh install.sh
@@ -95,6 +97,7 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 
 
 #### 安装
+
 
 如果使用的是v0.5.0以前的版本则无需安装， 只要将Orange下载下来放到合适的位置即可。
 
