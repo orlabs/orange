@@ -71,11 +71,16 @@ return function(config, store)
                         if s.enable == true then
                             tmp.active_selector_count = tmp.active_selector_count + 1
                             local selector_rules = orange_db.get_json(v .. ".selector." .. sid .. ".rules")
-                            for _, r in ipairs(selector_rules) do
-                                if r.enable == true then
-                                    tmp.active_rule_count = tmp.active_rule_count + 1
-                                else
-                                    tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                            if not selector_rules then
+                                tmp.active_rule_count = 0
+                                tmp.inactive_rule_count = 0
+                            else
+                                for _, r in ipairs(selector_rules) do
+                                    if r.enable == true then
+                                        tmp.active_rule_count = tmp.active_rule_count + 1
+                                    else
+                                        tmp.inactive_rule_count = tmp.inactive_rule_count + 1
+                                    end
                                 end
                             end
                         else
@@ -89,7 +94,6 @@ return function(config, store)
                     enable =  orange_db.get(v .. ".enable"),
                     name = v
                 }
-                
             end
             plugin_configs[v] = tmp
         end
