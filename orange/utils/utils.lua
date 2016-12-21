@@ -1,7 +1,7 @@
 -- general utility functions.
 -- some functions is from [kong](getkong.org)
 local require = require
-local uuid = require("orange.lib.uuid")
+local uuid = require("orange.lib.jit-uuid")
 local date = require("orange.lib.date")
 local json = require("cjson")
 local type = type
@@ -10,6 +10,17 @@ local pairs = pairs
 local tostring = tostring
 local string_gsub = string.gsub
 local string_find = string.find
+local ffi = require "ffi"
+local ffi_cdef = ffi.cdef
+local ffi_typeof = ffi.typeof
+local ffi_new = ffi.new
+local ffi_str = ffi.string
+local C = ffi.C
+
+ffi_cdef[[
+typedef unsigned char u_char;
+int RAND_bytes(u_char *buf, int num);
+]]
 
 local _M = {}
 
@@ -29,7 +40,7 @@ function _M.current_timetable()
     local hour = day .. " " .. h
     local minute = hour .. ":" .. m
     local second = minute .. ":" .. s
-    
+
     return {
         Day = day,
         Hour = hour,
@@ -205,6 +216,26 @@ function _M.load_module_if_exists(module_name)
         return false
     else
         error(res)
+    end
+end
+
+---Try to generate a random seed using OpenSSL.
+-- ffi based, would be more effenticy
+-- This function is mainly ispired by https://github.com/bungle/lua-resty-random
+-- @return a pseudo-random number for math.randomseed
+do
+    local bytes_buf_t = ffi_typeof "uint8_t[?]"
+    local n_bytes = 4
+    function _M.get_random_seed()
+        local buf = ffi_new(bytes_buf_t, n_bytes)
+
+        if C.RAND_bytes(buf, n_bytes) == 0 then
+            ngx.log(ngx.ERR, "could not get random bytes, using ngx.time() + ngx.worker.pid() instead")
+            return ngx.time() + ngx.worker.pid()
+        end
+
+        local a, b, c, d = ffi_str(buf, n_bytes):byte(1, 4)
+        return a * 0x1000000 + b * 0x10000 + c * 0x100 + d
     end
 end
 
