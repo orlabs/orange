@@ -65,3 +65,20 @@ new_plugin.sh
 test_conf
 test_start.sh
 fix_name.sh
+
+
+# phpstorm project files
+.idea
+*.log
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+
