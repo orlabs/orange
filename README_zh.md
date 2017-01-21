@@ -22,9 +22,6 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 - [lor](https://github.com/sumory/lor)框架: 版本在v0.2.5+
     - git clone https://github.com/sumory/lor
     - cd lor && sh install.sh
-- libuuid.so
-    - Orange依赖libuuid生成uuid
-    - centos用户可通过命令`yum install libuuid-devel`安装，其它情况请自行google
 - MySQL
     - 配置存储和集群扩展需要MySQL支持。从0.2.0版本开始，Orange去除了本地文件存储的方式，目前仅提供MySQL存储支持.
 
