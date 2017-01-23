@@ -79,7 +79,7 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 
 - 雨帆([@syhily](https://github.com/syhily))
 - lhmwzy([@lhmwzy](https://github.com/lhmwzy))
-
+- 罗泽轩([@spacewander](https://github.com/spacewander))
 
 ### See also
 
