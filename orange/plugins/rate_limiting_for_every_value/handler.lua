@@ -6,7 +6,10 @@ local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local BasePlugin = require("orange.plugins.base_handler")
-local counter = require("orange.plugins.rate_limiting.counter")
+
+local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
+
+local counter = require(plugin_config.loadname .. "counter")
 
 local function get_current_stat(limit_key)
     return counter.get(limit_key)
@@ -38,11 +41,54 @@ local function filter_rules(sid, plugin, ngx_var_uri)
         return false
     end
 
+    local get_rate_limite_key = function(condition_type,condition)
+        local real
+
+        if condition_type == "URI" then
+            real = ngx.var.uri
+        elseif condition_type == "Query" then
+            local query = ngx.req.get_uri_args()
+            real = query[condition.name]
+        elseif condition_type == "Header" then
+            local headers = ngx.req.get_headers()
+            real = headers[condition.name]
+        elseif condition_type == "IP" then
+            real =  ngx.var.remote_addr
+        elseif condition_type == "UserAgent" then
+            real =  ngx.var.http_user_agent
+        elseif condition_type == "PostParams" then
+            local headers = ngx.req.get_headers()
+            local header = headers['Content-Type']
+            if header then
+                local is_multipart = string_find(header, "multipart")
+                if is_multipart and is_multipart > 0 then
+                    return false
+                end
+            end
+
+            ngx.req.read_body()
+            local post_params, err = ngx.req.get_post_args()
+            if not post_params or err then
+                ngx.log(ngx.ERR, "[Condition Judge]failed to get post args: ", err)
+                return false
+            end
+
+            real = post_params[condition.name]
+        elseif condition_type == "Referer" then
+            real =  ngx.var.http_referer
+        elseif condition_type == "Host" then
+            real =  ngx.var.host
+        end
+
+        return real
+    end
+
     for i, rule in ipairs(rules) do
         if rule.enable == true then
             -- judge阶段
-            local pass = judge_util.judge_rule(rule, plugin)
-
+            local condition =  rule.judge.conditions[0];
+            local real_value = get_rate_limite_key(condition.type,condition)
+            local pass = real_value and true or false;
             -- handle阶段
             local handle = rule.handle
             if pass then
@@ -52,21 +98,21 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                 if limit_type then
                     local current_timetable = utils.current_timetable()
                     local time_key = current_timetable[limit_type]
-                    local limit_key = rule.id .. "#" .. time_key
+                    local limit_key = rule.id .. "#" .. time_key .. "#" .. real_value
                     local current_stat = get_current_stat(limit_key) or 0
-                        
-                    ngx.header["X-RateLimit-Limit" .. "-" .. limit_type] = handle.count
+
+                    ngx.header[plugin_config.plug_reponse_header_prefix .. limit_type] = handle.count
 
                     if current_stat >= handle.count then
                         if handle.log == true then
                             ngx.log(ngx.INFO, "[RateLimiting-Forbidden-Rule] ", rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
 
-                        ngx.header["X-RateLimit-Remaining" .. "-" .. limit_type] = 0
+                        ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         ngx.exit(429)
                         return true
                     else
-                        ngx.header["X-RateLimit-Remaining" .. "-" .. limit_type] = handle.count - current_stat - 1
+                        ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = handle.count - current_stat - 1
                         incr_stat(limit_key, limit_type)
 
                         -- only for test, comment it in production
@@ -88,18 +134,19 @@ local RateLimitingHandler = BasePlugin:extend()
 RateLimitingHandler.PRIORITY = 1000
 
 function RateLimitingHandler:new(store)
-    RateLimitingHandler.super.new(self, "rate-limiting-plugin")
+--    RateLimitingHandler.super.new(self, "rate-limiting-plugin")
+    RateLimitingHandler.super.new(self, plugin_config.name)
     self.store = store
 end
 
 function RateLimitingHandler:access(conf)
     RateLimitingHandler.super.access(self)
-    
-    local enable = orange_db.get("rate_limiting.enable")
-    local meta = orange_db.get_json("rate_limiting.meta")
-    local selectors = orange_db.get_json("rate_limiting.selectors")
+
+    local enable = orange_db.get(plugin_config.table_name..".enable")
+    local meta = orange_db.get_json(plugin_config.table_name..".meta")
+    local selectors = orange_db.get_json(plugin_config.table_name..".selectors")
     local ordered_selectors = meta and meta.selectors
-    
+
     if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
         return
     end
@@ -109,11 +156,11 @@ function RateLimitingHandler:access(conf)
         ngx.log(ngx.INFO, "==[RateLimiting][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
-            local selector_pass 
+            local selector_pass
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else
-                selector_pass = judge_util.judge_selector(selector, "rate_limiting")-- selector judge
+                selector_pass = judge_util.judge_selector(selector,plugin_config.table_name)-- selector judge
             end
 
             if selector_pass then
@@ -121,7 +168,7 @@ function RateLimitingHandler:access(conf)
                     ngx.log(ngx.INFO, "[RateLimiting][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
 
-                local stop = filter_rules(sid, "rate_limiting", ngx_var_uri)
+                local stop = filter_rules(sid, plugin_config.table_name, ngx_var_uri)
                 if stop then -- 不再执行此插件其他逻辑
                     return
                 end

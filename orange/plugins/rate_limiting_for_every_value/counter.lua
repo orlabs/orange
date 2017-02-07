@@ -1,7 +1,9 @@
 local cjson = require("cjson")
 local resty_lock = require("resty.lock")
+local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
+
 local ngx_log = ngx.log
-local cache = ngx.shared.rate_limit
+local cache = ngx.shared.rate_limiting_for_every_value
 
 -- default exprired time for different periods
 local EXPIRE_TIME = {
@@ -55,7 +57,7 @@ function _M.get_or_set(key, cb)
     local value = _M.get(key)
     if value then return value end
 
-    local lock, err = resty_lock:new("rate_limit_counter_lock", {
+    local lock, err = resty_lock:new(plugin_config.shared_dict_rw_lock_name, {
         exptime = 10,
         timeout = 5
     })
