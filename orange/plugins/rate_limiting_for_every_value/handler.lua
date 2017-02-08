@@ -8,6 +8,7 @@ local judge_util = require("orange.utils.judge")
 local BasePlugin = require("orange.plugins.base_handler")
 local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
 local counter = require("orange.plugins.rate_limiting_for_every_value.counter")
+local extractor_util = require("orange.utils.extractor")
 
 local function get_current_stat(limit_key)
     return counter.get(limit_key)
@@ -39,53 +40,9 @@ local function filter_rules(sid, plugin, ngx_var_uri)
         return false
     end
 
-    local get_rate_limite_key = function(condition_type,condition)
-        local real
-
-        if condition_type == "URI" then
-            real = ngx.var.uri
-        elseif condition_type == "Query" then
-            local query = ngx.req.get_uri_args()
-            real = query[condition.name]
-        elseif condition_type == "Header" then
-            local headers = ngx.req.get_headers()
-            real = headers[condition.name]
-        elseif condition_type == "IP" then
-            real =  ngx.var.remote_addr
-        elseif condition_type == "UserAgent" then
-            real =  ngx.var.http_user_agent
-        elseif condition_type == "PostParams" then
-            local headers = ngx.req.get_headers()
-            local header = headers['Content-Type']
-            if header then
-                local is_multipart = string_find(header, "multipart")
-                if is_multipart and is_multipart > 0 then
-                    return false
-                end
-            end
-
-            ngx.req.read_body()
-            local post_params, err = ngx.req.get_post_args()
-            if not post_params or err then
-                ngx.log(ngx.ERR, "[Condition Judge]failed to get post args: ", err)
-                return false
-            end
-
-            real = post_params[condition.name]
-        elseif condition_type == "Referer" then
-            real =  ngx.var.http_referer
-        elseif condition_type == "Host" then
-            real =  ngx.var.host
-        end
-
-        return real
-    end
-
     for i, rule in ipairs(rules) do
         if rule.enable == true then
-            -- judge阶段
-            local condition =  rule.judge.conditions[1];
-            local real_value = get_rate_limite_key(condition.type,condition)
+            local real_value = extractor_util.extract_variables(rule.extractor)
             local pass = real_value and true or false;
             -- handle阶段
             local handle = rule.handle
