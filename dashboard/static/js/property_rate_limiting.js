@@ -6,12 +6,12 @@
         },
 
         init: function () {
-            L.Common.loadConfigs("rate_limiting_for_every_value", _this, true);
+            L.Common.loadConfigs("property_rate_limiting", _this, true);
             _this.initEvents();
         },
 
         initEvents: function(){
-            var op_type = "rate_limiting_for_every_value";
+            var op_type = "property_rate_limiting";
             L.Common.initRuleAddDialog(op_type, _this);//添加规则对话框
             L.Common.initRuleDeleteDialog(op_type, _this);//删除规则对话框
             L.Common.initRuleEditDialog(op_type, _this);//编辑规则对话框
