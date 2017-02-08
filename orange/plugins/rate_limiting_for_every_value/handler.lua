@@ -9,7 +9,7 @@ local BasePlugin = require("orange.plugins.base_handler")
 
 local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
 
-local counter = require(plugin_config.loadname .. "counter")
+local counter = require(plugin_config.require_prefix .. "counter")
 
 local function get_current_stat(limit_key)
     return counter.get(limit_key)
