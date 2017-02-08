@@ -106,61 +106,9 @@
                     </div>
                 </div><!-- name -->
 
-                <!-- add - 条件编辑器模板 start -->
-                <div id="judge-area">
-
-                    <div class="form-group">
-                        <label for="input-judge-type" class="col-sm-1 control-label">规则</label>
-                        <div class="col-sm-3">
-                            <select class="form-control" id="rule-judge-type">
-                                <option value="0">单一条件匹配</option>
-                                <option value="1">and匹配</option>
-                                <option value="2">or匹配</option>
-                                <option value="3">复杂匹配</option>
-                            </select>
-                        </div>
-
-                        <div class="col-sm-8" id="expression-area" style="display:none;">
-                            <input type="text" class="form-control" id="rule-judge-expression" placeholder="规则表达式，示例: (v[1] or v[2]) and v[3]">
-                        </div>
-                    </div><!-- 类型 -->
-
-                    <div class="form-group pair condition-holder">
-                        <label class="col-sm-1 control-label"></label>
-
-                        <div class="col-sm-2">
-                            <select class="form-control" name="rule-judge-condition-type">
-                                <option value="URI">URI</option>
-                                <option value="Header">Header</option>
-                                <option value="Query">Query</option>
-                                <option value="PostParams">PostParams</option>
-                                <option value="IP">IP</option>
-                                <option value="UserAgent">UserAgent</option>
-                                <!-- <option value="Method">Method</option> -->
-                                <option value="Host">Host</option>
-                                <option value="Referer">Referer</option>
-                            </select>
-                        </div>
-                        <div class="col-sm-2 condition-name-hodler" style="display:none;padding-left:0px;">
-                            <input type="text" class="form-control" name="rule-judge-condition-name" placeholder="name">
-                        </div>
-                        <div class="col-sm-1" style="margin-top:5px">
-                            <span class="input-group-btn">
-                                <a class="btn btn-remove" style="padding:0 5px;">
-                                    <i class="fa fa-remove"></i>
-                                </a>
-                                <a class="btn btn-add" style="padding:0 5px;">
-                                    <i class="fa fa-plus"></i>
-                                </a>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <!-- judge -->
-
-
-
-                <!-- add - 条件编辑器模板 end -->
+                <!-- add - 变量提取器模板 start -->
+                {(common/extraction-add.html)}
+                <!-- add - 变量提取器模板 end -->
 
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
@@ -206,9 +154,9 @@
                     </div>
                 </div><!-- name -->
 
-                <!-- edit - 条件编辑器模板 start -->
-                {(common/condition-edit.html)}
-                <!-- edit - 条件编辑器模板 end -->
+                <!-- add - 变量提取器模板 start -->
+                {(common/extraction-edit.html)}
+                <!-- add - 变量提取器模板 end -->
 
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
@@ -258,6 +206,7 @@
     <script src="/static/js/rate_limiting_for_every_value.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            APP.global_config.validate_conditions = false;
             APP.Common.resetNav("nav-rate-limiting");
             APP.RateLimiting.init();
             $(".sortable-list").sortable().disableSelection();

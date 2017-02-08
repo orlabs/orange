@@ -25,8 +25,12 @@
 
             L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
-            L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
-            L.Common.initConditionTypeChangeEvent();//condition类型选择事件
+
+
+            L.Common.initExtractionAddOrRemove();//添加或删除条件
+            L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
+            L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
+            L.Common.initExtractionHasDefaultValueOrNotEvent();//提取项是否有默认值选择事件
 
             L.Common.initViewAndDownloadEvent(op_type, _this);
             L.Common.initSwitchBtn(op_type, _this);//redirect关闭、开启
@@ -39,6 +43,7 @@
                 data: {
                     name: null,
                     judge:{},
+                    extractor: {},
                     handle:{}
                 }
             };
@@ -51,6 +56,16 @@
             }else{
                 result.success = false;
                 result.data = buildJudgeResult.data;
+                return result;
+            }
+
+            //build extractor
+            var buildExtractorResult = L.Common.buildExtractor();
+            if (buildExtractorResult.success == true) {
+                result.data.extractor = buildExtractorResult.data.extractor;
+            } else {
+                result.success = false;
+                result.data = buildExtractorResult.data;
                 return result;
             }
 

@@ -1,5 +1,8 @@
 (function (L) {
     var _this = null;
+    L.global_config = {
+        validate_conditions:true,
+    }
     L.Common = L.Common || {};
     _this = L.Common = {
         data: {},
@@ -224,6 +227,10 @@
                 result.data.name = name;
             }
 
+            if( ! L.global_config.validate_conditions){
+                result.success = true;
+                return result;
+            }
 
             var judge_type = parseInt($("#rule-judge-type").val());
             result.data.judge.type = judge_type;

@@ -1,6 +1,7 @@
 local ipairs = ipairs
 local type = type
 local tostring = tostring
+local table_concat = table.concat;
 
 local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
@@ -42,8 +43,9 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
-            local real_value = extractor_util.extract_variables(rule.extractor)
-            local pass = real_value and true or false;
+            local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
+            local pass = (real_value ~= '');
+
             -- handle阶段
             local handle = rule.handle
             if pass then
