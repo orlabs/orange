@@ -1,9 +1,9 @@
 local cjson = require("cjson")
 local resty_lock = require("resty.lock")
-local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
+local plugin_config =  require("orange.plugins.property_rate_limiting.plugin")
 
 local ngx_log = ngx.log
-local cache = ngx.shared.rate_limiting_for_every_value
+local cache = ngx.shared.property_rate_limiting
 
 -- default exprired time for different periods
 local EXPIRE_TIME = {

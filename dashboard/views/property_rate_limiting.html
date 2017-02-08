@@ -203,12 +203,12 @@
 
     {(common/common_js.html)}<!-- 通用js -->
 
-    <script src="/static/js/rate_limiting_for_every_value.js"></script>
+    <script src="/static/js/property_rate_limiting.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             APP.global_config.validate_conditions = false;
             APP.Common.resetNav("nav-rate-limiting");
-            APP.RateLimiting.init();
+            APP.PropertyRateLimiting.init();
             $(".sortable-list").sortable().disableSelection();
         });
     </script>

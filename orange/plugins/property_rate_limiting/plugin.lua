@@ -1,12 +1,12 @@
 local _M = {}
-_M.name = 'rate-limiting-for-every-value-plugin'
-_M.api_name = 'rate-limiting-api'
-_M.require_prefix = 'orange.plugins.rate_limiting_for_every_value.';
-_M.plug_reponse_header_prefix = 'X-RateLimit-Remaining-';
-_M.table_name = 'rate_limiting_for_every_value'
-_M.ngx_shared_dict_name = 'rate_limiting_for_every_value';
-_M.shared_dict_rw_lock_name = 'rate_limiting_for_every_value_counter_lock'
-_M.message_forbidden = 'RateLimitingForEveryValue-Forbidden-Rule';
-_M.name_for_log = 'RateLimitingForEveryValue';
+_M.name = 'property-rate-limiting-plugin'
+_M.api_name = 'property-rate-limiting-api'
+_M.require_prefix = 'orange.plugins.property_rate_limiting.';
+_M.plug_reponse_header_prefix = 'X-PropertyRateLimiting-Remaining-';
+_M.table_name = 'property_rate_limiting'
+
+_M.shared_dict_rw_lock_name = 'property_rate_limiting_counter_lock'
+_M.message_forbidden = 'PropertyRateLimiting-Forbidden-Rule';
+_M.name_for_log = 'PropertyRateLimiting';
 
 return _M

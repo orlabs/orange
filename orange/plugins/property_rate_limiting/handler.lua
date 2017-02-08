@@ -7,8 +7,8 @@ local utils = require("orange.utils.utils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local BasePlugin = require("orange.plugins.base_handler")
-local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
-local counter = require("orange.plugins.rate_limiting_for_every_value.counter")
+local plugin_config =  require("orange.plugins.property_rate_limiting.plugin")
+local counter = require("orange.plugins.property_rate_limiting.counter")
 local extractor_util = require("orange.utils.extractor")
 
 local function get_current_stat(limit_key)
@@ -87,17 +87,16 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 end
 
 
-local RateLimitingHandler = BasePlugin:extend()
-RateLimitingHandler.PRIORITY = 1000
+local PropertyRateLimitingHandler = BasePlugin:extend()
+PropertyRateLimitingHandler.PRIORITY = 1000
 
-function RateLimitingHandler:new(store)
---    RateLimitingHandler.super.new(self, "rate-limiting-plugin")
-    RateLimitingHandler.super.new(self, plugin_config.name)
+function PropertyRateLimitingHandler:new(store)
+    PropertyRateLimitingHandler.super.new(self, plugin_config.name)
     self.store = store
 end
 
-function RateLimitingHandler:access(conf)
-    RateLimitingHandler.super.access(self)
+function PropertyRateLimitingHandler:access(conf)
+    PropertyRateLimitingHandler.super.access(self)
 
     local enable = orange_db.get(plugin_config.table_name..".enable")
     local meta = orange_db.get_json(plugin_config.table_name..".meta")
@@ -146,4 +145,4 @@ function RateLimitingHandler:access(conf)
 
 end
 
-return RateLimitingHandler
+return PropertyRateLimitingHandler

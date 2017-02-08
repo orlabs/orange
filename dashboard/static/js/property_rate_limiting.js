@@ -1,7 +1,7 @@
 (function (L) {
     var _this = null;
-    L.RateLimiting = L.RateLimiting || {};
-    _this = L.RateLimiting = {
+    L.PropertyRateLimiting = L.PropertyRateLimiting || {};
+    _this = L.PropertyRateLimiting = {
         data: {
         },
 
