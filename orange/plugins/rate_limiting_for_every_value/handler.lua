@@ -9,7 +9,7 @@ local BasePlugin = require("orange.plugins.base_handler")
 
 local plugin_config =  require("orange.plugins.rate_limiting_for_every_value.plugin")
 
-local counter = require(plugin_config.require_prefix .. "counter")
+local counter = require("orange.plugins.rate_limiting_for_every_value.counter")
 
 local function get_current_stat(limit_key)
     return counter.get(limit_key)
@@ -86,7 +86,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
     for i, rule in ipairs(rules) do
         if rule.enable == true then
             -- judge阶段
-            local condition =  rule.judge.conditions[0];
+            local condition =  rule.judge.conditions[1];
             local real_value = get_rate_limite_key(condition.type,condition)
             local pass = real_value and true or false;
             -- handle阶段
