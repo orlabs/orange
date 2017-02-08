@@ -11,7 +11,7 @@ local function load_plugin_api(plugin, dashboard_router, store)
     ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
     local ok, plugin_api, e
-    ok = xpcall(function() 
+    ok = xpcall(function()
         plugin_api = require(plugin_api_path)
     end, function()
         e = debug.traceback()
@@ -44,7 +44,7 @@ end
 return function(config, store)
     local dashboard_router = lor:Router()
     local orange_db = require("orange.store.orange_db")
-    
+
     dashboard_router:get("/", function(req, res, next)
         --- 全局信息
         -- 当前加载的插件，开启与关闭情况
@@ -130,7 +130,9 @@ return function(config, store)
     dashboard_router:get("/rate_limiting", function(req, res, next)
         res:render("rate_limiting")
     end)
-
+    dashboard_router:get("/rate_limiting_for_every_value", function(req, res, next)
+        res:render("rate_limiting_for_every_value")
+    end)
     dashboard_router:get("/basic_auth", function(req, res, next)
         res:render("basic_auth/basic_auth")
     end)
