@@ -206,8 +206,7 @@
     <script src="/static/js/property_rate_limiting.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            APP.global_config.validate_conditions = false;
-            APP.Common.resetNav("nav-rate-limiting");
+            APP.Common.resetNav("nav-property-rate-limiting");
             APP.PropertyRateLimiting.init();
             $(".sortable-list").sortable().disableSelection();
         });

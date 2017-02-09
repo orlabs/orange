@@ -1,8 +1,5 @@
 (function (L) {
     var _this = null;
-    L.global_config = {
-        validate_conditions:true,
-    }
     L.Common = L.Common || {};
     _this = L.Common = {
         data: {},
@@ -208,6 +205,26 @@
             return result;
         },
 
+        buildName:function()
+        {
+            var result = {
+                success: false,
+                data: {
+                    name: {}
+                }
+            };
+
+            var name = $("#rule-name").val();
+            if (!name) {
+                result.data = "规则名称不能为空";
+                return result;
+            }
+
+            result.data.name = name;
+            result.success = true;
+            return result;
+        },
+
         buildJudge: function (ignore_name) {
             var result = {
                 success: false,
@@ -216,20 +233,13 @@
                 }
             };
 
-            if(ignore_name != true){
-                var name = $("#rule-name").val();
-                if (!name) {
-                    result.success = false;
-                    result.data = "规则名称不能为空";
-                    return result;
+            if(ignore_name != true) {
+                var temp_result = L.Common.buildName();
+                if(!temp_result.success){
+                    return temp_result;
+                }else{
+                    result.data.name = temp_result.data.name
                 }
-
-                result.data.name = name;
-            }
-
-            if( ! L.global_config.validate_conditions){
-                result.success = true;
-                return result;
             }
 
             var judge_type = parseInt($("#rule-judge-type").val());

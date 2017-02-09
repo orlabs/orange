@@ -205,7 +205,7 @@ CREATE TABLE `property_rate_limiting` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `property_rate_limiting` WRITE;
-/*!40000 ALTER TABLE `rate_limiting_for_every_value` DISABLE KEYS */;
+/*!40000 ALTER TABLE `property_rate_limiting` DISABLE KEYS */;
 
 INSERT INTO `property_rate_limiting` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
