@@ -49,10 +49,9 @@
             };
 
             //build name and judge
-            var buildJudgeResult = L.Common.buildJudge();
+            var buildJudgeResult = L.Common.buildName();
             if(buildJudgeResult.success == true){
                 result.data.name = buildJudgeResult.data.name;
-                result.data.judge = buildJudgeResult.data.judge;
             }else{
                 result.success = false;
                 result.data = buildJudgeResult.data;
