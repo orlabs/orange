@@ -28,7 +28,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.0.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.1.sql)导入到orange库中
 
 #### 修改配置文件
 

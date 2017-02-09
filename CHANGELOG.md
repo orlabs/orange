@@ -1,4 +1,8 @@
-### v0.6.0 beta 2016.11.13
+### v0.6.1 2017.02.09
+
+添加property based rate limiting插件，该插件由[@noname007](https://github.com/noname007)贡献
+
+### v0.6.0 2016.11.13
 
 注意，0.6.*版本与之前的版本并不兼容，主要改动如下：
 

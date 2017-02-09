@@ -40,7 +40,7 @@ LOCK TABLES `basic_auth` WRITE;
 
 INSERT INTO `basic_auth` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `basic_auth` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -67,7 +67,7 @@ LOCK TABLES `dashboard_user` WRITE;
 
 INSERT INTO `dashboard_user` (`id`, `username`, `password`, `is_admin`, `create_time`, `enable`)
 VALUES
-	(1,'admin','1fe832a7246fd19b7ea400a10d23d1894edfa3a5e09ee27e0c4a96eb0136763d',1,'2016-11-11 11:11:11',1);
+    (1,'admin','1fe832a7246fd19b7ea400a10d23d1894edfa3a5e09ee27e0c4a96eb0136763d',1,'2016-11-11 11:11:11',1);
 
 /*!40000 ALTER TABLE `dashboard_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -93,7 +93,7 @@ LOCK TABLES `divide` WRITE;
 
 INSERT INTO `divide` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `divide` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -119,7 +119,7 @@ LOCK TABLES `key_auth` WRITE;
 
 INSERT INTO `key_auth` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `key_auth` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -161,7 +161,7 @@ LOCK TABLES `monitor` WRITE;
 
 INSERT INTO `monitor` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `monitor` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -187,11 +187,32 @@ LOCK TABLES `rate_limiting` WRITE;
 
 INSERT INTO `rate_limiting` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `rate_limiting` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `property_rate_limiting`;
+
+CREATE TABLE `property_rate_limiting` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `property_rate_limiting` WRITE;
+/*!40000 ALTER TABLE `property_rate_limiting` DISABLE KEYS */;
+
+INSERT INTO `property_rate_limiting` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+    (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `property_rate_limiting` ENABLE KEYS */;
+UNLOCK TABLES;
 
 # Dump of table redirect
 # ------------------------------------------------------------
@@ -213,7 +234,7 @@ LOCK TABLES `redirect` WRITE;
 
 INSERT INTO `redirect` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `redirect` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -239,7 +260,7 @@ LOCK TABLES `rewrite` WRITE;
 
 INSERT INTO `rewrite` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `rewrite` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -265,7 +286,7 @@ LOCK TABLES `waf` WRITE;
 
 INSERT INTO `waf` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-	(1,'1','{}','meta','2016-11-11 11:11:11');
+    (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `waf` ENABLE KEYS */;
 UNLOCK TABLES;
