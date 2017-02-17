@@ -15,7 +15,7 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 - MySQL v5.5+
 - OpenResty v1.9.7.3+ or Nginx+lua module
     - install OpenResty with `--with-http_stub_status_module` option
-- [Lor Framework](https://github.com/sumory/lor) v0.2.5+
+- [Lor Framework](https://github.com/sumory/lor) v0.2.6, **not compatible** with lor v0.3.0 for now.
 
 Import the SQL file(e.g. install/orange-v0.6.1.sql) which is adapted to your Orange version to MySQL database named `orange`.
 
