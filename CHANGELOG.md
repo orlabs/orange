@@ -1,3 +1,12 @@
+### v0.6.2 2017.02.18
+
+- 兼容Orange与最新版本的[lor]（https://github.com/sumory/lor）, 即lor v0.3.0
+
+注意：
+
+- 若使用的Orange版本在0.6.2以下，则应安装lor v0.2.*版本, 推荐lor v0.2.6
+- 若使用的Orange版本在0.6.2及以上，可升级lor到v0.3.0+版本
+
 ### v0.6.1 2017.02.09
 
 添加property based rate limiting插件，该插件由[@noname007](https://github.com/noname007)贡献

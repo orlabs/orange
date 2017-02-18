@@ -49,7 +49,7 @@ return function(config, store)
         if result and not err then
             if result and #result == 1 then
                 isExist = true
-                user = result[1] 
+                user = result[1]
                 userid = user.id
             end
         else
@@ -91,7 +91,7 @@ return function(config, store)
         res.locals.userid = 0
         res.locals.create_time = ""
         req.session.destroy()
-        res:redirect("/login")
+        res:redirect("/auth/login")
     end)
 
 

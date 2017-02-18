@@ -19,17 +19,16 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 - OpenResty: 版本应在1.9.7.3+
     - Orange的监控插件需要统计http的某些状态数据，所以需要编译OpenResty时添加`--with-http_stub_status_module`
     - 由于使用了*_block指令，所以OpenResty的版本最好在1.9.7.3以上.
-- [lor](https://github.com/sumory/lor)框架: 版本v0.2.6
-    - 暂时与lor v0.3.0(即master版本)不兼容
-    - 下载0.2.6版本的release包，解压到lor文件夹
-    - cd lor && sh install.sh
+- [lor](https://github.com/sumory/lor)框架
+    - 若使用的Orange版本低于v0.6.2则应安装lor v0.2.*版本
+    - 若使用的Orange版本高于或等于v0.6.2则应安装lor v0.3.0+版本
 - MySQL
     - 配置存储和集群扩展需要MySQL支持。从0.2.0版本开始，Orange去除了本地文件存储的方式，目前仅提供MySQL存储支持.
 
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.1.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.2.sql)导入到orange库中
 
 #### 修改配置文件
 
@@ -45,10 +44,12 @@ orange.conf的配置如下，请按需修改:
         "redirect",
         "rewrite",
         "rate_limiting",
+        "property_rate_limiting",
         "basic_auth",
         "key_auth",
         "waf",
-        "divide"
+        "divide",
+        "kvstore"
     ],
 
     "store": "mysql",//目前仅支持mysql存储

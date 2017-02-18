@@ -1,4 +1,5 @@
 local string_find = string.find
+local setmetatable = setmetatable
 local session_middleware = require("lor.lib.middleware.session")
 local check_login_middleware = require("dashboard.middleware.check_login")
 local check_is_admin_middleware = require("dashboard.middleware.check_is_admin")
@@ -53,32 +54,29 @@ function _M:build_app()
     -- routes
     app:use(dashboard_router(config, store)())
 
-    -- 404 error
-    app:use(function(req, res, next)
-        if req:is_found() ~= true then
-            if string_find(req.headers["Accept"], "application/json") then
-                res:status(404):json({
-                    success = false,
-                    msg = "404! sorry, not found."
-                })
-            else
-                res:status(404):send("404! sorry, not found. " .. req.path or "")
-            end
-        end
-    end)
-
     -- error handle middleware
     app:erroruse(function(err, req, res, next)
         ngx.log(ngx.ERR, err)
+        local is_json_accept = string_find(req.headers["Accept"], "application/json")
 
-        if string_find(req.headers["Accept"], "application/json") then
-            res:status(500):json({
+        if req:is_found() ~= true then
+            if is_json_accept then
+                return res:status(404):json({
+                    success = false,
+                    msg = "404! sorry, not found."
+                })
+            end
+            return res:status(404):send("404! sorry, not found. " .. (req.path or ""))
+        end
+
+        if is_json_accept then
+            return res:status(500):json({
                 success = false,
                 msg = "500! unknown error."
             })
-        else
-            res:status(500):send("unknown error")
         end
+
+        res:status(500):send("unknown error")
     end)
 end
 
