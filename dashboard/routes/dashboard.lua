@@ -137,6 +137,10 @@ return function(config, store)
         res:render("basic_auth/basic_auth")
     end)
 
+    dashboard_router:get("/signature_auth", function(req, res, next)
+        res:render("signature_auth/signature_auth")
+    end)
+
     dashboard_router:get("/key_auth", function(req, res, next)
         res:render("key_auth/key_auth")
     end)
