@@ -16,7 +16,7 @@
                 <div class="row content-header">
                     <div class="col-md-12">
                         <div class="pull-left">
-                            <h4 class="head_title">HTTP Basic Auth</h4>
+                            <h4 class="head_title">HTTP Signature Auth</h4>
                         </div>
                         <div class="pull-right">
                              {(common/plugin-op.html)}
@@ -120,8 +120,12 @@
                 <!-- add - 条件编辑器模板 end -->
 
                 <!-- add - credentials编辑器模板 start -->
-                {(basic_auth/credential-add.html)}
+                {(signature_auth/credential-add.html)}
                 <!-- add - credentials编辑器模板 end -->
+
+                <!-- add - 变量提取器模板 start -->
+                {(common/extraction-add.html)}
+                <!-- add - 变量提取器模板 end -->
 
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
@@ -166,8 +170,12 @@
                 <!-- edit - 条件编辑器模板 end -->
 
                 <!-- edit - credentials编辑器模板 start -->
-                {(basic_auth/credential-edit.html)}
+                {(signature_auth/credential-edit.html)}
                 <!-- edit - credentials编辑器模板 end -->
+
+                <!-- add - 变量提取器模板 start -->
+                {(common/extraction-edit.html)}
+                <!-- add - 变量提取器模板 end -->
 
 
                 <div class="form-group handle-holder">
@@ -199,18 +207,19 @@
         </div>
     </script>
 
-    {(basic_auth/credential-tmpl.html)}
+    {(common/extraction-tmpl.html)}
+    {(signature_auth/credential-tmpl.html)}
 
     {(common/selector-item-tpl.html)}
     {(common/selector-add.html)}
     {(common/selector-edit.html)}
 
     {(common/common_js.html)}<!-- 通用js -->
-    <script src="/static/js/basic_auth.js"></script>
+    <script src="/static/js/signature_auth.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            APP.Common.resetNav("nav-basic-auth");
-            APP.BasicAuth.init();
+            APP.Common.resetNav("nav-signature-auth");
+            APP.SignatureAuth.init();
             $(".sortable-list").sortable().disableSelection();
         });
     </script>

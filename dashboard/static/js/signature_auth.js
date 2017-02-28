@@ -1,26 +1,26 @@
 (function (L) {
     var _this = null;
-    L.BasicAuth = L.BasicAuth || {};
-    _this = L.BasicAuth = {
+    L.SignatureAuth = L.SignatureAuth || {};
+    _this = L.SignatureAuth = {
         data: {
         },
 
         init: function () {
-            L.Common.loadConfigs("basic_auth", _this, true);
+            L.Common.loadConfigs("signature_auth", _this, true);
             _this.initEvents();
         },
 
         initEvents: function () {
-            L.Common.initRuleAddDialog("basic_auth", _this);//添加规则对话框
-            L.Common.initRuleDeleteDialog("basic_auth", _this);//删除规则对话框
-            L.Common.initRuleEditDialog("basic_auth", _this);//编辑规则对话框
-            L.Common.initRuleSortEvent("basic_auth", _this);
+            L.Common.initRuleAddDialog("signature_auth", _this);//添加规则对话框
+            L.Common.initRuleDeleteDialog("signature_auth", _this);//删除规则对话框
+            L.Common.initRuleEditDialog("signature_auth", _this);//编辑规则对话框
+            L.Common.initRuleSortEvent("signature_auth", _this);
 
-            L.Common.initSelectorAddDialog("basic_auth", _this);
-            L.Common.initSelectorDeleteDialog("basic_auth", _this);
-            L.Common.initSelectorEditDialog("basic_auth", _this);
-            L.Common.initSelectorSortEvent("basic_auth", _this);
-            L.Common.initSelectorClickEvent("basic_auth", _this);
+            L.Common.initSelectorAddDialog("signature_auth", _this);
+            L.Common.initSelectorDeleteDialog("signature_auth", _this);
+            L.Common.initSelectorEditDialog("signature_auth", _this);
+            L.Common.initSelectorSortEvent("signature_auth", _this);
+            L.Common.initSelectorClickEvent("signature_auth", _this);
 
             L.Common.initSelectorTypeChangeEvent();//选择器类型选择事件
             L.Common.initConditionAddOrRemove();//添加或删除条件
@@ -30,8 +30,13 @@
             _this.initCredentialAddOrRemove();//添加或删除credential
             _this.initCredentialAddBtnEvent();
 
-            L.Common.initViewAndDownloadEvent("basic_auth", _this);
-            L.Common.initSwitchBtn("basic_auth", _this);//redirect关闭、开启
+            L.Common.initExtractionAddOrRemove();//添加或删除条件
+            L.Common.initExtractionTypeChangeEvent();//extraction类型选择事件
+            L.Common.initExtractionAddBtnEvent();//添加提前项按钮事件
+            L.Common.initExtractionHasDefaultValueOrNotEvent();//提取项是否有默认值选择事件
+
+            L.Common.initViewAndDownloadEvent("signature_auth", _this);
+            L.Common.initSwitchBtn("signature_auth", _this);//redirect关闭、开启
             L.Common.initSyncDialog("basic_auth", _this);//编辑规则对话框
         },
 
@@ -104,6 +109,7 @@
                 data: {
                     name: null,
                     judge: {},
+                    extractor: {},
                     handle: {}
                 }
             };
@@ -116,6 +122,16 @@
             } else {
                 result.success = false;
                 result.data = buildJudgeResult.data;
+                return result;
+            }
+
+            //build extractor
+            var buildExtractorResult = L.Common.buildExtractor();
+            if (buildExtractorResult.success == true) {
+                result.data.extractor = buildExtractorResult.data.extractor;
+            } else {
+                result.success = false;
+                result.data = buildExtractorResult.data;
                 return result;
             }
 
