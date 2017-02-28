@@ -212,7 +212,7 @@
                 result.data = tmp_tip;
                 return result;
             }
-            result.data = credentials;
+            result.data = credentials[0];
 
             //判断个数是否匹配
             if (credentials.length < 1) {

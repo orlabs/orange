@@ -12,24 +12,33 @@ local handle_util = require("orange.utils.handle")
 local BasePlugin = require("orange.plugins.base_handler")
 local extractor_util = require("orange.utils.extractor")
 
-local function is_authorized(signature, secretKey,extractor)
+local function is_authorized(signature_name, secretKey,extractor)
 
-    if not signature or not credentials then return false end
-
-    if extractor == nil or next(extractor) == nil  then
-        return false
+    if not signature_name or not secretKey then
+        return false,'sig or secret key config error'
     end
 
-    local build_sig_str = function(extractor,secretKey)
+    if extractor == nil or next(extractor) == nil  then
+        return false,'extractor empty'
+    end
+
+    local check_sig = function(extractions,secretKey)
         local param = {}
         local req_val = {}
 
-        for i, extraction in ipairs(extractor) do
-            tabel_insert(param,extraction.name)
-            req_val[extraction.name] = extractor_util.extract_variable(extraction)
+        for i, extraction in ipairs(extractions) do
+            local name = extraction.name
+            tabel_insert(param,name)
+            local temp= extractor_util.extract_variable(extraction)
+            if  temp then
+                req_val[name]  = temp
+            else
+                return false ,name.." is empty"
+            end
         end
-        table.sort(param)
 
+        local signature = req_val[signature_name]
+        req_val[signature_name]=nil
 
         local md5 = require("resty.md5")
         local md5 = md5:new()
@@ -39,10 +48,12 @@ local function is_authorized(signature, secretKey,extractor)
         end
 
         for _, v in ipairs(param) do
-            local ok = md5:update(req_val[v])
-            if not ok then
-                ngx.log(ngx.ERR,'server error exec md5:update faild')
-                return false
+            if req_val[v] then
+                local ok = md5:update(req_val[v])
+                if not ok then
+                    ngx.log(ngx.ERR,'server error exec md5:update faild')
+                    return false
+                end
             end
         end
 
@@ -52,14 +63,13 @@ local function is_authorized(signature, secretKey,extractor)
             return false
         end
 
-        local digest = md5:final()
-
         local str = require "resty.string"
+        local calc_sig = str.to_hex(md5:final())
 
-        return str.to_hex(digest)
+        return calc_sig == signature
     end
 
-    return build_sig_str(extractor,secretKey)  == signature
+    return check_sig(extractor.extractions,secretKey)
 
 end
 
@@ -94,7 +104,6 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                         ngx.log(ngx.INFO, "[SignatureAuth-Forbidden-Rule] ", rule.name, " uri:", ngx_var_uri)
                     end
                     ngx.exit(tonumber(handle.code) or 401)
-
                     return true
                 end
             end
