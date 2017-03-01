@@ -79,8 +79,8 @@
             var row = self.parents('.credential-holder');
             var new_row = row.clone(true);
 
-            $(new_row).find("input[name=rule-handle-credential-username]").val("");
-            $(new_row).find("input[name=rule-handle-credential-password]").val("");
+            $(new_row).find("input[name=rule-handle-credential-signame]").val("");
+            $(new_row).find("input[name=rule-handle-credential-secretkey]").val("");
             $(new_row).find("label").text("");
 
             $(new_row).insertAfter($(this).parents('.credential-holder'))
@@ -194,8 +194,8 @@
             $(".credential-holder").each(function () {
                 var self = $(this);
                 var credential = {};
-                var username = self.find("input[name=rule-handle-credential-username]").val();
-                var password = self.find("input[name=rule-handle-credential-password]").val();
+                var username = self.find("input[name=rule-handle-credential-signame]").val();
+                var password = self.find("input[name=rule-handle-credential-secretkey]").val();
 
                 if (!username || !password) {
                     tmp_success = false;
