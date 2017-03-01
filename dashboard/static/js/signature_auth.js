@@ -199,7 +199,7 @@
 
                 if (!signame || !secretkey) {
                     tmp_success = false;
-                    tmp_tip = "credential的username和password字段均不得为空";
+                    tmp_tip = "签名名和密钥字段均不得为空";
                 }
 
                 credential.signame = signame;
