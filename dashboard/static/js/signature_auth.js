@@ -194,16 +194,16 @@
             $(".credential-holder").each(function () {
                 var self = $(this);
                 var credential = {};
-                var username = self.find("input[name=rule-handle-credential-signame]").val();
-                var password = self.find("input[name=rule-handle-credential-secretkey]").val();
+                var signame = self.find("input[name=rule-handle-credential-signame]").val();
+                var secretkey = self.find("input[name=rule-handle-credential-secretkey]").val();
 
-                if (!username || !password) {
+                if (!signame || !secretkey) {
                     tmp_success = false;
                     tmp_tip = "credential的username和password字段均不得为空";
                 }
 
-                credential.username = username;
-                credential.password = password;
+                credential.signame = signame;
+                credential.secretkey = secretkey;
                 credentials.push(credential);
             });
 

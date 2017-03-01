@@ -79,9 +79,7 @@
 
                         <td class="left rule-credential-td">
                             {@if r.handle.credentials }
-                                {@each r.handle.credentials as cdt, cdtindex}
-                                    <span>${cdt.username}:${cdt.password}</span><br/>
-                                {@/each}
+                                <span>${r.handle.credentials.signame}:${r.handle.credentials.secretkey}</span><br/>
                             {@/if}
                         </td>
 

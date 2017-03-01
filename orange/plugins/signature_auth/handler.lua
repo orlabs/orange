@@ -92,7 +92,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                         ngx.log(ngx.INFO, "[SignatureAuth-Pass-Rule] ", rule.name, " uri:", ngx_var_uri)
                     end
                     local credentials = handle.credentials
-                    local authorized = is_authorized(credentials.username,credentials.password,rule.extractor)
+                    local authorized = is_authorized(credentials.signame,credentials.secretkey,rule.extractor)
                     if authorized then
                         return true
                     else
