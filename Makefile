@@ -3,11 +3,15 @@ ORANGE_HOME ?= /usr/local/orange
 ORANGE_BIN ?= /usr/local/bin/orange
 
 .PHONY: test install show
+init-config:
+	@cp conf/nginx.conf.example conf/nginx.conf
+	@cp conf/orange.conf.example conf/orange.conf
+
 
 test:
 	@echo "to be continued..."
 
-install:
+install:init-config
 	@rm -rf $(ORANGE_BIN)
 	@rm -rf $(ORANGE_HOME)
 	@mkdir -p $(ORANGE_HOME)
@@ -15,7 +19,7 @@ install:
 	@for item in $(TO_INSTALL) ; do \
 		cp -a $$item $(ORANGE_HOME)/; \
 	done;
-	
+
 	@cat $(ORANGE_HOME)/conf/nginx.conf | sed "s/..\/\?.lua;\/usr\/local\/lor\/\?.lua;;/\/usr\/local\/orange\/\?.lua;\/usr\/local\/lor\/?.lua;;/" > $(ORANGE_HOME)/conf/new_nginx.conf
 	@rm $(ORANGE_HOME)/conf/nginx.conf
 	@mv $(ORANGE_HOME)/conf/new_nginx.conf $(ORANGE_HOME)/conf/nginx.conf
