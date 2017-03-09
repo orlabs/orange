@@ -164,4 +164,8 @@ function _M.extract_variables(extractor)
     return variables
 end
 
+function _M.extract_variable(extraction)
+    return extract_variable(extraction)
+end
+
 return _M
