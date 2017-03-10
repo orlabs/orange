@@ -82,3 +82,8 @@ nbproject
 Thumbs.db
 
 
+/conf/nginx.conf
+/conf/orange.conf
+*.bt
+*.svg
+*.cbt

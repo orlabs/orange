@@ -8,6 +8,11 @@ then
 	pid=`cat $current_path/logs/nginx.pid`
 fi
 
+if [ ! -f ./conf/nginx.conf ] || [ ! -f ./conf/orange.conf ]
+then
+    make init-config
+fi
+
 if [ "$pid" = "" ]
 then
 	echo "start orange.."
