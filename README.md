@@ -19,15 +19,15 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
     - Orange v0.6.1 and versions before v0.6.1 are compatible with lor v0.2.*
     - Orange v0.6.2+ is compatible with lor v0.3.0+
 
-Import the SQL file(e.g. install/orange-v0.6.2.sql) which is adapted to your Orange version into MySQL database named `orange`.
+Import the SQL file(e.g. install/orange-v0.6.3.sql) which is adapted to your Orange version into MySQL database named `orange`.
 
 #### Install
 
-**1) version < 0.5.0**
+1) script management
 
-If you use Orange under v0.5.0, there is no need to `install`.
+use shell scripts (e.g. `start.sh`) to manage Orange.
 
-**2) version >= 0.5.0**
+2) CLI tool
 
 In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
 
@@ -38,17 +38,15 @@ make install
 
 then, the Orange runtime lua module is installed in `/usr/local/orange` and an executable command named `/usr/local/bin/orange` is generated.
 
-
 #### Usages
 
 Before starting Orange, you should ensure that the `orange.conf` and `nginx.conf` are redefined to satisfy the demands of your project.
 
-
-**1) version < 0.5.0**
+1) script management
 
 Just `sh start.sh` to start Orange. You could rewrite some other shell scripts as you need.
 
-**2) version >= 0.5.0**
+2) CLI tool
 
 `orange help` to check usages:
 
@@ -79,10 +77,10 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 
 ### Contributors
 
-- 雨帆([@syhily](https://github.com/syhily))
-- lhmwzy([@lhmwzy](https://github.com/lhmwzy))
-- 罗泽轩([@spacewander](https://github.com/spacewander))
-- joke([@noname007](https://github.com/noname007))
+- [@syhily](https://github.com/syhily)
+- [@lhmwzy](https://github.com/lhmwzy)
+- [@spacewander](https://github.com/spacewander)
+- [@noname007](https://github.com/noname007)
 
 ### See also
 

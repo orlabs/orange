@@ -28,7 +28,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.2.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.3.sql)导入到orange库中
 
 #### 修改配置文件
 
@@ -47,6 +47,7 @@ orange.conf的配置如下，请按需修改:
         "property_rate_limiting",
         "basic_auth",
         "key_auth",
+        "signature_auth",
         "waf",
         "divide",
         "kvstore"
@@ -149,10 +150,10 @@ Orange启动成功后， dashboard和API server也随之启动：
 
 ### 贡献者
 
-- 雨帆([@syhily](https://github.com/syhily))
-- lhmwzy([@lhmwzy](https://github.com/lhmwzy))
-- 罗泽轩([@spacewander](https://github.com/spacewander))
-- joke([@noname007](https://github.com/noname007))
+- [@syhily](https://github.com/syhily)
+- [@lhmwzy](https://github.com/lhmwzy)
+- [@spacewander](https://github.com/spacewander)
+- [@noname007](https://github.com/noname007)
 
 ### See also
 

@@ -1,3 +1,8 @@
+### v0.6.3 2017.03.10
+
+- 添加插件： `signature auth plugin`
+- 将默认的配置文件做成模板，即`ngingx.conf.example`和`orange.conf.example`
+
 ### v0.6.2 2017.02.18
 
 - 兼容Orange与最新版本的[lor]（https://github.com/sumory/lor）, 即lor v0.3.0
