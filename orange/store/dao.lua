@@ -13,7 +13,7 @@ local _M = {
 }
 
 function _M.get_selector(plugin, store, selector_id)
-    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then 
+    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then
         return nil
     end
 
@@ -30,7 +30,7 @@ function _M.get_selector(plugin, store, selector_id)
 end
 
 function _M.get_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then 
+    if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then
         return {}
     end
 
@@ -71,7 +71,7 @@ function _M.get_rules_of_selector(plugin, store, rule_ids)
 end
 
 function _M.delete_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then 
+    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then
         return true
     end
 
@@ -97,7 +97,7 @@ function _M.delete_rules_of_selector(plugin, store, rule_ids)
 end
 
 function _M.delete_selector(plugin, store, selector_id)
-    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then 
+    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then
         return true
     end
 
@@ -128,7 +128,7 @@ function _M.get_meta(plugin, store)
 end
 
 function _M.update_meta(plugin, store, meta)
-    if not meta or type(meta) ~= "table" then 
+    if not meta or type(meta) ~= "table" then
         return false
     end
 
@@ -147,7 +147,7 @@ function _M.update_meta(plugin, store, meta)
 end
 
 function _M.update_selector(plugin, store, selector)
-    if not selector or type(selector) ~= "table" then 
+    if not selector or type(selector) ~= "table" then
         return false
     end
 
@@ -244,7 +244,7 @@ function _M.update_local_selector_rules(plugin, store, selector_id)
         ngx.log(ngx.ERR, "update local rules of selector error, err:", err)
         return false
     end
-    
+
     return true
 end
 
@@ -306,7 +306,7 @@ function _M.init_rules_of_selector(plugin, store, selector_id)
         ngx.log(ngx.ERR, "init plugin[" .. plugin .. "] local rules of selector error, err:", err)
         return false
     end
-    
+
     return true
 end
 
@@ -401,7 +401,7 @@ end
 function _M.compose_plugin_data(store, plugin)
     local data = {}
     local ok, e
-    ok = xpcall(function() 
+    ok = xpcall(function()
         -- get enable
         local enables, err = store:query({
             sql = "select `key`, `value` from meta where `key`=?",
@@ -494,7 +494,7 @@ end
 -- ########################### init cache when starting orange #############################
 function _M.load_data_by_mysql(store, plugin)
     local ok, e
-    ok = xpcall(function() 
+    ok = xpcall(function()
         local v = plugin
         if not v or v == "" then
             ngx.log(ngx.ERR, "params error, the `plugin` is nil")
