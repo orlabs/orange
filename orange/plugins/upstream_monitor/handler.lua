@@ -33,6 +33,7 @@ function UpstreamMonitor:init_worker()
         rise = 2,  -- # of successive successes before turning a peer up
         valid_statuses = {200, 302},  -- a list valid HTTP status code
         concurrency = 10,  -- concurrency level for test requests
+        shared_config=true,
     }
 
     if not ok then

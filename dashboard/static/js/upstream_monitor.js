@@ -16,6 +16,18 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
+
+                        $("#upstream-monitor-config").text('')
+                        $.each(result.data.conf, function(name, value)
+                        {
+                            var text = "<span>"+ name + "</span>"
+
+                            var input = text + "   <input name= " + name + " value = "+ escape(value) + " /><br/>"
+                            $("#upstream-monitor-config").append(input)
+                        });
+
+                        $("#upstream-monitor-status").html("<pre>" + result.data.upstream_status + "</pre>")
+
                         L.Common.resetSwitchBtn(result.data.enable, op_type);
                         $("#switch-btn").show();
                         $("#view-btn").show();
@@ -23,7 +35,6 @@
 
                         //重新设置数据
                         _this.data.enable = enable;
-
                         $("#op-part").css("display", "block");
                     } else {
                         $("#op-part").css("display", "none");
