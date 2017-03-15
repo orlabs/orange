@@ -21,8 +21,7 @@
                         $.each(result.data.conf, function(name, value)
                         {
                             var text = "<span>"+ name + "</span>"
-
-                            var input = text + "   <input name= " + name + " value = "+ escape(value) + " /><br/>"
+                            var input = text + "<br/> <textarea name= " + name + ">"+value+"</textarea>  <br/>"
                             $("#upstream-monitor-config").append(input)
                         });
 
@@ -46,8 +45,25 @@
                     L.Common.showErrorTip("提示", "查询" + op_type + "配置请求发生异常");
                 }
             });
-        },
 
+            $("#upstream-monitor-config-submit").click(function(){
+                $.ajax({
+                    url: '/' + op_type + '/configs',
+                    type: 'post',
+                    cache: false,
+                    data: $('form').serialize(),
+                    dataType: 'json',
+                    success:function(result){
+                        alert(result)
+
+                    },
+                    error:function() {
+                        $("#op-part").css("display", "none");
+                        L.Common.showErrorTip("提示", "查询" + op_type + "配置请求发生异常");
+                    }
+                });
+            });
+        },
         initEvents: function(){
             var op_type = "upstream_monitor";
             L.Common.initViewAndDownloadEvent(op_type, _this);

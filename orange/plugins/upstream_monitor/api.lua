@@ -32,6 +32,17 @@ API:get("/upstream_monitor/configs", function(store)
     end
 end)
 
+API:post("/upstream_monitor/configs",function(store)
+    return function(req, res, next)
+        local cjson = require('cjson')
+
+        ngx.log(ngx.ERR,cjson.encode(req.body))
+        return
+        hc.check_and_set_config(req.body)
+
+    end
+end)
+
 return API
 
 

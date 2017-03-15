@@ -37,15 +37,18 @@
 
                 <div  id="table-view" class="row" style="margin-top:30px;">
                     <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">健康检查配置</div>
-                            <div class="panel-body">
-                               <div class="panel-body"  id="upstream-monitor-config" >
-                                   <p>此处展示数据</p>
+                        <form  action = '/upstream_monitor/configs' method="post" >
+                            <div class="panel panel-default">
+                                <div class="panel-heading">健康检查配置</div>
+                                <div class="panel-body">
+                                   <div class="panel-body"  id="upstream-monitor-config" >
+                                       <p>此处展示数据</p>
+                                    </div>
+                                    <input type="button" id="upstream-monitor-config-submit" value="提交">
                                 </div>
-
                             </div>
-                        </div>
+
+                        </form>
                     </div>
                     <div class="col-md-12">
                         <div class="panel panel-default">
