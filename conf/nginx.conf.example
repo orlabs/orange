@@ -39,6 +39,7 @@ http {
     lua_shared_dict rate_limit 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict healthcheck 1m;
+    lua_shared_dict healthcheck_config 1m;
 
     init_by_lua_block {
         local orange = require("orange.orange")
@@ -59,33 +60,6 @@ http {
     }
 
     init_worker_by_lua_block {
-        local hc = require "resty.upstream.healthcheck"
-        local ok, err = hc.spawn_checker{
-            shm = "healthcheck",  -- defined by "lua_shared_dict"
-            upstream = "default_upstream", -- defined by "upstream"
-            type = "http",
-
-            http_req = "GET /status HTTP/1.0\r\nHost: localhost\r\n\r\n",
-                    -- raw HTTP request for checking
-
-            interval = 2000,  -- run the check cycle every 2 sec
-            timeout = 1000,   -- 1 sec is the timeout for network operations
-            fall = 3,  -- # of successive failures before turning a peer down
-            rise = 2,  -- # of successive successes before turning a peer up
-            valid_statuses = {200, 302},  -- a list valid HTTP status code
-            concurrency = 10,  -- concurrency level for test requests
-        }
-
-        if not ok then
-            ngx.log(ngx.ERR, "failed to spawn health checker: ", err)
-            return
-        end
-
-        -- Just call hc.spawn_checker() for more times here if you have
-        -- more upstream groups to monitor. One call for one upstream group.
-        -- They can all share the same shm zone without conflicts but they
-        -- need a bigger shm zone for obvious reasons.
-
         local orange = context.orange
         orange.init_worker()
     }
