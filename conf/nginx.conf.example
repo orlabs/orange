@@ -14,7 +14,9 @@ http {
 
     log_format  main '$remote_addr - $remote_user [$time_local] "$request" '
     '$status $body_bytes_sent "$http_referer" '
-    '"$http_user_agent" "$http_x_forwarded_for"';
+    '"$http_user_agent" "$request_time" "$ssl_protocol" "$ssl_cipher" "$http_x_forwarded_for"'
+    '"$upstream_addr" "$upstream_status" "$upstream_response_length" "$upstream_response_time"';
+
     access_log  ./logs/access.log  main;
     error_log ./logs/error.log info;
 
@@ -71,6 +73,12 @@ http {
         location = /favicon.ico {
             log_not_found off;
             access_log off;
+        }
+
+        location /gateway_benchmark {
+            content_by_lua_block{
+                ngx.say('work good');
+            }
         }
 
         location / {
