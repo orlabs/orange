@@ -47,7 +47,7 @@ http {
         local env_orange_conf = os.getenv("ORANGE_CONF")
         print(string.char(27) .. "[34m" .. "[INFO]" .. string.char(27).. "[0m", [[the env[ORANGE_CONF] is ]], env_orange_conf)
 
-        local config_file = env_orange_conf or "./conf/orange.conf"
+        local config_file = env_orange_conf or ngx.config.prefix().. "/conf/orange.conf"
         local config, store = orange.init({
             config = config_file
         })
@@ -73,12 +73,6 @@ http {
         location = /favicon.ico {
             log_not_found off;
             access_log off;
-        }
-
-        location /gateway_benchmark {
-            content_by_lua_block{
-                ngx.say('work good');
-            }
         }
 
         location / {
