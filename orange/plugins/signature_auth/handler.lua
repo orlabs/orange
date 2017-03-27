@@ -114,16 +114,16 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 end
 
 
-local BasicAuthHandler = BasePlugin:extend()
-BasicAuthHandler.PRIORITY = 2000
+local SignatureAuthHandler = BasePlugin:extend()
+SignatureAuthHandler.PRIORITY = 2000
 
-function BasicAuthHandler:new(store)
-    BasicAuthHandler.super.new(self, "signature_auth-plugin")
+function SignatureAuthHandler:new(store)
+    SignatureAuthHandler.super.new(self, "signature_auth-plugin")
     self.store = store
 end
 
-function BasicAuthHandler:access(conf)
-    BasicAuthHandler.super.access(self)
+function SignatureAuthHandler:access(conf)
+    SignatureAuthHandler.super.access(self)
 
     local enable = orange_db.get("signature_auth.enable")
     local meta = orange_db.get_json("signature_auth.meta")
@@ -173,4 +173,4 @@ function BasicAuthHandler:access(conf)
 
 end
 
-return BasicAuthHandler
+return SignatureAuthHandler
