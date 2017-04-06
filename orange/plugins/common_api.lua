@@ -35,11 +35,12 @@ return function(plugin)
                 res:json({
                     success = false,
                     msg = (enable == true and "failed to enable plugin" or "failed to disable plugin")
-                })  
+                })
             end
         end
     }
 
+    -- fetch config from store
     API["/" .. plugin .. "/fetch_config"] = {
         GET = function(store)
             return function(req, res, next)
@@ -57,6 +58,54 @@ return function(plugin)
                         msg = "error to fetch config from store"
                     })
                 end
+            end
+        end
+    }
+
+    -- get config in Orange's node now
+    API["/" .. plugin .. "/config"] = {
+        GET = function(store)
+            return function(req, res, next)
+                local enable = orange_db.get(plugin .. ".enable") or false
+                local meta = orange_db.get_json(plugin .. ".meta") or {}
+
+                local selectors = {}
+                if meta and meta.selectors and type(meta.selectors)=="table" then
+                    for i, sid in ipairs(meta.selectors) do
+                        local selector = {}
+                        local cache_selectors = orange_db.get_json(plugin .. ".selectors") or {}
+                        for j, selector_detail in pairs(cache_selectors) do
+                            if j == sid then
+                                selector = selector_detail
+                                if selector_detail.rules and type(selector_detail.rules) == "table" then
+                                    local rule_ids = selector_detail.rules
+                                    local cache_rules = orange_db.get_json(plugin .. ".selector." .. sid .. ".rules") or {}
+                                    local rules = {}
+                                    for m, rule_id in ipairs(rule_ids) do
+                                        for n, rule in ipairs(cache_rules) do
+                                            if rule_id == rule.id then
+                                                table_insert(rules, rule)
+                                            end
+                                        end
+                                    end
+                                    selector.rules = rules
+                                else
+                                    selector.rules = {}
+                                end
+                            end
+                        end
+                        table_insert(selectors, selector)
+                    end
+                end
+
+                return res:json({
+                    success = true,
+                    msg = "succeed to get configuration in this node",
+                    data = {
+                        enable = enable,
+                        selectors = selectors
+                    }
+                })
             end
         end
     }
@@ -151,7 +200,7 @@ return function(plugin)
                     msg = "succeed to create rule"
                 })
             end
-        end, 
+        end,
 
         GET = function(store)
             return function(req, res, next)
@@ -159,7 +208,7 @@ return function(plugin)
 
                 local rules = orange_db.get_json(plugin .. ".selector." .. selector_id .. ".rules") or {}
                 res:json({
-                    success = true, 
+                    success = true,
                     data = {
                         rules = rules
                     }
@@ -173,7 +222,7 @@ return function(plugin)
                 local rule = req.body.rule
                 rule = utils.json_decode(rule)
                 rule.time = utils.now()
-            
+
                 local update_result = dao.update_rule(plugin, store, rule)
 
                 if update_result then
@@ -302,7 +351,7 @@ return function(plugin)
                 local new_order = req.body.order
                 if not new_order or new_order == "" then
                     return res:json({
-                        success = false, 
+                        success = false,
                         msg = "error params"
                     })
                 end
@@ -317,10 +366,10 @@ return function(plugin)
 
                 local update_selector_result, update_local_selectors_result, update_local_selector_rules_result
                 local selector = dao.get_selector(plugin, store, selector_id)
-                if not selector or not selector.value then 
+                if not selector or not selector.value then
                     ngx.log(ngx.ERR, "error to find selector when resorting rules of it")
                     return res:json({
-                        success = true, 
+                        success = true,
                         msg = "error to find selector when resorting rules of it"
                     })
                 else
@@ -355,7 +404,7 @@ return function(plugin)
         GET = function(store) -- get selectors
             return function(req, res, next)
                 res:json({
-                    success = true, 
+                    success = true,
                     data = {
                         enable = orange_db.get(plugin .. ".enable"),
                         meta = orange_db.get_json(plugin .. ".meta"),
@@ -547,7 +596,7 @@ return function(plugin)
                 local new_order = req.body.order
                 if not new_order or new_order == "" then
                     return res:json({
-                        success = false, 
+                        success = false,
                         msg = "error params"
                     })
                 end
@@ -562,10 +611,10 @@ return function(plugin)
 
                 local update_meta_result, update_local_meta_result
                 local meta = dao.get_meta(plugin, store)
-                if not meta or not meta.value then 
+                if not meta or not meta.value then
                     ngx.log(ngx.ERR, "error to find meta when resorting selectors")
                     return res:json({
-                        success = true, 
+                        success = true,
                         msg = "error to find meta when resorting selectors"
                     })
                 else
