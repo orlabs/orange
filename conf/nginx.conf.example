@@ -14,7 +14,9 @@ http {
 
     log_format  main '$remote_addr - $remote_user [$time_local] "$request" '
     '$status $body_bytes_sent "$http_referer" '
-    '"$http_user_agent" "$http_x_forwarded_for"';
+    '"$http_user_agent" "$request_time" "$ssl_protocol" "$ssl_cipher" "$http_x_forwarded_for"'
+    '"$upstream_addr" "$upstream_status" "$upstream_response_length" "$upstream_response_time"';
+
     access_log  ./logs/access.log  main;
     error_log ./logs/error.log info;
 
@@ -45,7 +47,7 @@ http {
         local env_orange_conf = os.getenv("ORANGE_CONF")
         print(string.char(27) .. "[34m" .. "[INFO]" .. string.char(27).. "[0m", [[the env[ORANGE_CONF] is ]], env_orange_conf)
 
-        local config_file = env_orange_conf or "./conf/orange.conf"
+        local config_file = env_orange_conf or ngx.config.prefix().. "/conf/orange.conf"
         local config, store = orange.init({
             config = config_file
         })
