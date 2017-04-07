@@ -64,9 +64,9 @@ version Show the version of Orange
 help    Show help tips
 ```
 
-#### Systemtap flame map 
+#### Systemtap Flame Graph
 
-First , you can install systemtap and wrk  or refer this https://github.com/noname007/script/tree/master/systemtap to install.
+First , you can install systemtap,[FlameGraph tools](https://github.com/brendangregg/FlameGraph) and wrk by yourself or refer this https://github.com/noname007/script/tree/master/systemtap to install.
 
 Second, run the cmd and wait a miniute.
 
