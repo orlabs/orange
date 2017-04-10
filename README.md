@@ -65,8 +65,6 @@ help    Show help tips
 ```
 
 
-
-
 ### Documents
 
 Find more about Orange on its [website](http://orange.sumory.com/docs). There is only a Chinese version for now.
