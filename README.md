@@ -64,13 +64,7 @@ version Show the version of Orange
 help    Show help tips
 ```
 
-#### Systemtap Flame Graph
 
-First , you can install systemtap,[FlameGraph tools](https://github.com/brendangregg/FlameGraph) and wrk by yourself or refer this https://github.com/noname007/script/tree/master/systemtap to install.
-
-Second, run the cmd and wait a miniute.
-
-    make -f otherAuto.Makefile URL=YOUR_BENCH_URL systemtap
 
 
 ### Documents
