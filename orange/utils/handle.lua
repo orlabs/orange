@@ -16,10 +16,10 @@ local function compose(extractor_type, tmpl, variables)
     if not extractor_type or extractor_type == 1 then
         -- replace with ngx.re.gsub
         local result = string_gsub(tmpl, "%${([1-9]+)}", function(m)
-            if type(variables[tonumber(m)]) ~= "string" then
-                return tmpl
+            local t = type(variables[tonumber(m)])
+            if t ~= "string" and t ~= "number" then
+                return "${" .. m .. "}"
             end
-
             return variables[tonumber(m)]
         end)
 
