@@ -154,6 +154,7 @@ Orange启动成功后， dashboard和API server也随之启动：
 - [@lhmwzy](https://github.com/lhmwzy)
 - [@spacewander](https://github.com/spacewander)
 - [@noname007](https://github.com/noname007)
+- [@itchenyi](https://github.com/itchenyi)
 
 ### See also
 
