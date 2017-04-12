@@ -5,7 +5,6 @@ local pcall = pcall
 local require = require
 require("orange.lib.globalpatches")()
 local utils = require("orange.utils.utils")
-local uuid = require("orange.lib.jit-uuid")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
 
@@ -85,7 +84,6 @@ end
 
 function Orange.init_worker()
     -- 仅在 init_worker 阶段调用，初始化随机因子，仅允许调用一次
-    uuid.seed()
     math.randomseed()
     -- 初始化定时器，清理计数器等
     if Orange.data and Orange.data.store and Orange.data.config.store == "mysql" then
