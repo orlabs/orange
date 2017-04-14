@@ -1,4 +1,4 @@
-local cjson = require("cjson")
+local json = require("orange.utils.json")
 local orange_data = ngx.shared.orange_data
 
 
@@ -11,7 +11,7 @@ end
 function _M.get_json(key)
     local value, f = _M._get(key)
     if value then
-        value = cjson.decode(value)
+        value = json.decode(value)
     end
     return value, f
 end
@@ -26,7 +26,7 @@ end
 
 function _M.set_json(key, value)
     if value then
-        value = cjson.encode(value)
+        value = json.encode(value)
     end
     return _M._set(key, value)
 end

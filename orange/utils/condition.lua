@@ -1,4 +1,5 @@
 local type = type
+local tostring = tostring
 local string_format = string.format
 local string_find = string.find
 local string_lower = string.lower
@@ -124,7 +125,7 @@ function _M.judge(condition)
         real =  ngx.var.host
     end
 
-    return assert_condition(real, operator, expected)
+    return assert_condition(tostring(real), operator, expected)
 end
 
 

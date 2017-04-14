@@ -2,7 +2,7 @@ local ipairs = ipairs
 local type = type
 local tostring = tostring
 local table_insert = table.insert
-local cjson = require("cjson")
+local json = require("orange.utils.json")
 local orange_db = require("orange.store.orange_db")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
@@ -143,7 +143,7 @@ return function(plugin)
                     })
                 end
 
-                local current_selector = utils.json_decode(selector.value)
+                local current_selector = json.decode(selector.value)
                 if not current_selector then
                     return res:json({
                         success = false,
@@ -152,7 +152,7 @@ return function(plugin)
                 end
 
                 local rule = req.body.rule
-                rule = cjson.decode(rule)
+                rule = json.decode(rule)
                 rule.id = utils.new_id()
                 rule.time = utils.now()
 
@@ -220,7 +220,7 @@ return function(plugin)
             return function(req, res, next)
                 local selector_id = req.params.id
                 local rule = req.body.rule
-                rule = utils.json_decode(rule)
+                rule = json.decode(rule)
                 rule.time = utils.now()
 
                 local update_result = dao.update_rule(plugin, store, rule)
@@ -270,7 +270,7 @@ return function(plugin)
                     })
                 end
 
-                local current_selector = utils.json_decode(selector.value)
+                local current_selector = json.decode(selector.value)
                 if not current_selector then
                     return res:json({
                         success = false,
@@ -373,7 +373,7 @@ return function(plugin)
                         msg = "error to find selector when resorting rules of it"
                     })
                 else
-                    local new_selector = utils.json_decode(selector.value) or {}
+                    local new_selector = json.decode(selector.value) or {}
                     new_selector.rules = rules
                     update_selector_result = dao.update_selector(plugin, store, new_selector)
                     if update_selector_result then
@@ -439,7 +439,7 @@ return function(plugin)
                 end
 
                 -- delete rules of it
-                local to_del_selector = utils.json_decode(selector.value)
+                local to_del_selector = json.decode(selector.value)
                 if not to_del_selector then
                     return res:json({
                         success = false,
@@ -453,7 +453,7 @@ return function(plugin)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)
-                local current_meta = utils.json_decode(meta.value)
+                local current_meta = json.decode(meta.value)
                 if not meta or not current_meta then
                    return res:json({
                         success = false,
@@ -508,7 +508,7 @@ return function(plugin)
         POST = function(store) -- create a selector
             return function(req, res)
                 local selector = req.body.selector
-                selector = cjson.decode(selector)
+                selector = json.decode(selector)
                 selector.id = utils.new_id()
                 selector.time = utils.now()
 
@@ -517,7 +517,7 @@ return function(plugin)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)
-                local current_meta = utils.json_decode(meta and meta.value or "{}")
+                local current_meta = json.decode(meta and meta.value or "{}")
                 if not meta or not current_meta then
                    return res:json({
                         success = false,
@@ -562,7 +562,7 @@ return function(plugin)
         PUT = function(store) -- update
             return function(req, res, next)
                 local selector = req.body.selector
-                selector = cjson.decode(selector)
+                selector = json.decode(selector)
                 selector.time = utils.now()
                 -- 更新selector
                 local update_selector_result = dao.update_selector(plugin, store, selector)
@@ -618,7 +618,7 @@ return function(plugin)
                         msg = "error to find meta when resorting selectors"
                     })
                 else
-                    local new_meta = utils.json_decode(meta.value) or {}
+                    local new_meta = json.decode(meta.value) or {}
                     new_meta.selectors = selectors
                     update_meta_result = dao.update_meta(plugin, store, new_meta)
                     if update_meta_result then

@@ -3,7 +3,6 @@
 local require = require
 local uuid = require("orange.lib.jit-uuid")
 local date = require("orange.lib.date")
-local json = require("cjson")
 local type = type
 local pcall = pcall
 local pairs = pairs
@@ -101,31 +100,6 @@ end
 
 function _M.new_id()
     return uuid()
-end
-
-function _M.json_encode(data, empty_table_as_object)
-    if not data then return nil end
-
-    local json_value
-    if json.encode_empty_table_as_object then
-        json.encode_empty_table_as_object(empty_table_as_object or false) -- 空的table默认为array
-    end
-    if require("ffi").os ~= "Windows" then
-        json.encode_sparse_array(true)
-    end
-
-    pcall(function(d) json_value = json.encode(d) end, data)
-    return json_value
-end
-
-function _M.json_decode(str)
-    if not str then return nil end
-    local json_object
-    pcall(function(data)
-        json_object = json.decode(data)
-    end, str)
-
-    return json_object
 end
 
 --- Calculates a table size.

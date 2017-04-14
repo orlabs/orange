@@ -1,4 +1,4 @@
-local cjson = require("cjson")
+local json = require("orange.utils.json")
 local resty_lock = require("resty.lock")
 local ngx_log = ngx.log
 local cache = ngx.shared.rate_limit
@@ -25,7 +25,7 @@ end
 function _M.get_json(key)
     local value, f = _M.get(key)
     if value then
-        value = cjson.decode(value)
+        value = json.decode(value)
     end
 
     return value, f
@@ -33,7 +33,7 @@ end
 
 function _M.set_json(key, value, expired)
     if value then
-        value = cjson.encode(value)
+        value = json.encode(value)
     end
 
     return _M.set(key, value, expired)

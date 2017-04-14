@@ -2,9 +2,9 @@ local ipairs = ipairs
 local type = type
 local tostring = tostring
 local string_format = string.format
-local cjson = require("cjson")
 local xpcall = xpcall
 local traceback = debug.traceback
+local json = require("orange.utils.json")
 local orange_db = require("orange.store.orange_db")
 local BaseAPI = require("orange.plugins.base_api")
 
@@ -49,8 +49,8 @@ end
 
 local function send_result(res, format, value)
     if format == "json" then
-        xpcall(function() 
-            value = cjson.decode(value)
+        xpcall(function()
+            value = json.decode(value)
         end, function(err)
             local trace = traceback(err, 2)
             ngx.log(ngx.ERR, "decode as json format error: ", trace)
@@ -76,7 +76,7 @@ API:post("/kvstore/enable", function(store)
         if enable == "1" then enable = true else enable = false end
 
         local result = false
-        
+
         local kvstore_enable = "0"
         if enable then kvstore_enable = "1" end
         local update_result = store:update({
@@ -108,7 +108,7 @@ end)
 API:get("/kvstore/fetch_config", function(store)
     return function(req, res, next)
         local data = {}
-        
+
         -- 查找enable
         local enable, err1 = store:query({
             sql = "select `value` from meta where `key`=?",
@@ -141,7 +141,7 @@ API:get("/kvstore/fetch_config", function(store)
         end
 
         if conf and type(conf) == "table" and #conf == 1 then
-            data.conf = cjson.decode(conf[1].value)
+            data.conf = json.decode(conf[1].value)
         else
             data.conf = {}
         end
@@ -189,7 +189,7 @@ API:post("/kvstore/sync", function(store)
         end
 
         if conf and type(conf) == "table" and #conf == 1 then
-            data.conf = cjson.decode(conf[1].value)
+            data.conf = json.decode(conf[1].value)
         else
             data.conf = {}
         end
@@ -232,7 +232,7 @@ API:post("/kvstore/configs", function(store)
     return function(req, res, next)
         local conf = req.body.conf
         local success, data = false, {}
-        
+
         -- 插入或更新到mysql
         local update_result = store:update({
             sql = "replace into meta SET `key`=?, `value`=?",
@@ -243,7 +243,7 @@ API:post("/kvstore/configs", function(store)
             local result, err, forcible = orange_db.set("kvstore.conf", conf)
             success = result
             if success then
-                data.conf = cjson.decode(conf)
+                data.conf = json.decode(conf)
                 data.enable = orange_db.get("kvstore.enable")
             end
         else
@@ -262,7 +262,7 @@ API:put("/kvstore/configs", function(store)
     return function(req, res, next)
         local conf = req.body.conf
         local success, data = false, {}
-        
+
         -- 插入或更新到mysql
         local update_result = store:update({
             sql = "replace into meta SET `key`=?, `value`=?",
@@ -273,7 +273,7 @@ API:put("/kvstore/configs", function(store)
             local result, err, forcible = orange_db.set("kvstore.conf", conf)
             success = result
             if success then
-                data.conf = cjson.decode(conf)
+                data.conf = json.decode(conf)
                 data.enable = orange_db.get("kvstore.enable")
             end
         else
@@ -292,7 +292,7 @@ API:get("/kvstore/get", function(store)
         local dict = req.query.dict
         local key = req.query.key
         local format = req.query.format
-        if format ~= "html" and format ~= "text" and format ~= "json" then 
+        if format ~= "html" and format ~= "text" and format ~= "json" then
             format = "json"
         end
 
@@ -323,7 +323,7 @@ API:get("/kvstore/get", function(store)
                 end
             end
 
-            if contains then 
+            if contains then
                 block = false
             end
         end
@@ -336,7 +336,7 @@ API:get("/kvstore/get", function(store)
         if not ngx_shared_dict then
             return send_err_result(res, format, string_format("ngx.shared.%s not exists", dict))
         end
-        
+
         local value = ngx_shared_dict:get(key)
         ngx.log(ngx.INFO, dict, " ", key, " ", format, " v:", value)
         send_result(res, format, value)
@@ -353,7 +353,7 @@ API:post("/kvstore/set", function(store)
         local format = req.body.format
         local log = req.body.log
 
-        if format ~= "html" and format ~= "text" and format ~= "json" then 
+        if format ~= "html" and format ~= "text" and format ~= "json" then
             format = "json"
         end
 
@@ -361,7 +361,7 @@ API:post("/kvstore/set", function(store)
             exptime = tonumber(exptime)
         end
 
-        if vtype ~= "number" and vtype ~= "string" then 
+        if vtype ~= "number" and vtype ~= "string" then
             vtype = "string"
         end
 
@@ -405,7 +405,7 @@ API:post("/kvstore/set", function(store)
                 end
             end
 
-            if contains then 
+            if contains then
                 block = false
             end
         end
@@ -418,7 +418,7 @@ API:post("/kvstore/set", function(store)
         if not ngx_shared_dict then
             return send_failed_result(res, format, string_format("ngx.shared.%s not exists", dict))
         end
-        
+
         local success, err, forcible
         if exptime and exptime >= 0 then
             success, err, forcible = ngx_shared_dict:set(key, value, exptime)
