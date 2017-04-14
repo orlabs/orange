@@ -1,6 +1,5 @@
 local pairs = pairs
 local ipairs = ipairs
-local cjson = require("cjson")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local extractor_util = require("orange.utils.extractor")
@@ -65,17 +64,17 @@ function WAFHandler:access(conf)
     local meta = orange_db.get_json("waf.meta")
     local selectors = orange_db.get_json("waf.selectors")
     local ordered_selectors = meta and meta.selectors
-    
+
     if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
         return
     end
-    
+
     local ngx_var_uri = ngx.var.uri
     for i, sid in ipairs(ordered_selectors) do
         ngx.log(ngx.INFO, "==[WAF][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
-            local selector_pass 
+            local selector_pass
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else
@@ -105,7 +104,7 @@ function WAFHandler:access(conf)
             end
         end
     end
-    
+
 end
 
 return WAFHandler
