@@ -99,7 +99,6 @@ function _M.random_string()
 end
 
 function _M.new_id()
-    uuid.seed()
     return uuid()
 end
 

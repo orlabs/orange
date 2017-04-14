@@ -1,9 +1,4 @@
 local cjson = require("cjson.safe")
-local ljson_decoder = require("orange.lib.json_decoder")
-
-local _M = {
-    json_decoder = ljson_decoder.new()
-}
 
 
 function _M.encode(data, empty_table_as_object)
@@ -25,11 +20,7 @@ end
 function _M.decode(data)
     if not data then return nil end
 
-    if not _M.json_decoder then
-        return cjson.decode(data)
-    end
-
-    return _M.json_decoder:decode(data)
+    return cjson.decode(data)
 end
 
 
