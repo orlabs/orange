@@ -3,8 +3,7 @@ local table_insert = table.insert
 local table_concat = table.concat
 local type = type
 local xpcall = xpcall
-local cjson = require("cjson")
-local utils = require("orange.utils.utils")
+local json = require("orange.utils.json")
 local orange_db = require("orange.store.orange_db")
 
 
@@ -13,7 +12,7 @@ local _M = {
 }
 
 function _M.get_selector(plugin, store, selector_id)
-    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then 
+    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then
         return nil
     end
 
@@ -30,7 +29,7 @@ function _M.get_selector(plugin, store, selector_id)
 end
 
 function _M.get_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then 
+    if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then
         return {}
     end
 
@@ -58,7 +57,7 @@ function _M.get_rules_of_selector(plugin, store, rule_ids)
         -- reorder the rules as the order stored in selector
         for _, rule_id in ipairs(rule_ids) do
             for _, r in ipairs(rules) do
-                local tmp = utils.json_decode(r.value)
+                local tmp = json.decode(r.value)
                 if tmp and tmp.id == rule_id then
                     table_insert(format_rules, tmp)
                 end
@@ -71,7 +70,7 @@ function _M.get_rules_of_selector(plugin, store, rule_ids)
 end
 
 function _M.delete_rules_of_selector(plugin, store, rule_ids)
-    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then 
+    if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then
         return true
     end
 
@@ -97,7 +96,7 @@ function _M.delete_rules_of_selector(plugin, store, rule_ids)
 end
 
 function _M.delete_selector(plugin, store, selector_id)
-    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then 
+    if not selector_id or selector_id == "" or type(selector_id) ~= "string" then
         return true
     end
 
@@ -128,11 +127,11 @@ function _M.get_meta(plugin, store)
 end
 
 function _M.update_meta(plugin, store, meta)
-    if not meta or type(meta) ~= "table" then 
+    if not meta or type(meta) ~= "table" then
         return false
     end
 
-    local meta_json_str = utils.json_encode(meta)
+    local meta_json_str = json.encode(meta)
     if not meta_json_str then
         ngx.log(ngx.ERR, "encode error: meta to save is not json format.")
         return false
@@ -147,11 +146,11 @@ function _M.update_meta(plugin, store, meta)
 end
 
 function _M.update_selector(plugin, store, selector)
-    if not selector or type(selector) ~= "table" then 
+    if not selector or type(selector) ~= "table" then
         return false
     end
 
-    local selector_json_str = utils.json_encode(selector)
+    local selector_json_str = json.encode(selector)
     if not selector_json_str then
         ngx.log(ngx.ERR, "encode error: selector to save is not json format.")
         return false
@@ -203,7 +202,7 @@ function _M.update_local_selectors(plugin, store)
     local to_update_selectors = {}
     if selectors and type(selectors) == "table" then
         for _, s in ipairs(selectors) do
-            to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
+            to_update_selectors[s.key] = json.decode(s.value or "{}")
         end
 
         local success, err, forcible = orange_db.set_json(plugin .. ".selectors", to_update_selectors)
@@ -235,7 +234,7 @@ function _M.update_local_selector_rules(plugin, store, selector_id)
         return false
     end
 
-    selector = utils.json_decode(selector.value)
+    selector = json.decode(selector.value)
     local rules_ids = selector.rules or {}
     local rules = _M.get_rules_of_selector(plugin, store, rules_ids)
 
@@ -244,28 +243,28 @@ function _M.update_local_selector_rules(plugin, store, selector_id)
         ngx.log(ngx.ERR, "update local rules of selector error, err:", err)
         return false
     end
-    
+
     return true
 end
 
 function _M.create_selector(plugin, store, selector)
     return store:insert({
         sql = "insert into " .. plugin .. "(`key`, `value`, `type`, `op_time`) values(?,?,?,?)",
-        params = { selector.id, cjson.encode(selector), "selector", selector.time }
+        params = { selector.id, json.encode(selector), "selector", selector.time }
     })
 end
 
 function _M.update_rule(plugin, store, rule)
     return store:update({
         sql = "update " .. plugin .. " set `value`=?,`op_time`=? where `key`=? and `type`=?",
-        params = { cjson.encode(rule), rule.time, rule.id, "rule" }
+        params = { json.encode(rule), rule.time, rule.id, "rule" }
     })
 end
 
 function _M.create_rule(plugin, store, rule)
     return store:insert({
         sql = "insert into " .. plugin .. "(`key`, `value`, `op_time`, `type`) values(?,?,?,?)",
-        params = { rule.id, utils.json_encode(rule), rule.time, "rule" }
+        params = { rule.id, json.encode(rule), rule.time, "rule" }
     })
 end
 
@@ -297,7 +296,7 @@ function _M.init_rules_of_selector(plugin, store, selector_id)
         return false
     end
 
-    selector = utils.json_decode(selector.value)
+    selector = json.decode(selector.value)
     local rules_ids = selector.rules or {}
     local rules = _M.get_rules_of_selector(plugin, store, rules_ids)
 
@@ -306,7 +305,7 @@ function _M.init_rules_of_selector(plugin, store, selector_id)
         ngx.log(ngx.ERR, "init plugin[" .. plugin .. "] local rules of selector error, err:", err)
         return false
     end
-    
+
     return true
 end
 
@@ -369,7 +368,7 @@ function _M.init_selectors_of_plugin(plugin, store)
     local to_update_selectors = {}
     if selectors and type(selectors) == "table" then
         for _, s in ipairs(selectors) do
-            to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
+            to_update_selectors[s.key] = json.decode(s.value or "{}")
 
             -- init this selector's rules local cache
             local init_rules_of_it = _M.init_rules_of_selector(plugin, store, s.key)
@@ -401,7 +400,7 @@ end
 function _M.compose_plugin_data(store, plugin)
     local data = {}
     local ok, e
-    ok = xpcall(function() 
+    ok = xpcall(function()
         -- get enable
         local enables, err = store:query({
             sql = "select `key`, `value` from meta where `key`=?",
@@ -431,7 +430,7 @@ function _M.compose_plugin_data(store, plugin)
         end
 
         if meta and type(meta) == "table" and #meta > 0 then
-            data[plugin .. ".meta"] = utils.json_decode(meta[1].value) or {}
+            data[plugin .. ".meta"] = json.decode(meta[1].value) or {}
         else
             ngx.log(ngx.ERR, "can not find meta from storage when fetching data of plugin[" .. plugin .. "]")
             return false
@@ -451,7 +450,7 @@ function _M.compose_plugin_data(store, plugin)
         local to_update_selectors = {}
         if selectors and type(selectors) == "table" then
             for _, s in ipairs(selectors) do
-                to_update_selectors[s.key] = utils.json_decode(s.value or "{}")
+                to_update_selectors[s.key] = json.decode(s.value or "{}")
 
                 -- init this selector's rules local cache
                 local selector_id = s.key
@@ -466,7 +465,7 @@ function _M.compose_plugin_data(store, plugin)
                     return false
                 end
 
-                selector = utils.json_decode(selector.value)
+                selector = json.decode(selector.value)
                 local rules_ids = selector.rules or {}
                 local rules = _M.get_rules_of_selector(plugin, store, rules_ids)
                 data[plugin .. ".selector." .. selector_id .. ".rules"] = rules
@@ -494,7 +493,7 @@ end
 -- ########################### init cache when starting orange #############################
 function _M.load_data_by_mysql(store, plugin)
     local ok, e
-    ok = xpcall(function() 
+    ok = xpcall(function()
         local v = plugin
         if not v or v == "" then
             ngx.log(ngx.ERR, "params error, the `plugin` is nil")
