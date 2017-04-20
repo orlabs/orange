@@ -16,7 +16,7 @@
             <div class="row content-header">
                 <div class="col-md-12">
                     <div class="pull-left">
-                        <h4 class="head_title">ddde</h4>
+                        <h4 class="head_title">Dynamic Upstream</h4>
                     </div>
                     <div class="pull-right">
                         {(common/plugin-op.html)}
@@ -192,6 +192,13 @@
                 <div class="col-sm-11">
                     <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite">
                 </div>
+            </div>
+            <div class="form-group handle-holder">
+
+                <label class="col-sm-1 control-label">负载</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-upstream-name" placeholder="upstream name">
+                </div>
             </div><!-- handle url template-->
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
@@ -241,7 +248,16 @@
                 <div class="col-sm-11">
                     <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite" value="${r.handle.uri_tmpl}">
                 </div>
+
             </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">负载</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-upstream-name" placeholder="upstream name" value="${r.handle.upstream_name}">
+                </div>
+            </div><!-- handle upstream name template-->
+
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">

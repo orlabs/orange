@@ -94,10 +94,20 @@
             var uri_tmpl = $("#rule-handle-uri-template").val();
             if (!uri_tmpl) {
                 result.success = false;
-                result.data = "rewrite使用的uri template不得为空";
+                result.data = "dynamic upstream 中 rewrite使用的uri template不得为空";
                 return result;
             }
             handle.uri_tmpl = uri_tmpl;
+
+            var upstream_name = $("#rule-handle-upstream-name").val();
+            if (!upstream_name) {
+                result.success = false;
+                result.data = "dynamic upstream 使用的upstream name不得为空";
+                return result;
+            }
+            handle.upstream_name = upstream_name;
+            console.log(handle)
+
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
             result.handle = handle;
