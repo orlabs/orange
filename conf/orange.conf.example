@@ -2,6 +2,7 @@
     "plugins": [
         "stat",
         "monitor",
+        "dynamic_upstream",
         "redirect",
         "rewrite",
         "rate_limiting",
