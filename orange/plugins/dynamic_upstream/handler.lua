@@ -14,8 +14,8 @@ local ngx_decode_args = ngx.decode_args
 local function ngx_set_uri(uri,rule_handle)
 
     ngx.var.upstream_request_uri = '/'..uri .. '?' ..  ngx.encode_args(ngx.req.get_uri_args())
-    ngx.var.upstream_name = rule_handle.upstream_name
-    ngx.log(ngx.INFO,'[DynamicUpstream][upstream uri][http://',ngx.var.upstream_name,ngx.var.upstream_request_uri,']')
+    ngx.var.upstream_url = rule_handle.upstream_name
+    ngx.log(ngx.INFO,'[DynamicUpstream][upstream uri][http://',ngx.var.upstream_url,ngx.var.upstream_request_uri,']')
 
 end
 
