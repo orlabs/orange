@@ -77,7 +77,7 @@ http {
 
         location / {
             set $upstream_host $host;
-            set $upstream_url 'http://default_upstream';
+            set $upstream_url 'default_upstream';
             set $upstream_request_uri '';
 
             rewrite_by_lua_block {
