@@ -37,7 +37,7 @@
 
             L.Common.initViewAndDownloadEvent("signature_auth", _this);
             L.Common.initSwitchBtn("signature_auth", _this);//redirect关闭、开启
-            L.Common.initSyncDialog("basic_auth", _this);//编辑规则对话框
+            L.Common.initSyncDialog("signature_auth", _this);//编辑规则对话框
         },
 
         //增加、删除credential按钮事件
