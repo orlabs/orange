@@ -193,6 +193,17 @@
                     <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite">
                 </div>
             </div>
+
+
+            <div class="form-group handle-holder">
+
+                <label class="col-sm-1 control-label">Host</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-host" placeholder="host">
+                </div>
+            </div><!-- handle url template-->
+
+
             <div class="form-group handle-holder">
 
                 <label class="col-sm-1 control-label">负载</label>
@@ -250,6 +261,13 @@
                 </div>
 
             </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">Host</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-host" placeholder="host" {@if r.handle.log ==false} value="${r.handle.host}" {@/if}>
+                </div>
+            </div><!-- handle upstream name template-->
 
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label">负载</label>

@@ -12,9 +12,9 @@ local ngx_set_uri_args = ngx.req.set_uri_args
 local ngx_decode_args = ngx.decode_args
 
 local function ngx_set_uri(uri,rule_handle)
-
-    ngx.var.upstream_request_uri = '/'..uri .. '?' ..  ngx.encode_args(ngx.req.get_uri_args())
+    ngx.var.upstream_host = rule_handle.host and rule_handle.host or ngx.var.host
     ngx.var.upstream_url = rule_handle.upstream_name
+    ngx.var.upstream_request_uri = '/'.. uri  .. '?' .. ngx.encode_args(ngx.req.get_uri_args())
     ngx.log(ngx.INFO,'[DynamicUpstream][upstream uri][http://',ngx.var.upstream_url,ngx.var.upstream_request_uri,']')
 
 end
@@ -49,8 +49,8 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                             local qs = string_sub(to_rewrite, from+1)
                             if qs then
                                 local args = ngx_decode_args(qs, 0)
-                                if args then 
-                                    ngx_set_uri_args(args) 
+                                if args then
+                                    ngx_set_uri_args(args)
                                 end
                             end
                         end
@@ -82,7 +82,7 @@ function DynamicUpstreamHandler:rewrite(conf)
     local meta = orange_db.get_json("dynamic_upstream.meta")
     local selectors = orange_db.get_json("dynamic_upstream.selectors")
     local ordered_selectors = meta and meta.selectors
-    
+
     if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
         return
     end
@@ -92,7 +92,7 @@ function DynamicUpstreamHandler:rewrite(conf)
         local selector = selectors[sid]
         ngx.log(ngx.INFO, "==[DynamicUpstream][START SELECTOR:", sid, "][NAME:",selector.name,']')
         if selector and selector.enable == true then
-            local selector_pass 
+            local selector_pass
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else

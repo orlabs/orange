@@ -37,7 +37,6 @@
             L.Common.initSyncDialog("dynamic_upstream", _this);//编辑规则对话框
         },
 
-        
         buildRule: function(){
             var result = {
                 success: false,
@@ -106,7 +105,14 @@
                 return result;
             }
             handle.upstream_name = upstream_name;
-            console.log(handle)
+
+
+            var host = $("#rule-handle-host").val();
+            if (!host) {
+               host = false
+            }
+
+            handle.host = host;
 
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
