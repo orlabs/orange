@@ -211,6 +211,19 @@
                     <input type="text" class="form-control" id="rule-handle-upstream-name" placeholder="upstream name">
                 </div>
             </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
+                    <select class="form-control">
+                        {% for _,upstream in ipairs(upstreams) do %}
+                            <option value = "{{ upstream }}" > {{ upstream }} </option>
+                        {% end %}
+                    </select>
+                </div>
+
+            </div><!-- handle url template-->
+
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-3">
@@ -275,6 +288,18 @@
                     <input type="text" class="form-control" id="rule-handle-upstream-name" placeholder="upstream name" value="${r.handle.upstream_name}">
                 </div>
             </div><!-- handle upstream name template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
+                    <select class="form-control">
+                        {% for _,upstream in ipairs(upstreams) do %}
+                            <option value = "{{ upstream }}" > {{ upstream }} </option>
+                        {% end %}
+                    </select>
+                </div>
+
+            </div><!-- handle url template-->
 
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>

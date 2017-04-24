@@ -4,6 +4,7 @@ local type = type
 local xpcall = xpcall
 local string_lower = string.lower
 local lor = require("lor.index")
+local lua_next = next
 
 
 local function load_plugin_api(plugin, dashboard_router, store)
@@ -127,7 +128,16 @@ return function(config, store)
         res:render("redirect")
     end)
     dashboard_router:get("/dynamic_upstream", function(req, res, next)
-        res:render("dynamic_upstream")
+        local upstream = require "ngx.upstream"
+
+        local upstream_list = upstream.get_upstreams()
+        local empty_table = false
+
+        if lua_next(upstream_list) == nil then
+            empty_table = true
+        end
+
+        res:render("dynamic_upstream",{upstreams=upstream_list,empty_table=empty_table})
     end)
     dashboard_router:get("/rate_limiting", function(req, res, next)
         res:render("rate_limiting")
