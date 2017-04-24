@@ -215,10 +215,12 @@
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
-                    <select class="form-control">
+                    <select class="form-control" id='rule-handle-upstream-name-assist'>
+                        <option value=''></option>
                         {% for _,upstream in ipairs(upstreams) do %}
                             <option value = "{{ upstream }}" > {{ upstream }} </option>
                         {% end %}
+
                     </select>
                 </div>
 
@@ -292,7 +294,8 @@
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
-                    <select class="form-control">
+                    <select class="form-control" id="rule-handle-upstream-name-assist">
+                        <option value =  "" ></option>
                         {% for _,upstream in ipairs(upstreams) do %}
                             <option value = "{{ upstream }}" > {{ upstream }} </option>
                         {% end %}
@@ -338,7 +341,14 @@
         APP.Common.resetNav("nav-dynamic-upstream");
         APP.DynamicUpstream.init();
         $(".sortable-list").sortable().disableSelection();
+
+        $("body").on("change","#rule-handle-upstream-name-assist",function(){
+            var val = $(this).val();
+            $("#rule-handle-upstream-name").val(val)
+        });
     });
+
+
 </script>
 
 
