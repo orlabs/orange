@@ -150,7 +150,7 @@ return function(plugin)
 
                             return res:json({
                                 success = false,
-                                msg = "error to load config from store, server: " .. s.host .. ':' s.port
+                                msg = "error to load config from store, server: " .. s.host .. ':'.. s.port
                             })
                         end
                     end
