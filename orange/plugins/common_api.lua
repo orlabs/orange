@@ -115,18 +115,52 @@ return function(plugin)
         POST = function(store)
             return function(req, res, next)
                 local load_success = dao.load_data_by_mysql(store, plugin)
-                if load_success then
-                    return res:json({
-                        success = true,
-                        msg = "succeed to load config from store"
-                    })
-                else
+
+                if not load_success then
+
                     ngx.log(ngx.ERR, "error to load plugin[" .. plugin .. "] config from store")
+
                     return res:json({
                         success = false,
                         msg = "error to load config from store"
                     })
+
                 end
+
+                local api_multi_server_config = context.config.api.multi_server
+
+                if api_multi_server_config and  api_multi_server_config.enable and not req.query.syncd  then
+
+                    local http = require "resty.http"
+                    local httpc = http.new()
+
+                    for _,s in ipairs(api_multi_server_config.servers) do
+
+                        local uri = 'http://'.. s.host ..':'.. s.port .. req.uri..'?syncd=1'
+
+                        ngx.log(ngx.INFO,"[SYNC CONFIG][HTTP_URI]",uri)
+
+                        local r,err = httpc:request_uri(uri,{method="POST", body = req.body})
+
+                        if not r  or 200 ~= r.status then
+
+                            ngx.log(ngx.ERR,"[HTTP_URI]",uri)
+
+                            ngx.log(ngx.ERR, "error to load plugin[" .. plugin .. "] config from store")
+
+                            return res:json({
+                                success = false,
+                                msg = "error to load config from store, server: " .. s.host .. ':' s.port
+                            })
+                        end
+                    end
+
+                end
+
+                return res:json({
+                    success = true,
+                    msg = "succeed to load config from store"
+                })
             end
         end
     }
