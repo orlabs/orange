@@ -1,0 +1,46 @@
+
+<div id="header-area">
+    <div class="form-group">
+        <label class="col-sm-1 control-label">Header</label>
+        <div class="col-sm-11">
+            <div class="col-sm-1" style="line-height: 30px;">
+                <a id="add-header-btn" class="btn btn-success" style="padding:0 5px;"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div><!-- 描述 -->
+
+{@if r.headers}
+    {@each r.headers as h, index}
+    <div class="form-group pair header-holder">
+        <label class="col-sm-1 control-label"></label>
+        <div class="col-sm-5 header-default-hodler">
+            <div class="col-sm-6"  >
+                <input type="text" name="rule-header-name-default" class="form-control" placeholder="header name" value="${h.name}">
+            </div>
+            <div class="col-sm-6"  >
+                <input type="text" name="rule-header-value-default" class="form-control" placeholder="header value" value="${h.value}">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <select class="form-control" name="rule-header-type">
+                <option value="normal" {@if h.type == "normal"} selected {@/if}>字面量</option>
+                <option value="extraction" {@if h.type== "extraction"}selected {@/if}>变量提取式</option>
+            </select>
+        </div>
+
+        <div class="col-sm-1" style="margin-top:5px;float:right;margin-right: 50px;">
+            <span class="input-group-btn">
+                <a class="btn btn-remove" style="padding:0 5px;">
+                    <i class="fa fa-remove"></i>
+                </a>
+                <a class="btn btn-add" style="padding:0 5px;">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </span>
+        </div>
+    </div>
+    {@/each}
+{@/if}
+
+</div>
+
