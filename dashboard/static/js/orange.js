@@ -471,6 +471,8 @@
             $(".header-holder").each(function () {
                 var self = $(this);
                 var header = {};
+
+                //提取类型
                 var type = self.find("select[name=rule-header-type]").val();
                 header.type = type;
                 // console.log(type)
@@ -490,12 +492,10 @@
                     tmp_success = false;
                     tmp_tip = "header value 字段不得为空";
                 }
+
                 header.value = value;
-
-
-
-
                 headers.push(header);
+
             });
 
             if(!tmp_success){
