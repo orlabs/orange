@@ -21,10 +21,17 @@
                 <input type="text" name="rule-header-value-default" class="form-control" placeholder="header value" value="${h.value}">
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
             <select class="form-control" name="rule-header-type">
                 <option value="normal" {@if h.type == "normal"} selected {@/if}>字面量</option>
                 <option value="extraction" {@if h.type== "extraction"}selected {@/if}>变量提取式</option>
+            </select>
+        </div>
+
+        <div class="col-sm-2">
+            <select class="form-control" name="rule-header-override">
+                <option value= 1 {@if h.override == 1} selected {@/if}>覆盖</option>
+                <option value= 0 {@if h.override== 0 }selected {@/if}>不覆盖</option>
             </select>
         </div>
 

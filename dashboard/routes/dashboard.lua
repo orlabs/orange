@@ -106,6 +106,10 @@ return function(config, store)
         res:render("status")
     end)
 
+    dashboard_router:get("/headers", function(req, res, next)
+        res:render("headers")
+    end)
+
     dashboard_router:get("/monitor", function(req, res, next)
         res:render("monitor")
     end)

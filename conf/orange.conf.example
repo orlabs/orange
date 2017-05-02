@@ -1,6 +1,7 @@
 {
     "plugins": [
         "stat",
+        "headers",
         "monitor",
         "redirect",
         "rewrite",

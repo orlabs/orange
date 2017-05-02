@@ -476,6 +476,8 @@
                 var type = self.find("select[name=rule-header-type]").val();
                 header.type = type;
                 // console.log(type)
+                var override = self.find("select[name=rule-header-override]").val();
+                header.override = override;
 
                 //提取 header name
                 var name = self.find("input[name=rule-header-name-default]").val();
