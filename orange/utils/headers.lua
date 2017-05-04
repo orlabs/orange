@@ -18,6 +18,11 @@ end
 
 function _M:set_headers(rule)
     local extractor,headers_config= rule.extractor,rule.headers
+
+    if not headers_config or type(headers_config) ~= 'table' then
+        return
+    end
+
     local variables = extractor_util.extract_variables(extractor)
     local req_headers = ngx.req.get_headers();
 
