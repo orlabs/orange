@@ -28,7 +28,6 @@ function _M:set_headers(rule)
 
     for _, v in pairs(headers_config) do
         --  不存在 || 存在且覆蓋
-        ngx.log(ngx.ERR,v.name,v.value);
         if not req_headers[v.name] or  v.override == '1' then
             if v.type == "normal" then
                 ngx.req.set_header(v.name,v.value)
@@ -36,7 +35,7 @@ function _M:set_headers(rule)
             elseif v.type == "extraction" then
                 local value = handle_util.build_uri(extractor.type, v.value, variables)
                 ngx.req.set_header(v.name,value)
-                ngx.log(ngx.INFO,'[plug header][normal] add headers [',v.name,":",value,']')
+                ngx.log(ngx.INFO,'[plug header][expression] add headers [',v.name,":",value,']')
             end
         end
 
