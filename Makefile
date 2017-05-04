@@ -10,6 +10,7 @@ init-config:
 
 deps:init-config
 	mkdir -p resty
+	wget https://github.com/pintsized/lua-resty-http/archive/master.zip
 	unzip master.zip
 	yes|cp -fr   lua-resty-http-master/lib/resty/*  resty/
 	rm -fr  master.zip  lua-resty-http-master
