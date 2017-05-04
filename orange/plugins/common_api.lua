@@ -144,9 +144,7 @@ return function(plugin)
 
                         if not r  or 200 ~= r.status then
 
-                            ngx.log(ngx.ERR,"[HTTP_URI]",uri)
-
-                            ngx.log(ngx.ERR, "error to load plugin[" .. plugin .. "] config from store")
+                            ngx.log(ngx.ERR,"request [",uri, "] fail, error to load plugin [" .. plugin .. "] config from store,err:",err)
 
                             return res:json({
                                 success = false,
