@@ -14,7 +14,6 @@ local function errlog(...)
     ngx.log(ngx.ERR,'[Kafka]',...)
 end
 
-
 local do_log = function(log_table)
     -- 定义kafka broker地址，ip需要和kafka的host.name配置一致
     local broker_list = context.config.plugin_config.kafka.broker_list
@@ -37,8 +36,6 @@ local do_log = function(log_table)
     end
 end
 
-
-
 local function log(premature,log_table)
     if premature then
         errlog("timer premature")
@@ -56,11 +53,6 @@ local function log(premature,log_table)
     end
 
 end
-
-
-
-
-
 
 --  log_format  main '$remote_addr - $remote_user [$time_local] "$request" '
 -- '$status $body_bytes_sent "$http_referer" '
@@ -93,8 +85,7 @@ function KafkaHandler:log()
 
     log_json["http_x_forwarded_for"] = ngx.var.http_x_forwarded_for and ngx.var.http_x_forwarded_for or '-'
     log_json["upstream_response_time"] = ngx.var.upstream_response_time and ngx.var.upstream_response_time or '-'
-    local upstream_url = ngx.var.upstream_url .. ngx.var.upstream_request_uri;
-    log_json["upstream_url"] = "http://" .. upstream_url;
+    log_json["upstream_url"] = "http://" .. ngx.var.upstream_url;
     log_json["request_headers"] = ngx.req.get_headers();
     log_json["response_headers"] = ngx.resp.get_headers();
 
