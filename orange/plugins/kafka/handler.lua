@@ -1,7 +1,6 @@
 local BasePlugin = require("orange.plugins.base_handler")
 local cjson = require "cjson"
 local producer = require "resty.kafka.producer"
-local client = require "resty.kafka.client"
 
 local  KafkaHandler = BasePlugin:extend()
 KafkaHandler.PRIORITY = 2000
@@ -11,12 +10,64 @@ function KafkaHandler:new(store)
     self.store = store
 end
 
+local function errlog(...)
+    ngx.log(ngx.ERR,'[Kafka]',...)
+end
+
+
+local do_log = function(log_table)
+    -- 定义kafka broker地址，ip需要和kafka的host.name配置一致
+    local broker_list = context.config.plugin_config.kafka.broker_list
+    local kafka_topic = context.config.plugin_config.kafka.topic
+    local producer_config =  context.config.plugin_config.kafka.producer_config
+
+    -- 定义json便于日志数据整理收集
+    -- 转换json为字符串
+    local message = cjson.encode(log_table);
+    -- 定义kafka异步生产者
+    local bp = producer:new(broker_list, producer_config)
+    -- 发送日志消息,send第二个参数key,用于kafka路由控制:
+    -- key为nill(空)时，一段时间向同一partition写入数据
+    -- 指定key，按照key的hash写入到对应的partition
+    local ok, err = bp:send(kafka_topic, nil, message)
+
+    if not ok then
+        ngx.log(ngx.ERR, "kafka send err:", err)
+        return
+    end
+end
+
+
+
+local function log(premature,log_table)
+    if premature then
+        errlog("timer premature")
+        return
+    end
+    local ok,err = pcall(do_log,log_table)
+
+    if not ok then
+        errlog("failed to record log by kafka",err)
+
+        local ok,err = ngx.timer.at(0,log,log_table)
+        if not ok then
+            errlog ("faild to create timer",err)
+        end
+    end
+
+end
+
+
+
+
+
+
 --  log_format  main '$remote_addr - $remote_user [$time_local] "$request" '
 -- '$status $body_bytes_sent "$http_referer" '
 -- '"$http_user_agent" "$request_time" "$ssl_protocol" "$ssl_cipher" "$http_x_forwarded_for"'
 -- '"$upstream_addr" "$upstream_status" "$upstream_response_length" "$upstream_response_time"';
 
-function KafkaHandler:access()
+function KafkaHandler:log()
     local log_json = {}
     log_json["remote_addr"] = ngx.var.remote_addr and ngx.var.remote_addr or '-'
     log_json["remote_user"] = ngx.var.remote_user and ngx.var.remote_user or '-'
@@ -47,24 +98,9 @@ function KafkaHandler:access()
     log_json["request_headers"] = ngx.req.get_headers();
     log_json["response_headers"] = ngx.resp.get_headers();
 
-    -- 定义kafka broker地址，ip需要和kafka的host.name配置一致
-    local broker_list = context.config.plugin_config.kafka.broker_list
-    local kafka_topic = context.config.plugin_config.kafka.topic
-    local producer_config =  context.config.plugin_config.kafka.producer_config
-
-    -- 定义json便于日志数据整理收集
-    -- 转换json为字符串
-    local message = cjson.encode(log_json);
-    -- 定义kafka异步生产者
-    local bp = producer:new(broker_list, producer_config)
-    -- 发送日志消息,send第二个参数key,用于kafka路由控制:
-    -- key为nill(空)时，一段时间向同一partition写入数据
-    -- 指定key，按照key的hash写入到对应的partition
-    local ok, err = bp:send(kafka_topic, nil, message)
-
+    local ok,err = ngx.timer.at(0,log,log_json)
     if not ok then
-        ngx.log(ngx.ERR, "kafka send err:", err)
-        return
+        errlog ("faild to create timer",err)
     end
 
 end
