@@ -38,6 +38,21 @@
             "^/error/$"
         ]
     },
+    "plugin_config":{
+        "kafka":{
+            "broker_list":[
+                {
+                    "host":"127.0.0.1",
+                    "port":9092
+                }
+            ],
+            "producer_config":{
+                "producer_type":"async"
+            },
+
+            "topic":"test"
+        }
+    },
     "api": {
         "auth_enable": true,
         "credentials": [
