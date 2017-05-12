@@ -29,7 +29,7 @@ install:init-config
 	@echo "require(\"bin.main\")(arg)" >> $(ORANGE_BIN)
 	@chmod +x $(ORANGE_BIN)
 	@echo "Orange installed."
-	@orange help
+	$(ORANGE_BIN) help
 
 show:
-	@orange help
+	$(ORANGE_BIN) help
