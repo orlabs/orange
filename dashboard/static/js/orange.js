@@ -703,6 +703,7 @@
                                         if (result.success) {
                                             //重新渲染规则
                                             _this.loadRules(op_type, context, selector_id);
+                                            _this.refreshConfigs(op_type, context);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "添加规则发生错误");
@@ -913,6 +914,7 @@
                                     if (result.success) {
                                         //重新渲染规则
                                         _this.loadRules(op_type, context, selector_id);
+                                        _this.refreshConfigs(op_type, context);//刷新本地缓存
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除规则发生错误");
@@ -1348,6 +1350,34 @@
                 },
                 error: function () {
                     _this.showErrorTip("提示", "查询" + op_type + "配置请求发生异常");
+                }
+            });
+        },
+
+        refreshConfigs: function (type, context) {//刷新本地缓存，fix  issue #110 (https://github.com/sumory/orange/issues/110)
+            var op_type = type;
+            $.ajax({
+                url: '/' + op_type + '/selectors',
+                type: 'get',
+                cache: false,
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        var enable = result.data.enable;
+                        var meta = result.data.meta;
+                        var selectors = result.data.selectors;
+
+                        //重新设置数据
+                        context.data.enable = enable;
+                        context.data.meta = meta;
+                        context.data.selectors = selectors;
+                    } else {
+                        _this.showErrorTip("错误提示", "刷新" + op_type + "配置的本地缓存发生错误， 请刷新页面！");
+                    }
+                },
+                error: function () {
+                    _this.showErrorTip("提示", "查询" + op_type + "配置的本地缓存发生异常， 请刷新页面！");
                 }
             });
         },
