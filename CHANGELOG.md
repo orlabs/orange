@@ -1,3 +1,14 @@
+### v0.6.4 2017.05.16
+
+- 修复issue#110, 解决在添加/删除规则后本地js cache未更新，之后立刻更改选择器配置造成的规则丢失bug
+- 修改Makefile， 支持自定义安装路径
+    - 自定义安装后，orange命令须手动添加到环境变量
+    - 使用诸如start命令时需指定--prefix
+- 为github issue添加默认模板
+- 默认的配置文件添加了一些log项
+- 修复了原来pr里的一些拼写问题
+- 移除docs/api里的文档， 更多文档请到[官网](http://orange.sumory.com)查看
+
 ### v0.6.3 2017.03.10
 
 - 添加插件： `signature auth plugin`
