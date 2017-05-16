@@ -72,7 +72,7 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 
 ### Docker
 
-[http://hub.docker.com/r/syhily/orange](http://hub.docker.com/r/syhily/orange) maintained by [@syhily](https://github.com/syhily)
+[https://store.docker.com/community/images/syhily/orange](https://store.docker.com/community/images/syhily/orange) maintained by [@syhily](https://github.com/syhily)
 
 
 ### Contributors

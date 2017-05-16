@@ -28,7 +28,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.3.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.4.sql)导入到orange库中
 
 #### 修改配置文件
 
@@ -145,8 +145,7 @@ Orange启动成功后， dashboard和API server也随之启动：
 
 ### Docker
 
-[http://hub.docker.com/r/syhily/orange](http://hub.docker.com/r/syhily/orange) 由[@syhily](https://github.com/syhily)维护.
-
+[https://store.docker.com/community/images/syhily/orange](https://store.docker.com/community/images/syhily/orange) 由[@syhily](https://github.com/syhily)维护.
 
 ### 贡献者
 
