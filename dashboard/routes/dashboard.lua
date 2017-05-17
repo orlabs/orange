@@ -110,6 +110,10 @@ return function(config, store)
         res:render("monitor")
     end)
 
+    dashboard_router:get("/upstream_monitor", function(req, res, next)
+        res:render("upstream_monitor")
+    end)
+
     dashboard_router:get("/monitor/rule/statistic", function(req, res, next)
         local rule_id = req.query.rule_id;
         local rule_name = req.query.rule_name or "";
