@@ -24,7 +24,8 @@ http {
     keepalive_timeout  65;
 
     upstream default_upstream {
-        server localhost:8001;
+        server 127.0.0.1:8001;
+        server 127.0.0.1:8002;
     }
 
 
@@ -39,8 +40,7 @@ http {
     lua_shared_dict monitor 10m; # used for url monitor statistic, see plugin: monitor
     lua_shared_dict rate_limit 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
-
-
+    lua_shared_dict healthcheck 1m;
 
     init_by_lua_block {
         local orange = require("orange.orange")
@@ -61,6 +61,33 @@ http {
     }
 
     init_worker_by_lua_block {
+        local hc = require "resty.upstream.healthcheck"
+        local ok, err = hc.spawn_checker{
+            shm = "healthcheck",  -- defined by "lua_shared_dict"
+            upstream = "default_upstream", -- defined by "upstream"
+            type = "http",
+
+            http_req = "GET /status HTTP/1.0\r\nHost: localhost\r\n\r\n",
+                    -- raw HTTP request for checking
+
+            interval = 2000,  -- run the check cycle every 2 sec
+            timeout = 1000,   -- 1 sec is the timeout for network operations
+            fall = 3,  -- # of successive failures before turning a peer down
+            rise = 2,  -- # of successive successes before turning a peer up
+            valid_statuses = {200, 302},  -- a list valid HTTP status code
+            concurrency = 10,  -- concurrency level for test requests
+        }
+
+        if not ok then
+            ngx.log(ngx.ERR, "failed to spawn health checker: ", err)
+            return
+        end
+
+        -- Just call hc.spawn_checker() for more times here if you have
+        -- more upstream groups to monitor. One call for one upstream group.
+        -- They can all share the same shm zone without conflicts but they
+        -- need a bigger shm zone for obvious reasons.
+
         local orange = context.orange
         orange.init_worker()
     }
@@ -73,6 +100,15 @@ http {
         location = /favicon.ico {
             log_not_found off;
             access_log off;
+        }
+
+        location = /status {
+            default_type text/plain;
+            content_by_lua_block {
+                local hc = require "resty.upstream.healthcheck"
+                ngx.say("Nginx Worker PID: ", ngx.worker.pid())
+                ngx.print(hc.status_page())
+            }
         }
 
         location / {
@@ -123,8 +159,8 @@ http {
     server {
         listen 8001;
         server_name localhost 127.0.0.1;
-        access_log ./logs/default_upstream_access.log main;
-        error_log ./logs/default_upstream_error.log;
+        access_log ./logs/default_upstream_8001_access.log main;
+        error_log ./logs/default_upstream_8001_error.log;
 
         location / {
             content_by_lua_block {
@@ -132,8 +168,34 @@ http {
                 ngx.say([[404! upstream not found. Host: ]] .. ngx.var.host .. "  URI: " .. ngx.var.uri)
             }
         }
+
+        location /status {
+            default_type text/plain;
+            content_by_lua_block {
+                ngx.say("work good")
+            }
+        }
     }
 
+    server {
+        listen 8002;
+        server_name localhost 127.0.0.1;
+        access_log ./logs/default_upstream_8002_access.log main;
+        error_log ./logs/default_upstream_8002_error.log;
+
+        location / {
+            content_by_lua_block {
+                ngx.status = 404
+                ngx.say([[404! upstream not found. Host: ]] .. ngx.var.host .. "  URI: " .. ngx.var.uri)
+            }
+        }
+        location /status {
+            default_type text/plain;
+            content_by_lua_block {
+                ngx.say("work good")
+            }
+        }
+    }
 
     # orange dashboard server
     server {
