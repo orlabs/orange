@@ -39,7 +39,7 @@ http {
     lua_shared_dict monitor 10m; # used for url monitor statistic, see plugin: monitor
     lua_shared_dict rate_limit 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
-
+    lua_shared_dict ssl_cert_pkey 10m; # used for rate dynamic_ssl
 
 
     init_by_lua_block {
@@ -65,10 +65,15 @@ http {
         orange.init_worker()
     }
 
+    ssl_session_tickets off;
+    ssl_session_fetch_by_lua_file  orange/plugins/dynamic_ssl/session_fetch.lua;
+    ssl_session_store_by_lua_file orange/plugins/dynamic_ssl/session_store.lua;
+
     # main server
     server {
         listen       80;
         #server_name  my_domain.com;
+        ssl_certificate_by_lua_file orange/plugins/dynamic_ssl/cert.lua;
 
         location = /favicon.ico {
             log_not_found off;

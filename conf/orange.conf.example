@@ -9,6 +9,7 @@
         "basic_auth",
         "key_auth",
         "signature_auth",
+        "dynamic_ssl",
         "waf",
         "divide",
         "kvstore"
@@ -29,6 +30,23 @@
             "pool_size": 3
         },
         "desc": "mysql configuration"
+    },
+    "cache_redis":{
+        "timeout": 5000,
+        "connect_config":{
+            "host":"127.0.0.1",
+            "port":6379,
+            "auth":false
+        },
+        "pool_config": {
+            "max_idle_timeout": 10000,
+            "pool_size": 1000
+        },
+        "record_redis_info":true,
+        "desc": "redis configuration"
+    },
+    "dynamic_ssl":{
+        "ssl_session_timeout":600
     },
     "dashboard": {
         "auth": false,

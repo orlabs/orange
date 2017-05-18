@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {(common/meta.html)}
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+<div id="wrapper">
+    {(common/left_nav.html)}<!-- 左侧导航 -->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row J_mainContent">
+
+            <!-- content start -->
+            <div class="row content-header">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <h4 class="head_title">Headers</h4>
+                    </div>
+                    <div class="pull-right">
+                        {(common/plugin-op.html)}
+                    </div>
+                </div>
+            </div>
+
+            {(common/data-view-part.html)}
+            {(common/right-selector-rule-part.html)}
+
+            <!-- content end -->
+        </div>
+    </div><!--右侧部分结束-->
+</div>
+
+
+
+
+<script id="rule-item-tpl" type="text/template">
+    {@each rules as r, index}
+    <li data-id="${r.id}" {@if r.enable==true } class="info-element"{@/if}
+    {@if r.enable!=true } class="warning-element"{@/if}>
+    <table class="table table-hover single-rule-table">
+        <tbody>
+        <tr>
+            <td class="center rule-enable-td">
+                {@if r.enable==true }
+                <span class="label label-primary">已启用</span>
+                {@/if}
+                {@if r.enable!=true }
+                <span class="label label-warning">已禁用</span>
+                {@/if}
+            </td>
+            <td class="rule-name-td">
+                <b class="namep">${r.name}</b>
+            </td>
+
+            <td class="left" title="变更时间">
+                <small>${r.time}</small>
+            </td>
+            <td class="center rule-op-td">
+                <a class="btn btn-white btn-sm edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i> </a>
+                <a class="btn btn-white btn-sm delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </li>
+    {@/each}
+</script>
+
+<script id="add-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="add-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">sni</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-sni" placeholder="Server name">
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">cert</label>
+                <div class="col-sm-11">
+                    <textarea type="text" class="form-control" id="rule-handle-cert-pem" placeholder="证书，pem 格式"></textarea>
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+
+                <label class="col-sm-1 control-label">pkey</label>
+                <div class="col-sm-11">
+                    <textarea type="text" class="form-control" id="rule-handle-pkey-pem" placeholder="私钥， pem 格式"></textarea>
+                </div>
+            </div><!-- handle url template-->
+
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true">记录日志</option>
+                        <option value="false">不记录日志</option>
+                    </select>
+                </div>
+            </div><!-- handle log-->
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script id="edit-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="edit-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" value="${r.name}" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">sni</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-sni" placeholder="Server name" value="${r.handle.sni}">
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">cert</label>
+                <div class="col-sm-11">
+                    <textarea type="text" class="form-control" id="rule-handle-cert-pem" placeholder="证书，pem 格式"> ${r.handle.cert} </textarea>
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+
+                <label class="col-sm-1 control-label">pkey</label>
+                <div class="col-sm-11">
+                    <textarea type="text" class="form-control" id="rule-handle-pkey-pem" placeholder="私钥， pem 格式">${r.handle.pkey}</textarea>
+                </div>
+            </div><!-- handle url template-->
+
+
+
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true" {@if r.handle.log==true} selected {@/if}>记录日志</option>
+                        <option value="false" {@if r.handle.log==false} selected {@/if}>不记录日志</option>
+                    </select>
+                </div>
+            </div><!-- handle log-->
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input {@if r.enable == true} checked {@/if} type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+{(common/extraction-tmpl.html)}
+
+{(common/selector-item-tpl.html)}
+{(common/selector-add.html)}
+{(common/selector-edit.html)}
+
+{(common/header-tmpl.html)}
+
+{(common/common_js.html)}<!-- 通用js -->
+<script src="/static/js/dynamic_ssl.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        APP.Common.resetNav("nav-ssl");
+        APP.DynamicSSL.init();
+        $(".sortable-list").sortable().disableSelection();
+    });
+</script>
+</body>
+</html>
