@@ -65,7 +65,7 @@ http {
         orange.init_worker()
     }
 
-    ssl_session_tickets off;
+    ssl_session_tickets on;
     ssl_session_fetch_by_lua_file  orange/plugins/dynamic_ssl/session_fetch.lua;
     ssl_session_store_by_lua_file orange/plugins/dynamic_ssl/session_store.lua;
 
