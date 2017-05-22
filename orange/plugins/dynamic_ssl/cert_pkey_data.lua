@@ -7,15 +7,16 @@
 --
 
 local log = require "orange.plugins.dynamic_ssl.logger"
+local c = ngx.shared.ssl_cert_pkey
 
 -- cert pkey 数据库数据在内存中的缓存
 local cert_pkey_hash_data = {}
+
 function cert_pkey_hash_data:get(key)
-    local c = ngx.shared.ssl_cert_pkey
-    local handle = require "orange.plugins.dynamic_ssl.handler"
 
     local v,err = c:get(key)
     if not v then
+        local handle = require "orange.plugins.dynamic_ssl.handler"
         log.errlog(key," cert or pkey data not found in cache; err: ",err);
         handle:sync_cache()
         v,err = c:get(key)
@@ -26,7 +27,6 @@ end
 
 
 function cert_pkey_hash_data:set(key,value)
-    local c = ngx.shared.ssl_cert_pkey
     local success, e, out_of_zone = c:set(key,value)
 
     if not success then

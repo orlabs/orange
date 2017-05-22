@@ -1,8 +1,8 @@
-local ssl_util = require "orange.plugins.dynamic_ssl.ssl_util"
 local ssl = require "ngx.ssl"
+local log = require "orange.plugins.dynamic_ssl.logger"
+local cert_pkey_hash = require "orange.plugins.dynamic_ssl.cert_pkey_data"
 
-local cert_pkey_hash = ssl_util.cert_pkey_hash
-local errlog = ssl_util.log.errlog
+local errlog = log.errlog
 
 local name, err = ssl.server_name()
 if not name then
