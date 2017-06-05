@@ -15,8 +15,7 @@ local function ngx_set_uri(uri,rule_handle)
     ngx.var.upstream_host = rule_handle.host and rule_handle.host or ngx.var.host
     ngx.var.upstream_url = rule_handle.upstream_name
     ngx.var.upstream_request_uri = uri  .. '?' .. ngx.encode_args(ngx.req.get_uri_args())
-    ngx.log(ngx.INFO,'[DynamicUpstream][upstream uri][http://',ngx.var.upstream_url,ngx.var.upstream_request_uri,']')
-
+    ngx.log(ngx.INFO, '[DynamicUpstream][upstream request][http://', ngx.var.upstream_url, ngx.var.upstream_request_uri, ']')
 end
 
 local function filter_rules(sid, plugin, ngx_var_uri)
@@ -28,6 +27,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
+            ngx.log(ngx.INFO, "==[DynamicUpstream][rule name:", rule.name, "][rule id:", rule.id, ']')
             -- judge阶段
             local pass = judge_util.judge_rule(rule, "dynamic_upstream")
             -- extract阶段
@@ -38,21 +38,27 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                 local handle = rule.handle
                 if handle and handle.uri_tmpl and handle.upstream_name then
                     local to_rewrite = handle_util.build_uri(rule.extractor.type, handle.uri_tmpl, variables)
-                    if to_rewrite and to_rewrite ~= ngx_var_uri then
+                    if to_rewrite then
                         if handle.log == true then
                             ngx.log(ngx.INFO, "[DynamicUpstream] ", ngx_var_uri, " to:", to_rewrite)
                         end
 
-                        local from, to, err = ngx_re_find(to_rewrite, "[%?]{1}", "jo")
+                        local from, to, err = ngx_re_find(to_rewrite, "[?]{1}", "jo")
+
                         if not err and from and from >= 1 then
                             --local qs = ngx_re_sub(to_rewrite, "[A-Z0-9a-z-_/]*[%?]{1}", "", "jo")
-                            local qs = string_sub(to_rewrite, from+1)
+                            local qs = string_sub(to_rewrite, from + 1)
                             if qs then
+                                -- save original query params
+                                -- ngx_set_uri_args(ngx.req.get_uri_args())
+                                -- not use above just to keep the same behavior with nginx `rewrite` instruct
                                 local args = ngx_decode_args(qs, 0)
                                 if args then
                                     ngx_set_uri_args(args)
                                 end
                             end
+
+                            to_rewrite = string_sub(to_rewrite, 1, from - 1)
                         end
                         ngx_set_uri(to_rewrite, handle)
                         return true
@@ -90,7 +96,7 @@ function DynamicUpstreamHandler:rewrite(conf)
     local ngx_var_uri = ngx.var.uri
     for i, sid in ipairs(ordered_selectors) do
         local selector = selectors[sid]
-        ngx.log(ngx.INFO, "==[DynamicUpstream][START SELECTOR:", sid, "][NAME:",selector.name,']')
+        ngx.log(ngx.INFO, "==[DynamicUpstream][START SELECTOR:", sid, ",NAME:",selector.name,']')
         if selector and selector.enable == true then
             local selector_pass
             if selector.type == 0 then -- 全流量选择器
