@@ -6,7 +6,7 @@ local  KafkaHandler = BasePlugin:extend()
 KafkaHandler.PRIORITY = 2000
 
 function KafkaHandler:new(store)
-    KafkaHandler.super.new(self, "key_auth-plugin")
+    KafkaHandler.super.new(self, "kafka-plugin")
     self.store = store
 end
 
@@ -31,7 +31,7 @@ local do_log = function(log_table)
     local ok, err = bp:send(kafka_topic, nil, message)
 
     if not ok then
-        ngx.log(ngx.ERR, "kafka send err:", err)
+        errlog("kafka send err:", err)
         return
     end
 end
@@ -85,7 +85,7 @@ function KafkaHandler:log()
 
     log_json["http_x_forwarded_for"] = ngx.var.http_x_forwarded_for and ngx.var.http_x_forwarded_for or '-'
     log_json["upstream_response_time"] = ngx.var.upstream_response_time and ngx.var.upstream_response_time or '-'
-    log_json["upstream_url"] = "http://" .. ngx.var.upstream_url;
+    log_json["upstream_url"] = "http://" .. ngx.var.upstream_url .. ngx.var.upstream_request_uri or '';
     log_json["request_headers"] = ngx.req.get_headers();
     log_json["response_headers"] = ngx.resp.get_headers();
 
