@@ -96,7 +96,10 @@
                 result.data = "dynamic upstream 中 rewrite使用的uri template不得为空";
                 return result;
             }
-            handle.uri_tmpl = uri_tmpl;
+            // refer this https://www.w3schools.com/jsref/jsref_trim_string.asp
+            handle.uri_tmpl = function(x) {
+                return x.replace(/^\s+|\s+$/gm,'');
+            }(uri_tmpl);
 
             var upstream_name = $("#rule-handle-upstream-name").val();
             if (!upstream_name) {
