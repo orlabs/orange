@@ -5,6 +5,7 @@ local xpcall = xpcall
 local string_lower = string.lower
 local lor = require("lor.index")
 local lua_next = next
+local json = require "cjson"
 
 
 local function load_plugin_api(plugin, dashboard_router, store)
@@ -137,7 +138,12 @@ return function(config, store)
             empty_table = true
         end
 
-        res:render("dynamic_upstream",{upstreams=upstream_list,empty_table=empty_table})
+        local every_upstream_config = {}
+        for _, v in ipairs(upstream_list) do
+            every_upstream_config[v] = upstream.get_servers(v)
+        end
+
+        res:render("dynamic_upstream",{upstreams=upstream_list, empty_table = empty_table, every_upstream_config = json.encode(every_upstream_config)})
     end)
     dashboard_router:get("/rate_limiting", function(req, res, next)
         res:render("rate_limiting")

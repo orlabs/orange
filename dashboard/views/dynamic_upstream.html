@@ -212,6 +212,13 @@
                 </div>
             </div><!-- handle url template-->
 
+             <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">负载</label>
+                <div class="col-sm-11">
+                    <pre id="rule-handle-upstream-name-code"></pre>
+                </div>
+            </div><!-- handle url template-->
+
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
@@ -294,6 +301,13 @@
             <div class="form-group handle-holder">
                 <label class="col-sm-1 control-label"></label>
                 <div class="col-sm-11">
+                    <pre id="rule-handle-upstream-name-code">${r.handle.upstream_name_ngx_fmt}</pre>
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
                     <select class="form-control" id="rule-handle-upstream-name-assist">
                         <option value =  "" ></option>
                         {% for _,upstream in ipairs(upstreams) do %}
@@ -337,14 +351,17 @@
 {(common/common_js.html)}<!-- 通用js -->
 <script src="/static/js/dynamic_upstream.js"></script>
 <script type="text/javascript">
+
     $(document).ready(function () {
         APP.Common.resetNav("nav-dynamic-upstream");
         APP.DynamicUpstream.init();
+        APP.DynamicUpstream.upstream_servers_list = {* every_upstream_config *}
         $(".sortable-list").sortable().disableSelection();
 
         $("body").on("change","#rule-handle-upstream-name-assist",function(){
             var val = $(this).val();
             $("#rule-handle-upstream-name").val(val)
+            $("#rule-handle-upstream-name-code").text(gen_ngx_fmt_upstream_servers_conf(val))
         });
     });
 

@@ -1,8 +1,64 @@
+function gen_ngx_fmt_upstream_servers_conf(upstream_name)
+{
+    if(upstream_name == "")
+        return "";
+    var usl = APP.DynamicUpstream.upstream_servers_list[upstream_name]
+    var crlf = "\n"
+    var tab = " "
+
+    var res = "upstream " + upstream_name + " {  " + crlf ;
+
+    for (var k in  usl){
+        var addrs = usl[k]
+        var line = '';
+
+        for(var k in addrs){
+
+            if(k == "addr"){
+                continue;
+            }
+
+            line += tab + k + "=" + addrs[k];
+        }
+        line += ";" + crlf;
+
+        var servers = addrs['addr']
+        if(typeof(servers) == "object"){
+            var tmp = '';
+
+            for(var k in servers){
+                tmp += tab + "server " + servers[k] + line;
+            }
+
+            line = tmp;
+        }else{
+            line  = tab + "server " + servers + line;
+        }
+
+        res += line ;
+    }
+
+    res += "}" + crlf
+
+    return res;
+}
+
 (function (L) {
     var _this = null;
     L.DynamicUpstream = L.DynamicUpstream || {};
     _this = L.DynamicUpstream = {
         data: {
+        },
+
+        renderRulesCallback:function(rules){
+            if(!rules || rules.length<1){
+                return ;
+            }
+
+            for(var k in rules){
+                var r = rules[k];
+                r.handle.upstream_name_ngx_fmt = gen_ngx_fmt_upstream_servers_conf(r.handle.upstream_name);
+            }
         },
 
         init: function () {
