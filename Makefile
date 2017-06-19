@@ -20,7 +20,7 @@ install:init-config
 		cp -a $$item $(ORANGE_HOME)/; \
 	done;
 
-	@cat $(ORANGE_HOME)/conf/nginx.conf | sed "s/..\/\?.lua;\/usr\/local\/lor\/\?.lua;;/"$(ORNAGE_HOME_PATH)"\/\?.lua;\/usr\/local\/lor\/?.lua;;/" > $(ORANGE_HOME)/conf/new_nginx.conf
+	@cat $(ORANGE_HOME)/conf/nginx.conf | sed "s/..\/?.lua;\/usr\/local\/lor\/?.lua;;/"$(ORNAGE_HOME_PATH)"\/?.lua;\/usr\/local\/lor\/?.lua;;/" > $(ORANGE_HOME)/conf/new_nginx.conf
 	@rm $(ORANGE_HOME)/conf/nginx.conf
 	@mv $(ORANGE_HOME)/conf/new_nginx.conf $(ORANGE_HOME)/conf/nginx.conf
 
