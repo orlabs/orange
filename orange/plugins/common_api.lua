@@ -127,7 +127,11 @@ return function(plugin)
 
                 end
 
-                local api_multi_server_config = context.config.api.multi_server
+                local config = context.config
+                local api_multi_server_config = config.api.multi_server
+
+                local local_server_credentials = config and config.api and config.api.credentials[1]
+                local local_server_auth_enable = config and config.api and config.api.auth_enable
 
                 if api_multi_server_config and  api_multi_server_config.enable and not req.query.syncd  then
 
@@ -135,20 +139,33 @@ return function(plugin)
                     local httpc = http.new()
 
                     for _,s in ipairs(api_multi_server_config.servers) do
-
                         local uri = 'http://'.. s.host ..':'.. s.port .. req.uri..'?syncd=1'
 
                         ngx.log(ngx.INFO,"[SYNC CONFIG][HTTP_URI]",uri)
 
-                        local r,err = httpc:request_uri(uri,{method="POST", body = req.body})
+                        local headers = {}
+                        local auth_enable = s.auth_enable ~= nil and  s.auth_enable or local_server_auth_enable
+                        if auth_enable  then
+                            local credential = s.credential ~= nil and s.credential or local_server_credentials
+                            if not credential or not credential.username or not credential.password then
+                                return res:json({
+                                    success = false,
+                                    msg = "error to load config from orange.conf, credential config not found "
+                                })
+                            end
+                            headers["Authorization"] = ngx.encode_base64(string.format("%s:%s", credential.username, credential.password))
+                        end
+
+                        local r,err = httpc:request_uri(uri,{
+                            method="POST",
+                            body = req.body,
+                            headers=headers
+                        })
 
                         if not r  or 200 ~= r.status then
-
-                            ngx.log(ngx.ERR,"request [",uri, "] fail, error to load plugin [" .. plugin .. "] config from store,err:",err)
-
                             return res:json({
                                 success = false,
-                                msg = "error to load config from store, server: " .. s.host .. ':'.. s.port
+                                msg = "http request [" .. uri ..  "] fail, err:" .. (err or r.status)
                             })
                         end
                     end
