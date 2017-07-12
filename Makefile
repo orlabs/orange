@@ -7,6 +7,17 @@ init-config:
 	@ test -f conf/nginx.conf   || (cp conf/nginx.conf.example conf/nginx.conf && echo "copy nginx.conf")
 	@ test -f conf/orange.conf  || (cp conf/orange.conf.example conf/orange.conf && echo "copy orange.conf")
 
+deps:init-config
+	mkdir -p resty
+	wget https://github.com/pintsized/lua-resty-http/archive/master.zip
+	unzip master.zip
+	yes|cp -fr   lua-resty-http-master/lib/resty/*  resty/
+	rm -fr  master.zip  lua-resty-http-master
+	wget https://github.com/doujiang24/lua-resty-kafka/archive/master.zip
+	unzip master.zip
+	yes|cp -fr lua-resty-kafka-master/lib/resty/* resty
+	rm -fr  master.zip lua-resty-kafka-master
+
 test:
 	@echo "to be continued..."
 

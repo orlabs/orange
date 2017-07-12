@@ -88,6 +88,7 @@ function KafkaHandler:log()
     log_json["upstream_url"] = "http://" .. ngx.var.upstream_url .. ngx.var.upstream_request_uri or '';
     log_json["request_headers"] = ngx.req.get_headers();
     log_json["response_headers"] = ngx.resp.get_headers();
+    log_json["server_addr"] = ngx.var.server_addr
 
     local ok,err = ngx.timer.at(0,log,log_json)
     if not ok then
