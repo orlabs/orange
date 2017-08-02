@@ -193,6 +193,25 @@ function _M.load_module_if_exists(module_name)
     end
 end
 
+--- checks the hostname type; ipv4, ipv6, or name.
+-- Type is determined by exclusion, not by validation. So if it returns 'ipv6' then
+-- it can only be an ipv6, but it is not necessarily a valid ipv6 address.
+-- @param name the string to check (this may contain a portnumber)
+-- @return string either; 'ipv4', 'ipv6', or 'name'
+-- @usage hostname_type("123.123.123.123")  -->  "ipv4"
+-- hostname_type("::1")              -->  "ipv6"
+-- hostname_type("some::thing")      -->  "ipv6", but invalid...
+function _M.hostnameType(name)
+    local remainder, colons = string_gsub(name, ":", "")
+    if colons > 1 then
+        return "ipv6"
+    end
+    if remainder:match("^[%d%.]+$") then
+        return "ipv4"
+    end
+    return "name"
+end
+
 ---Try to generate a random seed using OpenSSL.
 -- ffi based, would be more effenticy
 -- This function is mainly ispired by https://github.com/bungle/lua-resty-random
