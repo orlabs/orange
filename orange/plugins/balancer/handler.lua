@@ -81,7 +81,7 @@ function BalancerHandler:balancer(conf)
     current_try.balancer_start = nil
 
     -- record overall latency
-    ngx.ctx.KONG_BALANCER_TIME = (ngx.ctx.KONG_BALANCER_TIME or 0) + try_latency
+    ngx.ctx.ORANGE_BALANCER_TIME = (ngx.ctx.ORANGE_BALANCER_TIME or 0) + try_latency
 end
 
 return BalancerHandler
