@@ -178,7 +178,7 @@ function Orange.access()
     ngx.log(ngx.INFO, "[scheme] ", scheme, "; [hostname] ", hostname)
 
     -- only care about upstreams stored in db
-    if utils.hostnameType(hostname) == "name" then
+    if utils.hostname_type(hostname) == "name" then
         local upstreams = orange_db.get_json("balancer.selectors")
 
         local name, port

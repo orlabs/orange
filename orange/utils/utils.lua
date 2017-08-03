@@ -201,7 +201,7 @@ end
 -- @usage hostname_type("123.123.123.123")  -->  "ipv4"
 -- hostname_type("::1")              -->  "ipv6"
 -- hostname_type("some::thing")      -->  "ipv6", but invalid...
-function _M.hostnameType(name)
+function _M.hostname_type(name)
     local remainder, colons = string_gsub(name, ":", "")
     if colons > 1 then
         return "ipv6"
