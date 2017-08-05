@@ -26,13 +26,13 @@
 
                 {(common/data-view-part.html)}
                 {(common/right-selector-rule-part.html)}
-                
+
                 <!-- content end -->
             </div>
         </div><!--右侧部分结束-->
     </div>
 
-    
+
 
 
     <script id="rule-item-tpl" type="text/template">
@@ -119,6 +119,7 @@
                                             <span>{</span><span>{</span>
                                             {@if e.type=="Query" }query.<span>${e.name}</span>{@/if}
                                             {@if e.type=="Header" }header.<span>${e.name}</span>{@/if}
+                                            {@if e.type=="Cookie" }cookie.<span>${e.name}</span>{@/if}
                                             {@if e.type=="PostParams" }body.<span>${e.name}</span>{@/if}
                                             {@if e.type=="Host" }host{@/if}
 
@@ -265,7 +266,7 @@
             </form>
         </div>
     </script>
-    
+
     {(common/extraction-tmpl.html)}
 
     {(common/selector-item-tpl.html)}

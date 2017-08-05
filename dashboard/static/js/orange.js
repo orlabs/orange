@@ -93,7 +93,7 @@
             $(document).on("change", 'select[name=rule-judge-condition-type]', function () {
                 var condition_type = $(this).val();
 
-                if (condition_type != "Header" && condition_type != "Query" && condition_type != "PostParams") {
+                if (condition_type != "Header" && condition_type != "Query" && condition_type != "Cookie" && condition_type != "PostParams") {
                     $(this).parents(".condition-holder").each(function () {
                         $(this).find(".condition-name-hodler").hide();
                     });
@@ -127,6 +127,7 @@
                 var extraction_type = $(this).val();
 
                 if (extraction_type != "Header" && extraction_type != "Query"
+                    && extraction_type != "Cookie"
                     && extraction_type != "PostParams" && extraction_type != "URI") {
                     $(this).parents(".extraction-holder").each(function () {
                         $(this).find(".extraction-name-hodler").hide();
@@ -265,7 +266,7 @@
                 var condition_type = self.find("select[name=rule-judge-condition-type]").val();
                 condition.type = condition_type;
 
-                if (condition_type == "Header" || condition_type == "Query" || condition_type == "PostParams") {
+                if (condition_type == "Header" || condition_type == "Query" || condition_type == "Cookie" || condition_type == "PostParams") {
                     var condition_name = self.find("input[name=rule-judge-condition-name]").val();
                     if (!condition_name) {
                         tmp_success = false;
@@ -376,7 +377,7 @@
                 extraction.type = type;
 
                 //如果允许子key则提取
-                if (type == "Header" || type == "Query" || type == "PostParams"|| type == "URI") {
+                if (type == "Header" || type == "Query" || type == "Cookie" || type == "PostParams" || type == "URI") {
                     var name = self.find("input[name=rule-extractor-extraction-name]").val();
                     if (!name) {
                         tmp_success = false;
@@ -386,7 +387,7 @@
                 }
 
                 //如果允许默认值则提取
-                var allow_default = (type == "Header" || type == "Query" || type == "PostParams"|| type == "Host"|| type == "IP"|| type == "Method");
+                var allow_default = (type == "Header" || type == "Query" || type == "Cookie"  || type == "PostParams" || type == "Host"|| type == "IP" || type == "Method");
                 var has_default = self.find("select[name=rule-extractor-extraction-has-default]").val();
                 if (allow_default && has_default=="1") {//只有允许提取&&有默认值的才取默认值
                     var default_value = self.find("div[name=rule-extractor-extraction-default]>input").val();

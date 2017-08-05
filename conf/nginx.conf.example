@@ -81,6 +81,7 @@ http {
 
             rewrite_by_lua_block {
                 local orange = context.orange
+                orange.init_cookies()
                 orange.redirect()
                 orange.rewrite()
             }

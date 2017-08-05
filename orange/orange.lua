@@ -4,6 +4,7 @@ local table_sort = table.sort
 local pcall = pcall
 local require = require
 require("orange.lib.globalpatches")()
+local ck = require("orange.lib.cookie")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
@@ -111,6 +112,14 @@ function Orange.init_worker()
     end
 end
 
+function Orange.init_cookies()
+    ngx.ctx.__cookies__ = nil
+
+    local COOKIE, err = ck:new()
+    if not err and COOKIE then
+        ngx.ctx.__cookies__ = COOKIE
+    end
+end
 
 function Orange.redirect()
     ngx.ctx.ORANGE_REDIRECT_START = now()
