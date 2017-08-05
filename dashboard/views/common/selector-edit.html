@@ -46,6 +46,7 @@
                                     <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
                                     <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
                                     <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
+                                    <option value="Cookie" {@if c.type == "Cookie" } selected {@/if}>Cookie</option>
                                     <option value="PostParams" {@if c.type == "PostParams" } selected {@/if}>PostParams</option>
                                     <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
                                     <option value="UserAgent" {@if c.type == "UserAgent" } selected {@/if}>UserAgent</option>
@@ -55,7 +56,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-2 condition-name-hodler"
-                                {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" }
+                                {@if c.type!="Header"&&c.type!="Query"&&c.type!="Cookie"&&c.type!="PostParams" }
                                     style="display:none;padding-left:0px;"
                                 {@else}
                                     style="padding-left:0px;"
