@@ -76,7 +76,7 @@ local function apply_history(rb, history, start)
     for i = start, #history do
         local target = history[i]
 
-        if target.weight > 0 then
+        if target.enable and target.weight > 0 then
             assert(rb:addHost(target.name, target.port, target.weight))
         else
             assert(rb:removeHost(target.name, target.port))
@@ -124,6 +124,11 @@ local get_balancer = function(target)
 
         -- need exact order, so create sort-key by create-time and uuid
         t.order = t.time .. ":" .. t.id
+        if t.enable then
+            t.order = "0" .. ":" .. t.order
+        else
+            t.order = "1" .. ":" .. t.order
+        end
     end
 
     table.sort(targets_history, function(a, b)
