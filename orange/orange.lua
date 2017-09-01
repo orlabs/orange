@@ -191,7 +191,7 @@ function Orange.access()
         if upstreams and type(upstreams) == "table" then
             for _, upstream in pairs(upstreams) do
                 if name == upstream.name then
-                    target = "orange_upstream"
+                    target = "http://orange_upstream"
 
                     -- set balancer_address
                     balancer_address = {

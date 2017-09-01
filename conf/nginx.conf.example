@@ -104,7 +104,7 @@ http {
             proxy_set_header X-Forwarded-Scheme $scheme;
             proxy_set_header Host $upstream_host;
 
-            proxy_pass http://$target;
+            proxy_pass $target;
 
             header_filter_by_lua_block {
                 local orange = context.orange
