@@ -10,3 +10,9 @@
 	* dashboard/views/jwt_auth/
 	* dashboard/routes/dashboard.lua  `注册`
 	* dashboard/views/common/left_nav.html `控制面板菜单栏`
+	
+### 备注
+	
+ * 项目依赖 [SkyLothar/lua-resty-jwt](https://github.com/SkyLothar/lua-resty-jwt)
+ 
+ 	* `opm get  lua-resty-jwt` 或者 `luarocks install lua-resty-jwt`
