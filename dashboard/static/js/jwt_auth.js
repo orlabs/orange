@@ -28,8 +28,8 @@
             L.Common.initJudgeTypeChangeEvent();//judge类型选择事件
             L.Common.initConditionTypeChangeEvent();//condition类型选择事件
 
-             _this.initCredentialAddOrRemove();//添加或删除credential
-            _this.initCredentialAddBtnEvent();
+             _this.initPayloadAddOrRemove(); //添加或删除 payload key
+            _this.initPayloadAddBtnEvent();
 
             L.Common.initViewAndDownloadEvent(op_type, _this);
             L.Common.initSwitchBtn(op_type, _this);//redirect关闭、开启
@@ -38,57 +38,57 @@
 
 
 
-        //增加、删除credential按钮事件
-        initCredentialAddOrRemove: function () {
+        //增加、删除  payload key 按钮事件
+        initPayloadAddOrRemove: function () {
 
             //点击“加号“添加新的输入行
-            $(document).on('click', '#credential-payload-area .pair .btn-add', _this.addNewCredential);
+            $(document).on('click', '#payload-area .pair .btn-add', _this.addNewPayload);
 
             //删除输入行
-            $(document).on('click', '#credential-payload-area .pair .btn-remove', function (event) {
+            $(document).on('click', '#payload-area .pair .btn-remove', function (event) {
                 $(this).parents('.form-group').remove();//删除本行输入
-                _this.resetAddCredentialBtn();
+                _this.resetAddPayloadBtn();
             });
         },
 
-        initCredentialAddBtnEvent: function () {
-            $(document).on('click', '#add-credential-payload-btn', function () {
+        initPayloadAddBtnEvent: function () {
+            $(document).on('click', '#add-payload-btn', function () {
                 var row;
-                var current_es = $('.credential-payload-holder');
+                var current_es = $('.payload-holder');
                 if (current_es && current_es.length) {
                     row = current_es[current_es.length - 1];
                 }
                 if (row) {//至少存在了一个提取项
                     var new_row = $(row).clone(true);
                     $(new_row).find("label").text("");
-                    $("#credential-payload-area").append($(new_row));
+                    $("#payload-area").append($(new_row));
                 } else {//没有任何提取项，从模板创建一个
-                    var html = $("#single-credential-tmpl").html();
-                    $("#credential-payload-area").append(html);
+                    var html = $("#single-payload-tmpl").html();
+                    $("#payload-area").append(html);
                 }
 
-                _this.resetAddCredentialBtn();
+                _this.resetAddPayloadBtn();
             });
         },
 
 
-        addNewCredential: function (event) {
+        addNewPayload: function (event) {
             var self = $(this);
-            var row = self.parents('.credential-payload-holder');
+            var row = self.parents('.payload-holder');
             var new_row = row.clone(true);
 
-            $(new_row).find("input[name=rule-handle-credential-key]").val("");
-            $(new_row).find("input[name=rule-handle-credential-target-value]").val("");
+            $(new_row).find("input[name=rule-handle-key]").val("");
+            $(new_row).find("input[name=rule-handle-target-value]").val("");
             $(new_row).find("label").text("");
 
-            $(new_row).insertAfter($(this).parents('.credential-payload-holder'))
-            _this.resetAddCredentialBtn();
+            $(new_row).insertAfter($(this).parents('.payload-holder'))
+            _this.resetAddPayloadBtn();
         },
 
-        resetAddCredentialBtn: function () {
-            var l = $("#credential-payload-area .pair").length;
+        resetAddPayloadBtn: function () {
+            var l = $("#payload-area .pair").length;
             var c = 0;
-            $("#credential-payload-area .pair").each(function () {
+            $("#payload-area .pair").each(function () {
                 c++;
                 if (c == l) {
                     $(this).find(".btn-add").show();
@@ -145,7 +145,7 @@
             var result = {};
             var handle = {};
 
-            var handle_credentials = _this.buildCredentials();
+            var handle_credentials = _this.buildPayloads();
             if(!handle_credentials.success){
                 result.success = false;
                 result.data = handle_credentials.data;
@@ -169,44 +169,39 @@
             return result;
         },
 
-        buildCredentials: function () {
+        buildPayloads: function () {
             var result = {
                 success: false,
                 data: []
             };
 
-            var credentials = [];
+            var secret = '';
 
             var tmp_success = true;
             var tmp_tip = "";
             $(".secret-holder").each(function () {
                 var self = $(this);
-                var credential = {};
-
-                var secret = self.find("input[name=rule-handle-secret]").val();
+                secret = self.find("input[name=rule-handle-secret]").val();
                 if (!secret) {
                     tmp_success = false;
                     tmp_tip = "Secret 不得为空";
                 }
-
-                credential.secret = secret;
-                credentials.push(credential);
             });
 
             var payloads = [];
 
-            $(".credential-payload-holder").each(function () {
+            $(".payload-holder").each(function () {
                 var self = $(this);
                 var payload = {};
 
-                var payload_type = self.find("select[name=rule-handle-credential-payload-type]").val();
+                var payload_type = self.find("select[name=rule-handle-payload-type]").val();
                 if (!payload_type) {
                     tmp_success = false;
-                    tmp_tip = "credential的type字段不得为空";
+                    tmp_tip = "payload 的type字段不得为空";
                 }
 
-                var key = self.find("input[name=rule-handle-credential-payload-key]").val();
-                var target_key = self.find("input[name=rule-handle-credential-payload-target-key]").val();
+                var key = self.find("input[name=rule-handle-payload-key]").val();
+                var target_key = self.find("input[name=rule-handle-payload-target-key]").val();
                 if (!key || !target_key) {
                     tmp_success = false;
                     tmp_tip = "payload 的 key 与目标 key 都不能为空";
@@ -219,21 +214,20 @@
             });
 
 
-
             if (!tmp_success) {
                 result.success = false;
                 result.data = tmp_tip;
                 return result;
             }
                //判断个数是否匹配
-            if (credentials.length < 1) {
+            if (secret == '') {
                 result.success = false;
-                result.data = "请配置credentials";
+                result.data = "请配置 secret";
                 return result;
             }
 
             result.data = {
-               secret: credentials[0].secret,
+               secret: secret,
                payload : payloads,
             };
 
