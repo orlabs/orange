@@ -11,8 +11,13 @@
 	* dashboard/routes/dashboard.lua  `注册`
 	* dashboard/views/common/left_nav.html `控制面板菜单栏`
 	
-### 备注
+### 说明
 	
  * 项目依赖 [SkyLothar/lua-resty-jwt](https://github.com/SkyLothar/lua-resty-jwt)
  
  	* `opm get  lua-resty-jwt` 或者 `luarocks install lua-resty-jwt`
+
+ * 认证方式：
+ 	
+ 	* 1、 Header `Authorization`:`Bearer Token`
+ 	* 2、 Query `token=Token` 	
