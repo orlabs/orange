@@ -15,7 +15,7 @@
 	
  * 项目依赖 [SkyLothar/lua-resty-jwt](https://github.com/SkyLothar/lua-resty-jwt)
  
- 	* `opm get  lua-resty-jwt` 或者 `luarocks install lua-resty-jwt`
+ 	* `opm get  SkyLothar/lua-resty-jwt` 或者 `luarocks install lua-resty-jwt`
 
  * 认证方式：
  	
