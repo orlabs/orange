@@ -214,7 +214,6 @@ function Orange.access()
             end -- end for loop
         end
     end
-    ngx.log(ngx.ERR, target)
 
     -- run balancer_execute once before the `balancer` context
     if balancer_address then
