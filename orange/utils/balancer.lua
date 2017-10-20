@@ -250,7 +250,7 @@ local function execute(target)
 
         local ip, port, hostname = balancer:getPeer(hasValue, nil, dns_cache_only)
 
-        ngx.log(ngx.ERR, "[ip]:", ip, " [port]: ", port)
+        ngx.log(ngx.INFO, "[ip]:", ip, " [port]: ", port)
         if not ip then
             if port == "No peers are available" then
                 -- in this case a "503 service unavailable", others will be a 500.
