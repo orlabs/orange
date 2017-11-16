@@ -1,7 +1,6 @@
 local ipairs = ipairs
 local table_insert = table.insert
 local table_sort = table.sort
-local string_find = string.find
 local pcall = pcall
 local require = require
 require("orange.lib.globalpatches")()
@@ -9,9 +8,6 @@ local ck = require("orange.lib.cookie")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
-local ngx_balancer = require("ngx.balancer")
-local orange_db = require("orange.store.orange_db")
-local balancer_execute = require("orange.utils.balancer").execute
 local dns_client = require("resty.dns.client")
 
 local HEADERS = {
@@ -160,74 +156,6 @@ function Orange.access()
     for _, plugin in ipairs(loaded_plugins) do
         plugin.handler:access()
     end
-
-    local upstream_url = ngx.var.upstream_url
-    ngx.log(ngx.INFO, "[AFTER ACCESS] ", " upstream_url: " , upstream_url)
-
-    -- here we set the ngx.var.target
-    local target = upstream_url
-    local scheme, hostname
-    local balancer_address
-    if string_find(upstream_url, "://") then
-        scheme, hostname = upstream_url:match("^(.+)://(.+)$")
-    else
-        schema = "http"
-        hostname = upstream_url
-    end
-
-    ngx.log(ngx.INFO, "[scheme] ", scheme, "; [hostname] ", hostname)
-
-    -- only care about upstreams stored in db
-    if utils.hostname_type(hostname) == "name" then
-        local upstreams = orange_db.get_json("balancer.selectors")
-
-        local name, port
-        if string_find(hostname, ":") then
-            name, port = hostname:match("^(.-)%:*(%d*)$")
-        else
-            name, port = hostname, 80
-        end
-
-        if upstreams and type(upstreams) == "table" then
-            for _, upstream in pairs(upstreams) do
-                if name == upstream.name then
-                    target = "http://orange_upstream"
-
-                    -- set balancer_address
-                    balancer_address = {
-                        type               = "name",  -- must be name
-                        host               = name,
-                        port               = port,
-                        try_count          = 0,
-                        tries              = {},
-                        retries            = upstream.retries or 0, -- number of retries for the balancer
-                        connection_timeout = upstream.connection_timeout or 60000,
-                        send_timeout       = upstream.send_timeout or 60000,
-                        read_timeout       = upstream.read_timeout or 60000,
-                        -- ip              = nil,     -- final target IP address
-                        -- balancer        = nil,     -- the balancer object, in case of balancer
-                        -- hostname        = nil,     -- the hostname belonging to the final target IP
-                    }
-
-                    break
-                end
-            end -- end for loop
-        end
-    end
-
-    -- run balancer_execute once before the `balancer` context
-    if balancer_address then
-        local ok, err = balancer_execute(balancer_address)
-        if not ok then
-            return ngx.exit(503)
-        end
-        ngx.ctx.balancer_address = balancer_address
-    end
-
-    -- target is used by proxy_pass
-    ngx.var.target = target
-
-    ngx.log(ngx.INFO, "[target] ", target, "; [upstream_url] ", upstream_url)
 
     local now_time = now()
     ngx.ctx.ORANGE_ACCESS_TIME = now_time - ngx.ctx.ORANGE_ACCESS_START

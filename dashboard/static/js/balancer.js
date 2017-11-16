@@ -6,8 +6,7 @@
         },
 
         init: function () {
-            //L.Common.loadConfigs("balancer", _this, true);
-            _this.loadConfigs(_this, true);
+            L.Common.loadConfigs("balancer", _this, true);
             _this.initEvents();
         },
 
@@ -25,6 +24,7 @@
 
             L.Common.initViewAndDownloadEvent(op_type, _this);  // 数据视图转换和下载事件
             L.Common.initSyncDialog(op_type, _this);            //同步配置对话框
+            L.Common.initSwitchBtn(op_type, _this);     //redirect关闭、开启
         },
 
         initUpstreamAddDialog: function(context) {
@@ -61,7 +61,7 @@
                                     success: function(result) {
                                         if (result.success) {
                                             // 重新渲染
-                                            _this.loadConfigs(context, false, function() {
+                                            L.Common.loadConfigs("balancer", context, false, function() {
                                                 $("#selector list li[data-id=" + current_selected_id + "]").addClass("selected-selector");
                                             });
                                             return true;
@@ -122,7 +122,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         // 重新渲染
-                                        _this.loadConfigs(context, false, function() {
+                                        L.Common.loadConfigs("balancer", context, false, function() {
                                             // 删除的是原来选中的Upstream，重新选中第一个
                                             if (current_selected_id == selector_id) {
                                                 var selector_list = $("#selector-list li");
@@ -210,7 +210,7 @@
                                     success: function(result) {
                                         if (result.success) {
                                             //重新渲染
-                                            _this.loadConfigs(context);
+                                            L.Common.loadConfigs("balancer", context);
                                             return true;
                                         } else {
                                             L.Common.showErrorTip("提示", result.msg || "编辑Upstream发生错误");
@@ -446,48 +446,6 @@
                     }]
                 });
                 d.show();
-            });
-        },
-
-        loadConfigs: function (context, page_load, callback) {
-            $.ajax({
-                url: '/balancer/selectors',
-                type: 'get',
-                cache: false,
-                data: {},
-                dataType: 'json',
-                success: function (result) {
-                    if (result.success) {
-                        // no need to reset switch button, balancer wouldn't be diabled
-                        $("#view-btn").show();
-
-                        var enable    = result.data.enable;
-                        var meta      = result.data.meta;
-                        var selectors = result.data.selectors;
-
-                        // 重新设置数据
-                        context.data.enable    = enable;
-                        context.data.meta      = meta;
-                        context.data.selectors = selectors;
-
-                        // render selectors
-                        L.Common.renderSelectors(meta, selectors)
-
-                        if (page_load) { // 第一次加载页面
-                            var selector_lis = $("#selector-list li")
-                            if (selector_lis && selector_lis.length > 0) {
-                                $(selector_lis[0]).click();
-                            }
-                        }
-
-                        callback && callback();
-                    } else {
-                        L.Common.showErrorTip("错误提示", "查询balancer配置请求发生错误");
-                    }
-                },
-                error : function() {
-                    L.Common.showErrorTip("提示", "查询balancer配置请求发生异常");
-                }
             });
         },
 
