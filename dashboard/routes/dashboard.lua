@@ -8,7 +8,7 @@ local lor = require("lor.index")
 
 local function load_plugin_api(plugin, dashboard_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
+    ngx.log(ngx.INFO, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
     local ok, plugin_api, e
     ok = xpcall(function()
@@ -151,6 +151,10 @@ return function(config, store)
 
     dashboard_router:get("/divide", function(req, res, next)
         res:render("divide")
+    end)
+
+    dashboard_router:get("/balancer", function(req, res, next)
+        res:render("balancer")
     end)
 
     dashboard_router:get("/kvstore", function(req, res, next)

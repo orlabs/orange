@@ -8,6 +8,7 @@ local ck = require("orange.lib.cookie")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
+local dns_client = require("resty.dns.client")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -79,6 +80,9 @@ function Orange.init(options)
         store = store,
         config = config
     }
+
+    -- init dns_client
+    assert(dns_client.init())
 
     return config, store
 end
@@ -160,6 +164,11 @@ function Orange.access()
     ngx.ctx.ACCESSED = true
 end
 
+function Orange.balancer()
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:balancer()
+    end
+end
 
 function Orange.header_filter()
 

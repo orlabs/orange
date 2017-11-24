@@ -508,7 +508,7 @@ function _M.load_data_by_mysql(store, plugin)
                 ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable)
                 return false
             else
-                ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] success")
+                ngx.log(ngx.INFO, "load data of plugin[" .. v .. "] success")
             end
         else -- ignore `stat` and `kvstore`
             local init_enable = _M.init_enable_of_plugin(v, store)
@@ -518,7 +518,7 @@ function _M.load_data_by_mysql(store, plugin)
                 ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable, " init_meta:", init_meta, " init_selectors_and_rules:", init_selectors_and_rules)
                 return false
             else
-                ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] success")
+                ngx.log(ngx.INFO, "load data of plugin[" .. v .. "] success")
             end
         end
     end, function()

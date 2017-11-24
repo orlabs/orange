@@ -449,7 +449,7 @@ return function(plugin)
 
                 local to_del_rules_ids = to_del_selector.rules or {}
                 local d_result = dao.delete_rules_of_selector(plugin, store, to_del_rules_ids)
-                ngx.log(ngx.ERR, "delete rules of selector:", d_result)
+                ngx.log(ngx.INFO, "delete rules of selector:", d_result)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)

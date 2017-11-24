@@ -37,7 +37,7 @@ function _M:build_app()
     if config.dashboard and config.dashboard.auth and config.dashboard.auth == true then
         -- session support
         app:use(session_middleware({
-            secret = config.dashboard.session_secret or "default_session_secret",
+            secret = config.dashboard.session_secret or "12345678", -- lua-resty-string: salt must be 8 characters or nil
             timeout = config.dashboard.session_timeout or 3600 -- default session timeout is 3600 seconds
         }))
         -- intercepter: login or not
