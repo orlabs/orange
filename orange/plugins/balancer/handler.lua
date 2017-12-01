@@ -15,8 +15,8 @@ local function now()
 end
 
 local BalancerHandler = BasePlugin:extend()
--- set balancer priority to 1000 so that balancer's access will be called at last
-BalancerHandler.PRIORITY = 1000
+-- set balancer priority to 999 so that balancer's access will be called at last
+BalancerHandler.PRIORITY = 999
 
 function BalancerHandler:new(store)
     BalancerHandler.super.new(self, "Balancer-plugin")
@@ -31,6 +31,7 @@ function BalancerHandler:access(conf)
     local selectors = orange_db.get_json("balancer.selectors")
 
     if not enable or enable ~= true or not meta or not selectors then
+        ngx.var.target = ngx.var.upstream_url
         return
     end
     
