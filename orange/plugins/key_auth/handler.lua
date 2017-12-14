@@ -158,6 +158,7 @@ function KeyAuthHandler:access(conf)
         local selector = selectors[sid]
         if selector and selector.enable == true then
             local selector_pass 
+            local selector_continue = selector.handle and selector.handle.continue
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else
@@ -170,15 +171,8 @@ function KeyAuthHandler:access(conf)
                 end
 
                 local stop = filter_rules(sid, "key_auth", ngx_var_uri, headers, body, query)
-                if stop then -- 不再执行此插件其他逻辑
+                if stop or not selector_continue then -- 不再执行此插件其他逻辑
                     return
-                end
-
-                -- if continue or break the loop
-                if selector.handle and selector.handle.continue == true then
-                    -- continue next selector
-                else
-                    break
                 end
             else
                 if selector.handle and selector.handle.log == true then
