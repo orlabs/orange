@@ -119,17 +119,17 @@ function BasicAuthHandler:access(conf)
                 if stop then -- 不再执行此插件其他逻辑
                     return
                 end
+
+                -- if continue or break the loop
+                if selector.handle and selector.handle.continue == true then
+                    -- continue next selector
+                else
+                    break
+                end
             else
                 if selector.handle and selector.handle.log == true then
                     ngx.log(ngx.INFO, "[BasicAuth][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
-            end
-
-            -- if continue or break the loop
-            if selector.handle and selector.handle.continue == true then
-                -- continue next selector
-            else
-                break
             end
         end
     end
