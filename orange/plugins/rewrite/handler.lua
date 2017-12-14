@@ -83,7 +83,6 @@ function RewriteHandler:rewrite(conf)
     for i, sid in ipairs(ordered_selectors) do
         ngx.log(ngx.INFO, "==[Rewrite][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
-        local selector_continue = selector.handle and selector.handle.continue
         if selector and selector.enable == true then
             local selector_pass 
             if selector.type == 0 then -- 全流量选择器
@@ -98,6 +97,7 @@ function RewriteHandler:rewrite(conf)
                 end
 
                 local stop = filter_rules(sid, "rewrite", ngx_var_uri)
+                local selector_continue = selector.handle and selector.handle.continue
                 if stop or not selector_continue then -- 不再执行此插件其他逻辑
                     return
                 end

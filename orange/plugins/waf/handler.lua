@@ -75,7 +75,6 @@ function WAFHandler:access(conf)
         local selector = selectors[sid]
         if selector and selector.enable == true then
             local selector_pass
-            local selector_continue = selector.handle and selector.handle.continue
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else
@@ -88,6 +87,7 @@ function WAFHandler:access(conf)
                 end
 
                 local stop = filter_rules(sid, "waf", ngx_var_uri)
+                local selector_continue = selector.handle and selector.handle.continue
                 if stop or not selector_continue then -- 不再执行此插件其他逻辑
                     return
                 end
