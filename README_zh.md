@@ -27,7 +27,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
     - 配置存储和集群扩展需要MySQL支持。从0.2.0版本开始，Orange去除了本地文件存储的方式，目前仅提供MySQL存储支持.
 
 - resty.http
-    - 集群节点使用了 resty.http 依赖
+    - 集群节点同步使用了 resty.http 依赖
 
 #### 数据表导入MySQL
 
