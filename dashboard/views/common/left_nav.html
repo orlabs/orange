@@ -32,13 +32,6 @@
             </li>
 
 
-            <li id="nav-node">
-                <a href="/admin/node/manage">
-                    <i class="fa fa fa-server"></i>
-                    <span class="nav-label">集群节点</span>
-                </a>
-            </li>
-
             <li class="line dk"></li>
 
 
@@ -112,8 +105,6 @@
                 </a>
             </li>
 
-
-
             {%
                 if locals and locals.login and locals.login == true then
             %}
@@ -130,6 +121,14 @@
                     <span class="nav-label">用户管理</span>
                 </a>
             </li>
+
+            <li id="nav-node">
+                <a href="/admin/node/manage">
+                    <i class="fa fa fa-server"></i>
+                    <span class="nav-label">集群节点</span>
+                </a>
+            </li>
+
             {% end %}
             <li>
                 <a href="/auth/logout">

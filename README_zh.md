@@ -10,6 +10,7 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 - 提供了一套默认的Dashboard用于动态管理各种功能和配置
 - 提供了API接口用于实现第三方服务(如个性化运维需求、第三方Dashboard等)
 - 可根据规范编写自定义插件扩展Orange功能
+- 提供集群节点同步
 
 
 ### 使用
@@ -24,6 +25,9 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
     - 若使用的Orange版本高于或等于v0.6.2则应安装lor v0.3.0+版本
 - MySQL
     - 配置存储和集群扩展需要MySQL支持。从0.2.0版本开始，Orange去除了本地文件存储的方式，目前仅提供MySQL存储支持.
+
+- resty.http
+    - 集群节点使用了 resty.http 依赖
 
 #### 数据表导入MySQL
 
