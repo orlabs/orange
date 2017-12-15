@@ -8,7 +8,7 @@ local lor = require("lor.index")
 
 local function load_plugin_api(plugin, dashboard_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
+    ngx.log(ngx.INFO, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
     local ok, plugin_api, e
     ok = xpcall(function()

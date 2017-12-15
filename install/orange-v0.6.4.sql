@@ -316,7 +316,22 @@ VALUES
 /*!40000 ALTER TABLE `waf` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `node`;
 
+CREATE TABLE `node` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `ip` varchar(20) NOT NULL DEFAULT '',
+  `port` smallint(6) DEFAULT '7777',
+  `api_username` varchar(50) DEFAULT '',
+  `api_password` varchar(50) DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `node` WRITE;
+UNLOCK TABLES;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
