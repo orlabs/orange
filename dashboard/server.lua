@@ -6,6 +6,7 @@ local check_is_admin_middleware = require("dashboard.middleware.check_is_admin")
 local dashboard_router = require("dashboard.routes.dashboard")
 local auth_router = require("dashboard.routes.auth")
 local admin_router = require("dashboard.routes.admin")
+local node_router = require("dashboard.routes.node")
 local lor = require("lor.index")
 
 local _M = {}
@@ -49,6 +50,8 @@ function _M:build_app()
         app:use(check_is_admin_middleware())
         -- admin router
         app:use("admin", admin_router(config)())
+        -- node router
+        app:use("admin", node_router(config)())
     end
 
     -- routes
