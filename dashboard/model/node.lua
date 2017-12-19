@@ -46,6 +46,15 @@ return function(config)
         end
     end
 
+    function node_model:update_node_status(id, status)
+        local res, err = db:query("update node set sync_status=? where id=?", { status, tonumber(id) })
+        if not res or err then
+            return false
+        else
+            return true
+        end
+    end
+
     function node_model:delete(id)
         local res, err = db:query("delete from node where id=?", { tonumber(id) })
         if not res or err then

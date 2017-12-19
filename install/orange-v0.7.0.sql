@@ -352,6 +352,7 @@ CREATE TABLE `node` (
   `port` smallint(6) DEFAULT '7777',
   `api_username` varchar(50) DEFAULT '',
   `api_password` varchar(50) DEFAULT '',
+  `sync_status` varchar(200) DEFAULT '',
   `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_key` (`ip`)

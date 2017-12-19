@@ -40,10 +40,11 @@
                         <thead>
                         <tr>
                             <th class="center" width="60px">序号</th>
-                            <th class="center">名称</th>
+                            <th class="center" width="100">名称</th>
                             <th class="center" width="150px">IP</th>
                             <th class="center" width="80px">端口</th>
                             <th class="center" width="200px">创建/变更时间</th>
+                            <th class="center" >状态</th>
                             <th class="center" width="150px">操作</th>
                         </tr>
                         </thead>
@@ -68,6 +69,7 @@
         <td class="center">${n.ip}</td>
         <td class="center">${n.port}</td>
         <td class="center">${n.op_time}</td>
+        <td class=""> $${n.sync_status | sync_status} </td>
         <td class="center do">
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default edit-node-btn" data-id="${n.id}" data-name="${n.name}"

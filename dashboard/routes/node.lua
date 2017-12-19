@@ -16,6 +16,7 @@ local function sync(nodes, plugs)
         if node.ip and node.port and node.api_username and node.api_password then
 
             node_result = {
+                id = node.id,
                 name = node.name,
                 ip = node.ip,
                 result = {}
@@ -24,7 +25,11 @@ local function sync(nodes, plugs)
             for j, plug in pairs(plugs) do
 
                 if plug ~= 'stat' then
+
                     local httpc = http.new()
+
+                    -- 设置超时时间 3s
+                    httpc:set_timeout(3000)
 
                     local url = string_format("http://%s:%s", node.ip, node.port)
                     local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
@@ -47,10 +52,10 @@ local function sync(nodes, plugs)
 
                     ngx.log(ngx.INFO, resp.body)
 
-                    table.insert(node_result.result, {
-                        plug = plug,
-                        status = resp.status
-                    })
+                    local plug_sync_status = {}
+                    plug_sync_status[plug] = resp.status == 200
+
+                    table.insert(node_result.result, plug_sync_status)
 
                     httpc:close()
                 end
@@ -141,7 +146,7 @@ return function(config, store)
         -- port
         if port < 1 or port > 65535 then
             return json:json({
-                success =false,
+                success = false,
                 msg = "端口号为 1~65535 间的数字"
             })
         end
@@ -239,7 +244,7 @@ return function(config, store)
         -- port
         if port < 1 or port > 65535 then
             return json:json({
-                success =false,
+                success = false,
                 msg = "端口号为 1~65535 间的数字"
             })
         end
@@ -306,15 +311,35 @@ return function(config, store)
         ngx.log(ngx.INFO, "sync configure to orange nodes")
 
         local nodes = node_model:query_all()
-
         local plugs = config.plugins
 
-        local results = sync(nodes, plugs)
+        local co = coroutine.create(function()
+            local results = sync(nodes, plugs)
+            for _, result in pairs(results) do
+                sync_status = ''
+                for j, status in pairs(result.result) do
+                    for name, plug_sync_status in pairs(status) do
+
+                        ngx.log(ngx.INFO, string_format("%s : %s", name, plug_sync_status))
+
+                        if plug_sync_status then
+                            sync_status = string_format('%s\n[1]%s[/1]', sync_status, name)
+                        else
+                            sync_status = string_format('%s\n[0]%s[/0]', sync_status, name)
+                        end
+                    end
+                end
+                -- 更新节点同步状态
+                node_model:update_node_status(result.id, sync_status)
+            end
+        end)
+
+        coroutine.resume(co)
 
         return res:json({
             success = true,
             msg = "同步已提交",
-            results = results
+            nodes = node_model:query_all(),
         })
     end)
 

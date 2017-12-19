@@ -1,6 +1,16 @@
 (function (L) {
     var _this = null;
     L.NodeManage = L.NodeManage || {};
+
+    var sync_status = function (data) {
+        return data
+            .replace(/\[\/[0-1]\]/g, '</span>')
+            .replace(/\[1\]/g, '<span class="label label-primary">')
+            .replace(/\[0\]/g, '<span class="label label-danger">');
+    };
+
+    juicer.register('sync_status', sync_status); //注册自定义函数
+
     _this = L.NodeManage = {
         data: {},
 
@@ -72,7 +82,7 @@
                                     }
                                 },
                                 error: function () {
-                                    L.Common.showErrorTip("提示", "添加用户请求发生异常");
+                                    L.Common.showErrorTip("提示", "添加节点请求发生异常");
                                     return false;
                                 }
                             });
@@ -172,7 +182,7 @@
                                 L.Common.showErrorTip("提示", "节点名称为1~20位, 只能输入字母、下划线、数字，必须以字母开头.");
                                 return false;
                             }
-                            
+
                             var ipPattern = /^\d{1,3}(\.\d{1,3}){3}$/;
                             if (!ip || ip.length < 7 || ip.length > 15 || !(ipPattern.test(ip))) {
                                 L.Common.showErrorTip("提示", "IP 长度须为7~15位!");
@@ -245,7 +255,7 @@
                                     L.Common.showTipDialog("提示", result.msg);
                                 },
                                 error: function () {
-                                    L.Common.showErrorTip("提示", "添加用户请求发生异常");
+                                    L.Common.showErrorTip("提示", "同步 orange 节点请求发生异常");
                                     return false;
                                 }
                             });
