@@ -69,7 +69,17 @@
         <td class="center">${n.ip}</td>
         <td class="center">${n.port}</td>
         <td class="center">${n.op_time}</td>
-        <td class=""> $${n.sync_status | sync_status} </td>
+        <td class="">
+{@each n.sync_status as status}
+{@each status as sync_status, plugin_name}
+{@if sync_status === true }
+<label class="label label-primary">${plugin_name}</label>
+{@else}
+<label class="label label-danger">${plugin_name}</label>
+{@/if}
+{@/each}
+{@/each}
+        </td>
         <td class="center do">
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default edit-node-btn" data-id="${n.id}" data-name="${n.name}"

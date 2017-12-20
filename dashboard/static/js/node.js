@@ -36,23 +36,24 @@
                         callback: function () {
                             var name = $("input[name=name]").val();
                             var ip = $("input[name=ip]").val();
-                            var port = $("input[name=port]").val();
+                            var port = parseInt($("input[name=port]").val());
                             var api_username = $("input[name=api_username]").val();
                             var api_password = $("input[name=api_password]").val();
 
-                            var pattern = /^[A-Za-z][A-Za-z0-9_]+$/;
-                            if (!name || name.length < 1 || name.length > 20 || !name.match(pattern)) {
-                                L.Common.showErrorTip("提示", "节点名称为1~20位, 只能输入字母、下划线、数字，必须以字母开头.");
+                            var name_pattern = /^.{1,20}$/;
+                            if (!name || !name.match(name_pattern)) {
+                                L.Common.showErrorTip("提示", "节点名称为1~20位");
                                 return false;
                             }
 
-                            var ipPattern = /^\d{1,3}(\.\d{1,3}){3}$/;
-                            if (!ip || ip.length < 7 || ip.length > 15 || !(ipPattern.test(ip))) {
-                                L.Common.showErrorTip("提示", "IP 长度须为7~15位!");
+                            var ip_pattern = /^\d+\.\d+\.\d+\.\d+$/;
+                            if (!ip || !ip.match(ip_pattern)) {
+                                L.Common.showErrorTip("提示", "IP 格式不正确!");
                                 return false;
                             }
 
-                            if (!port || port < 1 || port > 65535) {
+                            var port_pattern = /^\d+$/;
+                            if (!port || isNaN(port) || port < 1 || port > 65535 || !port.toString().match(port_pattern)) {
                                 L.Common.showErrorTip("提示", "端口为 1~65535 间的数字!");
                                 return false;
                             }
@@ -120,7 +121,7 @@
                                         //重新渲染规则
                                         _this.renderTable(result.data); //渲染table
                                         _this.data.nodes = result.data.nodes; //重新设置数据
-
+                                        L.Common.showTipDialog("提示", result.msg || "删除节点信息成功")
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除节点发生错误");
@@ -173,23 +174,24 @@
 
                             var name = $("input[name=name]").val();
                             var ip = $("input[name=ip]").val();
-                            var port = $("input[name=port]").val();
+                            var port = parseInt($("input[name=port]").val());
                             var api_username = $("input[name=api_username]").val();
                             var api_password = $("input[name=api_password]").val();
 
-                            var pattern = /^[A-Za-z][A-Za-z0-9_]+$/;
-                            if (!name || name.length < 1 || name.length > 20 || !name.match(pattern)) {
-                                L.Common.showErrorTip("提示", "节点名称为1~20位, 只能输入字母、下划线、数字，必须以字母开头.");
+                            var name_pattern = /^.{1,20}$/;
+                            if (!name || !name.match(name_pattern)) {
+                                L.Common.showErrorTip("提示", "节点名称为1~20位");
                                 return false;
                             }
 
-                            var ipPattern = /^\d{1,3}(\.\d{1,3}){3}$/;
-                            if (!ip || ip.length < 7 || ip.length > 15 || !(ipPattern.test(ip))) {
-                                L.Common.showErrorTip("提示", "IP 长度须为7~15位!");
-                                return false;
-                            }
+                            // var ip_pattern = /^\d+\.\d+\.\d+\.\d+$/;
+                            // if (!ip || !ip.match(ip_pattern)) {
+                            //     L.Common.showErrorTip("提示", "IP 格式不正确!");
+                            //     return false;
+                            // }
 
-                            if (!port || port < 1 || port > 65535) {
+                            var port_pattern = /^\d+$/;
+                            if (!port || isNaN(port) || port < 1 || port > 65535 || !port.toString().match(port_pattern)) {
                                 L.Common.showErrorTip("提示", "端口为 1~65535 间的数字!");
                                 return false;
                             }
@@ -212,7 +214,7 @@
                                         //重新渲染规则
                                         _this.renderTable(result.data, id); //渲染table
                                         _this.data.nodes = result.data.nodes; //重新设置数据
-
+                                        L.Common.showTipDialog("提示", result.msg || "修改节点信息成功")
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "编辑节点发生错误");
@@ -252,6 +254,11 @@
                                 data: {},
                                 dataType: 'json',
                                 success: function (result) {
+
+                                    //重新渲染规则
+                                    _this.renderTable(result.data); //渲染table
+                                    _this.data.nodes = result.data.nodes; //重新设置数据
+
                                     L.Common.showTipDialog("提示", result.msg);
                                 },
                                 error: function () {
@@ -281,18 +288,16 @@
                         _this.data.nodes = result.data.nodes; //重新设置数据
 
                     } else {
-                        L.Common.showTipDialog("错误提示", "查询节点请求发生错误");
+                        L.Common.showErrorTip("错误提示", "查询节点请求发生错误");
                     }
                 },
                 error: function () {
-                    L.Common.showTipDialog("提示", "查询节点请求发生异常");
+                    L.Common.showErrorTip("提示", "查询节点请求发生异常");
                 }
             });
         },
 
         renderTable: function (data, highlight_id) {
-            console.log(data, highlight_id);
-
             highlight_id = highlight_id || 0;
             var tpl = $("#node-item-tpl").html();
             data.highlight_id = highlight_id;
