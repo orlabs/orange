@@ -70,14 +70,12 @@
         <td class="center">${n.port}</td>
         <td class="center">${n.op_time}</td>
         <td class="">
-{@each n.sync_status as status}
-{@each status as sync_status, plugin_name}
+{@each n.sync_status as sync_status, plugin_name}
 {@if sync_status === true }
 <label class="label label-primary">${plugin_name}</label>
 {@else}
 <label class="label label-danger">${plugin_name}</label>
 {@/if}
-{@/each}
 {@/each}
         </td>
         <td class="center do">

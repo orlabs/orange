@@ -6,24 +6,37 @@ local json = require("orange.utils.json")
 local encode_base64 = ngx.encode_base64
 local string_format = string.format
 local lor = require("lor.index")
-
-
+local socket = require("socket")
 
 
 return function(config, store)
+
     local node_router = lor:Router()
     local node_model = require("dashboard.model.node")(config)
 
     local function get_nodes()
         local nodes = node_model:query_all()
 
-        for _, node in pairs(nodes) do
-            -- 格式化成 json 数据
-            node.sync_status = json.decode(node.sync_status)
+        if nodes then
+            for _, node in pairs(nodes) do
+                -- 格式化成 json 数据
+                node.sync_status = json.decode(node.sync_status)
+            end
         end
 
         return nodes
     end
+
+    -- 获取 IP
+    local function get_ip_by_hostname(hostname)
+        local ip, resolved = socket.dns.toip(hostname)
+        local ListTab = {}
+        for k, v in ipairs(resolved.ip) do
+            table.insert(ListTab, v)
+        end
+        return unpack(ListTab)
+    end
+
 
     -- 节点同步
     local function sync_nodes(nodes, plugins)
@@ -31,16 +44,9 @@ return function(config, store)
         for _, node in pairs(nodes) do
             if node.ip and node.port and node.api_username and node.api_password then
 
-                local node_result = {
-                    id = node.id,
-                    name = node.name,
-                    ip = node.ip,
-                    result = {}
-                }
-
                 for _, plugin in pairs(plugins) do
 
-                    if plugin ~= 'stat' then
+                    if plugin ~= 'stat' and plugin ~= 'node' then
 
                         local httpc = http.new()
 
@@ -61,33 +67,43 @@ return function(config, store)
                             }
                         })
 
-                        local plug_sync_status = {}
-
                         if not resp then
                             ngx.log(ngx.ERR, err)
-                            plug_sync_status[plugin] = false
+                            node.sync_status[plugin] = false
                         else
                             ngx.log(ngx.INFO, resp.body)
-                            plug_sync_status[plugin] = resp.status == 200
+                            node.sync_status[plugin] = resp.status == 200
                         end
 
                         httpc:close()
-
-                        table.insert(node_result.result, plug_sync_status)
                     end
                 end
 
                 -- 更新到数据库
-                node_model:update_node_status(node_result.id, json.encode(node_result.result))
+                node_model:update_node_status(node.id, json.encode(node.sync_status))
             end
         end
 
         return get_nodes()
     end
 
+    function node_router:registry()
+        local local_ip = get_ip_by_hostname(socket.dns.gethostname())
+        node_model:registry(local_ip, 7777, config.api.credentials[1])
+    end
 
+    node_router:get("/node/registry", function(req, res, next)
+
+        node_router:registry()
+
+        res:json({
+            success = true,
+            data = {}
+        })
+    end)
 
     node_router:get("/node/manage", function(req, res, next)
+        node_router:registry()
         res:render("node")
     end)
 
@@ -274,7 +290,11 @@ return function(config, store)
         ngx.log(ngx.INFO, "sync configure to orange nodes")
 
         local nodes = get_nodes()
-        local results = sync_nodes(nodes, config.plugins)
+        local results = {}
+
+        if nodes then
+            results = sync_nodes(nodes, config.plugins)
+        end
 
         return res:json({
             success = true,

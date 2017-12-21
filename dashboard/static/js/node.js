@@ -2,15 +2,6 @@
     var _this = null;
     L.NodeManage = L.NodeManage || {};
 
-    var sync_status = function (data) {
-        return data
-            .replace(/\[\/[0-1]\]/g, '</span>')
-            .replace(/\[1\]/g, '<span class="label label-primary">')
-            .replace(/\[0\]/g, '<span class="label label-danger">');
-    };
-
-    juicer.register('sync_status', sync_status); //注册自定义函数
-
     _this = L.NodeManage = {
         data: {},
 
