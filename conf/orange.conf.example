@@ -12,7 +12,8 @@
         "waf",
         "divide",
         "kvstore",
-        "balancer"
+        "balancer",
+        "node"
     ],
     "store": "mysql",
     "store_mysql": {
