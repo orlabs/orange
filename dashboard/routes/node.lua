@@ -44,6 +44,8 @@ return function(config, store)
         for _, node in pairs(nodes) do
             if node.ip and node.port and node.api_username and node.api_password then
 
+                node.sync_status = {}
+
                 for _, plugin in pairs(plugins) do
 
                     if plugin ~= 'stat' and plugin ~= 'node' then
