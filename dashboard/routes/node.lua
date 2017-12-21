@@ -105,7 +105,7 @@ return function(config, store)
     end)
 
     node_router:get("/node/manage", function(req, res, next)
-        node_router:registry()
+        -- node_router:registry()
         res:render("node")
     end)
 
