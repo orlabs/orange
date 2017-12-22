@@ -18,7 +18,7 @@ http {
     '"$upstream_addr" "$upstream_status" "$upstream_response_length" "$upstream_response_time"';
 
     access_log  ./logs/access.log  main;
-    error_log ./logs/error.log info;
+    error_log ./logs/error.log error;
 
     sendfile        on;
     keepalive_timeout  65;
@@ -132,7 +132,7 @@ http {
         listen 8001;
         server_name localhost 127.0.0.1;
         access_log ./logs/default_upstream_access.log main;
-        error_log ./logs/default_upstream_error.log;
+        error_log ./logs/default_upstream_error.log error;
 
         location / {
             content_by_lua_block {
@@ -149,7 +149,7 @@ http {
         stub_status on;
         #server_name  localhost;
         access_log ./logs/dashboard_access.log main;
-        error_log ./logs/dashboard_error.log info;
+        error_log ./logs/dashboard_error.log error;
 
         location = /favicon.ico {
             log_not_found off;
@@ -180,7 +180,7 @@ http {
         listen       7777;
         #server_name  localhost;
         access_log ./logs/api_access.log main;
-        error_log ./logs/api_error.log info;
+        error_log ./logs/api_error.log error;
 
         location = /favicon.ico {
             log_not_found off;

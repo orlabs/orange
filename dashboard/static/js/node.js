@@ -223,6 +223,28 @@
                 d.show();
             });
 
+            $('#reg-node-btn').click(function () {
+                $.ajax({
+                    url: '/admin/node/register',
+                    type: 'post',
+                    cache: false,
+                    data: {},
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            _this.renderTable(result.data); //渲染table
+                            _this.data.nodes = result.data.nodes; //重新设置数据
+                            L.Common.showTipDialog("错误提示", "注册节点请求已发送");
+                        } else {
+                            L.Common.showErrorTip("错误提示", "注册节点请求发生错误");
+                        }
+                    },
+                    error: function () {
+                        L.Common.showErrorTip("提示", "注册节点请求发生异常");
+                    }
+                });
+            })
+
 
             $("#sync-node-btn").click(function () {
                 var content = $("#sync-node-tpl").html()

@@ -44,68 +44,56 @@ return function(config, store)
         for _, node in pairs(nodes) do
             if node.ip and node.port and node.api_username and node.api_password then
 
-                node.sync_status = {}
+                local httpc = http.new()
 
-                for _, plugin in pairs(plugins) do
+                -- 设置超时时间 200 ms
+                httpc:set_timeout(200)
 
-                    if plugin ~= 'stat' and plugin ~= 'node' then
+                local url = string_format("http://%s:%s", node.ip, node.port)
+                local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
+                local path = '/node/sync'
 
-                        local httpc = http.new()
+                ngx.log(ngx.INFO, url .. path)
 
-                        -- 设置超时时间 200 ms
-                        httpc:set_timeout(200)
+                local resp, err = httpc:request_uri(url, {
+                    method = "POST",
+                    path = path,
+                    headers = {
+                        ["Authorization"] = authorization
+                    }
+                })
 
-                        local url = string_format("http://%s:%s", node.ip, node.port)
-                        local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
-                        local path = string_format('/%s/sync', plugin)
-
-                        ngx.log(ngx.INFO, url .. path)
-
-                        local resp, err = httpc:request_uri(url, {
-                            method = "POST",
-                            path = path,
-                            headers = {
-                                ["Authorization"] = authorization
-                            }
-                        })
-
-                        if not resp then
-                            ngx.log(ngx.ERR, err)
-                            node.sync_status[plugin] = false
-                        else
-                            ngx.log(ngx.INFO, resp.body)
-                            node.sync_status[plugin] = resp.status == 200
-                        end
-
-                        httpc:close()
-                    end
+                if not resp then
+                    ngx.log(ngx.ERR, err)
+                else
+                    ngx.log(ngx.INFO, resp.body)
                 end
 
-                -- 更新到数据库
-                node_model:update_node_status(node.id, json.encode(node.sync_status))
+                httpc:close()
             end
         end
 
         return get_nodes()
     end
 
-    function node_router:registry()
+    function node_router:register()
         local local_ip = get_ip_by_hostname(socket.dns.gethostname())
         node_model:registry(local_ip, 7777, config.api.credentials[1])
     end
 
-    node_router:get("/node/registry", function(req, res, next)
+    node_router:post("/node/register", function(req, res, next)
 
-        node_router:registry()
+        node_router:register()
 
         res:json({
             success = true,
-            data = {}
+            data = {
+                nodes = get_nodes()
+            }
         })
     end)
 
     node_router:get("/node/manage", function(req, res, next)
-        -- node_router:registry()
         res:render("node")
     end)
 
