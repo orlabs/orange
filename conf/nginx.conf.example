@@ -81,6 +81,13 @@ http {
             access_log off;
         }
 
+        location = /ping {
+            content_by_lua_block {
+                ngx.status = 200
+                ngx.say("pong")
+            }
+        }
+
         location / {
             set $upstream_host $host;
             set $upstream_url nil;
