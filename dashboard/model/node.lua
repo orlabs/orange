@@ -5,7 +5,7 @@ return function(config)
     local node_model = {}
     local mysql_config = config.store_mysql
     local db = DB:new(mysql_config)
-    local table_name = 'node'
+    local table_name = 'cluster_node'
 
     function node_model:new(name, ip, port, api_username, api_password)
         return db:query("insert into " .. table_name .. "(name,ip,port,api_username,api_password) values(?,?,?,?,?)",

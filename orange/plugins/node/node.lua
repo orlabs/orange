@@ -76,7 +76,7 @@ end
 
 function _M.sync(plugins, store)
 
-    local table_name = 'node'
+    local table_name = 'cluster_node'
     local local_ip = _M:get_ip()
 
     local nodes, err = store:query({
@@ -112,7 +112,7 @@ end
 
 function _M.register(credentials, store)
 
-    local table_name = 'node'
+    local table_name = 'cluster_node'
     local local_ip = _M:get_ip()
 
     local nodes, err = store:query({

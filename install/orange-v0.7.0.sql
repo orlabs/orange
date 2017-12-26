@@ -345,7 +345,32 @@ UNLOCK TABLES;
 # Dump of table node
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `node`;
+
 CREATE TABLE `node` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `node` WRITE;
+/*!40000 ALTER TABLE `node` DISABLE KEYS */;
+
+INSERT INTO `balancer` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+    (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `balancer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+# Dump of table cluster_node
+# ------------------------------------------------------------
+
+CREATE TABLE `cluster_node` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `ip` varchar(20) NOT NULL DEFAULT '',
@@ -358,9 +383,9 @@ CREATE TABLE `node` (
   UNIQUE KEY `unique_key` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `node` WRITE;
+LOCK TABLES `cluster_node` WRITE;
 
-/*!40000 ALTER TABLE `node` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cluster_node` DISABLE KEYS */;
 UNLOCK TABLES;
 
 
