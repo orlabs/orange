@@ -2,8 +2,7 @@
     var _this = null;
     L.Balancer = L.Balancer || {};
     _this = L.Balancer = {
-        data: {
-        },
+        data: {},
 
         init: function () {
             L.Common.loadConfigs("balancer", _this, true);
@@ -13,22 +12,22 @@
         initEvents: function () {
             var op_type = "balancer";
 
-            _this.initUpstreamAddDialog(_this);         //添加Upstream对话框
-            _this.initUpstreamDeleteDialog(_this);      //删除Upstream对话框
-            _this.initUpstreamEditDialog(_this);        //编辑Upstream对话框
-            _this.initUpstreamClickEvent(_this);        //点击Upstream显示对应的Host列表
+            _this.initUpstreamAddDialog(_this); //添加Upstream对话框
+            _this.initUpstreamDeleteDialog(_this); //删除Upstream对话框
+            _this.initUpstreamEditDialog(_this); //编辑Upstream对话框
+            _this.initUpstreamClickEvent(_this); //点击Upstream显示对应的Host列表
 
-            _this.initHostAddDialog(_this);             //添加Host对话框
-            _this.initHostDeleteDialog(_this);          //删除Host对话框
-            _this.initHostEditDialog(_this);            //编辑Host对话框
+            _this.initHostAddDialog(_this); //添加Host对话框
+            _this.initHostDeleteDialog(_this); //删除Host对话框
+            _this.initHostEditDialog(_this); //编辑Host对话框
 
-            L.Common.initViewAndDownloadEvent(op_type, _this);  // 数据视图转换和下载事件
-            L.Common.initSyncDialog(op_type, _this);            //同步配置对话框
-            L.Common.initSwitchBtn(op_type, _this);     //redirect关闭、开启
+            L.Common.initViewAndDownloadEvent(op_type, _this); // 数据视图转换和下载事件
+            L.Common.initSyncDialog(op_type, _this); //同步配置对话框
+            L.Common.initSwitchBtn(op_type, _this); //redirect关闭、开启
         },
 
-        initUpstreamAddDialog: function(context) {
-            $("#add-selector-btn").click(function() {
+        initUpstreamAddDialog: function (context) {
+            $("#add-selector-btn").click(function () {
                 var current_selected_id;
                 var current_selected_selector = $("#selector-list li.selected-selector");
                 if (current_selected_selector) {
@@ -43,10 +42,10 @@
                     modal: true,
                     button: [{
                         value: '取消'
-                    },{
+                    }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var result = _this.buildUpstream();
                             console.log(result);
 
@@ -58,15 +57,15 @@
                                         selector: JSON.stringify(result.data)
                                     },
                                     dataType: 'json',
-                                    success: function(result) {
+                                    success: function (result) {
                                         if (result.success) {
                                             // 重新渲染
-                                            L.Common.loadConfigs("balancer", context, false, function() {
+                                            L.Common.loadConfigs("balancer", context, false, function () {
                                                 $("#selector list li[data-id=" + current_selected_id + "]").addClass("selected-selector");
                                             });
                                             return true;
                                         } else {
-                                            L.Comman.showErrorTip("提示", result.msg || "添加Upstream发生错误");
+                                            L.Common.showErrorTip("提示", result.msg || "添加Upstream发生错误");
                                             return false;
                                         }
                                     }
@@ -86,8 +85,8 @@
         },
 
         initUpstreamDeleteDialog: function (context) {
-            $(document).on("click", ".delete-selector-btn", function(e) {
-                e.stopPropagation();    // 阻止冒泡
+            $(document).on("click", ".delete-selector-btn", function (e) {
+                e.stopPropagation(); // 阻止冒泡
                 var name = $(this).attr("data-name");
                 var selector_id = $(this).attr("data-id");
                 if (!selector_id) {
@@ -122,7 +121,7 @@
                                 success: function (result) {
                                     if (result.success) {
                                         // 重新渲染
-                                        L.Common.loadConfigs("balancer", context, false, function() {
+                                        L.Common.loadConfigs("balancer", context, false, function () {
                                             // 删除的是原来选中的Upstream，重新选中第一个
                                             if (current_selected_id == selector_id) {
                                                 var selector_list = $("#selector-list li");
@@ -146,22 +145,21 @@
                                         return false;
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "删除Upstream请求发生异常");
                                     return false;
                                 }
                             });
                         }
-                    }
-                    ]
+                    }]
                 });
 
                 d.show();
             });
         },
 
-        initUpstreamEditDialog: function(context) {
-            $(document).on("click", ".edit-selector-btn", function(e) {
+        initUpstreamEditDialog: function (context) {
+            $(document).on("click", ".edit-selector-btn", function (e) {
                 e.stopPropagation(); // 阻止冒泡
                 var tpl = $("#edit-selector-tpl").html();
                 var selector_id = $(this).attr("data-id");
@@ -187,7 +185,7 @@
                     }, {
                         value: '预览',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var s = _this.buildUpstream();
                             _this.showPreview("upstream", s);
                             return false;
@@ -195,7 +193,7 @@
                     }, {
                         value: '保存修改',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var result = _this.buildUpstream();
                             result.data.id = selector.id; //拼上要修改的id
 
@@ -207,7 +205,7 @@
                                         selector: JSON.stringify(result.data)
                                     },
                                     dataType: 'json',
-                                    success: function(result) {
+                                    success: function (result) {
                                         if (result.success) {
                                             //重新渲染
                                             L.Common.loadConfigs("balancer", context);
@@ -217,7 +215,7 @@
                                             return false;
                                         }
                                     },
-                                    error: function() {
+                                    error: function () {
                                         L.Common.showErrorTip("提示", "编辑Upstream请求发生异常");
                                         return false;
                                     }
@@ -234,8 +232,8 @@
             });
         },
 
-        initUpstreamClickEvent: function(context) {
-            $(document).on("click", ".selector-item", function() {
+        initUpstreamClickEvent: function (context) {
+            $(document).on("click", ".selector-item", function () {
                 var self = $(this);
                 var selector_id = self.attr("data-id");
                 var selector_name = self.attr("data-name");
@@ -243,7 +241,7 @@
                     $("#rules-section-header").text("Upstream【" + selector_name + "】hosts 列表");
                 }
 
-                $(".selector-item").each(function() {
+                $(".selector-item").each(function () {
                     $(this).removeClass("selected-selector");
                 })
                 self.addClass("selected-selector");
@@ -253,10 +251,10 @@
             });
         },
 
-        initHostAddDialog: function(context) {
+        initHostAddDialog: function (context) {
             var rules_key = "rules";
 
-            $("#add-btn").click(function() {
+            $("#add-btn").click(function () {
                 var selector_id = $("#add-btn").attr("data-id");
                 if (!selector_id) {
                     L.Common.showErrorTip("错误提示", "添加host前请先选择【Upstream】!");
@@ -273,7 +271,7 @@
                     }, {
                         value: '预览',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var host = _this.buildHost();
                             _this.showPreview("host", host);
                             return false;
@@ -281,7 +279,7 @@
                     }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var result = _this.buildHost();
                             if (result.success == true) {
                                 $.ajax({
@@ -291,7 +289,7 @@
                                         rule: JSON.stringify(result.data)
                                     },
                                     dataType: 'json',
-                                    success: function(result) {
+                                    success: function (result) {
                                         if (result.success) {
                                             // 重新渲染host
                                             _this.loadHosts(context, selector_id);
@@ -302,7 +300,7 @@
                                             return false;
                                         }
                                     },
-                                    error: function() {
+                                    error: function () {
                                         L.Common.showErrorTip("提示", "添加Host请求发生异常");
                                         return false;
                                     }
@@ -319,8 +317,8 @@
             })
         },
 
-        initHostDeleteDialog: function(context) {
-            $(document).on("click", ".delete-btn", function() {
+        initHostDeleteDialog: function (context) {
+            $(document).on("click", ".delete-btn", function () {
                 var name = $(this).attr("data-name");
                 var rule_id = $(this).attr("data-id");
                 var selector_id = $("#add-btn").attr("data-id");
@@ -328,14 +326,14 @@
                 var d = dialog({
                     title: '提示',
                     width: 480,
-                    content: "确定要删除Host【" + name+ "】吗？",
+                    content: "确定要删除Host【" + name + "】吗？",
                     modal: true,
                     button: [{
                         value: '取消'
                     }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             $.ajax({
                                 url: '/balancer/selectors/' + selector_id + '/rules',
                                 type: 'delete',
@@ -343,7 +341,7 @@
                                     rule_id: rule_id
                                 },
                                 dataType: 'json',
-                                success: function(result) {
+                                success: function (result) {
                                     if (result.success) {
                                         // 重新渲染规则
                                         _this.loadHosts(context, selector_id);
@@ -355,7 +353,7 @@
                                         return false;
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "删除Host请求发生异常");
                                     return false;
                                 }
@@ -367,8 +365,8 @@
             });
         },
 
-        initHostEditDialog: function(context) {
-            $(document).on("click", ".edit-btn", function() {
+        initHostEditDialog: function (context) {
+            $(document).on("click", ".edit-btn", function () {
                 var selector_id = $("#add-btn").attr("data-id");
 
                 var tpl = $("#edit-tpl").html();
@@ -403,7 +401,7 @@
                     }, {
                         value: '预览',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var host = _this.buildHost();
                             _this.showPreview("host", host);
                             return false;
@@ -411,7 +409,7 @@
                     }, {
                         value: '保存修改',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var result = _this.buildHost();
                             result.data.id = rule.id; // 拼上要修改的id
 
@@ -423,7 +421,7 @@
                                         rule: JSON.stringify(result.data)
                                     },
                                     dataType: 'json',
-                                    success: function(result) {
+                                    success: function (result) {
                                         if (result.success) {
                                             // 重新渲染Hosts
                                             _this.loadHosts(context, selector_id);
@@ -433,7 +431,7 @@
                                             return false;
                                         }
                                     },
-                                    error: function() {
+                                    error: function () {
                                         L.Common.showErrorTip("提示", "编辑Host请求发生异常");
                                         return false;
                                     }
@@ -449,14 +447,14 @@
             });
         },
 
-        loadHosts: function(context, selector_id) {
+        loadHosts: function (context, selector_id) {
             $.ajax({
                 url: '/balancer/selectors/' + selector_id + '/rules',
                 type: 'get',
                 cache: false,
                 data: {},
                 dataType: 'json',
-                success: function(result) {
+                success: function (result) {
                     if (result.success) {
                         $("view-btn").show();
 
@@ -468,18 +466,18 @@
                         L.Common.showErrorTip("错误提示", "查询 balancer 规则发生错误");
                     }
                 },
-                error: function() {
+                error: function () {
                     L.Common.showErrorTip("提示", "查询 balancer 规则发生异常");
                 }
             });
         },
 
-        renderHosts: function(data) {
+        renderHosts: function (data) {
             data = data || {};
             if (!data.rules || data.rules.length < 1) {
-                var html = '<div class="alert alert-warning" style="margin: 25px 0 10px 0;">'+
-                        '<p>该Upstream下没有Host,请添加!</p>'+
-                '</div>';
+                var html = '<div class="alert alert-warning" style="margin: 25px 0 10px 0;">' +
+                    '<p>该Upstream下没有Host,请添加!</p>' +
+                    '</div>';
                 $("#rules").html(html);
             } else {
                 var tpl = $("#rule-item-tpl").html();
@@ -488,13 +486,13 @@
             }
         },
 
-        emptyHosts: function() {
+        emptyHosts: function () {
             $("#rules-section-header").text("Upstream-hosts 列表")
             $("#rules").html("");
             $("#add-btn").removeAttr("data-id");
         },
 
-        showPreview: function(type, json_data) {
+        showPreview: function (type, json_data) {
             var content = "";
 
             if (json_data.success == true) {
@@ -510,7 +508,7 @@
                 modal: true,
                 button: [{
                     value: '返回',
-                    callback: function() {
+                    callback: function () {
                         d.close().remove();
                     }
                 }]
@@ -518,13 +516,13 @@
             d.show();
 
             $("#preview_data code").text(JSON.stringify(json_data.data, null, 2));
-            $('pre code').each(function() {
+            $('pre code').each(function () {
                 hljs.highlightBlock($(this)[0]);
             });
         },
 
 
-        buildUpstream: function() {
+        buildUpstream: function () {
             var result = {
                 success: false,
                 data: {
