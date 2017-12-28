@@ -370,6 +370,8 @@ UNLOCK TABLES;
 # Dump of table cluster_node
 # ------------------------------------------------------------
 
+DROP TABLE IF EXISTS `cluster_node`;
+
 CREATE TABLE `cluster_node` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
