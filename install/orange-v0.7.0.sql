@@ -360,7 +360,7 @@ CREATE TABLE `node` (
 LOCK TABLES `node` WRITE;
 /*!40000 ALTER TABLE `node` DISABLE KEYS */;
 
-INSERT INTO `balancer` (`id`, `key`, `value`, `type`, `op_time`)
+INSERT INTO `node` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
     (1,'1','{}','meta','2016-11-11 11:11:11');
 
