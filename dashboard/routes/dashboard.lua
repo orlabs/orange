@@ -106,6 +106,10 @@ return function(config, store)
         res:render("status")
     end)
 
+    dashboard_router:get("/node", function(req, res, next)
+        res:redirect("/admin/node/manage")
+    end)
+
     dashboard_router:get("/monitor", function(req, res, next)
         res:render("monitor")
     end)

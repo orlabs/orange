@@ -191,6 +191,11 @@ http {
             return 200 'User-agent: *\nDisallow: /';
         }
 
+        location = /ping {
+            access_log off;
+            return 200 "pong";
+        }
+
         location / {
             content_by_lua_block {
                 local main = require("api.main")

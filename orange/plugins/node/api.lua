@@ -31,9 +31,7 @@ api:post("/node/sync", function(store)
     return function(req, res, next)
         res:json({
             success = true,
-            data = {
-                status = node.sync(context.config.plugins, store)
-            }
+            data = node.sync(context.config.plugins, store)
         })
     end
 end)

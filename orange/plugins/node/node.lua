@@ -90,23 +90,12 @@ function _M.sync(plugins, store)
 
     local node = nodes[1]
     local sync_result = sync_node_plugins(node, plugins)
-    local s = json.encode(sync_result)
-
-    ngx.log(ngx.ERR, s)
-
-    local result, err = store:update({
-        sql = "UPDATE " .. table_name .. " SET sync_status = ? WHERE id = ?",
-        params = { s, node.id }
-    })
 
     if not result or err then
         ngx.log(ngx.ERR, "SYNC")
     end
 
-    return {
-        ip = local_ip,
-        status = node
-    }
+    return sync_result
     
 end
 

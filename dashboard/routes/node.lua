@@ -63,11 +63,18 @@ return function(config, store)
                     }
                 })
 
-                if not resp then
-                    ngx.log(ngx.ERR, err)
+                local sync_status = ''
+
+                if not resp or err ~= nil then
+                    ngx.log(ngx.ERR, string_format("%s : %s", node.ip, err))
+                    sync_status = '{"ERROR":false}'
                 else
-                    ngx.log(ngx.INFO, resp.body)
+                    ngx.log(ngx.ERR, resp.body)
+                    local body = json.decode(resp.body)
+                    sync_status = json.encode(body.data)
                 end
+
+                node_model:update_node_status(node.id, sync_status)
 
                 httpc:close()
             end

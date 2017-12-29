@@ -20,7 +20,7 @@
                     </div>
                     <div class="pull-right">
 
-                        <a class="btn btn-primary" href="javascript:void(0);" id="add-node-btn">
+                        <a class="btn btn-default" href="javascript:void(0);" id="add-node-btn">
                             <i class="fa fa-filter"></i>
                             <span>添加节点</span>
                         </a>
@@ -30,7 +30,12 @@
                             <span>注册节点</span>
                         </a>
 
-                        <a class="btn btn-danger" href="javascript:void(0);" id="sync-node-btn">
+                        <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                            <i class="fa fa-pause"></i>
+                            <span>停用该插件</span>
+                        </a>
+
+                        <a class="btn btn-primary" href="javascript:void(0);" id="sync-node-btn">
                             <i class="fa fa-refresh"></i>
                             <span>同步 orange 节点</span>
                         </a>
@@ -193,6 +198,8 @@
         将所有配置同步到所有 orange 节点，确认操作吗？
     </div>
 </script>
+
+{(common/selector-item-tpl.html)}
 
 {(common/common_js.html)}<!-- 通用js -->
 <script src="/static/js/node.js"></script>

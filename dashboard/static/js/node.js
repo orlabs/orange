@@ -7,11 +7,15 @@
 
         init: function () {
             _this.loadNodes();
+            L.Common.loadConfigs("node", _this, true);
             _this.initEvents();
-
         },
 
         initEvents: function () {
+
+            var op_type = "node";
+            L.Common.initSwitchBtn(op_type, _this); //redirect关闭、开启
+
             $("#add-node-btn").click(function () {
                 var content = $("#add-node-tpl").html()
                 var d = dialog({
