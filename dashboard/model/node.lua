@@ -1,4 +1,5 @@
 local DB = require("dashboard.model.db")
+local json = require("orange.utils.json")
 
 return function(config)
 
@@ -60,6 +61,15 @@ return function(config)
 
     function node_model:delete(id)
         local res, err = db:query("delete from " .. table_name .. " where id=?", {  tonumber(id) })
+        if not res or err then
+            return false
+        else
+            return true
+        end
+    end
+
+    function node_model:remove_error_nodes()
+        local res, err = db:query("delete from " .. table_name .. " where sync_status=? ", {  json.encode({ERROR=false}) })
         if not res or err then
             return false
         else

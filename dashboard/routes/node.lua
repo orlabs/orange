@@ -104,6 +104,18 @@ return function(config, store)
         res:render("node")
     end)
 
+    node_router:post("/node/remove_error_nodes", function(req,res,next)
+        
+        node_model:remove_error_nodes()
+
+        res:json({
+            success = true,
+            data = {
+                nodes = get_nodes()
+            }
+        })
+    end)
+
     node_router:get("/nodes", function(req, res, next)
         return res:json({
             success = true,
