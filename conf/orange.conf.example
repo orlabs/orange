@@ -13,11 +13,13 @@
         "divide",
         "kvstore",
         "balancer",
-        "node"
+        "node",
+        "persist"
     ],
     "store": "mysql",
     "store_mysql": {
         "timeout": 5000,
+        "timezone": "+8:00",
         "connect_config": {
             "host": "127.0.0.1",
             "port": 3306,

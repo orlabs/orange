@@ -390,6 +390,23 @@ LOCK TABLES `cluster_node` WRITE;
 /*!40000 ALTER TABLE `cluster_node` DISABLE KEYS */;
 UNLOCK TABLES;
 
+CREATE TABLE `cluster_node_stat` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ip` varchar(20) NOT NULL DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `key` varchar(50) DEFAULT NULL,
+  `request_2xx` int(11) DEFAULT '0',
+  `request_3xx` int(11) DEFAULT '0',
+  `request_4xx` int(11) DEFAULT '0',
+  `request_5xx` int(11) DEFAULT '0',
+  `total_request_count` int(11) DEFAULT '0',
+  `total_success_request_count` int(11) DEFAULT '0',
+  `traffic_read` int(11) DEFAULT '0',
+  `traffic_write` int(11) DEFAULT '0',
+  `total_request_time` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -1,4 +1,3 @@
-local orange_db = require("orange.store.orange_db")
 local BasePlugin = require("orange.plugins.base_handler")
 local node = require("orange.plugins.node.node")
 
@@ -10,11 +9,13 @@ function NodeHandler:new(store)
     self.store = store
 end
 
-function NodeHandler:init_worker(conf)
-
+function NodeHandler:init_worker()
+    NodeHandler.super.init_worker(self)
+    node.init()
 end
 
-function NodeHandler:log(conf)
+function NodeHandler:log()
+    NodeHandler.super.log(self)
     node.log()
 end
 

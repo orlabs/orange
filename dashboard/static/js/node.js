@@ -1,22 +1,23 @@
-(function(L) {
+(function (L) {
     var _this = null;
     L.NodeManage = L.NodeManage || {};
 
     _this = L.NodeManage = {
         data: {},
 
-        init: function() {
+        init: function () {
             _this.loadNodes();
             L.Common.loadConfigs("node", _this, true);
             _this.initEvents();
+            _this.initStatisticBtnEvent();
         },
 
-        initEvents: function() {
+        initEvents: function () {
 
             var op_type = "node";
             L.Common.initSwitchBtn(op_type, _this); //redirect关闭、开启
 
-            $("#add-node-btn").click(function() {
+            $("#add-node-btn").click(function () {
                 var content = $("#add-node-tpl").html()
                 var d = dialog({
                     title: '添加 orange 节点',
@@ -28,7 +29,7 @@
                     }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             var name = $("input[name=name]").val();
                             var ip = $("input[name=ip]").val();
                             var port = parseInt($("input[name=port]").val());
@@ -65,7 +66,7 @@
                                     api_password: api_password
                                 },
                                 dataType: 'json',
-                                success: function(result) {
+                                success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
 
@@ -77,7 +78,7 @@
                                         return false;
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "添加节点请求发生异常");
                                     return false;
                                 }
@@ -88,7 +89,7 @@
                 d.show();
             });
 
-            $(document).on("click", ".delete-node-btn", function() {
+            $(document).on("click", ".delete-node-btn", function () {
                 var id = $(this).attr("data-id");
                 var name = $(this).attr("data-name");
 
@@ -102,7 +103,7 @@
                     }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             $.ajax({
                                 url: '/admin/node/delete',
                                 type: 'post',
@@ -111,7 +112,7 @@
                                     id: id
                                 },
                                 dataType: 'json',
-                                success: function(result) {
+                                success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
                                         _this.renderTable(result.data); //渲染table
@@ -123,7 +124,7 @@
                                         return false;
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "删除节点请求发生异常");
                                     return false;
                                 }
@@ -135,7 +136,7 @@
                 d.show();
             });
 
-            $(document).on("click", "#clear-error-node-btn", function() {
+            $(document).on("click", "#clear-error-node-btn", function () {
 
                 var d = dialog({
                     title: '提示',
@@ -147,13 +148,13 @@
                     }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
                             $.ajax({
                                 url: '/admin/node/remove_error_nodes',
                                 type: 'post',
                                 cache: false,
                                 dataType: 'json',
-                                success: function(result) {
+                                success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
                                         _this.renderTable(result.data); //渲染table
@@ -165,7 +166,7 @@
                                         return false;
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "删除节点请求发生异常");
                                     return false;
                                 }
@@ -177,7 +178,7 @@
                 d.show();
             });
 
-            $(document).on("click", ".edit-node-btn", function() {
+            $(document).on("click", ".edit-node-btn", function () {
                 var tpl = $("#edit-node-tpl").html();
                 var id = $(this).attr("data-id");
                 var name = $(this).attr("data-name");
@@ -207,7 +208,7 @@
                     }, {
                         value: '保存修改',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
 
                             var name = $("input[name=name]").val();
                             var ip = $("input[name=ip]").val();
@@ -246,7 +247,7 @@
                                     api_password: api_password
                                 },
                                 dataType: 'json',
-                                success: function(result) {
+                                success: function (result) {
                                     if (result.success) {
                                         //重新渲染规则
                                         _this.renderTable(result.data, id); //渲染table
@@ -258,7 +259,7 @@
                                         return false;
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "编辑节点请求发生异常");
                                     return false;
                                 }
@@ -269,14 +270,14 @@
                 d.show();
             });
 
-            $('#reg-node-btn').click(function() {
+            $('#reg-node-btn').click(function () {
                 $.ajax({
                     url: '/admin/node/register',
                     type: 'post',
                     cache: false,
                     data: {},
                     dataType: 'json',
-                    success: function(result) {
+                    success: function (result) {
                         if (result.success) {
                             _this.renderTable(result.data); //渲染table
                             _this.data.nodes = result.data.nodes; //重新设置数据
@@ -285,14 +286,14 @@
                             L.Common.showErrorTip("错误提示", "注册节点请求发生错误");
                         }
                     },
-                    error: function() {
+                    error: function () {
                         L.Common.showErrorTip("提示", "注册节点请求发生异常");
                     }
                 });
             })
 
 
-            $("#sync-node-btn").click(function() {
+            $("#sync-node-btn").click(function () {
                 var content = $("#sync-node-tpl").html()
                 var d = dialog({
                     title: '同步 orange 节点',
@@ -304,7 +305,7 @@
                     }, {
                         value: '确定',
                         autofocus: false,
-                        callback: function() {
+                        callback: function () {
 
                             $.ajax({
                                 url: '/admin/node/sync',
@@ -312,7 +313,7 @@
                                 cache: false,
                                 data: {},
                                 dataType: 'json',
-                                success: function(result) {
+                                success: function (result) {
 
                                     //重新渲染规则
                                     _this.renderTable(result.data); //渲染table
@@ -320,7 +321,7 @@
 
                                     L.Common.showTipDialog("提示", result.msg);
                                 },
-                                error: function() {
+                                error: function () {
                                     L.Common.showErrorTip("提示", "同步 orange 节点请求发生异常");
                                     return false;
                                 }
@@ -334,14 +335,14 @@
         },
 
 
-        loadNodes: function() {
+        loadNodes: function () {
             $.ajax({
                 url: '/admin/nodes',
                 type: 'get',
                 cache: false,
                 data: {},
                 dataType: 'json',
-                success: function(result) {
+                success: function (result) {
                     if (result.success) {
                         _this.renderTable(result.data); //渲染table
                         _this.data.nodes = result.data.nodes; //重新设置数据
@@ -350,13 +351,26 @@
                         L.Common.showErrorTip("错误提示", "查询节点请求发生错误");
                     }
                 },
-                error: function() {
+                error: function () {
                     L.Common.showErrorTip("提示", "查询节点请求发生异常");
                 }
             });
         },
 
-        renderTable: function(data, highlight_id) {
+        initStatisticBtnEvent: function () {
+            $(document).on("click", ".statistic-btn", function () {
+                var self = $(this);
+                var id = self.attr("data-id");
+                var ip = self.attr("data-ip");
+                if (!id) {
+                    return;
+                }
+                window.location.href = "/admin/node/statistic?id=" + id + '&ip=' + ip;
+            });
+
+        },
+
+        renderTable: function (data, highlight_id) {
             highlight_id = highlight_id || 0;
             var tpl = $("#node-item-tpl").html();
             data.highlight_id = highlight_id;

@@ -104,8 +104,33 @@ return function(config, store)
         res:render("node")
     end)
 
-    node_router:post("/node/remove_error_nodes", function(req,res,next)
-        
+    node_router:get("/node/statistic", function(req, res, next)
+
+        res:render("node-stat", {
+            id = req.query.id,
+            ip = req.query.ip
+        })
+    end)
+
+    node_router:get("/node/stat", function(req, res, next)
+
+        local node_ip = req.query.ip or ''
+        local limit = req.query.limit or 120
+
+        if node_ip == '' then
+            data = node_model:get_stat(limit)
+        else
+            data = node_model:get_stat_by_ip(node_ip, limit)
+        end
+
+        res:json({
+            success = true,
+            data = data
+        })
+    end)
+
+    node_router:post("/node/remove_error_nodes", function(req, res, next)
+
         node_model:remove_error_nodes()
 
         res:json({
