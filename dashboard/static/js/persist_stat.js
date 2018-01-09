@@ -87,6 +87,7 @@
                             qpsOption.series[0].data = [];
 
                             responseOption.series[0].data = [];
+                            responseOption.series[1].data = [];
 
                             trafficOption.series[0].data = [];
                             trafficOption.series[1].data = [];
