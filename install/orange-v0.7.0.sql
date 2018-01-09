@@ -408,6 +408,9 @@ CREATE TABLE `cluster_node_stat` (
   UNIQUE KEY `key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE `cluster_node_stat` ADD INDEX `ip` (`ip`);
+ALTER TABLE `cluster_node_stat` ADD INDEX (`op_time`);
+
 # Dump of table persist
 # ------------------------------------------------------------
 

@@ -20,7 +20,7 @@ return function(config)
             " sum(total_request_time) as total_request_time" ..
             " from " .. table_name ..
             " group by minute(op_time)" ..
-            " order by op_time asc limit ?", { limit })
+            " order by op_time desc limit ?", { limit })
 
         if not result or err or type(result) ~= "table" or #result < 1 then
             return nil, err
@@ -31,7 +31,7 @@ return function(config)
 
     function node_model:get_stat_by_ip(ip, limit)
 
-        local result, err = db:query("select * from " .. table_name .. " where ip = ? order by op_time asc limit ?", { ip, limit })
+        local result, err = db:query("select * from " .. table_name .. " where ip = ? order by op_time desc limit ?", { ip, limit })
 
         if not result or err or type(result) ~= "table" or #result < 1 then
             return nil, err
