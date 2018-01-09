@@ -18,6 +18,12 @@
                     </div>
 
                     <div class="pull-right" id="time-set">
+
+                        <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                            <i class="fa fa-pause"></i>
+                            <span>停用该插件</span>
+                        </a>
+
                         <span class="l">时间间隔:</span>
                         <a href="javascript:void(0);" class="active timer_interval" data-interval="10000">10s</a> /
                         <a href="javascript:void(0);" class="timer_interval" data-interval="30000">30s</a> /
@@ -52,13 +58,14 @@
 
 <input type="hidden" id="ip-input" value="{{ ip }}"/>
 
+{(common/selector-item-tpl.html)}
 {(common/common_js.html)}<!-- 通用js -->
 <script src="/static/js/echarts3/echarts.common.min.js"></script>
-<script src="/static/js/node_stat.js"></script>
+<script src="/static/js/persist_stat.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        APP.Common.resetNav("nav-node");
-        APP.NodeStat.init();
+        APP.Common.resetNav("nav-persist");
+        APP.PersistStat.init();
     });
 </script>
 </body>

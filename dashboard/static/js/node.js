@@ -15,7 +15,7 @@
         initEvents: function () {
 
             var op_type = "node";
-            L.Common.initSwitchBtn(op_type, _this); //redirect关闭、开启
+            L.Common.initSwitchBtn(op_type, _this); //关闭、开启
 
             $("#add-node-btn").click(function () {
                 var content = $("#add-node-tpl").html()
@@ -365,7 +365,7 @@
                 if (!id) {
                     return;
                 }
-                window.location.href = "/admin/node/statistic?id=" + id + '&ip=' + ip;
+                window.location.href = "/persist?id=" + id + '&ip=' + ip;
             });
 
         },

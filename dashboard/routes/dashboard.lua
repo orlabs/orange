@@ -110,10 +110,6 @@ return function(config, store)
         res:redirect("/admin/node/manage")
     end)
 
-    dashboard_router:get("/persist", function(req, res, next)
-        res:redirect("/admin/node/statistic")
-    end)
-
     dashboard_router:get("/monitor", function(req, res, next)
         res:render("monitor")
     end)

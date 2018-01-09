@@ -1,7 +1,7 @@
 (function (L) {
     var _this = null;
-    L.NodeStat = L.NodeStat || {};
-    _this = L.NodeStat = {
+    L.PersistStat = L.PersistStat || {};
+    _this = L.PersistStat = {
         data: {
             timer: null,
             requestChart: null,
@@ -18,6 +18,10 @@
             _this.initTrafficStatus();
 
             _this.startTimer();
+
+            var op_type = "persist";
+            L.Common.loadConfigs("persist", _this, true);
+            // L.Common.initSwitchBtn(op_type, _this); //关闭、开启
 
             $("#time-set a").click(function () {
                 $("#time-set a").each(function () {
@@ -56,7 +60,7 @@
             var get_node_stat = function () {
 
                 $.ajax({
-                    url: '/admin/node/stat',
+                    url: '/persist/statistic',
                     type: 'get',
                     cache: false,
                     data: {
@@ -425,7 +429,7 @@
                     trigger: 'axis'
                 },
                 legend: {
-                    data: ['总入(kb)', '总出(kb)', '均入(bytes)', '均出(bytes)']
+                    data: ['总入(kb)', '总出(kb)']
                 },
                 xAxis: [
                     {
@@ -451,21 +455,6 @@
                         name: '总出(kb)',
                         type: 'line',
                         data: []
-                    }, {
-                        name: '均入(bytes)',
-                        type: 'line',
-                        data: (function () {
-                            var res = [];
-                            var len = 100;
-                            while (len--) {
-                                res.push(0);
-                            }
-                            return res;
-                        })()
-                    }, {
-                        name: '均出(bytes)',
-                        type: 'line',
-                        data: []
                     }
                 ]
             };
@@ -473,7 +462,7 @@
             var trafficChart = echarts.init(document.getElementById('traffic-area'));
             trafficChart.setOption(option);
             _this.data.trafficChart = trafficChart;
-        },
+        }
 
     };
 }(APP));
