@@ -110,7 +110,8 @@
                                 qpsOption.series[0].data.push(data[i].total_success_request_count / 60);
 
                                 // response
-                                responseOption.series[0].data.push(data[i].total_request_time * 1000);
+                                responseOption.series[0].data.push(data[i].total_request_time);
+                                responseOption.series[1].data.push(data[i].total_request_time / data[i].total_request_count);
 
                                 // traffic
                                 trafficOption.series[0].data.push(data[i].traffic_read / 1024);
