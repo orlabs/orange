@@ -43,7 +43,7 @@ local function sync_node_plugins(node, plugins)
 
             local url = string_format("http://%s:%s", node.ip, node.port)
             local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
-            local path = string_format('/%s/sync?rmd=' .. ngx.time(), plugin)
+            local path = string_format('/%s/sync?seed=' .. ngx.time(), plugin)
 
             local resp, err = httpc:request_uri(url, {
                 method = "POST",
@@ -57,7 +57,7 @@ local function sync_node_plugins(node, plugins)
                 ngx.log(ngx.ERR, plugin .. " sync err", err)
                 sync_result[plugin] = false
             else
-                sync_result[plugin] = resp.status == 200
+                sync_result[plugin] = tonumber(resp.status) == 200
                 ngx.log(ngx.ERR, "status" .. resp.status, sync_result[plugin])
             end
 

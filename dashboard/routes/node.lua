@@ -46,12 +46,12 @@ return function(config, store)
 
                 local httpc = http.new()
 
-                -- 设置超时时间 200 ms
-                httpc:set_timeout(200)
+                -- 设置超时时间 1000 ms
+                httpc:set_timeout(1000)
 
                 local url = string_format("http://%s:%s", node.ip, node.port)
                 local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
-                local path = '/node/sync'
+                local path = '/node/sync?seed=' .. ngx.time()
 
                 ngx.log(ngx.INFO, url .. path)
 
@@ -65,7 +65,7 @@ return function(config, store)
 
                 local sync_status = ''
 
-                if not resp or err ~= nil then
+                if not resp or err then
                     ngx.log(ngx.ERR, string_format("%s : %s", node.ip, err))
                     sync_status = '{"ERROR":false}'
                 else
