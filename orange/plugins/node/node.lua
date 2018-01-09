@@ -38,8 +38,8 @@ local function sync_node_plugins(node, plugins)
 
             local httpc = http.new()
 
-            -- 设置超时时间 200 ms
-            httpc:set_timeout(200)
+            -- 设置超时时间 1000 ms
+            httpc:set_timeout(1000)
 
             local url = string_format("http://%s:%s", node.ip, node.port)
             local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
