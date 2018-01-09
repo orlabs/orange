@@ -36,7 +36,8 @@
 
 
         startTimer: function (interval) {
-            interval = interval || 3000;//默认3s请求一次
+
+            interval = interval || 10000; // 默认 10s 请求一次
             if (_this.data.timer) {
                 clearInterval(_this.data.timer);
             }
@@ -52,112 +53,136 @@
                 return hour + ':' + min;
             }
 
+            var get_node_stat = function () {
 
-            $.ajax({
-                url: '/admin/node/stat',
-                type: 'get',
-                cache: false,
-                data: {
-                    ip: $("#ip-input").val()
-                },
-                dataType: 'json',
-                success: function (result) {
-                    if (result.success) {
+                $.ajax({
+                    url: '/admin/node/stat',
+                    type: 'get',
+                    cache: false,
+                    data: {
+                        ip: $("#ip-input").val()
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
 
-                        var data = result.data || {};
+                            var data = result.data || {};
 
-                        //request 统计
-                        var requestOption = _this.data.requestChart.getOption();
-                        var qpsOption = _this.data.qpsChart.getOption();
-                        var responseOption = _this.data.responseChart.getOption();
-                        var trafficOption = _this.data.trafficChart.getOption();
+                            //request 统计
+                            var requestOption = _this.data.requestChart.getOption();
+                            var qpsOption = _this.data.qpsChart.getOption();
+                            var responseOption = _this.data.responseChart.getOption();
+                            var trafficOption = _this.data.trafficChart.getOption();
 
-                        for (var i = 0; i < data.length; i++) {
+                            requestOption.series[0].data = [];
+                            requestOption.series[1].data = [];
+                            requestOption.series[2].data = [];
+                            requestOption.series[3].data = [];
+                            requestOption.series[4].data = [];
 
-                            // request
-                            requestOption.series[0].data.push(data[i].total_request_count);
-                            requestOption.series[1].data.push(data[i].request_2xx);
-                            requestOption.series[2].data.push(data[i].request_3xx);
-                            requestOption.series[3].data.push(data[i].request_4xx);
-                            requestOption.series[4].data.push(data[i].request_5xx);
+                            qpsOption.series[0].data = [];
 
-                            // qps
-                            qpsOption.series[0].data.push(data[i].total_success_request_count / 60);
+                            responseOption.series[0].data = [];
 
-                            // response
-                            responseOption.series[0].data.push(data[i].total_request_time);
+                            trafficOption.series[0].data = [];
+                            trafficOption.series[1].data = [];
 
-                            // traffice
-                            trafficOption.series[0].data.push(data[i].traffic_read);
-                            trafficOption.series[1].data.push(data[i].traffic_write);
+                            requestOption.xAxis[0].data = [];
+                            qpsOption.xAxis[0].data = [];
+                            responseOption.xAxis[0].data = [];
+                            trafficOption.xAxis[0].data = [];
 
-                            var op_time = format_date(data[i].op_time);
 
-                            console.log(op_time);
+                            for (var i = 0; i < data.length; i++) {
 
-                            requestOption.xAxis[0].data.push(op_time);
-                            qpsOption.xAxis[0].data.push(op_time);
-                            responseOption.xAxis[0].data.push(op_time);
-                            trafficOption.xAxis[0].data.push(op_time);
+                                // request
+                                requestOption.series[0].data.push(data[i].total_request_count);
+                                requestOption.series[1].data.push(data[i].request_2xx);
+                                requestOption.series[2].data.push(data[i].request_3xx);
+                                requestOption.series[3].data.push(data[i].request_4xx);
+                                requestOption.series[4].data.push(data[i].request_5xx);
+
+                                // qps
+                                qpsOption.series[0].data.push(data[i].total_success_request_count / 60);
+
+                                // response
+                                responseOption.series[0].data.push(data[i].total_request_time * 1000);
+
+                                // traffic
+                                trafficOption.series[0].data.push(data[i].traffic_read / 1024);
+                                trafficOption.series[1].data.push(data[i].traffic_write / 1024);
+
+                                var op_time = format_date(data[i].op_time);
+
+                                requestOption.xAxis[0].data.push(op_time);
+                                qpsOption.xAxis[0].data.push(op_time);
+                                responseOption.xAxis[0].data.push(op_time);
+                                trafficOption.xAxis[0].data.push(op_time);
+                            }
+
+                            _this.data.requestChart.setOption(requestOption);
+                            _this.data.qpsChart.setOption(qpsOption);
+                            _this.data.responseChart.setOption(responseOption);
+                            _this.data.trafficChart.setOption(trafficOption);
+
+                            //
+                            // //请求时间统计
+                            // var responseOption = _this.data.responseChart.getOption();
+                            // data0 = responseOption.series[0].data;
+                            // data1 = responseOption.series[1].data;
+                            // data0.shift();
+                            // data0.push(data.total_request_time);
+                            // data1.shift();
+                            // data1.push(data.average_request_time * 1000);
+                            // responseOption.xAxis[0].data.shift();
+                            // responseOption.xAxis[0].data.push(axisData);
+                            // _this.data.responseChart.setOption(responseOption);
+                            //
+                            // //流量统计
+                            // var trafficOption = _this.data.trafficChart.getOption();
+                            // data0 = trafficOption.series[0].data;
+                            // data1 = trafficOption.series[1].data;
+                            // data2 = trafficOption.series[2].data;
+                            // data3 = trafficOption.series[3].data;
+                            // data0.shift();
+                            // data0.push(Math.round(data.traffic_read / 1024));
+                            // data1.shift();
+                            // data1.push(Math.round(data.traffic_write / 1024));
+                            // data2.shift();
+                            // data2.push(Math.round(data.average_traffic_read));
+                            // data3.shift();
+                            // data3.push(Math.round(data.average_traffix_write));
+                            // trafficOption.xAxis[0].data.shift();
+                            // trafficOption.xAxis[0].data.push(axisData);
+                            // _this.data.trafficChart.setOption(trafficOption);
+
+                        } else {
+                            APP.Common.showTipDialog("错误提示", result.msg);
+                            try_times--;
+                            if (try_times < 0) {
+                                clearInterval(_this.data.timer);
+                                APP.Common.showTipDialog("错误提示", "查询请求发生错误次数太多，停止查询");
+                            }
                         }
-
-                        _this.data.requestChart.setOption(requestOption);
-                        _this.data.qpsChart.setOption(qpsOption);
-                        _this.data.responseChart.setOption(responseOption);
-                        _this.data.trafficChart.setOption(trafficOption);
-
-                        //
-                        // //请求时间统计
-                        // var responseOption = _this.data.responseChart.getOption();
-                        // data0 = responseOption.series[0].data;
-                        // data1 = responseOption.series[1].data;
-                        // data0.shift();
-                        // data0.push(data.total_request_time);
-                        // data1.shift();
-                        // data1.push(data.average_request_time * 1000);
-                        // responseOption.xAxis[0].data.shift();
-                        // responseOption.xAxis[0].data.push(axisData);
-                        // _this.data.responseChart.setOption(responseOption);
-                        //
-                        // //流量统计
-                        // var trafficOption = _this.data.trafficChart.getOption();
-                        // data0 = trafficOption.series[0].data;
-                        // data1 = trafficOption.series[1].data;
-                        // data2 = trafficOption.series[2].data;
-                        // data3 = trafficOption.series[3].data;
-                        // data0.shift();
-                        // data0.push(Math.round(data.traffic_read / 1024));
-                        // data1.shift();
-                        // data1.push(Math.round(data.traffic_write / 1024));
-                        // data2.shift();
-                        // data2.push(Math.round(data.average_traffic_read));
-                        // data3.shift();
-                        // data3.push(Math.round(data.average_traffix_write));
-                        // trafficOption.xAxis[0].data.shift();
-                        // trafficOption.xAxis[0].data.push(axisData);
-                        // _this.data.trafficChart.setOption(trafficOption);
-
-                    } else {
-                        APP.Common.showTipDialog("错误提示", result.msg);
+                    },
+                    error: function () {
                         try_times--;
                         if (try_times < 0) {
                             clearInterval(_this.data.timer);
-                            APP.Common.showTipDialog("错误提示", "查询请求发生错误次数太多，停止查询");
+                            APP.Common.showTipDialog("错误提示", "查询请求发生异常次数太多，停止查询");
+
+                        } else {
+                            APP.Common.showTipDialog("提示", "查询请求发生异常");
                         }
-                    }
-                },
-                error: function () {
-                    try_times--;
-                    if (try_times < 0) {
-                        clearInterval(_this.data.timer);
-                        APP.Common.showTipDialog("错误提示", "查询请求发生异常次数太多，停止查询");
 
-                    } else {
-                        APP.Common.showTipDialog("提示", "查询请求发生异常");
                     }
+                });
 
-                }
-            });
+            };
+
+            setInterval(get_node_stat, interval);
+
+            get_node_stat();
 
         },
 
