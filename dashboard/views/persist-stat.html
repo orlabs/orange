@@ -19,12 +19,22 @@
 
                     <div class="pull-right" id="time-set">
 
-                        <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow" href="javascript:void(0);">
+                        <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow"
+                           href="javascript:void(0);">
                             <i class="fa fa-pause"></i>
                             <span>停用该插件</span>
                         </a>
 
-                        <span class="l">时间间隔:</span>
+                        <span class="l">显示范围:</span>
+                        <a href="javascript:void(0);" class="active time_range" data-minutes="15">15分钟</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="30">30分钟</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="60">1小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="360">6小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="720">12小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="1200">24小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="2400">2天</a>
+
+                        <span class="l">自动刷新时间间隔:</span>
                         <a href="javascript:void(0);" class="active timer_interval" data-interval="10000">10s</a> /
                         <a href="javascript:void(0);" class="timer_interval" data-interval="30000">30s</a> /
                         <a href="javascript:void(0);" class="timer_interval" data-interval="60000">60s</a>
@@ -63,7 +73,7 @@
 <script src="/static/js/echarts3/echarts.common.min.js"></script>
 <script src="/static/js/persist_stat.js"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function () {
         APP.Common.resetNav("nav-persist");
         APP.PersistStat.init();
     });

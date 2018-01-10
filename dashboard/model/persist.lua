@@ -10,7 +10,7 @@ return function(config)
 
     function node_model:get_stat(limit)
 
-        local result, err = db:query("select op_time,sum(request_2xx) as request_2xx,sum(request_3xx) as request_3xx," ..
+        local result, err = db:query("select op_time,DATE_FORMAT(op_time, '%Y-%m-%d %h:%i') as stat_time, sum(request_2xx) as request_2xx,sum(request_3xx) as request_3xx," ..
             " sum(request_4xx) as request_4xx," ..
             " sum(request_5xx) as request_5xx," ..
             " sum(total_request_count) as total_request_count," ..
@@ -19,7 +19,7 @@ return function(config)
             " sum(traffic_write) as traffic_write," ..
             " sum(total_request_time) as total_request_time" ..
             " from " .. table_name ..
-            " group by minute(op_time)" ..
+            " group by stat_time" ..
             " order by op_time desc limit ?", { limit })
 
         if not result or err or type(result) ~= "table" or #result < 1 then

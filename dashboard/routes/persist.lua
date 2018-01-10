@@ -15,7 +15,7 @@ return function(config, store)
     persist_router:get("/persist/statistic", function(req, res, next)
 
         local node_ip = req.query.ip or ''
-        local limit = req.query.limit or 120
+        local limit = tonumber(req.query.minutes) or 720
 
         if node_ip == '' then
             data = persist_model:get_stat(limit)
@@ -27,7 +27,6 @@ return function(config, store)
             success = true,
             data = data
         })
-
     end)
 
     return persist_router

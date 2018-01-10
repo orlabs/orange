@@ -8,7 +8,8 @@
             qpsChart: null,
             responseChart: null,
             trafficChart: null,
-            interval: 3000
+            interval: 10 * 1000,
+            minutes: 15
         },
 
         init: function () {
@@ -21,7 +22,7 @@
 
             var op_type = "persist";
             L.Common.loadConfigs("persist", _this, true);
-            // L.Common.initSwitchBtn(op_type, _this); //关闭、开启
+            L.Common.initSwitchBtn(op_type, _this); //关闭、开启
 
             $("#time-set a").click(function () {
                 $("#time-set a").each(function () {
@@ -36,162 +37,170 @@
                 _this.data.interval = interval;
                 _this.startTimer(interval);
             });
+
+            $(document).on("click", ".time_range", function () {
+                var minutes = parseInt($(this).attr("data-minutes"));
+                _this.data.minutes = minutes;
+                _this.getStatistic();
+            });
+
+
         },
 
 
-        startTimer: function (interval) {
+        startTimer: function () {
 
-            interval = interval || 10000; // 默认 10s 请求一次
             if (_this.data.timer) {
                 clearInterval(_this.data.timer);
             }
 
-            function format_date(s) {
-                var time = new Date(s);
-                var hour = time.getHours();
-                var min = time.getMinutes();
+            setInterval(_this.getStatistic, _this.data.interval);
 
-                hour = hour < 10 ? '0' + hour : hour
-                min = min < 10 ? '0' + min : min
-
-                return hour + ':' + min;
-            }
-
-            var get_node_stat = function () {
-
-                $.ajax({
-                    url: '/persist/statistic',
-                    type: 'get',
-                    cache: false,
-                    data: {
-                        ip: $("#ip-input").val()
-                    },
-                    dataType: 'json',
-                    success: function (result) {
-                        if (result.success) {
-
-                            var data = result.data || {};
-
-                            //request 统计
-                            var requestOption = _this.data.requestChart.getOption();
-                            var qpsOption = _this.data.qpsChart.getOption();
-                            var responseOption = _this.data.responseChart.getOption();
-                            var trafficOption = _this.data.trafficChart.getOption();
-
-                            requestOption.series[0].data = [];
-                            requestOption.series[1].data = [];
-                            requestOption.series[2].data = [];
-                            requestOption.series[3].data = [];
-                            requestOption.series[4].data = [];
-
-                            qpsOption.series[0].data = [];
-
-                            responseOption.series[0].data = [];
-                            responseOption.series[1].data = [];
-
-                            trafficOption.series[0].data = [];
-                            trafficOption.series[1].data = [];
-
-                            requestOption.xAxis[0].data = [];
-                            qpsOption.xAxis[0].data = [];
-                            responseOption.xAxis[0].data = [];
-                            trafficOption.xAxis[0].data = [];
-
-
-                            for (var i = 0; i < data.length; i++) {
-
-                                // request
-                                requestOption.series[0].data.push(data[i].total_request_count);
-                                requestOption.series[1].data.push(data[i].request_2xx);
-                                requestOption.series[2].data.push(data[i].request_3xx);
-                                requestOption.series[3].data.push(data[i].request_4xx);
-                                requestOption.series[4].data.push(data[i].request_5xx);
-
-                                // qps
-                                qpsOption.series[0].data.push(data[i].total_success_request_count / 60);
-
-                                // response
-                                responseOption.series[0].data.push(data[i].total_request_time);
-                                responseOption.series[1].data.push(data[i].total_request_time / data[i].total_request_count);
-
-                                // traffic
-                                trafficOption.series[0].data.push(data[i].traffic_read / 1024);
-                                trafficOption.series[1].data.push(data[i].traffic_write / 1024);
-
-                                var op_time = format_date(data[i].op_time);
-
-                                requestOption.xAxis[0].data.push(op_time);
-                                qpsOption.xAxis[0].data.push(op_time);
-                                responseOption.xAxis[0].data.push(op_time);
-                                trafficOption.xAxis[0].data.push(op_time);
-                            }
-
-                            _this.data.requestChart.setOption(requestOption);
-                            _this.data.qpsChart.setOption(qpsOption);
-                            _this.data.responseChart.setOption(responseOption);
-                            _this.data.trafficChart.setOption(trafficOption);
-
-                            //
-                            // //请求时间统计
-                            // var responseOption = _this.data.responseChart.getOption();
-                            // data0 = responseOption.series[0].data;
-                            // data1 = responseOption.series[1].data;
-                            // data0.shift();
-                            // data0.push(data.total_request_time);
-                            // data1.shift();
-                            // data1.push(data.average_request_time * 1000);
-                            // responseOption.xAxis[0].data.shift();
-                            // responseOption.xAxis[0].data.push(axisData);
-                            // _this.data.responseChart.setOption(responseOption);
-                            //
-                            // //流量统计
-                            // var trafficOption = _this.data.trafficChart.getOption();
-                            // data0 = trafficOption.series[0].data;
-                            // data1 = trafficOption.series[1].data;
-                            // data2 = trafficOption.series[2].data;
-                            // data3 = trafficOption.series[3].data;
-                            // data0.shift();
-                            // data0.push(Math.round(data.traffic_read / 1024));
-                            // data1.shift();
-                            // data1.push(Math.round(data.traffic_write / 1024));
-                            // data2.shift();
-                            // data2.push(Math.round(data.average_traffic_read));
-                            // data3.shift();
-                            // data3.push(Math.round(data.average_traffix_write));
-                            // trafficOption.xAxis[0].data.shift();
-                            // trafficOption.xAxis[0].data.push(axisData);
-                            // _this.data.trafficChart.setOption(trafficOption);
-
-                        } else {
-                            APP.Common.showTipDialog("错误提示", result.msg);
-                            try_times--;
-                            if (try_times < 0) {
-                                clearInterval(_this.data.timer);
-                                APP.Common.showTipDialog("错误提示", "查询请求发生错误次数太多，停止查询");
-                            }
-                        }
-                    },
-                    error: function () {
-                        try_times--;
-                        if (try_times < 0) {
-                            clearInterval(_this.data.timer);
-                            APP.Common.showTipDialog("错误提示", "查询请求发生异常次数太多，停止查询");
-
-                        } else {
-                            APP.Common.showTipDialog("提示", "查询请求发生异常");
-                        }
-
-                    }
-                });
-
-            };
-
-            setInterval(get_node_stat, interval);
-
-            get_node_stat();
+            _this.getStatistic();
 
         },
 
+        formatDate: function (s) {
+            return s.substr(0, s.length - 2) + '00';
+
+            var time = new Date(s);
+            var hour = time.getHours();
+            var min = time.getMinutes();
+
+            hour = hour < 10 ? '0' + hour : hour
+            min = min < 10 ? '0' + min : min
+            return hour + ':' + min;
+        },
+
+        getStatistic: function () {
+
+            $.ajax({
+                url: '/persist/statistic',
+                type: 'get',
+                cache: false,
+                data: {
+                    ip: $("#ip-input").val(),
+                    minutes: _this.data.minutes
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+
+                        var data = result.data || {};
+
+                        //request 统计
+                        var requestOption = _this.data.requestChart.getOption();
+                        var qpsOption = _this.data.qpsChart.getOption();
+                        var responseOption = _this.data.responseChart.getOption();
+                        var trafficOption = _this.data.trafficChart.getOption();
+
+                        requestOption.series[0].data = [];
+                        requestOption.series[1].data = [];
+                        requestOption.series[2].data = [];
+                        requestOption.series[3].data = [];
+                        requestOption.series[4].data = [];
+
+                        qpsOption.series[0].data = [];
+
+                        responseOption.series[0].data = [];
+                        responseOption.series[1].data = [];
+
+                        trafficOption.series[0].data = [];
+                        trafficOption.series[1].data = [];
+
+                        requestOption.xAxis[0].data = [];
+                        qpsOption.xAxis[0].data = [];
+                        responseOption.xAxis[0].data = [];
+                        trafficOption.xAxis[0].data = [];
+
+
+                        for (var i = data.length - 1; i >= 0; i--) {
+
+                            // request
+                            requestOption.series[0].data.push(data[i].total_request_count);
+                            requestOption.series[1].data.push(data[i].request_2xx);
+                            requestOption.series[2].data.push(data[i].request_3xx);
+                            requestOption.series[3].data.push(data[i].request_4xx);
+                            requestOption.series[4].data.push(data[i].request_5xx);
+
+                            // qps
+                            qpsOption.series[0].data.push(data[i].total_success_request_count / 60);
+
+                            // response
+                            responseOption.series[0].data.push(data[i].total_request_time);
+                            responseOption.series[1].data.push(data[i].total_request_time / data[i].total_request_count);
+
+                            // traffic
+                            trafficOption.series[0].data.push(data[i].traffic_read / 1024);
+                            trafficOption.series[1].data.push(data[i].traffic_write / 1024);
+
+                            var op_time = _this.formatDate(data[i].op_time);
+
+                            requestOption.xAxis[0].data.push(op_time);
+                            qpsOption.xAxis[0].data.push(op_time);
+                            responseOption.xAxis[0].data.push(op_time);
+                            trafficOption.xAxis[0].data.push(op_time);
+                        }
+
+                        _this.data.requestChart.setOption(requestOption);
+                        _this.data.qpsChart.setOption(qpsOption);
+                        _this.data.responseChart.setOption(responseOption);
+                        _this.data.trafficChart.setOption(trafficOption);
+
+                        //
+                        // //请求时间统计
+                        // var responseOption = _this.data.responseChart.getOption();
+                        // data0 = responseOption.series[0].data;
+                        // data1 = responseOption.series[1].data;
+                        // data0.shift();
+                        // data0.push(data.total_request_time);
+                        // data1.shift();
+                        // data1.push(data.average_request_time * 1000);
+                        // responseOption.xAxis[0].data.shift();
+                        // responseOption.xAxis[0].data.push(axisData);
+                        // _this.data.responseChart.setOption(responseOption);
+                        //
+                        // //流量统计
+                        // var trafficOption = _this.data.trafficChart.getOption();
+                        // data0 = trafficOption.series[0].data;
+                        // data1 = trafficOption.series[1].data;
+                        // data2 = trafficOption.series[2].data;
+                        // data3 = trafficOption.series[3].data;
+                        // data0.shift();
+                        // data0.push(Math.round(data.traffic_read / 1024));
+                        // data1.shift();
+                        // data1.push(Math.round(data.traffic_write / 1024));
+                        // data2.shift();
+                        // data2.push(Math.round(data.average_traffic_read));
+                        // data3.shift();
+                        // data3.push(Math.round(data.average_traffix_write));
+                        // trafficOption.xAxis[0].data.shift();
+                        // trafficOption.xAxis[0].data.push(axisData);
+                        // _this.data.trafficChart.setOption(trafficOption);
+
+                    } else {
+                        APP.Common.showTipDialog("错误提示", result.msg);
+                        try_times--;
+                        if (try_times < 0) {
+                            clearInterval(_this.data.timer);
+                            APP.Common.showTipDialog("错误提示", "查询请求发生错误次数太多，停止查询");
+                        }
+                    }
+                },
+                error: function () {
+                    try_times--;
+                    if (try_times < 0) {
+                        clearInterval(_this.data.timer);
+                        APP.Common.showTipDialog("错误提示", "查询请求发生异常次数太多，停止查询");
+
+                    } else {
+                        APP.Common.showTipDialog("提示", "查询请求发生异常");
+                    }
+
+                }
+            });
+
+        },
         initRequestStatus: function () {
             var option = {
                 title: {
