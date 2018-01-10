@@ -134,7 +134,7 @@
                             trafficOption.series[0].data.push(data[i].traffic_read / 1024);
                             trafficOption.series[1].data.push(data[i].traffic_write / 1024);
 
-                            var op_time = _this.formatDate(data[i].op_time);
+                            var op_time = (data[i].stat_time);
 
                             requestOption.xAxis[0].data.push(op_time);
                             qpsOption.xAxis[0].data.push(op_time);

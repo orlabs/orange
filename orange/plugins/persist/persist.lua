@@ -82,79 +82,68 @@ local function write_data(config)
 
     local now = ngx.now()
     local date_now = os.date('*t', now)
-
     local min = get_min(date_now.min)
 
     local stat_time = string.format('%d-%d-%d %d:%d:00',
         date_now.year, date_now.month, date_now.day, date_now.hour, min)
 
-    ngx.log(ngx.ERR, "FLUSH STAT DATA TO DB ", stat_time)
-
     local result, err
+    local table_name = 'cluster_node_stat'
 
     -- 是否存在
     result, err = config.store:query({
-        sql = "SELECT stat_time FROM cluster_node_stat WHERE stat_time = ? LIMIT 1",
+        sql = "SELECT stat_time FROM " .. table_name .. " WHERE stat_time = ? LIMIT 1",
         params = { stat_time }
     })
 
     if not result or err then
-        ngx.log(ngx.ERR, "ERR", err)
+        ngx.log(ngx.ERR, " query has error ", err)
     else
+
+        local params = {
+            tonumber(request_2xx),
+            tonumber(request_3xx),
+            tonumber(request_4xx),
+            tonumber(request_5xx),
+            tonumber(total_count),
+            tonumber(total_success_count),
+            tonumber(traffic_read),
+            tonumber(traffic_write),
+            tonumber(total_request_time),
+            stat_time,
+            node_ip
+        }
+
         if result and #result == 1 then
             ngx.log(ngx.ERR, "UPDATE")
 
             result, err = config.store:query({
-                sql = "UPDATE cluster_node_stat" ..
-                    "request_2xx = request_2xx + ?, " ..
-                    "request_3xx = request_3xx + ?, " ..
-                    "request_4xx = request_4xx + ?, " ..
-                    "request_5xx = request_5xx + ?, " ..
-                    "total_request_count = total_request_count + ?, " ..
-                    "total_success_request_count = total_success_request_count + ?, " ..
-                    "traffic_read = traffic_read + ?, " ..
-                    "traffic_write = traffic_write + ?, " ..
-                    "total_request_time = total_request_time + ? " ..
-                    "WHERE stat_time = ? AND ip = ? ",
-                params = {
-                    request_2xx,
-                    request_3xx,
-                    request_4xx,
-                    request_5xx,
-                    total_count,
-                    total_success_count,
-                    traffic_read,
-                    traffic_write,
-                    total_request_time,
-                    stat_time,
-                    node_ip
-                },
+                sql = "UPDATE " .. table_name .. " SET " ..
+                    " request_2xx = request_2xx + ?, " ..
+                    " request_3xx = request_3xx + ?, " ..
+                    " request_4xx = request_4xx + ?, " ..
+                    " request_5xx = request_5xx + ?, " ..
+                    " total_request_count = total_request_count + ?, " ..
+                    " total_success_request_count = total_success_request_count + ?, " ..
+                    " traffic_read = traffic_read + ?, " ..
+                    " traffic_write = traffic_write + ?, " ..
+                    " total_request_time = total_request_time + ? " ..
+                    " WHERE stat_time = ? AND ip = ? ",
+                params = params,
             })
         else
             ngx.log(ngx.ERR, "INSERT")
 
             result, err = config.store:query({
-                sql = "INSERT cluster_node_stat " ..
-                    "(ip, stat_time, request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time) " ..
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                params = {
-                    node_ip,
-                    stat_time,
-                    request_2xx,
-                    request_3xx,
-                    request_4xx,
-                    request_5xx,
-                    total_count,
-                    total_success_count,
-                    traffic_read,
-                    traffic_write,
-                    total_request_time
-                }
+                sql = "INSERT " .. table_name .. " " ..
+                    " (request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time,ip, stat_time) " ..
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                params = params
             })
         end
 
         if not result or err then
-            ngx.log(ngx.ERR, "ERR", err)
+            ngx.log(ngx.ERR, " query has error ", err)
         end
     end
 end

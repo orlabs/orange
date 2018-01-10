@@ -394,7 +394,7 @@ CREATE TABLE `cluster_node_stat` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ip` varchar(20) NOT NULL DEFAULT '',
   `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `key` varchar(50) DEFAULT NULL,
+  `stat_time` datetime DEFAULT NULL,
   `request_2xx` int(11) DEFAULT '0',
   `request_3xx` int(11) DEFAULT '0',
   `request_4xx` int(11) DEFAULT '0',
@@ -405,11 +405,10 @@ CREATE TABLE `cluster_node_stat` (
   `traffic_write` int(11) DEFAULT '0',
   `total_request_time` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `key` (`key`)
+  KEY `ip` (`ip`),
+  KEY `op_time` (`op_time`),
+  KEY `stat_time` (`stat_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE `cluster_node_stat` ADD INDEX `ip` (`ip`);
-ALTER TABLE `cluster_node_stat` ADD INDEX (`op_time`);
 
 # Dump of table persist
 # ------------------------------------------------------------
