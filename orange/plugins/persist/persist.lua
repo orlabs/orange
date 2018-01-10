@@ -92,8 +92,8 @@ local function write_data(config)
 
     -- 是否存在
     result, err = config.store:query({
-        sql = "SELECT stat_time FROM " .. table_name .. " WHERE stat_time = ? LIMIT 1",
-        params = { stat_time }
+        sql = "SELECT stat_time FROM " .. table_name .. " WHERE stat_time = ? AND ip = ? LIMIT 1",
+        params = { stat_time, ip }
     })
 
     if not result or err then
@@ -115,8 +115,6 @@ local function write_data(config)
         }
 
         if result and #result == 1 then
-            ngx.log(ngx.ERR, "UPDATE")
-
             result, err = config.store:query({
                 sql = "UPDATE " .. table_name .. " SET " ..
                     " request_2xx = request_2xx + ?, " ..
@@ -132,8 +130,6 @@ local function write_data(config)
                 params = params,
             })
         else
-            ngx.log(ngx.ERR, "INSERT")
-
             result, err = config.store:query({
                 sql = "INSERT " .. table_name .. " " ..
                     " (request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time,ip, stat_time) " ..
