@@ -21,73 +21,141 @@ function toint(x)
     end
 end
 
+function get_min(min)
+    --    local mod = math.fmod(min, 2)
+    --    if mod == 1 then
+    --        min = min - 1
+    --    end
+    return min
+end
+
 local _M = {}
 
-function _M.init(config)
-    ngx.log(ngx.ERR, "persist init")
+local function setinterval(callback, interval)
 
-    local node_ip = _M.get_ip()
-    local delay = 60
     local handler
     handler = function()
-        -- 暂存
-        local request_2xx = status:get(KEY_REQUEST_2XX)
-        local request_3xx = status:get(KEY_REQUEST_3XX)
-        local request_4xx = status:get(KEY_REQUEST_4XX)
-        local request_5xx = status:get(KEY_REQUEST_5XX)
-        local total_count = status:get(KEY_TOTAL_COUNT)
-        local total_success_count = status:get(KEY_TOTAL_SUCCESS_COUNT)
-        local traffic_read = status:get(KEY_TRAFFIC_READ)
-        local traffic_write = status:get(KEY_TRAFFIC_WRITE)
-        local total_request_time = status:get(KEY_TOTAL_REQUEST_TIME)
-
-        -- 清空计数
-        status:set(KEY_REQUEST_2XX, 0)
-        status:set(KEY_REQUEST_3XX, 0)
-        status:set(KEY_REQUEST_4XX, 0)
-        status:set(KEY_REQUEST_5XX, 0)
-        status:set(KEY_TOTAL_COUNT, 0)
-        status:set(KEY_TOTAL_SUCCESS_COUNT, 0)
-        status:set(KEY_TRAFFIC_READ, 0)
-        status:set(KEY_TRAFFIC_WRITE, 0)
-        status:set(KEY_TOTAL_REQUEST_TIME, 0)
-
-        -- 存储统计
-        local stat_key = node_ip .. '-' .. toint(ngx.now())
-        local result, err = config.store:query({
-            sql = "INSERT cluster_node_stat " ..
-                "(ip, `key`, request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time) " ..
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            params = {
-                node_ip,
-                stat_key,
-                request_2xx,
-                request_3xx,
-                request_4xx,
-                request_5xx,
-                total_count,
-                total_success_count,
-                traffic_read,
-                traffic_write,
-                total_request_time
-            }
-        })
-
-        if not result or err then
-            ngx.log(ngx.ERR, "ERR", err)
+        if type(callback) == 'function' then
+            callback()
         end
 
-        local ok, err = ngx.timer.at(delay, handler)
+        local ok, err = ngx.timer.at(interval, handler)
         if not ok then
             ngx.log(ngx.ERR, "failed to create the timer: ", err)
             return
         end
     end
 
-    local ok, err = ngx.timer.at(delay, handler)
+    local ok, err = ngx.timer.at(interval, handler)
     if not ok then
         ngx.log(ngx.ERR, "failed to create the timer: ", err)
         return
+    end
+end
+
+local function write_data(config)
+
+    -- 暂存
+    local request_2xx = status:get(KEY_REQUEST_2XX)
+    local request_3xx = status:get(KEY_REQUEST_3XX)
+    local request_4xx = status:get(KEY_REQUEST_4XX)
+    local request_5xx = status:get(KEY_REQUEST_5XX)
+    local total_count = status:get(KEY_TOTAL_COUNT)
+    local total_success_count = status:get(KEY_TOTAL_SUCCESS_COUNT)
+    local traffic_read = status:get(KEY_TRAFFIC_READ)
+    local traffic_write = status:get(KEY_TRAFFIC_WRITE)
+    local total_request_time = status:get(KEY_TOTAL_REQUEST_TIME)
+
+    -- 清空计数
+    status:set(KEY_REQUEST_2XX, 0)
+    status:set(KEY_REQUEST_3XX, 0)
+    status:set(KEY_REQUEST_4XX, 0)
+    status:set(KEY_REQUEST_5XX, 0)
+    status:set(KEY_TOTAL_COUNT, 0)
+    status:set(KEY_TOTAL_SUCCESS_COUNT, 0)
+    status:set(KEY_TRAFFIC_READ, 0)
+    status:set(KEY_TRAFFIC_WRITE, 0)
+    status:set(KEY_TOTAL_REQUEST_TIME, 0)
+
+    -- 存储统计
+    local node_ip = _M.get_ip()
+
+    local now = ngx.now()
+    local date_now = os.date('*t', now)
+
+    local min = get_min(date_now.min)
+
+    local stat_time = string.format('%d-%d-%d %d:%d:00',
+        date_now.year, date_now.month, date_now.day, date_now.hour, min)
+
+    ngx.log(ngx.ERR, "FLUSH STAT DATA TO DB ", stat_time)
+
+    local result, err
+
+    -- 是否存在
+    result, err = config.store:query({
+        sql = "SELECT stat_time FROM cluster_node_stat WHERE stat_time = ? LIMIT 1",
+        params = { stat_time }
+    })
+
+    if not result or err then
+        ngx.log(ngx.ERR, "ERR", err)
+    else
+        if result and #result == 1 then
+            ngx.log(ngx.ERR, "UPDATE")
+
+            result, err = config.store:query({
+                sql = "UPDATE cluster_node_stat" ..
+                    "request_2xx = request_2xx + ?, " ..
+                    "request_3xx = request_3xx + ?, " ..
+                    "request_4xx = request_4xx + ?, " ..
+                    "request_5xx = request_5xx + ?, " ..
+                    "total_request_count = total_request_count + ?, " ..
+                    "total_success_request_count = total_success_request_count + ?, " ..
+                    "traffic_read = traffic_read + ?, " ..
+                    "traffic_write = traffic_write + ?, " ..
+                    "total_request_time = total_request_time + ? " ..
+                    "WHERE stat_time = ? AND ip = ? ",
+                params = {
+                    request_2xx,
+                    request_3xx,
+                    request_4xx,
+                    request_5xx,
+                    total_count,
+                    total_success_count,
+                    traffic_read,
+                    traffic_write,
+                    total_request_time,
+                    stat_time,
+                    node_ip
+                },
+            })
+        else
+            ngx.log(ngx.ERR, "INSERT")
+
+            result, err = config.store:query({
+                sql = "INSERT cluster_node_stat " ..
+                    "(ip, stat_time, request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time) " ..
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                params = {
+                    node_ip,
+                    stat_time,
+                    request_2xx,
+                    request_3xx,
+                    request_4xx,
+                    request_5xx,
+                    total_count,
+                    total_success_count,
+                    traffic_read,
+                    traffic_write,
+                    total_request_time
+                }
+            })
+        end
+
+        if not result or err then
+            ngx.log(ngx.ERR, "ERR", err)
+        end
     end
 end
 
@@ -99,6 +167,42 @@ local function get_ip_by_hostname(hostname)
         table.insert(list_tab, v)
     end
     return unpack(list_tab)
+end
+
+function _M.init(config)
+    ngx.log(ngx.ERR, "persist init worker")
+
+    local interval = 60
+
+    -- 单进程，只执行一次
+    if ngx.worker.id() == 0 then
+
+        local date_now = os.date('*t', ngx.time())
+        local second = date_now.sec
+
+        if second > 0 then
+            -- 矫正统计写入
+            ngx.timer.at(interval - 1 - second, function()
+
+                write_data(config)
+
+                -- 定时保存
+                setinterval(function()
+                    write_data(config)
+                end, interval)
+            end)
+        else
+            -- 定时保存
+            setinterval(function()
+                write_data(config)
+            end, interval)
+        end
+    end
+end
+
+function _M.log(config)
+    local date_now = os.date('*t', ngx.time())
+    local min = get_min(date_now.min)
 end
 
 function _M.get_ip()

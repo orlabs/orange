@@ -14,4 +14,9 @@ function PersistHandler:init_worker()
     persist.init(self)
 end
 
+function PersistHandler:log()
+    PersistHandler.super.log(self)
+    persist.log(self)
+end
+
 return PersistHandler
