@@ -132,7 +132,7 @@ local function write_data(config)
         else
             result, err = config.store:query({
                 sql = "INSERT " .. table_name .. " " ..
-                    " (request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time,ip, stat_time) " ..
+                    " (request_2xx, request_3xx, request_4xx, request_5xx, total_request_count, total_success_request_count, traffic_read, traffic_write, total_request_time, stat_time, ip) " ..
                     " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 params = params
             })
