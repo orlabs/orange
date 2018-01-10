@@ -93,7 +93,7 @@ local function write_data(config)
     -- 是否存在
     result, err = config.store:query({
         sql = "SELECT stat_time FROM " .. table_name .. " WHERE stat_time = ? AND ip = ? LIMIT 1",
-        params = { stat_time, ip }
+        params = { stat_time, node_ip }
     })
 
     if not result or err then
