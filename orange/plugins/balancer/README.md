@@ -1,4 +1,4 @@
-此插件依赖以下两个库，可还是用luarocks安装
+此插件依赖以下两个库，可用luarocks安装
 
 - luarocks install penlight
 - luarocks install lua-resty-dns-client

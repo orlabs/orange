@@ -153,15 +153,15 @@ function _M.extract(extractor_type, extractions)
         result = extract_variable_for_template(extractions)
     end
 
-    for i, v in pairs(result) do
-        if type(v) == "table" then
-             for j, m in pairs(v) do
-                ngx.log(ngx.ERR, i, ":", j, ":", m)
-             end
-        else
-            ngx.log(ngx.ERR, i, ":", v)
-        end
-    end
+    -- for i, v in pairs(result) do
+    --     if type(v) == "table" then
+    --          for j, m in pairs(v) do
+    --             ngx.log(ngx.INFO, i, ":", j, ":", m)
+    --          end
+    --     else
+    --         ngx.log(ngx.INFO, i, ":", v)
+    --     end
+    -- end
 
     return result
 end
