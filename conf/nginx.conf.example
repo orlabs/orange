@@ -12,8 +12,8 @@ http {
     charset UTF-8;
     include ./mime.types;
 
-    log_format  main '$remote_addr - $remote_user [$time_local] "$request" '
-    '$status $body_bytes_sent "$http_referer" '
+    log_format  main '$remote_addr - $remote_user [$time_local] '
+    '$host $scheme "$request" $status $body_bytes_sent "$http_referer" '
     '"$http_user_agent" "$request_time" "$ssl_protocol" "$ssl_cipher" "$http_x_forwarded_for"'
     '"$upstream_addr" "$upstream_status" "$upstream_response_length" "$upstream_response_time"';
 
@@ -107,6 +107,8 @@ http {
             proxy_pass $target;
 
             header_filter_by_lua_block {
+                ngx.header["X-Powered-By"] = "bhb api gataway";
+                ngx.header["Server"] = nil
                 local orange = context.orange
                 orange.header_filter()
             }
@@ -132,7 +134,7 @@ http {
         listen 8001;
         server_name localhost 127.0.0.1;
         access_log ./logs/default_upstream_access.log main;
-        error_log ./logs/default_upstream_error.log;
+        error_log ./logs/default_upstream_error.log error;
 
         location / {
             content_by_lua_block {
@@ -149,7 +151,7 @@ http {
         stub_status on;
         #server_name  localhost;
         access_log ./logs/dashboard_access.log main;
-        error_log ./logs/dashboard_error.log info;
+        error_log ./logs/dashboard_error.log error;
 
         location = /favicon.ico {
             log_not_found off;
@@ -180,7 +182,7 @@ http {
         listen       7777;
         #server_name  localhost;
         access_log ./logs/api_access.log main;
-        error_log ./logs/api_error.log info;
+        error_log ./logs/api_error.log error;
 
         location = /favicon.ico {
             log_not_found off;
@@ -189,6 +191,11 @@ http {
 
         location /robots.txt {
             return 200 'User-agent: *\nDisallow: /';
+        }
+
+        location = /ping {
+            access_log off;
+            return 200 "pong";
         }
 
         location / {

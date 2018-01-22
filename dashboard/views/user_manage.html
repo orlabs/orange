@@ -49,7 +49,7 @@
         </div><!--右侧部分结束-->
     </div>
 
-    
+
 
     <script id="user-item-tpl" type="text/template">
         {@each users as u, index}
@@ -142,6 +142,7 @@
     <script src="/static/js/user_manage.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            APP.Common.resetNav("nav-user-manage");
             APP.UserManage.init();
         });
     </script>

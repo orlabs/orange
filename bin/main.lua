@@ -9,6 +9,7 @@ local cmds = {
     reload = "Reload the config of Orange",
     store = "Init/Update/Backup Orange store",
     version = "Show the version of Orange",
+    register = "Register the node",
     help = "Show help tips"
 }
 

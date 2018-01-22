@@ -58,7 +58,7 @@ return function(config, store)
             local tmp
             if v ~= "kvstore" then
                 tmp = {
-                    enable =  orange_db.get(v .. ".enable"),
+                    enable = orange_db.get(v .. ".enable"),
                     name = v,
                     active_selector_count = 0,
                     inactive_selector_count = 0,
@@ -91,7 +91,7 @@ return function(config, store)
                 plugin_configs[v] = tmp
             else
                 tmp = {
-                    enable =  orange_db.get(v .. ".enable"),
+                    enable = orange_db.get(v .. ".enable"),
                     name = v
                 }
             end
@@ -104,6 +104,10 @@ return function(config, store)
 
     dashboard_router:get("/status", function(req, res, next)
         res:render("status")
+    end)
+
+    dashboard_router:get("/node", function(req, res, next)
+        res:redirect("/admin/node/manage")
     end)
 
     dashboard_router:get("/monitor", function(req, res, next)
@@ -167,7 +171,7 @@ return function(config, store)
 
     --- 加载其他"可用"插件API
     local available_plugins = config.plugins
-    if not available_plugins or type(available_plugins) ~= "table" or #available_plugins<1 then
+    if not available_plugins or type(available_plugins) ~= "table" or #available_plugins < 1 then
         ngx.log(ngx.ERR, "no available plugins, maybe you should check `orange.conf`.")
     else
         for _, p in ipairs(available_plugins) do

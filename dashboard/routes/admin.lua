@@ -37,20 +37,8 @@ return function(config, store)
     end)
 
     admin_router:post("/user/new", function(req, res, next)
-        local is_admin = false
 
-        if req and req.session and req.session.get("user") then
-            is_admin = req.session.get('user').is_admin
-        end
-
-        if not is_admin then
-            return res:json({
-                success = false,
-                msg = "您的身份不是管理员，不允许创建用户."
-            })
-        end
-
-        local username = req.body.username 
+        local username = req.body.username
         local password = req.body.password
         local enable = req.body.enable
 
@@ -67,13 +55,13 @@ return function(config, store)
         local username_len = slen(username)
         local password_len = slen(password)
 
-        if username_len<4 or username_len>50 then
+        if username_len < 4 or username_len > 50 then
             return res:json({
                 success = false,
                 msg = "用户名长度应为4~50位."
             })
         end
-        if password_len<6 or password_len>50 then
+        if password_len < 6 or password_len > 50 then
             return res:json({
                 success = false,
                 msg = "密码长度应为6~50位."
@@ -81,7 +69,7 @@ return function(config, store)
         end
 
         if not match then
-           return res:json({
+            return res:json({
                 success = false,
                 msg = "用户名只能输入字母、下划线、数字，必须以字母开头."
             })
@@ -108,33 +96,21 @@ return function(config, store)
                     data = {
                         users = user_model:query_all()
                     }
-                })  
+                })
             else
                 return res:json({
                     success = false,
                     msg = "新建用户失败."
-                }) 
+                })
             end
         end
     end)
 
     admin_router:post("/user/modify", function(req, res, next)
-        local is_admin = false
-
-        if req and req.session and req.session.get("user") then
-            is_admin = req.session.get('user').is_admin
-        end
-
-        if not is_admin then
-            return res:json({
-                success = false,
-                msg = "您的身份不是管理员，不允许修改用户."
-            })
-        end
 
         local password = req.body.new_pwd
         local password_len = slen(password)
-        
+
 
         local user_id = req.body.user_id
         if not user_id then
@@ -145,7 +121,7 @@ return function(config, store)
         end
 
         local enable = req.body.enable
-        if not password or password=="" then -- 无需更改密码
+        if not password or password == "" then -- 无需更改密码
             local result = user_model:update_enable(user_id, enable)
             if result then
                 return res:json({
@@ -154,15 +130,15 @@ return function(config, store)
                     data = {
                         users = user_model:query_all()
                     }
-                })  
+                })
             else
                 return res:json({
                     success = false,
                     msg = "修改用户失败."
-                }) 
+                })
             end
         else
-            if password_len<6 or password_len>50 then
+            if password_len < 6 or password_len > 50 then
                 return res:json({
                     success = false,
                     msg = "密码长度应为6~50位."
@@ -178,29 +154,17 @@ return function(config, store)
                     data = {
                         users = user_model:query_all()
                     }
-                })  
+                })
             else
                 return res:json({
                     success = false,
                     msg = "修改用户失败."
-                }) 
+                })
             end
         end
     end)
 
     admin_router:post("/user/delete", function(req, res, next)
-        local is_admin = false
-
-        if req and req.session and req.session.get("user") then
-            is_admin = req.session.get('user').is_admin
-        end
-
-        if not is_admin then
-            return res:json({
-                success = false,
-                msg = "您的身份不是管理员，不允许删除用户."
-            })
-        end
 
         local user_id = req.body.user_id
         if not user_id then
@@ -218,14 +182,13 @@ return function(config, store)
                 data = {
                     users = user_model:query_all()
                 }
-            })  
+            })
         else
             return res:json({
                 success = false,
                 msg = "删除用户失败."
-            }) 
+            })
         end
-        
     end)
 
 

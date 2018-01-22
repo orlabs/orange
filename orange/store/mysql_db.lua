@@ -12,7 +12,7 @@ local DB = {}
 function DB:new(conf)
     local instance = {}
     instance.conf = conf
-    setmetatable(instance, { __index = self})
+    setmetatable(instance, { __index = self })
     return instance
 end
 
@@ -34,6 +34,10 @@ function DB:exec(sql)
     ngx.log(ngx.INFO, "connected to mysql, reused_times:", db:get_reused_times(), " sql:", sql)
 
     db:query("SET NAMES utf8")
+    if conf.timezone then
+        db:query("set time_zone = '" .. conf.timezone .. "'")
+    end
+
     local res, err, errno, sqlstate = db:query(sql)
     if not res or err then
         ngx.log(ngx.ERR, "bad result: ", err, ": ", errno, ": ", sqlstate, ".")
@@ -59,7 +63,7 @@ end
 function DB:insert(sql, params)
     local res, err, errno, sqlstate = self:query(sql, params)
     if res and not err then
-        return  res.insert_id, err
+        return res.insert_id, err
     else
         return res, err
     end
@@ -79,24 +83,24 @@ function DB:delete(sql, params)
 end
 
 local function split(str, delimiter)
-    if str==nil or str=='' or delimiter==nil then
+    if str == nil or str == '' or delimiter == nil then
         return nil
     end
 
     local result = {}
-    for match in (str..delimiter):gmatch("(.-)"..delimiter) do
+    for match in (str .. delimiter):gmatch("(.-)" .. delimiter) do
         tinsert(result, match)
     end
     return result
 end
 
 local function compose(t, params)
-    if t==nil or params==nil or type(t)~="table" or type(params)~="table" or #t~=#params+1 or #t==0 then
+    if t == nil or params == nil or type(t) ~= "table" or type(params) ~= "table" or #t ~= #params + 1 or #t == 0 then
         return nil
     else
         local result = t[1]
-        for i=1, #params do
-            result = result  .. params[i].. t[i+1]
+        for i = 1, #params do
+            result = result .. params[i] .. t[i + 1]
         end
         return result
     end
@@ -116,7 +120,7 @@ function DB:parse_sql(sql, params)
         tinsert(new_params, v)
     end
 
-    local t = split(sql,"?")
+    local t = split(sql, "?")
     local sql = compose(t, new_params)
 
     return sql

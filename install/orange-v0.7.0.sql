@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Pro SQL dump
-# Version 4096
+# Version 4541
 #
 # http://www.sequelpro.com/
-# http://code.google.com/p/sequel-pro/
+# https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.6.15)
-# Database: orange_test
-# Generation Time: 2016-11-13 14:48:35 +0000
+# Host: 127.0.0.1 (MySQL 5.5.58)
+# Database: orange
+# Generation Time: 2018-01-22 10:11:59 +0000
 # ************************************************************
 
 
@@ -18,6 +18,32 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Dump of table balancer
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `balancer`;
+
+CREATE TABLE `balancer` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `balancer` WRITE;
+/*!40000 ALTER TABLE `balancer` DISABLE KEYS */;
+
+INSERT INTO `balancer` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `balancer` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table basic_auth
@@ -40,10 +66,57 @@ LOCK TABLES `basic_auth` WRITE;
 
 INSERT INTO `basic_auth` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `basic_auth` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table cluster_node
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `cluster_node`;
+
+CREATE TABLE `cluster_node` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `ip` varchar(20) NOT NULL DEFAULT '',
+  `port` smallint(6) DEFAULT '7777',
+  `api_username` varchar(50) DEFAULT '',
+  `api_password` varchar(50) DEFAULT '',
+  `sync_status` varchar(2000) DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table cluster_node_stat
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `cluster_node_stat`;
+
+CREATE TABLE `cluster_node_stat` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ip` varchar(20) NOT NULL DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `stat_time` datetime DEFAULT NULL,
+  `request_2xx` int(11) DEFAULT '0',
+  `request_3xx` int(11) DEFAULT '0',
+  `request_4xx` int(11) DEFAULT '0',
+  `request_5xx` int(11) DEFAULT '0',
+  `total_request_count` int(11) DEFAULT '0',
+  `total_success_request_count` int(11) DEFAULT '0',
+  `traffic_read` int(11) DEFAULT '0',
+  `traffic_write` int(11) DEFAULT '0',
+  `total_request_time` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `ip` (`ip`),
+  KEY `op_time` (`op_time`),
+  KEY `stat_time` (`stat_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 # Dump of table dashboard_user
@@ -67,7 +140,7 @@ LOCK TABLES `dashboard_user` WRITE;
 
 INSERT INTO `dashboard_user` (`id`, `username`, `password`, `is_admin`, `create_time`, `enable`)
 VALUES
-    (1,'admin','1fe832a7246fd19b7ea400a10d23d1894edfa3a5e09ee27e0c4a96eb0136763d',1,'2016-11-11 11:11:11',1);
+  (1,'admin','1fe832a7246fd19b7ea400a10d23d1894edfa3a5e09ee27e0c4a96eb0136763d',1,'2016-11-11 11:11:11',1);
 
 /*!40000 ALTER TABLE `dashboard_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -93,7 +166,7 @@ LOCK TABLES `divide` WRITE;
 
 INSERT INTO `divide` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `divide` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -119,7 +192,7 @@ LOCK TABLES `key_auth` WRITE;
 
 INSERT INTO `key_auth` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `key_auth` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -161,9 +234,87 @@ LOCK TABLES `monitor` WRITE;
 
 INSERT INTO `monitor` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `monitor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table node
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `node`;
+
+CREATE TABLE `node` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `node` WRITE;
+/*!40000 ALTER TABLE `node` DISABLE KEYS */;
+
+INSERT INTO `node` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `node` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table persist
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `persist`;
+
+CREATE TABLE `persist` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `persist` WRITE;
+/*!40000 ALTER TABLE `persist` DISABLE KEYS */;
+
+INSERT INTO `persist` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `persist` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table property_rate_limiting
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `property_rate_limiting`;
+
+CREATE TABLE `property_rate_limiting` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `property_rate_limiting` WRITE;
+/*!40000 ALTER TABLE `property_rate_limiting` DISABLE KEYS */;
+
+INSERT INTO `property_rate_limiting` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `property_rate_limiting` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -187,57 +338,11 @@ LOCK TABLES `rate_limiting` WRITE;
 
 INSERT INTO `rate_limiting` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `rate_limiting` ENABLE KEYS */;
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `property_rate_limiting`;
-
-CREATE TABLE `property_rate_limiting` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-LOCK TABLES `property_rate_limiting` WRITE;
-/*!40000 ALTER TABLE `property_rate_limiting` DISABLE KEYS */;
-
-INSERT INTO `property_rate_limiting` (`id`, `key`, `value`, `type`, `op_time`)
-VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
-
-/*!40000 ALTER TABLE `property_rate_limiting` ENABLE KEYS */;
-UNLOCK TABLES;
-
-# Dump of table signature_auth
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `signature_auth`;
-
-CREATE TABLE `signature_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-LOCK TABLES `signature_auth` WRITE;
-/*!40000 ALTER TABLE `signature_auth` DISABLE KEYS */;
-
-INSERT INTO `signature_auth` (`id`, `key`, `value`, `type`, `op_time`)
-VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
-
-/*!40000 ALTER TABLE `signature_auth` ENABLE KEYS */;
-UNLOCK TABLES;
 
 # Dump of table redirect
 # ------------------------------------------------------------
@@ -259,7 +364,7 @@ LOCK TABLES `redirect` WRITE;
 
 INSERT INTO `redirect` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `redirect` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -285,9 +390,35 @@ LOCK TABLES `rewrite` WRITE;
 
 INSERT INTO `rewrite` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `rewrite` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table signature_auth
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `signature_auth`;
+
+CREATE TABLE `signature_auth` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `signature_auth` WRITE;
+/*!40000 ALTER TABLE `signature_auth` DISABLE KEYS */;
+
+INSERT INTO `signature_auth` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `signature_auth` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -311,36 +442,11 @@ LOCK TABLES `waf` WRITE;
 
 INSERT INTO `waf` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+  (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `waf` ENABLE KEYS */;
 UNLOCK TABLES;
 
-
-# Dump of table balancer
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `balancer`;
-
-CREATE TABLE `balancer` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-LOCK TABLES `balancer` WRITE;
-/*!40000 ALTER TABLE `balancer` DISABLE KEYS */;
-
-INSERT INTO `balancer` (`id`, `key`, `value`, `type`, `op_time`)
-VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
-
-/*!40000 ALTER TABLE `balancer` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

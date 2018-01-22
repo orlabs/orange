@@ -2,8 +2,7 @@
     var _this = null;
     L.UserManage = L.UserManage || {};
     _this = L.UserManage = {
-        data: {
-        },
+        data: {},
 
         init: function () {
             _this.loadUsers();
@@ -12,7 +11,7 @@
         },
 
         initEvents: function () {
-            $("#add-user-btn").click(function(){
+            $("#add-user-btn").click(function () {
                 var content = $("#add-user-tpl").html()
                 var d = dialog({
                     title: '添加Dashboard用户',
@@ -25,24 +24,24 @@
                         value: '确定',
                         autofocus: false,
                         callback: function () {
-                            var username =$("input[name=username]").val();
+                            var username = $("input[name=username]").val();
                             var password = $("input[name=password]").val();
 
                             var pattern = /^[A-Za-z][A-Za-z0-9_]+$/;
-                            if(!username || username.length<4 || username.length>50 || !username.match(pattern)) {
+                            if (!username || username.length < 4 || username.length > 50 || !username.match(pattern)) {
                                 L.Common.showErrorTip("提示", "用户名为4~50位, 只能输入字母、下划线、数字，必须以字母开头.");
                                 return false;
                             }
 
-                            if(!password || password.length<6 || password.length>50){
+                            if (!password || password.length < 6 || password.length > 50) {
                                 L.Common.showErrorTip("提示", "密码长度须为6~50位!");
                                 return false;
                             }
 
                             var enable = $('input[name=enable]').is(':checked');
-                            if(enable){
+                            if (enable) {
                                 enable = 1;
-                            }else{
+                            } else {
                                 enable = 0;
                             }
 
@@ -62,6 +61,8 @@
 
                                         _this.data.users = result.data.users;//重新设置数据
                                         _this.renderTable(result.data, _this.data.users[_this.data.users.length - 1].id);//渲染table
+
+                                        L.Common.showTipDialog("提示", result.msg || "添加用户成功");
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "添加用户发生错误");
@@ -80,10 +81,10 @@
                 d.show();
             });
 
-            $(document).on("click", ".delete-user-btn", function(){
+            $(document).on("click", ".delete-user-btn", function () {
                 var user_id = $(this).attr("data-id");
                 var name = $(this).attr("data-name");
-                if(name=="admin"){
+                if (name == "admin") {
                     L.Common.showErrorTip("提示", "不得删除admin用户!");
                     return false;
                 }
@@ -102,7 +103,7 @@
                             $.ajax({
                                 url: '/admin/user/delete',
                                 type: 'post',
-                                cache:false,
+                                cache: false,
                                 data: {
                                     user_id: user_id
                                 },
@@ -112,7 +113,7 @@
                                         //重新渲染规则
                                         _this.renderTable(result.data);//渲染table
                                         _this.data.users = result.data.users;//重新设置数据
-
+                                        L.Common.showTipDialog("提示", result.msg || "删除用户成功");
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "删除用户发生错误");
@@ -139,8 +140,8 @@
 
                 var html = juicer(tpl, {
                     u: {
-                        username:username,
-                        enable:enable
+                        username: username,
+                        enable: enable
                     }
                 });
 
@@ -157,26 +158,26 @@
                         callback: function () {
                             var new_pwd = $("input[name=password]").val();
 
-                            if(!new_pwd || new_pwd==""){
-                               new_pwd = "";
-                            }else{
-                                if(new_pwd.length<6 || new_pwd.length>50){
+                            if (!new_pwd || new_pwd == "") {
+                                new_pwd = "";
+                            } else {
+                                if (new_pwd.length < 6 || new_pwd.length > 50) {
                                     L.Common.showErrorTip("提示", "新密码长度须为6~50位!");
                                     return false;
                                 }
                             }
 
                             var enable = $('input[name=enable]').is(':checked');
-                            if(enable){
+                            if (enable) {
                                 enable = 1;
-                            }else{
+                            } else {
                                 enable = 0;
                             }
 
                             $.ajax({
                                 url: '/admin/user/modify',
                                 type: 'post',
-                                cache:false,
+                                cache: false,
                                 data: {
                                     user_id: user_id,
                                     new_pwd: new_pwd,
@@ -188,7 +189,7 @@
                                         //重新渲染规则
                                         _this.renderTable(result.data, user_id);//渲染table
                                         _this.data.users = result.data.users;//重新设置数据
-
+                                        L.Common.showTipDialog("提示", result.msg || "修改用户成功");
                                         return true;
                                     } else {
                                         L.Common.showErrorTip("提示", result.msg || "编辑用户发生错误");
@@ -222,11 +223,11 @@
                         _this.data.users = result.data.users;//重新设置数据
 
                     } else {
-                        L.Common.showTipDialog("错误提示", "查询Dashboard用户请求发生错误");
+                        L.Common.showErrorTip("错误提示", "查询Dashboard用户请求发生错误");
                     }
                 },
                 error: function () {
-                    L.Common.showTipDialog("提示", "查询Dashboard用户请求发生异常");
+                    L.Common.showErrorTip("提示", "查询Dashboard用户请求发生异常");
                 }
             });
         },
