@@ -47,7 +47,10 @@
                         autofocus: false,
                         callback: function () {
                             var result = _this.buildUpstream();
-                            console.log(result);
+                            
+                          
+                          
+                          .log(result);
 
                             if (result.success) {
                                 $.ajax({
