@@ -16,11 +16,16 @@ return function(config, store)
 
         local node_ip = req.query.ip or ''
         local limit = tonumber(req.query.minutes) or 720
+        local group_by_day = false
+
+        if limit > 2400 then
+            group_by_day = true
+        end
 
         if node_ip == '' then
-            data = persist_model:get_stat(limit)
+            data = persist_model:get_stat(limit, group_by_day)
         else
-            data = persist_model:get_stat_by_ip(node_ip, limit)
+            data = persist_model:get_stat_by_ip(node_ip, limit, group_by_day)
         end
 
         res:json({

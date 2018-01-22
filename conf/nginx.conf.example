@@ -107,6 +107,8 @@ http {
             proxy_pass $target;
 
             header_filter_by_lua_block {
+                ngx.header["X-Powered-By"] = "bhb api gataway";
+                ngx.header["Server"] = nil
                 local orange = context.orange
                 orange.header_filter()
             }

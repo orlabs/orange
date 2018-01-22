@@ -1,4 +1,4 @@
-(function (L) {
+(function(L) {
     var _this = null;
     L.PersistStat = L.PersistStat || {};
     _this = L.PersistStat = {
@@ -12,7 +12,7 @@
             minutes: 15
         },
 
-        init: function () {
+        init: function() {
             _this.initRequestStatus();
             _this.initQPSStatus();
             _this.initReponseStatus();
@@ -24,21 +24,21 @@
             L.Common.loadConfigs("persist", _this, true);
             L.Common.initSwitchBtn(op_type, _this); //关闭、开启
 
-            $("#time-set a").click(function () {
-                $("#time-set a").each(function () {
+            $("#time-set a").click(function() {
+                $("#time-set a").each(function() {
                     $(this).removeClass("active")
                 });
 
                 $(this).addClass("active");
             });
 
-            $(document).on("click", ".timer_interval", function () {
+            $(document).on("click", ".timer_interval", function() {
                 var interval = parseInt($(this).attr("data-interval"));
                 _this.data.interval = interval;
                 _this.startTimer(interval);
             });
 
-            $(document).on("click", ".time_range", function () {
+            $(document).on("click", ".time_range", function() {
                 var minutes = parseInt($(this).attr("data-minutes"));
                 _this.data.minutes = minutes;
                 _this.getStatistic();
@@ -48,7 +48,7 @@
         },
 
 
-        startTimer: function () {
+        startTimer: function() {
 
             if (_this.data.timer) {
                 clearInterval(_this.data.timer);
@@ -60,7 +60,7 @@
 
         },
 
-        formatDate: function (s) {
+        formatDate: function(s) {
             return s.substr(0, s.length - 2) + '00';
 
             var time = new Date(s);
@@ -72,18 +72,33 @@
             return hour + ':' + min;
         },
 
-        getStatistic: function () {
+        getStatistic: function() {
+
+            var seconds = 60;
+
+            if (_this.data.minutes > 2400) {
+                seconds = 86400;
+            }
+
+            var data = {
+                minutes: _this.data.minutes
+            };
+
+            var ip = $("#ip-input").val();
+
+            if (ip != '') {
+                data['ip'] = ip;
+            }
+
+            var try_times;
 
             $.ajax({
                 url: '/persist/statistic',
                 type: 'get',
                 cache: false,
-                data: {
-                    ip: $("#ip-input").val(),
-                    minutes: _this.data.minutes
-                },
+                data: data,
                 dataType: 'json',
-                success: function (result) {
+                success: function(result) {
                     if (result.success) {
 
                         var data = result.data || {};
@@ -124,7 +139,7 @@
                             requestOption.series[4].data.push(data[i].request_5xx);
 
                             // qps
-                            qpsOption.series[0].data.push(data[i].total_success_request_count / 60);
+                            qpsOption.series[0].data.push(data[i].total_success_request_count / seconds);
 
                             // response
                             responseOption.series[0].data.push(data[i].total_request_time);
@@ -187,7 +202,7 @@
                         }
                     }
                 },
-                error: function () {
+                error: function() {
                     try_times--;
                     if (try_times < 0) {
                         clearInterval(_this.data.timer);
@@ -201,7 +216,7 @@
             });
 
         },
-        initRequestStatus: function () {
+        initRequestStatus: function() {
             var option = {
                 title: {
                     text: '请求统计',
@@ -224,76 +239,66 @@
                     show: true,
                     right: "20px",
                     feature: {
-                        dataView: {readOnly: false},
+                        dataView: { readOnly: false },
                         saveAsImage: {}
                     }
                 },
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: [],
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value',
-                        scale: true,
-                        name: '次数'
-                    }
-                ],
-                series: [
-                    {
-                        name: '全部请求',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#03A1F7'
-                            }
-                        },
-                        data: []
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: [],
+                }],
+                yAxis: [{
+                    type: 'value',
+                    scale: true,
+                    name: '次数'
+                }],
+                series: [{
+                    name: '全部请求',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#03A1F7'
+                        }
                     },
-                    {
-                        name: '2xx请求',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#269EBD'
-                            }
-                        },
-                        data: []
+                    data: []
+                }, {
+                    name: '2xx请求',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#269EBD'
+                        }
                     },
-                    {
-                        name: '3xx请求',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#F75903'
-                            }
-                        },
-                        data: []
+                    data: []
+                }, {
+                    name: '3xx请求',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#F75903'
+                        }
                     },
-                    {
-                        name: '4xx请求',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#1C9361'
-                            }
-                        },
-                        data: []
+                    data: []
+                }, {
+                    name: '4xx请求',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#1C9361'
+                        }
                     },
-                    {
-                        name: '5xx请求',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#F75903'
-                            }
-                        },
-                        data: []
-                    }
-                ]
+                    data: []
+                }, {
+                    name: '5xx请求',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#F75903'
+                        }
+                    },
+                    data: []
+                }]
             };
 
             var requestChart = echarts.init(document.getElementById('request-area'));
@@ -301,7 +306,7 @@
             _this.data.requestChart = requestChart;
         },
 
-        initQPSStatus: function () {
+        initQPSStatus: function() {
             var option = {
                 title: {
                     text: 'QPS统计',
@@ -324,37 +329,31 @@
                     show: true,
                     right: "34px",
                     feature: {
-                        dataView: {readOnly: false},
+                        dataView: { readOnly: false },
                         saveAsImage: {}
                     }
                 },
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: [],
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value',
-                        scale: true,
-                        name: 'Query'
-                    }
-                ],
-                series: [
-                    {
-                        name: 'QPS',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#ECA047'
-                            }
-                        },
-                        areaStyle: {normal: {}},
-                        data: []
-                    }
-                ]
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: [],
+                }],
+                yAxis: [{
+                    type: 'value',
+                    scale: true,
+                    name: 'Query'
+                }],
+                series: [{
+                    name: 'QPS',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#ECA047'
+                        }
+                    },
+                    areaStyle: { normal: {} },
+                    data: []
+                }]
             };
 
             var qpsChart = echarts.init(document.getElementById('qps-area'));
@@ -362,7 +361,7 @@
             _this.data.qpsChart = qpsChart;
         },
 
-        initReponseStatus: function () {
+        initReponseStatus: function() {
             var option = {
                 title: {
                     text: '请求时间统计',
@@ -381,42 +380,35 @@
                 legend: {
                     data: ['总时间(s)', '平均响应时间(ms)']
                 },
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: [],
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value',
-                        scale: true,
-                        name: ''
-                    }
-                ],
-                series: [
-                    {
-                        name: '总时间(s)',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#8E704F'
-                            }
-                        },
-                        data: []
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: [],
+                }],
+                yAxis: [{
+                    type: 'value',
+                    scale: true,
+                    name: ''
+                }],
+                series: [{
+                    name: '总时间(s)',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#8E704F'
+                        }
                     },
-                    {
-                        name: '平均响应时间(ms)',
-                        type: 'line',
-                        itemStyle: {
-                            normal: {
-                                color: '#AD8EAD'
-                            }
-                        },
-                        data: []
-                    }
-                ]
+                    data: []
+                }, {
+                    name: '平均响应时间(ms)',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            color: '#AD8EAD'
+                        }
+                    },
+                    data: []
+                }]
             };
 
             var responseChart = echarts.init(document.getElementById('response-area'));
@@ -424,7 +416,7 @@
             _this.data.responseChart = responseChart;
         },
 
-        initTrafficStatus: function () {
+        initTrafficStatus: function() {
             var option = {
                 title: {
                     text: '流量统计',
@@ -442,32 +434,26 @@
                 legend: {
                     data: ['总入(kb)', '总出(kb)']
                 },
-                xAxis: [
-                    {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: [],
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value',
-                        scale: true,
-                        name: ''
-                    }
-                ],
-                series: [
-                    {
-                        name: '总入(kb)',
-                        type: 'line',
-                        smooth: true,
-                        data: []
-                    }, {
-                        name: '总出(kb)',
-                        type: 'line',
-                        data: []
-                    }
-                ]
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: [],
+                }],
+                yAxis: [{
+                    type: 'value',
+                    scale: true,
+                    name: ''
+                }],
+                series: [{
+                    name: '总入(kb)',
+                    type: 'line',
+                    smooth: true,
+                    data: []
+                }, {
+                    name: '总出(kb)',
+                    type: 'line',
+                    data: []
+                }]
             };
 
             var trafficChart = echarts.init(document.getElementById('traffic-area'));
