@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {(common/meta.html)}
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+<div id="wrapper">
+    {(common/left_nav.html)}<!-- 左侧导航 -->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row J_mainContent">
+            <div class="row content-header">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <h4 class="head_title">{{ ip }} 持久日志</h4>
+                    </div>
+
+                    <div class="pull-right" id="time-set">
+
+                        <a id="switch-btn" style="display:none;" data-on="yes" class="btn btn-danger" rel="nofollow"
+                           href="javascript:void(0);">
+                            <i class="fa fa-pause"></i>
+                            <span>停用该插件</span>
+                        </a>
+
+                        <span class="l">显示范围:</span>
+                        <a href="javascript:void(0);" class="active time_range" data-minutes="15">15分钟</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="30">30分钟</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="60">1小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="360">6小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="720">12小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="1440">24小时</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="2400">2天</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="10080">7天</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="21600">15天</a> /
+                        <a href="javascript:void(0);" class="time_range" data-minutes="43200">30天</a>
+
+                        <span class="l">自动刷新时间间隔:</span>
+                        <a href="javascript:void(0);" class="active timer_interval" data-interval="10000">10s</a> /
+                        <a href="javascript:void(0);" class="timer_interval" data-interval="30000">30s</a> /
+                        <a href="javascript:void(0);" class="timer_interval" data-interval="60000">60s</a>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div style="height:400px;padding-top:20px;" id="request-area"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div style="height:400px;padding-top:20px;" id="qps-area"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div style="height:400px;padding-top:20px;" id="response-area"></div>
+                </div>
+                <div class="col-md-6">
+                    <div style="height:400px;padding-top:20px;" id="traffic-area"></div>
+                </div>
+            </div>
+            <!-- content end -->
+        </div>
+    </div><!--右侧部分结束-->
+</div>
+
+<input type="hidden" id="ip-input" value="{{ ip }}"/>
+
+{(common/selector-item-tpl.html)}
+{(common/common_js.html)}<!-- 通用js -->
+<script src="/static/js/echarts3/echarts.common.min.js"></script>
+<script src="/static/js/persist_stat.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        APP.Common.resetNav("nav-persist");
+        APP.PersistStat.init();
+    });
+</script>
+</body>
+</html>
