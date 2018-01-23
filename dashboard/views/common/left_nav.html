@@ -1,4 +1,4 @@
- <!--左侧导航开始-->
+<!--左侧导航开始-->
 <nav id="nav-section" class="navbar-default navbar-static-side" role="navigation">
     <div class="nav-close" style="display: none"><i class="glyphicon glyphicon-transfer"></i>
     </div>
@@ -6,13 +6,17 @@
         <ul class="nav" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
-                        <p>
-                            <span style="display: inline-block;height: 50px;width:50px;line-height: 50px;vertical-align: middle;margin-left: -6px;padding-top: 10px;">{(common/logo.html)}</span>
-                            <span style="display: inline-block;height: 50px;line-height: 50px;vertical-align: middle;color: #fff;padding-top:6px;font-size: 18px;padding-left: 10px;"><strong class="font-bold">Orange</strong></span>
-                        </p>
+                    <p>
+                        <span
+                            style="display: inline-block;height: 50px;width:50px;line-height: 50px;vertical-align: middle;margin-left: -6px;padding-top: 10px;">{(common/logo.html)}</span>
+                        <span
+                            style="display: inline-block;height: 50px;line-height: 50px;vertical-align: middle;color: #fff;padding-top:6px;font-size: 18px;padding-left: 10px;"><strong
+                            class="font-bold">Orange</strong></span>
+                    </p>
                 </div>
                 <div class="logo-element">
-                     <span style="display: inline-block;height: 50px;width:50px;line-height: 50px;vertical-align: middle;margin-left: -6px;padding-top: 10px;">{(common/logo.html)}</span>
+                    <span
+                        style="display: inline-block;height: 50px;width:50px;line-height: 50px;vertical-align: middle;margin-left: -6px;padding-top: 10px;">{(common/logo.html)}</span>
                 </div>
             </li>
             <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
@@ -30,6 +34,7 @@
                     <span class="nav-label">全局统计</span>
                 </a>
             </li>
+
 
             <li class="line dk"></li>
 
@@ -109,18 +114,22 @@
                     <span class="nav-label">KVStore</span>
                 </a>
             </li>
-
-
+            <li id="nav-persist">
+                <a href="/persist">
+                    <i class="fa fa-th"></i>
+                    <span class="nav-label">历史监控</span>
+                </a>
+            </li>
 
             {%
-                if locals and locals.login and locals.login == true then
+            if locals and locals.login and locals.login == true then
             %}
             <li class="line dk"></li>
             <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
                 <span class="ng-scope">管理</span>
             </li>
             {%
-            	if locals.is_admin then
+            if locals.is_admin then
             %}
             <li id="nav-user-manage">
                 <a href="/admin/user/manage">
@@ -128,6 +137,14 @@
                     <span class="nav-label">用户管理</span>
                 </a>
             </li>
+
+            <li id="nav-node">
+                <a href="/admin/node/manage">
+                    <i class="fa fa fa-server"></i>
+                    <span class="nav-label">集群节点</span>
+                </a>
+            </li>
+
             {% end %}
             <li>
                 <a href="/auth/logout">
