@@ -342,6 +342,45 @@ VALUES
 /*!40000 ALTER TABLE `balancer` ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- Create syntax for TABLE 'persist_log'
+CREATE TABLE `persist_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ip` varchar(20) NOT NULL DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `stat_time` datetime DEFAULT NULL,
+  `request_2xx` int(11) DEFAULT '0',
+  `request_3xx` int(11) DEFAULT '0',
+  `request_4xx` int(11) DEFAULT '0',
+  `request_5xx` int(11) DEFAULT '0',
+  `total_request_count` int(11) DEFAULT '0',
+  `total_success_request_count` int(11) DEFAULT '0',
+  `traffic_read` int(11) DEFAULT '0',
+  `traffic_write` int(11) DEFAULT '0',
+  `total_request_time` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `ip` (`ip`),
+  KEY `op_time` (`op_time`),
+  KEY `stat_time` (`stat_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Create syntax for TABLE 'persist'
+CREATE TABLE `persist` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `persist` WRITE;
+
+INSERT INTO `persist` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
+
+UNLOCK TABLES;
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
