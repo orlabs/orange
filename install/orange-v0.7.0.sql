@@ -342,7 +342,29 @@ VALUES
 /*!40000 ALTER TABLE `balancer` ENABLE KEYS */;
 UNLOCK TABLES;
 
--- Create syntax for TABLE 'persist_log'
+
+DROP TABLE IF EXISTS `persist`;
+
+CREATE TABLE `persist` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  
+LOCK TABLES `persist` WRITE;
+
+INSERT INTO `persist` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+  (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
+
+UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `persist_log`;
+
 CREATE TABLE `persist_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ip` varchar(20) NOT NULL DEFAULT '',
@@ -363,8 +385,24 @@ CREATE TABLE `persist_log` (
   KEY `stat_time` (`stat_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Create syntax for TABLE 'persist'
-CREATE TABLE `persist` (
+DROP TABLE IF EXISTS `cluster_node`;
+
+CREATE TABLE `cluster_node` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `ip` varchar(20) NOT NULL DEFAULT '',
+  `port` smallint(6) DEFAULT '7777',
+  `api_username` varchar(50) DEFAULT '',
+  `api_password` varchar(50) DEFAULT '',
+  `sync_status` varchar(2000) DEFAULT '',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `node`;
+
+CREATE TABLE `node` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL DEFAULT '',
   `value` varchar(2000) NOT NULL DEFAULT '',
@@ -373,10 +411,10 @@ CREATE TABLE `persist` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  
+LOCK TABLES `node` WRITE;
 
-LOCK TABLES `persist` WRITE;
-
-INSERT INTO `persist` (`id`, `key`, `value`, `type`, `op_time`)
+INSERT INTO `node` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
   (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
 
