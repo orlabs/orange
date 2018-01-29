@@ -88,6 +88,11 @@ function _M.judge(condition)
     elseif condition_type == "Header" then
         local headers = ngx.req.get_headers()
         real = headers[condition.name]
+    elseif condition_type == "Cookie" then
+        local cookies = ngx.ctx.__cookies__
+        if cookies then
+            real = cookies:get(condition.name)
+        end
     elseif condition_type == "IP" then
         real =  ngx.var.remote_addr
     elseif condition_type == "UserAgent" then

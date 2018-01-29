@@ -7,6 +7,9 @@ local orange_db = require("orange.store.orange_db")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
 local dao = require("orange.store.dao")
+local consul_kv = require("orange.store.consul_kv")
+local consul = require("orange.plugins.consul_balancer.consul_balancer")
+local orange = require("orange.orange")
 
 -- build common apis
 return function(plugin)
@@ -403,6 +406,7 @@ return function(plugin)
     API["/" .. plugin .. "/selectors"] = {
         GET = function(store) -- get selectors
             return function(req, res, next)
+                local meta = orange_db.get_json(plugin .. ".meta")
                 res:json({
                     success = true,
                     data = {
@@ -447,9 +451,13 @@ return function(plugin)
                     })
                 end
 
+                if plugin == "consul_balancer" then
+                    orange.data.consul.remove_watch(to_del_selector)
+                end
+
                 local to_del_rules_ids = to_del_selector.rules or {}
                 local d_result = dao.delete_rules_of_selector(plugin, store, to_del_rules_ids)
-                ngx.log(ngx.ERR, "delete rules of selector:", d_result)
+                ngx.log(ngx.INFO, "delete rules of selector:", d_result)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)
@@ -536,6 +544,15 @@ return function(plugin)
 
                 -- update local meta & selectors
                 if insert_result then
+                    if plugin == "consul_balancer" then
+                        orange.data.consul.add_watch({
+                            id = selector.id,
+                            name = selector.name,
+                            service = selector.service,
+                            tag = nil
+                        })
+                    end
+                    
                     local update_local_meta_result = dao.update_local_meta(plugin, store)
                     local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if update_local_meta_result and update_local_selectors_result then
@@ -562,11 +579,42 @@ return function(plugin)
         PUT = function(store) -- update
             return function(req, res, next)
                 local selector = req.body.selector
+                local meta = orange_db.get_json(plugin .. ".meta")
                 selector = json.decode(selector)
+
+                local old_selector = dao.get_selector(plugin, store, selector.id)
+                if not old_selector or not old_selector.value then
+                    return res:json({
+                        success = false,
+                        msg = "error to get old selector"
+                    })
+                end
+
+                old_selector = json.decode(old_selector.value)
+                if not old_selector then
+                    return res:json({
+                        success = false,
+                        msg = "error to decode old selector value"
+                    })
+                end
+
+                -- update rule
+                --ngx.log(ngx.ERR, old_selector.rules);
+                selector.rules = old_selector.rules or {}
                 selector.time = utils.now()
+
                 -- 更新selector
                 local update_selector_result = dao.update_selector(plugin, store, selector)
                 if update_selector_result then
+                    if plugin == "consul_balancer" then
+                        orange.data.consul.add_watch({
+                            id = selector.id,
+                            name = selector.name,
+                            service = selector.service,
+                            tag = nil
+                        })
+                    end
+
                     local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if not update_local_selectors_result then
                         return res:json({
@@ -580,6 +628,8 @@ return function(plugin)
                         msg = "error to update selector"
                     })
                 end
+
+                meta = orange_db.get_json(plugin .. ".meta")
 
                 return res:json({
                     success = true,

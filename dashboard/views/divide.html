@@ -10,7 +10,7 @@
 
         <!--右侧部分开始-->
         <div id="page-wrapper" class="gray-bg dashbard-1">
-         
+
             <div class="row J_mainContent">
                 <!-- content start -->
                 <div class="row content-header">
@@ -116,6 +116,7 @@
                                             <span>{</span><span>{</span>
                                             {@if e.type=="Query" }query.<span>${e.name}</span>{@/if}
                                             {@if e.type=="Header" }header.<span>${e.name}</span>{@/if}
+                                            {@if e.type=="Cookie" }cookie.<span>${e.name}</span>{@/if}
                                             {@if e.type=="PostParams" }body.<span>${e.name}</span>{@/if}
                                             {@if e.type=="Host" }host{@/if}
 

@@ -29,6 +29,10 @@ function BasePlugin:access()
     ngx.log(ngx.DEBUG, " executing plugin \"", self._name, "\": access")
 end
 
+function BasePlugin:balancer()
+    ngx.log(ngx.DEBUG, " executing plugin \"", self._name, "\": balancer")
+end
+
 function BasePlugin:header_filter()
     ngx.log(ngx.DEBUG, " executing plugin \"", self._name, "\": header_filter")
 end
