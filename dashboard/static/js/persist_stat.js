@@ -101,7 +101,13 @@
                 success: function(result) {
                     if (result.success) {
 
-                        var data = result.data || {};
+                        var data = result.data || [];
+
+                        // 没有数据时，不予展示图表
+                        if (data.length === 0) {
+                            APP.Common.showTipDialog("提示", "没有更多数据");
+                            return;
+                        }
 
                         //request 统计
                         var requestOption = _this.data.requestChart.getOption();
