@@ -18,8 +18,10 @@ return function(config, store)
         local limit = tonumber(req.query.minutes) or 720
         local group_by_day = false
 
-        if limit > 2400 then
+        -- 大于 2 天，统计粒度 按天计算
+        if limit > (24 * 60 * 2) then
             group_by_day = true
+            limit = limit / (24 * 60)
         end
 
         if node_ip == '' then

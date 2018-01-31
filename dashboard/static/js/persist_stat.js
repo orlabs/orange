@@ -76,7 +76,7 @@
 
             var seconds = 60;
 
-            if (_this.data.minutes > 2400) {
+            if (_this.data.minutes > 2880) {
                 seconds = 86400;
             }
 
@@ -139,7 +139,7 @@
                             requestOption.series[4].data.push(data[i].request_5xx);
 
                             // qps
-                            qpsOption.series[0].data.push(data[i].total_success_request_count / seconds);
+                            qpsOption.series[0].data.push(data[i].total_request_count / seconds);
 
                             // response
                             responseOption.series[0].data.push(data[i].total_request_time);
