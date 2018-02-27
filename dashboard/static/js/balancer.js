@@ -43,12 +43,19 @@
                     modal: true,
                     button: [{
                         value: '取消'
-                    },{
+                    }, {
+                        value: '预览',
+                        autofocus: false,
+                        callback: function() {
+                            var s = _this.buildUpstream();
+                            _this.showPreview("upstream", s);
+                            return false;
+                        }
+                    }, {
                         value: '确定',
                         autofocus: false,
                         callback: function() {
                             var result = _this.buildUpstream();
-                            console.log(result);
 
                             if (result.success) {
                                 $.ajax({
@@ -198,6 +205,7 @@
                         callback: function() {
                             var result = _this.buildUpstream();
                             result.data.id = selector.id; //拼上要修改的id
+                            result.data.rules = selector.rules;//拼上已有的rules
 
                             if (result.success == true) {
                                 $.ajax({
@@ -532,7 +540,7 @@
                     connection_timeout: 60000,
                     read_timeout: 60000,
                     send_timeout: 60000,
-                    retries: 0,
+                    retries: 3,
                     slots: 1000
                 }
             };
