@@ -34,10 +34,10 @@
                 </select>
             </div>
             <div class="col-sm-2 condition-name-hodler"
-                {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" } 
-                    style="display:none;padding-left:0px;" 
+                {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" }
+                    style="display:none;padding-left:0px;"
                 {@else}
-                    style="padding-left:0px;" 
+                    style="padding-left:0px;"
                 {@/if}>
                 <input type="text" class="form-control" name="rule-judge-condition-name" placeholder="name" value="${c.name}">
             </div>
@@ -51,6 +51,7 @@
                     <option value=">=" {@if c.operator==">=" } selected {@/if}>&ge;</option>
                     <option value="<" {@if c.operator=="<"} selected {@/if}>&lt;</option>
                     <option value="<=" {@if c.operator=="<="} selected {@/if}>&le;</option>
+                    <option value="%" {@if c.operator=="%"} selected {@/if}>%</option>
                 </select>
             </div>
             <div class="col-sm-3">
