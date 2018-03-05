@@ -26,6 +26,8 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 - 使用luarocks安装一些第三方库
     - luarocks install penlight
     - luarocks install lua-resty-dns-client
+    - luarocks install lua-resty-http
+    - luarocks install luasocket
 
 #### 数据表导入MySQL
 
