@@ -6,6 +6,7 @@ local orange_db = require "orange.store.orange_db"
 local pl_tablex = require "pl.tablex"
 local dns_client = require "resty.dns.client"
 local ring_balancer = require "resty.dns.balancer"
+local table_insert = table.insert
 
 local toip = dns_client.toip
 local log = ngx.log
@@ -109,29 +110,32 @@ local get_balancer = function(target)
 
     -- we've got the upstream, now fetch its targets, from orange_db
 
-    local targets_history = orange_db.get_json("balancer.selector." .. upstream.id .. ".rules")
+    local targets = orange_db.get_json("balancer.selector." .. upstream.id .. ".rules")
 
-    if not targets_history then
+    if not targets then
         return false    -- TODO, for now, just simply reply false
     end
 
     -- perform some raw data updates
-    for _, t in ipairs(targets_history) do
-        -- split `target` field into `name` and `port`
-        local port
-        t.name, port = string.match(t.target, "^(.-):(%d+)$")
-        t.port = tonumber(port)
-
-        -- need exact order, so create sort-key by create-time and uuid
-        t.order = t.time .. ":" .. t.id
+    local enabled_targets = {}
+    for i, t in ipairs(targets) do
         if t.enable then
-            t.order = "0" .. ":" .. t.order
-        else
-            t.order = "1" .. ":" .. t.order
+            -- split `target` field into `name` and `port`
+            local port
+            t.name, port = string.match(t.target, "^(.-):(%d+)$")
+            t.port = tonumber(port)
+
+            -- need exact order, so create sort-key by create-time and uuid
+            t.order = t.time .. ":" .. t.id
+            table_insert(enabled_targets, t)
         end
     end
 
-    table.sort(targets_history, function(a, b)
+    if #enabled_targets == 0 then
+        return false    -- no enabled host
+    end
+
+    table.sort(enabled_targets, function(a, b)
         return a.order < b.order
     end)
 
@@ -159,17 +163,17 @@ local get_balancer = function(target)
     -- ones with `__`-prefixed, are the ones on the `balancer` object, and the
     -- regular ones are the ones we just fetched an are comparing against.
     local __size = #balancer.__targets_history
-    local size = #targets_history
+    local size = #enabled_targets
 
     if __size ~= size or
         (balancer.__targets_history[__size] or EMPTY_T).order ~=
-        (targets_history[size] or EMPTY_T).order then
+        (enabled_targets[size] or EMPTY_T).order then
         -- last entries in history don't match, so we must do some updates.
 
         -- compare balancer history with db-loaded history
         local last_equal_index = 0  -- last index where history is the same
         for i, entry in ipairs(balancer.__targets_history) do
-            if entry.order ~= (targets_history[i] or EMPTY_T).order then
+            if entry.order ~= (enabled_targets[i] or EMPTY_T).order then
                 last_equal_index = i - 1
                 break
             end
@@ -177,7 +181,7 @@ local get_balancer = function(target)
 
         if last_equal_index == __size then
             -- history is the same, so we only need to add new entries
-            apply_history(balancer, targets_history, last_equal_index + 1)
+            apply_history(balancer, enabled_targets, last_equal_index + 1)
         else
             -- history not the same.
             -- TODO: ideally we would undo the last ones until we're equal again
@@ -195,7 +199,7 @@ local get_balancer = function(target)
 
             balancer.__targets_history = {}
             balancers[upstream.name] = balancer
-            apply_history(balancer, targets_history, 1)
+            apply_history(balancer, enabled_targets, 1)
         end
     end
 
