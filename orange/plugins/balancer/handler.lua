@@ -109,6 +109,11 @@ end
 function BalancerHandler:balancer(conf)
     BalancerHandler.super.balancer(self)
 
+    local enable = orange_db.get("balancer.enable")
+    if not enable or enable ~= true then
+        return
+    end
+
     local addr = ngx.ctx.balancer_address
     local tries = addr.tries
     local current_try = {}

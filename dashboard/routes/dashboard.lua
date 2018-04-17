@@ -161,6 +161,10 @@ return function(config, store)
         res:render("balancer")
     end)
 
+    dashboard_router:get("/consul_balancer", function(req, res, next)
+        res:render("consul_balancer")
+    end)
+
     dashboard_router:get("/kvstore", function(req, res, next)
         res:render("kvstore")
     end)
