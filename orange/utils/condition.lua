@@ -92,7 +92,6 @@ function _M.judge(condition)
         real =  ngx.var.remote_addr
     elseif condition_type == "Weight" then
         real = ngx.now() * 1000 % 100
-        ngx.log(ngx.ERR,real)
     elseif condition_type == "UserAgent" then
         real =  ngx.var.http_user_agent
     elseif condition_type == "Method" then
