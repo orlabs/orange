@@ -30,11 +30,12 @@ local function filter_rules(sid, plugin, ngx_var_uri)
             ngx.log(ngx.INFO, "==[DynamicUpstream][rule name:", rule.name, "][rule id:", rule.id, ']')
             -- judge阶段
             local pass = judge_util.judge_rule(rule, "dynamic_upstream")
-            -- extract阶段
-            local variables = extractor_util.extract_variables(rule.extractor)
 
             -- handle阶段
             if pass then
+                -- extract阶段
+                local variables = extractor_util.extract_variables(rule.extractor)
+
                 local handle = rule.handle
                 if handle and handle.uri_tmpl and handle.upstream_name then
                     local to_rewrite = handle_util.build_uri(rule.extractor.type, handle.uri_tmpl, variables)
