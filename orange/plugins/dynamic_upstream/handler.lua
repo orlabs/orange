@@ -12,7 +12,8 @@ local ngx_set_uri_args = ngx.req.set_uri_args
 local ngx_decode_args = ngx.decode_args
 
 local function ngx_set_uri(uri,rule_handle)
-    ngx.var.upstream_host = rule_handle.host and rule_handle.host or ngx.var.host
+    ngx.var.upstream_scheme = rule_handle.upstream_scheme
+    ngx.var.upstream_host = rule_handle.host or ngx.var.host
     ngx.var.upstream_url = rule_handle.upstream_name
     if uri then
         ngx.var.upstream_request_uri = uri  .. '?' .. ngx.encode_args(ngx.req.get_uri_args())

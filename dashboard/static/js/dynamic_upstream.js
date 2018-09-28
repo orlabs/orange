@@ -154,11 +154,17 @@ function gen_ngx_fmt_upstream_servers_conf(upstream_name)
                 }(uri_tmpl);
             }
 
-            console.log(uri_tmpl)
-
             if(uri_tmpl) {
                 handle.uri_tmpl = uri_tmpl
             }
+
+            var upstream_scheme = $("#rule-handle-upstream-scheme").val();
+            if (!upstream_scheme) {
+                result.success = false;
+                result.data = "dynamic upstream 使用的upstream name不得为空";
+                return result;
+            }
+            handle.upstream_scheme = upstream_scheme;
 
             var upstream_name = $("#rule-handle-upstream-name").val();
             if (!upstream_name) {
