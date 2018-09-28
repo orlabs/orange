@@ -14,7 +14,9 @@ local ngx_decode_args = ngx.decode_args
 local function ngx_set_uri(uri,rule_handle)
     ngx.var.upstream_host = rule_handle.host and rule_handle.host or ngx.var.host
     ngx.var.upstream_url = rule_handle.upstream_name
-    ngx.var.upstream_request_uri = uri  .. '?' .. ngx.encode_args(ngx.req.get_uri_args())
+    if uri then
+        ngx.var.upstream_request_uri = uri  .. '?' .. ngx.encode_args(ngx.req.get_uri_args())
+    end
     ngx.log(ngx.INFO, '[DynamicUpstream][upstream request][http://', ngx.var.upstream_url, ngx.var.upstream_request_uri, ']')
 end
 
@@ -37,7 +39,9 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                 local variables = extractor_util.extract_variables(rule.extractor)
 
                 local handle = rule.handle
-                if handle and handle.uri_tmpl and handle.upstream_name then
+                if not handle.uri_tmpl then
+                    ngx_set_uri(nil, handle)
+                elseif handle and handle.upstream_name then
                     local to_rewrite = handle_util.build_uri(rule.extractor.type, handle.uri_tmpl, variables)
                     if to_rewrite then
                         if handle.log == true then

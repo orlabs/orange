@@ -147,15 +147,18 @@ function gen_ngx_fmt_upstream_servers_conf(upstream_name)
             var result = {};
             var handle = {};
             var uri_tmpl = $("#rule-handle-uri-template").val();
-            if (!uri_tmpl) {
-                result.success = false;
-                result.data = "dynamic upstream 中 rewrite使用的uri template不得为空";
-                return result;
+            if (uri_tmpl) {
+                // refer this https://www.w3schools.com/jsref/jsref_trim_string.asp
+                uri_tmpl = function(x) {
+                    return x.replace(/^\s+|\s+$/gm,'');
+                }(uri_tmpl);
             }
-            // refer this https://www.w3schools.com/jsref/jsref_trim_string.asp
-            handle.uri_tmpl = function(x) {
-                return x.replace(/^\s+|\s+$/gm,'');
-            }(uri_tmpl);
+
+            console.log(uri_tmpl)
+
+            if(uri_tmpl) {
+                handle.uri_tmpl = uri_tmpl
+            }
 
             var upstream_name = $("#rule-handle-upstream-name").val();
             if (!upstream_name) {
