@@ -87,8 +87,6 @@ function Orange.init_worker()
     math.randomseed()
     -- 初始化定时器，清理计数器等
     if Orange.data and Orange.data.store and Orange.data.config.store == "mysql" then
-        local worker_id = ngx.worker.id()
-        if worker_id == 0 then
             local ok, err = ngx.timer.at(0, function(premature, store, config)
                 local available_plugins = config.plugins
                 for _, v in ipairs(available_plugins) do
@@ -103,7 +101,6 @@ function Orange.init_worker()
                 ngx.log(ngx.ERR, "failed to create the timer: ", err)
                 return os.exit(1)
             end
-        end
     end
 
     for _, plugin in ipairs(loaded_plugins) do
