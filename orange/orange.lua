@@ -205,6 +205,9 @@ function Orange.body_filter()
     end
 
     if ngx.ctx.ACCESSED then
+        if ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT == nil then
+            ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT = 0
+        end
         ngx.ctx.ORANGE_RECEIVE_TIME = now() - ngx.ctx.ORANGE_HEADER_FILTER_STARTED_AT
     end
 end

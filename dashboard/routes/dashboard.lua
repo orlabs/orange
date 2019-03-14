@@ -149,6 +149,11 @@ return function(config, store)
         res:render("key_auth/key_auth")
     end)
 
+    -- JWT AUTH
+    dashboard_router:get("/jwt_auth", function(req, res, next)
+        res:render("jwt_auth/jwt_auth")
+    end)
+
     dashboard_router:get("/waf", function(req, res, next)
         res:render("waf")
     end)

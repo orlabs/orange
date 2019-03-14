@@ -33,6 +33,15 @@ http {
 
         keepalive 60;   # connection pool
     }
+    #
+    # Config client_body_buffer_size equal client_max_body_size for enforcing in-memory buffering of the whole request body
+    # ref: https://github.com/openresty/lua-nginx-module/issues/521
+    #
+    # official instruct docs http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
+    #
+
+    client_body_buffer_size 1m;
+    client_max_body_size 1m;
 
     #----------------------------Orange configuration-----------------------------
     lua_package_path '../?.lua;/usr/local/lor/?.lua;;';
