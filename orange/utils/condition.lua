@@ -111,6 +111,8 @@ function _M.judge(condition)
         end
     elseif condition_type == "IP" then
         real =  ngx.var.remote_addr
+    elseif condition_type == "Random" then
+        real = ngx.now() * 1000 % 100
     elseif condition_type == "UserAgent" then
         real =  ngx.var.http_user_agent
     elseif condition_type == "Method" then

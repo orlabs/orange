@@ -43,6 +43,7 @@
 
                             <div class="col-sm-2">
                                 <select class="form-control" name="rule-judge-condition-type">
+                                    <option value="Random" {@if c.type == "Random" } selected {@/if}>Random</option>
                                     <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
                                     <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
                                     <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
