@@ -1,0 +1,29 @@
+sudo: required
+dist: trusty
+
+os: linux
+
+language: c
+
+compiler:
+  - gcc
+  - clang
+
+addons:
+  apt:
+    packages:
+    - luarocks
+    - jq
+
+
+env:
+  matrix:
+    - NGINX_VERSION=1.9.15
+    - NGINX_VERSION=1.11.2
+
+before_install:
+  - jq . conf/orange.conf.example >> /dev/null  || exit 1
+  - sudo luarocks install luacheck
+  - luacheck -q .
+  - '! grep -n -P ''(?<=.{80}).+'' --color `find . -name ''*.lua''` || (echo "ERROR: Found Lua source lines exceeding 80 columns." > /dev/stderr; exit 1)'
+  - '! grep -n -P ''\t+'' --color `find . -name ''*.lua''` || (echo "ERROR: Cannot use tabs." > /dev/stderr; exit 1)'
