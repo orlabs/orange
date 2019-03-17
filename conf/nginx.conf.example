@@ -85,7 +85,9 @@ http {
 
         location / {
             set $upstream_host $host;
-            set $upstream_url 'http://default_upstream';
+            set $upstream_request_uri '';
+            set $upstream_url '';
+            set $upstream_scheme '';
 
             rewrite_by_lua_block {
                 local orange = context.orange
@@ -102,8 +104,7 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Scheme $scheme;
-            proxy_set_header Host $upstream_host;
-            proxy_pass $upstream_url;
+            proxy_pass $upstream_scheme$upstream_url$upstream_request_uri;
 
 
             header_filter_by_lua_block {
@@ -136,8 +137,12 @@ http {
 
         location / {
             content_by_lua_block {
-                ngx.status = 404
-                ngx.say([[404! upstream not found. Host: ]] .. ngx.var.host .. "  URI: " .. ngx.var.uri)
+                local json = require "cjson"
+                ngx.status = 200
+                ngx.say("Host: "..ngx.var.host .. "  URI: " .. ngx.var.uri)
+                ngx.say('[Query string]',json.encode(ngx.req.get_uri_args()))
+                ngx.req.read_body()
+                ngx.say('[Post Params]',json.encode(ngx.req.get_post_args()))
             }
         }
     }

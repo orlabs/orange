@@ -1398,6 +1398,7 @@
                         //重新设置数据
                         context.data.selector_rules = context.data.selector_rules || {};
                         context.data.selector_rules[selector_id] = result.data.rules;
+                        context.renderRulesCallback && context.renderRulesCallback(result.data.rules);
                         _this.renderRules(result.data);
                     } else {
                         _this.showErrorTip("错误提示", "查询" + op_type + "规则发生错误");
