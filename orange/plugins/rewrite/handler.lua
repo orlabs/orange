@@ -39,8 +39,8 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                         local from, to, err = ngx_re_find(to_rewrite, "[?]{1}", "jo")
                         if not err and from and from >= 1 then
                             --local qs = ngx_re_sub(to_rewrite, "[A-Z0-9a-z-_/]*[%?]{1}", "", "jo")
-                            to_rewrite = string_sub(to_rewrite, 1, from-1)
                             local qs = string_sub(to_rewrite, from+1)
+                            to_rewrite = string_sub(to_rewrite, 1, from-1)
                             if qs then
                                 local args = ngx_decode_args(qs, 0)
                                 if args then 
