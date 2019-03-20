@@ -34,7 +34,7 @@ function BalancerHandler:access(conf)
         ngx.var.target = ngx.var.upstream_url
         return
     end
-    
+
     local upstream_url = ngx.var.upstream_url
     ngx.log(ngx.INFO, "[upstream_url] ", upstream_url)
 
@@ -77,7 +77,7 @@ function BalancerHandler:access(conf)
                         retries            = upstream.retries or 0, -- number of retries for the balancer
                         connection_timeout = upstream.connection_timeout or 60000,
                         send_timeout       = upstream.send_timeout or 60000,
-                        read_timeout       = upstream_read_timeout or 60000,
+                        read_timeout       = upstream.read_timeout or 60000,
 
                         -- ip              = nil,     -- final target IP address
                         -- balancer        = nil,     -- the balancer object, in case of balancer
@@ -132,7 +132,7 @@ function BalancerHandler:balancer(conf)
 
         local ok, err = balancer_execute(addr)
         if not ok then
-            ngx.log(ngx.ERR, "failed to retry the dns/balancer resolver for ", 
+            ngx.log(ngx.ERR, "failed to retry the dns/balancer resolver for ",
                     addr.host, "' with: ", tostring(err))
             return ngx.exit(500)
         end
