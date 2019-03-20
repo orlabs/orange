@@ -34,7 +34,6 @@ function BalancerHandler:access(conf)
         ngx.var.target = ngx.var.upstream_url
         return
     end
-
     local upstream_url = ngx.var.upstream_url
     ngx.log(ngx.INFO, "[upstream_url] ", upstream_url)
 
