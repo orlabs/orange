@@ -131,7 +131,7 @@ function BalancerHandler:balancer(conf)
 
         local ok, err = balancer_execute(addr)
         if not ok then
-            ngx.log(ngx.ERR, "failed to retry the dns/balancer resolver for ",
+            ngx.log(ngx.ERR, "failed to retry the dns/balancer resolver for ", 
                     addr.host, "' with: ", tostring(err))
             return ngx.exit(500)
         end
