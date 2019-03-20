@@ -1,4 +1,4 @@
-### HTTP JSON Web Authorization Plugin
+### HTTP JSON Web Token Plugin
 
 ### file
 * 插件目录
@@ -16,6 +16,8 @@
  * 项目依赖 [SkyLothar/lua-resty-jwt](https://github.com/SkyLothar/lua-resty-jwt)
  
  	* `opm get  SkyLothar/lua-resty-jwt` 或者 `luarocks install lua-resty-jwt`
+ * 添加插件配置 
+    * 需要在 orange.conf 中 plugins 添加 `jwt_auth` 
 
  * 认证方式：
  	
