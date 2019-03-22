@@ -13,9 +13,9 @@
 	
 ### 说明
 	
- * 项目依赖 [SkyLothar/lua-resty-jwt](https://github.com/SkyLothar/lua-resty-jwt)
+ * 项目依赖 [shimohq/lua-resty-jwt](https://github.com/shimohq/lua-resty-jwt)
  
- 	* `opm get  SkyLothar/lua-resty-jwt` 或者 `luarocks install lua-resty-jwt`
+ 	* `opm get shimohq/lua-resty-jwtt` 或者 `luarocks install lua-resty-jwt-48606`
  * 添加插件配置 
     * 需要在 orange.conf 中 plugins 添加 `jwt_auth` 
 
