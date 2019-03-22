@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {(common/meta.html)}
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+<div id="wrapper">
+    {(common/left_nav.html)}<!-- 左侧导航 -->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row J_mainContent">
+
+            <!-- content start -->
+            <div class="row content-header">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <h4 class="head_title">Dynamic Upstream</h4>
+                    </div>
+                    <div class="pull-right">
+                        {(common/plugin-op.html)}
+                    </div>
+                </div>
+            </div>
+
+            {(common/data-view-part.html)}
+            {(common/right-selector-rule-part.html)}
+
+            <!-- content end -->
+        </div>
+    </div><!--右侧部分结束-->
+</div>
+
+
+
+
+<script id="rule-item-tpl" type="text/template">
+    {@each rules as r, index}
+    <li data-id="${r.id}" {@if r.enable==true } class="info-element"{@/if}
+    {@if r.enable!=true } class="warning-element"{@/if}>
+    <table class="table table-hover single-rule-table">
+        <tbody>
+        <tr>
+            <td class="center rule-enable-td">
+                {@if r.enable==true }
+                <span class="label label-primary">已启用</span>
+                {@/if}
+                {@if r.enable!=true }
+                <span class="label label-warning">已禁用</span>
+                {@/if}
+            </td>
+            <td class="rule-name-td">
+                <b class="namep">${r.name}</b>
+            </td>
+            <td class="left rule-condition-td">
+                <p>
+                    <b>类型</b>:
+                    {@if r.judge.type==0 }
+                    单一条件匹配
+                    {@/if}
+                    {@if r.judge.type==1 }
+                    and匹配
+                    {@/if}
+                    {@if r.judge.type==2 }
+                    or匹配
+                    {@/if}
+                    {@if r.judge.type==3 }
+                    复杂匹配
+                    {@/if}
+
+
+                    {@if r.judge.type==3 }
+                    <br/><b>表达式</b>: ${r.judge.expression}
+                    {@/if}
+                </p>
+                {@each r.judge.conditions as c, index}
+                <p class="conditionp">${c.type}: ${c.name} ${c.operator} ${c.value}</p>
+                {@/each}
+            </td>
+
+            <td class="left rule-extractor-td">
+                <p class="extractorp">
+                    {@if r.extractor}
+                    <b>变量提取类型</b>:
+                    {@if !r.extractor.type || r.extractor.type==1 }
+                    索引式提取
+                    {@/if}
+                    {@if r.extractor.type==2 }
+                    模板式提取
+                    {@/if}
+                    <br/>
+                    {@/if}
+                </p>
+
+                {@if r.extractor && r.extractor.extractions }
+                {@each r.extractor.extractions as e, index}
+
+                {@if !r.extractor.type || r.extractor.type==1 }<!-- 索引式提取 -->
+                {@if e.type!="URI" }
+                <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                ${e.type}{@if e.name }[${e.name}]{@/if}
+
+                {@if e.default=="" || e.default }
+                <span style="color:#aaa;margin-left:15px;">
+                                                    default: <i style="text-decoration:underline">${e.default}</i>
+                                                </span>
+                {@/if}
+                {@/if}
+
+                {@if e.type=="URI" }
+                <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                <i style="text-decoration:underline">${e.name}</i>
+                {@/if}
+                <br/>
+                {@/if}
+                {@if r.extractor.type==2 }<!-- 模板式提取 -->
+                {@if e.type!="URI" }
+                <span>{</span><span>{</span>
+                {@if e.type=="Query" }query.<span>${e.name}</span>{@/if}
+                {@if e.type=="Header" }header.<span>${e.name}</span>{@/if}
+                {@if e.type=="PostParams" }body.<span>${e.name}</span>{@/if}
+                {@if e.type=="Host" }host{@/if}
+
+                {@if e.type=="IP" }ip{@/if}
+                {@if e.type=="Method" }method{@/if}
+                <span>}</span><span>}</span>
+
+                {@if e.default=="" || e.default }
+                <span style="color:#aaa;margin-left:15px;">
+                                                    default: <i style="text-decoration:underline">${e.default}</i>
+                                                </span>
+                {@/if}
+                {@/if}
+
+                {@if e.type=="URI" }
+                <span>{</span><span>{</span>
+                uri.v1 or uri.v2 ...
+                <span>}</span><span>}</span>
+
+                <i style="text-decoration:underline">regrex: ${e.name}</i>
+
+                {@/if}
+                <br/>
+                {@/if}
+
+                {@/each}
+                {@/if}
+            </td>
+
+            <td class="left rule-urltmpl-td">
+                <b>URI模板</b>:
+                <br/>
+                <p class="urltmplp">${r.handle.uri_tmpl}</p>
+                <b>记录日志</b>: ${r.handle.log}
+            </td>
+
+            <td class="left" title="变更时间">
+                <small>${r.time}</small>
+            </td>
+            <td class="center rule-op-td">
+                <a class="btn btn-white btn-sm edit-btn" data-id="${r.id}" data-name="${r.name}"><i title="编辑" class="fa fa-pencil"></i> </a>
+                <a class="btn btn-white btn-sm delete-btn" data-id="${r.id}" data-name="${r.name}"><i title="删除" class="fa fa-trash"></i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </li>
+    {@/each}
+</script>
+
+<script id="add-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="add-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <!-- add - 条件编辑器模板 start -->
+            {(common/condition-add.html)}
+            <!-- add - 条件编辑器模板 end -->
+
+            <!-- add - 变量提取器模板 start -->
+            {(common/extraction-add.html)}
+            <!-- add - 变量提取器模板 end -->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">Rewrite</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite">
+                </div>
+            </div>
+
+
+            <div class="form-group handle-holder">
+
+                <label class="col-sm-1 control-label">Host</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-host" placeholder="host">
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">协议</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-upstream-scheme" placeholder="http://,https://,ws://,wss://" value="http://">
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">负载</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-upstream-name" placeholder="upstream name">
+                </div>
+            </div><!-- handle url template-->
+
+             <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
+                    <pre id="rule-handle-upstream-name-code"></pre>
+                </div>
+             </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
+                    <select class="form-control" id='rule-handle-upstream-name-assist'>
+                        <option value=''></option>
+                        {% for _,upstream in ipairs(upstreams) do %}
+                            <option value = "{{ upstream }}" > {{ upstream }} </option>
+                        {% end %}
+                    </select>
+                </div>
+
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true">记录日志</option>
+                        <option value="false">不记录日志</option>
+                    </select>
+                </div>
+            </div><!-- handle log-->
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<script id="edit-tpl" type="application/template">
+    <div id="rule-edit-area">
+        <form id="edit-rule-form" class="form-horizontal">
+            <div class="form-group">
+                <label for="input-name" class="col-sm-1 control-label">名称</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-name" value="${r.name}" placeholder="名称">
+                </div>
+            </div><!-- name -->
+
+            <!-- edit - 条件编辑器模板 start -->
+            {(common/condition-edit.html)}
+            <!-- edit - 条件编辑器模板 end -->
+
+            <!-- edit - 变量提取器模板 start -->
+            {(common/extraction-edit.html)}
+            <!-- edit - 变量提取器模板 end -->
+
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">Rewrite</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-uri-template" placeholder="uri template to rewrite" value="${r.handle.uri_tmpl}">
+                </div>
+
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">Host</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-host" placeholder="host" {@if r.handle.host !=false} value="${r.handle.host}" {@/if}>
+                </div>
+            </div><!-- handle upstream name template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">协议</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-upstream-scheme" placeholder="http://,https://,ws://,wss://" value="http://">
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label">负载</label>
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" id="rule-handle-upstream-name" placeholder="upstream name" value="${r.handle.upstream_name}">
+                </div>
+            </div><!-- handle upstream name template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
+                    <pre id="rule-handle-upstream-name-code">${r.handle.upstream_name_ngx_fmt}</pre>
+                </div>
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-11">
+                    <select class="form-control" id="rule-handle-upstream-name-assist">
+                        <option value =  "" ></option>
+                        {% for _,upstream in ipairs(upstreams) do %}
+                            <option value = "{{ upstream }}" > {{ upstream }} </option>
+                        {% end %}
+                    </select>
+                </div>
+
+            </div><!-- handle url template-->
+
+            <div class="form-group handle-holder">
+                <label class="col-sm-1 control-label"></label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="rule-handle-log">
+                        <option value="true" {@if r.handle.log==true} selected {@/if}>记录日志</option>
+                        <option value="false" {@if r.handle.log==false} selected {@/if}>不记录日志</option>
+                    </select>
+                </div>
+            </div><!-- handle log-->
+
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <div class="checkbox">
+                        <label>
+                            <input {@if r.enable==true} checked {@/if} type="checkbox" id="rule-enable"> 启用
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+{(common/extraction-tmpl.html)}
+
+{(common/selector-item-tpl.html)}
+{(common/selector-add.html)}
+{(common/selector-edit.html)}
+
+{(common/common_js.html)}<!-- 通用js -->
+<script src="/static/js/dynamic_upstream.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        APP.Common.resetNav("nav-dynamic-upstream");
+        APP.DynamicUpstream.init();
+        APP.DynamicUpstream.upstream_servers_list = {* every_upstream_config *}
+        $(".sortable-list").sortable().disableSelection();
+
+        $("body").on("change","#rule-handle-upstream-name-assist",function(){
+            var val = $(this).val();
+            $("#rule-handle-upstream-name").val(val)
+            $("#rule-handle-upstream-name-code").text(gen_ngx_fmt_upstream_servers_conf(val))
+        });
+    });
+
+
+</script>
+
+
+
+</body>
+</html>

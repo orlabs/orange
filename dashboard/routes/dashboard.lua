@@ -4,11 +4,13 @@ local type = type
 local xpcall = xpcall
 local string_lower = string.lower
 local lor = require("lor.index")
+local lua_next = next
+local json = require "cjson"
 
 
 local function load_plugin_api(plugin, dashboard_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    ngx.log(ngx.INFO, "[plugin's api load], plugin_api_path:", plugin_api_path)
+    ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
     local ok, plugin_api, e
     ok = xpcall(function()
@@ -106,8 +108,8 @@ return function(config, store)
         res:render("status")
     end)
 
-    dashboard_router:get("/node", function(req, res, next)
-        res:redirect("/admin/node/manage")
+    dashboard_router:get("/headers", function(req, res, next)
+        res:render("headers")
     end)
 
     dashboard_router:get("/monitor", function(req, res, next)
@@ -130,7 +132,23 @@ return function(config, store)
     dashboard_router:get("/redirect", function(req, res, next)
         res:render("redirect")
     end)
+    dashboard_router:get("/dynamic_upstream", function(req, res, next)
+        local upstream = require "ngx.upstream"
 
+        local upstream_list = upstream.get_upstreams()
+        local empty_table = false
+
+        if lua_next(upstream_list) == nil then
+            empty_table = true
+        end
+
+        local every_upstream_config = {}
+        for _, v in ipairs(upstream_list) do
+            every_upstream_config[v] = upstream.get_servers(v)
+        end
+
+        res:render("dynamic_upstream",{upstreams=upstream_list, empty_table = empty_table, every_upstream_config = json.encode(every_upstream_config)})
+    end)
     dashboard_router:get("/rate_limiting", function(req, res, next)
         res:render("rate_limiting")
     end)
@@ -162,14 +180,6 @@ return function(config, store)
         res:render("divide")
     end)
 
-    dashboard_router:get("/balancer", function(req, res, next)
-        res:render("balancer")
-    end)
-
-    dashboard_router:get("/consul_balancer", function(req, res, next)
-        res:render("consul_balancer")
-    end)
-
     dashboard_router:get("/kvstore", function(req, res, next)
         res:render("kvstore")
     end)
@@ -190,5 +200,4 @@ return function(config, store)
 
     return dashboard_router
 end
-
 

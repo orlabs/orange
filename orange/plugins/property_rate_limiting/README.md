@@ -1,4 +1,4 @@
-###Property Rate Limiting Plugin（基于特征的限流插件）
+### Property Rate Limiting Plugin（基于特征的限流插件）
 
 特征是指请求中的值，实现的功能就是根据请求中的一些值来作为限流的判断准则，在一定程度上能起到一定的防ddos攻击。
 

@@ -1,7 +1,9 @@
 {
     "plugins": [
         "stat",
+        "headers",
         "monitor",
+        "dynamic_upstream",
         "redirect",
         "rewrite",
         "rate_limiting",

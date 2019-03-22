@@ -18,28 +18,26 @@ http {
     '"$upstream_addr" "$upstream_status" "$upstream_response_length" "$upstream_response_time"';
 
     access_log  ./logs/access.log  main;
-    error_log ./logs/error.log error;
+    error_log ./logs/error.log info;
 
     sendfile        on;
     keepalive_timeout  65;
 
-    # orange upstream
-    upstream orange_upstream {
-        server 0.0.0.1;
-        balancer_by_lua_block {
-            local orange = context.orange
-            orange.balancer()
-        }
-
-        keepalive 60;   # connection pool
+    map $http_upgrade $connection_upgrade {
+        websocket upgrade;
+        default $http_connection;
     }
+
+    upstream default_upstream {
+        server localhost:8001;
+    }
+
     #
     # Config client_body_buffer_size equal client_max_body_size for enforcing in-memory buffering of the whole request body
     # ref: https://github.com/openresty/lua-nginx-module/issues/521
     #
     # official instruct docs http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
     #
-
     client_body_buffer_size 1m;
     client_max_body_size 1m;
 
@@ -92,12 +90,12 @@ http {
 
         location / {
             set $upstream_host $host;
-            set $upstream_url nil;
-            set $target '';
+            set $upstream_request_uri '';
+            set $upstream_url '';
+            set $upstream_scheme '';
 
             rewrite_by_lua_block {
                 local orange = context.orange
-                orange.init_cookies()
                 orange.redirect()
                 orange.rewrite()
             }
@@ -108,12 +106,13 @@ http {
             }
 
             # proxy
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Scheme $scheme;
-            proxy_set_header Host $upstream_host;
+            proxy_pass $upstream_scheme$upstream_url$upstream_request_uri;
 
-            proxy_pass $target;
 
             header_filter_by_lua_block {
                 local orange = context.orange
@@ -145,8 +144,12 @@ http {
 
         location / {
             content_by_lua_block {
-                ngx.status = 404
-                ngx.say([[404! upstream not found. Host: ]] .. ngx.var.host .. "  URI: " .. ngx.var.uri)
+                local json = require "cjson"
+                ngx.status = 200
+                ngx.say("Host: "..ngx.var.host .. "  URI: " .. ngx.var.uri)
+                ngx.say('[Query string]',json.encode(ngx.req.get_uri_args()))
+                ngx.req.read_body()
+                ngx.say('[Post Params]',json.encode(ngx.req.get_post_args()))
             }
         }
     }
