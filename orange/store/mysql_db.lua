@@ -5,15 +5,13 @@ local setmetatable = setmetatable
 local ngx_quote_sql_str = ngx.quote_sql_str
 local mysql = require("resty.mysql")
 local utils = require("orange.utils.utils")
+local Object = require("orange.lib.classic")
 
 
-local DB = {}
+local DB = Object:extend()
 
 function DB:new(conf)
-    local instance = {}
-    instance.conf = conf
-    setmetatable(instance, { __index = self})
-    return instance
+    self.conf = conf
 end
 
 function DB:exec(sql)
@@ -33,7 +31,6 @@ function DB:exec(sql)
 
     ngx.log(ngx.INFO, "connected to mysql, reused_times:", db:get_reused_times(), " sql:", sql)
 
-    db:query("SET NAMES utf8")
     local res, err, errno, sqlstate = db:query(sql)
     if not res or err then
         ngx.log(ngx.ERR, "bad result: ", err, ": ", errno, ": ", sqlstate, ".")

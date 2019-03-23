@@ -5,13 +5,13 @@ local Store = require("orange.store.base")
 local MySQLStore = Store:extend()
 
 function MySQLStore:new(options)
-    self._name = options.name or "mysql-store"
-    MySQLStore.super.new(self, self._name)
+    local name = options.name or "mysql-store"
+    self.super.new(self, name)
     self.store_type = "mysql"
     local connect_config = options.connect_config
     self.mysql_addr = connect_config.host .. ":" .. connect_config.port
     self.data = {}
-    self.db = mysql_db:new(options)
+    self.db = mysql_db(options)
 end
 
 function MySQLStore:query(opts)
