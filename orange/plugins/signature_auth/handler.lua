@@ -66,7 +66,7 @@ local function is_authorized(signature_name, secretKey,extractor)
         local str = require "resty.string"
         local calc_sig = str.to_hex(md5:final())
 
-        return calc_sig == signature
+        return calc_sig == string.lower(signature or "")
     end
 
     return check_sig(extractor.extractions,secretKey)
