@@ -151,10 +151,12 @@ Orange启动成功后， dashboard和API server也随之启动：
 - [@spacewander](https://github.com/spacewander)
 - [@noname007](https://github.com/noname007)
 - [@itchenyi](https://github.com/itchenyi)
-- [@zhjwpku](https://github.com/zhjwpku)
-- [@zhousoft](https://github.com/zhousoft)
-- [@zhousoft](https://github.com/zhousoft)
-- [@imocat](https://github.com/imocat)
+- [@Near-Zhang](https://github.com/Near-Zhang)
+- [@khlipeng](https://github.com/khlipeng)
+- [@sumory](https://github.com/sumory)
+- [@wujunze](https://github.com/wujunze)
+
+
 
 ### See also
 
