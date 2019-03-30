@@ -10,6 +10,7 @@
         "property_rate_limiting",
         "basic_auth",
         "key_auth",
+        "hmac_auth",
         "signature_auth",
         "waf",
         "divide",
