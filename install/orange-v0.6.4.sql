@@ -317,7 +317,7 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table key_auth
+# Dump of table jwt_auth
 # ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `jwt_auth`;
@@ -333,13 +333,39 @@ CREATE TABLE `jwt_auth` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `jwt_auth` WRITE;
-/*!40000 ALTER TABLE `key_auth` DISABLE KEYS */;
+/*!40000 ALTER TABLE `jwt_auth` DISABLE KEYS */;
 
 INSERT INTO `jwt_auth` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
     (1,'1','{}','meta','2016-11-11 11:11:11');
 
-/*!40000 ALTER TABLE `key_auth` ENABLE KEYS */;
+/*!40000 ALTER TABLE `jwt_auth` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table hmac_auth
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `hmac_auth`;
+
+CREATE TABLE `hmac_auth` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(2000) NOT NULL DEFAULT '',
+  `type` varchar(11) DEFAULT '0',
+  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `hmac_auth` WRITE;
+/*!40000 ALTER TABLE `hmac_auth` DISABLE KEYS */;
+
+INSERT INTO `hmac_auth` (`id`, `key`, `value`, `type`, `op_time`)
+VALUES
+    (1,'1','{}','meta','2016-11-11 11:11:11');
+
+/*!40000 ALTER TABLE `hmac_auth` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
