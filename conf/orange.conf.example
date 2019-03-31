@@ -14,7 +14,8 @@
         "signature_auth",
         "waf",
         "divide",
-        "kvstore"
+        "kvstore",
+        "balancer"
     ],
     "store": "mysql",
     "store_mysql": {
@@ -41,6 +42,21 @@
             "^/auth/login$",
             "^/error/$"
         ]
+    },
+    "plugin_config":{
+        "kafka":{
+            "broker_list":[
+                {
+                    "host":"127.0.0.1",
+                    "port":9092
+                }
+            ],
+            "producer_config":{
+                "producer_type":"async"
+            },
+
+            "topic":"test"
+        }
     },
     "api": {
         "auth_enable": true,

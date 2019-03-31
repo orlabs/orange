@@ -30,6 +30,7 @@
                     <select class="form-control" name="rule-extractor-extraction-type">
                         <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
                         <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
+                        <option value="Cookie" {@if c.type == "Cookie" } selected {@/if}>Cookie</option>
                         <option value="PostParams" {@if c.type == "PostParams" } selected {@/if}>PostParams</option>
                         <option value="Host" {@if c.type == "Host" } selected {@/if}>Host</option>
                         <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
@@ -38,10 +39,10 @@
                     </select>
                 </div>
                 <div class="col-sm-2 extraction-name-hodler"
-                    {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams"&&c.type!="URI" } 
-                        style="display:none;padding-left:0px;" 
+                    {@if c.type!="Header"&&c.type!="Query"&&c.type!="Cookie"&&c.type!="PostParams"&&c.type!="URI" }
+                        style="display:none;padding-left:0px;"
                     {@else}
-                        style="padding-left:0px;" 
+                        style="padding-left:0px;"
                     {@/if}>
                     <input type="text" class="form-control" name="rule-extractor-extraction-name" placeholder="name" value="${c.name}">
                 </div>

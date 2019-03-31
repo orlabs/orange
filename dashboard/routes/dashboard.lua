@@ -206,4 +206,3 @@ return function(config, store)
     return dashboard_router
 end
 
-
