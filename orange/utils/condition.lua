@@ -3,6 +3,7 @@ local string_format = string.format
 local string_find = string.find
 local string_lower = string.lower
 local ngx_re_find = ngx.re.find
+local re_gmatch = ngx.re.gmatch
 
 local function assert_condition(real, operator, expected)
     if not real then
@@ -58,6 +59,21 @@ local function assert_condition(real, operator, expected)
                 return true
             end
         end
+    elseif operator == '%' then
+        local mod_num = 0;
+        local value = {}
+        local idx = 1
+        --expected like: 50|1,2,3
+        for i in re_gmatch(expected, "(\\d+)", "jsio") do
+            if idx == 1 then
+                mod_num = tonumber(i[1])
+            else
+                value[i[1]] = true
+            end
+            idx = idx + 1
+        end
+        local mod_value = math.fmod(tonumber(real), mod_num)
+        return value[tostring(mod_value)] == true;
     end
 
     return false
@@ -88,8 +104,15 @@ function _M.judge(condition)
     elseif condition_type == "Header" then
         local headers = ngx.req.get_headers()
         real = headers[condition.name]
+    elseif condition_type == "Cookie" then
+        local cookies = ngx.ctx.__cookies__
+        if cookies then
+            real = cookies:get(condition.name)
+        end
     elseif condition_type == "IP" then
         real =  ngx.var.remote_addr
+    elseif condition_type == "Random" then
+        real = ngx.now() * 1000 % 100
     elseif condition_type == "UserAgent" then
         real =  ngx.var.http_user_agent
     elseif condition_type == "Method" then

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {(common/meta.html)}
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        {(common/left_nav.html)}
+        <!-- 左侧导航 -->
+
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+
+            <div class="row J_mainContent">
+                <!-- content start -->
+                <div class="row content-header">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <h4 class="head_title">Consul Upstream Editor</h4>
+                        </div>
+                        <div class="pull-right">
+                            <a id="clear-btn" data-show="true" class="btn btn-success" rel="nofollow" href="javascript:void(0);">
+                                <i class="fa fa-bar-chart"></i>
+                                <span>清除统计数据</span>
+                            </a>
+                            {(common/plugin-op.html)}
+                        </div>
+                    </div>
+                </div>
+
+                {(common/data-view-part.html)}
+
+                <div class="row" id="table-view">
+                    <div class="col-sm-3" style="padding-right:0px;">
+                        <div class="ibox">
+                            <div class="ibox-content" id="selector-section">
+                                <h4>Consul Upstream 列表</h4>
+                                <ul id="selector-list" class="sortable-list agile-list ui-sortable">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-9">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <h4 id="rules-section-header">consul upstream-hosts</h4>
+
+                                <ul id="rules" class="sortable-list agile-list">
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content end -->
+
+                <div class="row" id="stat-view" style="display: none;">
+                    <div class="col-md-12">
+                        <div style="height:400px;padding-top:20px;" id="stat-area"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+    </div>
+
+    <script id="rule-item-tpl" type="text/template">
+        {@each rules as r, index}
+        <li data-id="${r.id}" {@if r.enable==true } class="info-element" {@/if} {@if r.enable!=true } class="warning-element" {@/if}>
+            <table class="table table-hover single-rule-table">
+                <tbody>
+                    <tr>
+                        <td class="center rule-enable-td">
+                            {@if r.enable==true }
+                            <span class="label label-primary">已启用</span> {@/if} {@if r.enable!=true }
+                            <span class="label label-warning">已禁用</span> {@/if}
+                        </td>
+                        <td class="rule-name-td">
+                            <b class="namep">${r.target}</b>
+                        </td>
+
+                        <td class="center">
+                            <span>权重：${r.weight}</span>
+                        </td>
+
+                        <td class="left" title="变更时间">
+                            <small><i class="fa fa-clock-o"></i> ${r.time}</small>
+                        </td>
+                        <td class="center rule-op-td">
+                            <a class="btn btn-white btn-sm edit-btn" data-id="${r.id}" data-name="${r.target}"><i title="编辑" class="fa fa-pencil"></i> </a>
+                            <a class="btn btn-white btn-sm delete-btn" data-id="${r.id}" data-name="${r.target}"><i title="删除" class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+        {@/each}
+    </script>
+
+    <script id="add-tpl" type="application/template">
+        <div id="rule-edit-area">
+            <form id="add-rule-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-1 control-label">target</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="rule-name" placeholder="targe=>(host:port)">
+                    </div>
+                    <label for="input-name" class="col-sm-1 control-label">weight</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="rule-weight" placeholder="10">
+                    </div>
+                </div>
+                <!-- target -->
+
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="rule-enable"> 启用
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </script>
+
+    <script id="edit-tpl" type="application/template">
+        <div id="rule-edit-area">
+            <form id="edit-rule-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-1 control-label">target</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="rule-name" value="${r.target}" placeholder="targe=>(host:port)">
+                    </div>
+                    <label for="input-name" class="col-sm-1 control-label">weight</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="rule-weight" value="${r.weight}" placeholder="10">
+                    </div>
+                </div>
+                <!-- target -->
+
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label>
+                                <input {@if r.enable==true} checked {@/if} type="checkbox" id="rule-enable"> 启用
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </script>
+
+
+    {(common/selector-item-tpl.html)}
+    <script id="add-selector-tpl" type="application/template">
+        <div id="selector-add-area">
+            <form id="add-selector-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">名称</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-name" placeholder="名称">
+                    </div>
+                </div>
+                <!-- name -->
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">服务名</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-service" placeholder="consul service name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">连接超时</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-connection-timeout" placeholder="default 60000(ms)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">读超时</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-read-timeout" placeholder="default 60000(ms)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">发送超时</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-send-timeout" placeholder="default 60000(ms)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">Slots</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-slots" placeholder="default 1000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">Retries</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-retries" placeholder="default 3">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-3">
+                        <div class="checkbox">
+                            <label class="checkbox">
+                                <input type="checkbox" id="selector-enable"> 启用
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" style="padding-left:0;">
+                        <select class="form-control" id="selector-log">   
+                                <option value="false" selected >不记录日志</option>   
+                                <option value="true" >记录日志</option>                
+                            </select>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </script>
+
+    <script id="edit-selector-tpl" type="application/template">
+        <div id="selector-edit-area">
+            <form id="edit-selector-form" class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">名称</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-name" value="${s.name}" placeholder="名称">
+                    </div>
+                </div>
+                <!-- name -->
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">服务名</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-service" value="${s.service}" placeholder="consul service name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">连接超时</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-connection-timeout" value="${s.connection_timeout}" placeholder="default 60000(ms)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">读超时</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-read-timeout" value="${s.read_timeout}" placeholder="default 60000(ms)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">发送超时</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-send-timeout" value="${s.send_timeout}" placeholder="default 60000(ms)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">Slots</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-slots" value="${s.slots}" placeholder="default 1000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-name" class="col-sm-2 control-label">Retries</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="selector-retries" value="${s.retries}" placeholder="default 3">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-11">
+                        <div class="checkbox">
+                            <label class="checkbox">
+                                <input {@if s.enable==true} checked {@/if} type="checkbox" id="selector-enable"> 启用
+                            </label>
+                        </div>
+                        <div class="col-sm-3" style="padding-left:0;">
+                            <select class="form-control" id="selector-log-consul">   
+                                <option value="false" {@if s.log_consul==false} selected {@/if}>不记录日志</option>   
+                                <option value="true" {@if s.log_consul==true} selected {@/if}>记录日志</option>                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </script>
+
+    {(common/common_js.html)}
+    <!-- 通用js -->
+    <script src="/static/js/echarts3/echarts.common.min.js"></script>
+    <script src="/static/js/consul_balancer.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            APP.Common.resetNav("nav-consult_balancer");
+            APP.ConsulBalancer.init();
+            $(".sortable-list").sortable().disableSelection();
+        });
+    </script>
+</body>
+
+</html>

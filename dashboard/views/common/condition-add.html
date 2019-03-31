@@ -21,15 +21,18 @@
 
         <div class="col-sm-2">
             <select class="form-control" name="rule-judge-condition-type">
+                <option value="Random">Random</option>
                 <option value="URI">URI</option>
                 <option value="Header">Header</option>
                 <option value="Query">Query</option>
+                <option value="Cookie">Cookie</option>
                 <option value="PostParams">PostParams</option>
                 <option value="IP">IP</option>
                 <option value="UserAgent">UserAgent</option>
                 <!-- <option value="Method">Method</option> -->
                 <option value="Host">Host</option>
                 <option value="Referer">Referer</option>
+                <option value="Method">HttpMethod</option>
             </select>
         </div>
         <div class="col-sm-2 condition-name-hodler" style="display:none;padding-left:0px;">
@@ -45,6 +48,7 @@
                 <option value=">=">&ge;</option>
                 <option value="<">&lt;</option>
                 <option value="<=">&le;</option>
+                <option value="%">%</option>
             </select>
         </div>
         <div class="col-sm-3">

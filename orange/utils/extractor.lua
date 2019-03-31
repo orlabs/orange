@@ -25,6 +25,13 @@ local function extract_variable(extraction)
     elseif etype == "Header" then
         local headers = ngx.req.get_headers()
         result = headers[extraction.name]
+    elseif etype == "Cookie" then
+        local cookies = ngx.ctx.__cookies__ -- 进入orange时注入，不要覆盖这个值
+        if cookies then
+            result = cookies:get(extraction.name)
+        else
+            result = nil -- fix: default value does not wokr if set ""
+        end
     elseif etype == "PostParams" then
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
@@ -81,7 +88,15 @@ local function extract_variable_for_template(extractions)
         elseif etype == "Header" then
             local headers = ngx.req.get_headers()
             if not result["header"] then result["header"] = {} end
-            result["header"][extraction.name]  = headers[extraction.name] or extraction.default
+            result["header"][extraction.name] = headers[extraction.name] or extraction.default
+        elseif etype == "Cookie" then
+            local cookies = ngx.ctx.__cookies__ -- 进入orange时注入，不要覆盖这个值
+            local cookie_value
+            if cookies then
+                cookie_value = cookies:get(extraction.name)
+            end
+            if not result["cookie"] then result["cookie"] = {} end
+            result["cookie"][extraction.name] = cookie_value or extraction.default
         elseif etype == "PostParams" then
             local headers = ngx.req.get_headers()
             local header = headers['Content-Type']
@@ -141,10 +156,10 @@ function _M.extract(extractor_type, extractions)
     -- for i, v in pairs(result) do
     --     if type(v) == "table" then
     --          for j, m in pairs(v) do
-    --             ngx.log(ngx.ERR, i, ":", j, ":", m)
+    --             ngx.log(ngx.INFO, i, ":", j, ":", m)
     --          end
     --     else
-    --         ngx.log(ngx.ERR, i, ":", v)
+    --         ngx.log(ngx.INFO, i, ":", v)
     --     end
     -- end
 
@@ -153,7 +168,7 @@ end
 
 function _M.extract_variables(extractor)
     if not extractor then return {} end
-    
+
     local extractor_type = extractor.type
     local extractions = extractor and extractor.extractions
     local variables

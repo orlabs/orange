@@ -14,6 +14,8 @@ local KEY_REQUEST_4XX = "REQUEST_4XX"
 local KEY_REQUEST_5XX = "REQUEST_5XX"
 local status = ngx.shared.status
 
+local orange_version = require("orange/version")
+
 local _M = {}
 
 function _M.init()
@@ -69,6 +71,7 @@ function _M.stat()
     local result = {
         nginx_version = ngx.var.nginx_version,
         ngx_lua_version = math.floor(ngx_lua_version / 1000000) .. '.' .. math.floor(ngx_lua_version / 1000) ..'.' .. math.floor(ngx_lua_version % 1000),
+        orange_version = orange_version,
         address = ngx.var.server_addr,
         worker_count = ngx.worker.count(),
         timestamp = ngx.time(),

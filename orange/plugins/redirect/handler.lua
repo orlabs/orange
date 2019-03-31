@@ -108,20 +108,14 @@ function RedirectHandler:redirect()
                 end
 
                 local stop = filter_rules(sid, "redirect", ngx_var_uri, ngx_var_host, ngx_var_scheme, ngx_var_args)
-                if stop then -- 不再执行此插件其他逻辑
+                local selector_continue = selector.handle and selector.handle.continue
+                if stop or not selector_continue then -- 不再执行此插件其他逻辑
                     return
                 end
             else
                 if selector.handle and selector.handle.log == true then
                     ngx.log(ngx.INFO, "[Redirect][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
-            end
-
-            -- if continue or break the loop
-            if selector.handle and selector.handle.continue == true then
-                -- continue next selector
-            else
-                break
             end
         end
     end

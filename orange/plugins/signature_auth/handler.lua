@@ -66,7 +66,7 @@ local function is_authorized(signature_name, secretKey,extractor)
         local str = require "resty.string"
         local calc_sig = str.to_hex(md5:final())
 
-        return calc_sig == signature
+        return calc_sig == string.lower(signature or "")
     end
 
     return check_sig(extractor.extractions,secretKey)
@@ -153,20 +153,14 @@ function SignatureAuthHandler:access(conf)
                 end
 
                 local stop = filter_rules(sid, "signature_auth", ngx_var_uri)
-                if stop then -- 不再执行此插件其他逻辑
+                local selector_continue = selector.handle and selector.handle.continue
+                if stop or selector_continue then -- 不再执行此插件其他逻辑
                     return
                 end
             else
                 if selector.handle and selector.handle.log == true then
                     ngx.log(ngx.INFO, "[SignatureAuth][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
-            end
-
-            -- if continue or break the loop
-            if selector.handle and selector.handle.continue == true then
-                -- continue next selector
-            else
-                break
             end
         end
     end
