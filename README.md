@@ -84,7 +84,6 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 - [@itchenyi](https://github.com/itchenyi)
 - [@Near-Zhang](https://github.com/Near-Zhang)
 - [@khlipeng](https://github.com/khlipeng)
-- [@sumory](https://github.com/sumory)
 - [@wujunze](https://github.com/wujunze)
 
 ### See also

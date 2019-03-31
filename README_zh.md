@@ -24,10 +24,10 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 - MySQL
     - 配置存储和集群扩展需要MySQL支持
 - 使用luarocks安装一些第三方库
-    - luarocks install penlight
-    - luarocks install lua-resty-dns-client
-    - luarocks install lua-resty-http
-    - luarocks install luasocket
+    - luarocks install https://luarocks.org/manifests/steved/penlight-1.5.4-1.rockspec
+    - luarocks install https://luarocks.org/manifests/kong/lua-resty-dns-client-2.2.0-1.rockspec
+    - luarocks install https://luarocks.org/lua-resty-http-0.13-0.src.rock
+    - luarocks install https://luarocks.org/manifests/luarocks/luasocket-3.0rc1-2.rockspec
 
 #### 数据表导入MySQL
 
@@ -153,7 +153,6 @@ Orange启动成功后， dashboard和API server也随之启动：
 - [@itchenyi](https://github.com/itchenyi)
 - [@Near-Zhang](https://github.com/Near-Zhang)
 - [@khlipeng](https://github.com/khlipeng)
-- [@sumory](https://github.com/sumory)
 - [@wujunze](https://github.com/wujunze)
 
 

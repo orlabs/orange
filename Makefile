@@ -10,14 +10,14 @@ init-config:
 
 deps:init-config
 	mkdir -p resty
-	wget https://github.com/pintsized/lua-resty-http/archive/master.zip
-	unzip master.zip
-	yes|cp -fr   lua-resty-http-master/lib/resty/*  resty/
-	rm -fr  master.zip  lua-resty-http-master
-	wget https://github.com/doujiang24/lua-resty-kafka/archive/master.zip
-	unzip master.zip
-	yes|cp -fr lua-resty-kafka-master/lib/resty/* resty
-	rm -fr  master.zip lua-resty-kafka-master
+	wget https://github.com/ledgetech/lua-resty-http/archive/v0.13.zip
+	unzip lua-resty-http-0.13.zip
+	yes|cp -fr   lua-resty-http-0.13/lib/resty/*  resty/
+	rm -fr  lua-resty-http-0.13.zip  lua-resty-http-0.13.zip
+	wget https://github.com/doujiang24/lua-resty-kafka/archive/v0.06.zip
+	unzip lua-resty-kafka-0.06.zip
+	yes|cp -fr lua-resty-kafka-0.06/lib/resty/* resty
+	rm -fr  lua-resty-kafka-0.06.zip lua-resty-kafka-0.06
 
 test:
 	@echo "to be continued..."
