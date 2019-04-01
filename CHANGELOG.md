@@ -1,3 +1,18 @@
+### v0.7.0 2019
+
+- 支持通过cookie、随机数、HTTP method进行拦截过滤
+- 新增取余的方式进行匹配规则
+- 新增kafka、balancer、consul_balancer、persist log、node插件
+- 修复一些已知bug：后台页面展示异常
+- 对后台页面、balancer等模块的代码和文档说明的重构
+- 修复了issue#160，解决balancer开关未打开时出现invalid URL prefix in "" 的错误
+- 修复了issue#162，解决选择器类型为1时continue=false的错误
+- 修复了issue#233，解决proxy read timeout配置无效的问题
+- 修复了issue#236，解决忽略大小写进行匹配鉴权值的问题
+- 修改Makefile
+    - 使用指定版的依赖
+
+
 ### v0.6.4 2017.05.16
 
 - 修复issue#110, 解决在添加/删除规则后本地js cache未更新，之后立刻更改选择器配置造成的规则丢失bug

@@ -325,7 +325,7 @@ DROP TABLE IF EXISTS `balancer`;
 CREATE TABLE `balancer` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
+  `value` varchar(10240) NOT NULL DEFAULT '',
   `type` varchar(11) DEFAULT '0',
   `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
