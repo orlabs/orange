@@ -82,6 +82,9 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 - [@spacewander](https://github.com/spacewander)
 - [@noname007](https://github.com/noname007)
 - [@itchenyi](https://github.com/itchenyi)
+- [@Near-Zhang](https://github.com/Near-Zhang)
+- [@khlipeng](https://github.com/khlipeng)
+- [@wujunze](https://github.com/wujunze)
 
 ### See also
 

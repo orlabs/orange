@@ -4,9 +4,11 @@ local table_sort = table.sort
 local pcall = pcall
 local require = require
 require("orange.lib.globalpatches")()
+local ck = require("orange.lib.cookie")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
+local dns_client = require("resty.dns.client")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -74,10 +76,16 @@ function Orange.init(options)
         os.exit(1)
     end
 
+    local consul = require("orange.plugins.consul_balancer.consul_balancer")
+    consul.set_shared_dict_name("consul_upstream", "consul_upstream_watch")
     Orange.data = {
         store = store,
-        config = config
+        config = config,
+        consul = consul
     }
+
+    -- init dns_client
+    assert(dns_client.init())
 
     return config, store
 end
@@ -94,6 +102,14 @@ function Orange.init_worker()
                     if not load_success then
                         os.exit(1)
                     end
+                    
+                    if v == "consul_balancer" then
+                        for ii,p in ipairs(loaded_plugins) do
+                            if v == p.name then
+                                p.handler.db_ready()
+                            end
+                        end
+                    end
                 end
             end, Orange.data.store, Orange.data.config)
 
@@ -108,6 +124,14 @@ function Orange.init_worker()
     end
 end
 
+function Orange.init_cookies()
+    ngx.ctx.__cookies__ = nil
+
+    local COOKIE, err = ck:new()
+    if not err and COOKIE then
+        ngx.ctx.__cookies__ = COOKIE
+    end
+end
 
 function Orange.redirect()
     ngx.ctx.ORANGE_REDIRECT_START = now()
@@ -148,6 +172,11 @@ function Orange.access()
     ngx.ctx.ACCESSED = true
 end
 
+function Orange.balancer()
+    for _, plugin in ipairs(loaded_plugins) do
+        plugin.handler:balancer()
+    end
+end
 
 function Orange.header_filter()
 

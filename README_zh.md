@@ -5,7 +5,7 @@
 
 <a href="./README_zh.md" style="font-size:13px">中文</a> | <a href="./README.md" style="font-size:13px">English</a> | <a href="http://orange.sumory.com" style="font-size:13px">Website</a>
 
-Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还可用于API监控、访问控制(鉴权、WAF)、流量筛选、访问限速、AB测试、动态分流等。它有以下特性：
+Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还可用于API监控、访问控制(鉴权、WAF)、流量筛选、访问限速、AB测试、静/动态分流等。它有以下特性：
 
 - 提供了一套默认的Dashboard用于动态管理各种功能和配置
 - 提供了API接口用于实现第三方服务(如个性化运维需求、第三方Dashboard等)
@@ -16,23 +16,27 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 
 #### 安装依赖
 
-- OpenResty: 版本应在1.9.7.3+
-    - Orange的监控插件需要统计http的某些状态数据，所以需要编译OpenResty时添加`--with-http_stub_status_module`
-    - 由于使用了*_block指令，所以OpenResty的版本最好在1.9.7.3以上.
-- [lor](https://github.com/sumory/lor)框架
+- OpenResty: 版本应在1.11.2+
+    - Orange的监控插件需要统计HTTP的状态数据，所以编译OpenResty时需要添加`--with-http_stub_status_module`
+- [Lor](https://github.com/sumory/lor)框架
     - 若使用的Orange版本低于v0.6.2则应安装lor v0.2.*版本
     - 若使用的Orange版本高于或等于v0.6.2则应安装lor v0.3.0+版本
 - MySQL
-    - 配置存储和集群扩展需要MySQL支持。从0.2.0版本开始，Orange去除了本地文件存储的方式，目前仅提供MySQL存储支持.
+    - 配置存储和集群扩展需要MySQL支持
+- 使用luarocks安装一些第三方库
+    - luarocks install https://luarocks.org/manifests/steved/penlight-1.5.4-1.rockspec
+    - luarocks install https://luarocks.org/manifests/kong/lua-resty-dns-client-2.2.0-1.rockspec
+    - luarocks install https://luarocks.org/lua-resty-http-0.13-0.src.rock
+    - luarocks install https://luarocks.org/manifests/luarocks/luasocket-3.0rc1-2.rockspec
 
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
-- 将与当前代码版本配套的SQL脚本(如install/orange-v0.6.4.sql)导入到orange库中
+- 将与当前代码版本配套的SQL脚本(如install/orange-v0.7.0.sql)导入到orange库中
 
 #### 修改配置文件
 
-Orange有**两个**配置文件，一个是`conf/orange.conf`，用于配置插件、存储方式和内部集成的默认Dashboard，另一个是`conf/nginx.conf`用于配置Nginx(OpenResty).
+Orange有**两个**配置文件，一个是`conf/orange.conf`，用于配置插件、存储方式和内部集成的默认Dashboard，另一个是`conf/nginx.conf`用于配置Nginx.
 
 orange.conf的配置如下，请按需修改:
 
@@ -41,16 +45,7 @@ orange.conf的配置如下，请按需修改:
     "plugins": [ //可用的插件列表，若不需要可从中删除，系统将自动加载这些插件的开放API并在7777端口暴露
         "stat",
         "monitor",
-        "redirect",
-        "rewrite",
-        "rate_limiting",
-        "property_rate_limiting",
-        "basic_auth",
-        "key_auth",
-        "signature_auth",
-        "waf",
-        "divide",
-        "kvstore"
+        ".."
     ],
 
     "store": "mysql",//目前仅支持mysql存储
@@ -67,8 +62,7 @@ orange.conf的配置如下，请按需修改:
         "pool_config": {
             "max_idle_timeout": 10000,
             "pool_size": 3
-        },
-        "desc": "mysql configuration"
+        }
     },
 
     "dashboard": {//默认的Dashboard配置.
@@ -101,9 +95,14 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 
 #### 安装
 
-如果使用的是v0.5.0以前的版本则无需安装， 只要将Orange下载下来放到合适的位置即可。
+1) 使用方式一
 
-如果使用的是v0.5.0及以上的版本， 可以通过`make install`将Orange安装到系统中。 执行此命令后， 以下两部分将被安装：
+无需安装, 只要将Orange下载下来, 根据需要修改一下`orange.conf`和`nginx.conf`配置，然后使用`start.sh`脚本即可启动。
+默认提供的nginx.conf和start.sh都是最简单的配置，只是给用户一个默认的配置参考，用户应该根据实际生产要求自行添加或更改其中的配置以满足需要。
+
+2) 使用方式二
+
+可以通过`make install`将Orange安装到系统中(默认安装到/usr/local/orange)。 执行此命令后， 以下两部分将被安装：
 
 ```
 /usr/local/orange     #orange运行时需要的文件
@@ -112,9 +111,9 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 
 #### 启动
 
-在v0.5.0以下版本中， 一个简单的shell脚本用来启动/重启orange, 执行`sh start.sh`即可。可以按需要仿照start.sh编写运维脚本， 本质上就是启动/关闭Nginx。
+若采用方式一安装，则执行`sh start.sh`即可启动。可以按需要仿照start.sh编写运维脚本， 本质上就是启动/关闭Nginx。
 
-除此之外， 从v0.5.0开始， 如果执行过`make install`将Orange安装到系统后， 还可以通过`orange`命令来管理， 执行`orange help`查看有哪些命令可以使用：
+若采用方式二`make install`安装，则可以通过命令行工具`orange`来管理， 执行`orange help`查看有哪些命令可以使用：
 
 ```
 Usage: orange COMMAND [OPTIONS]
@@ -130,12 +129,10 @@ version Show the version of Orange
 help    Show help tips
 ```
 
-
 Orange启动成功后， dashboard和API server也随之启动：
 
 - 内置的Dashboard可通过`http://localhost:9999`访问
 - API Server默认在`7777`端口监听，如不需要API Server可删除nginx.conf里对应的配置
-
 
 ### 文档
 
@@ -154,6 +151,11 @@ Orange启动成功后， dashboard和API server也随之启动：
 - [@spacewander](https://github.com/spacewander)
 - [@noname007](https://github.com/noname007)
 - [@itchenyi](https://github.com/itchenyi)
+- [@Near-Zhang](https://github.com/Near-Zhang)
+- [@khlipeng](https://github.com/khlipeng)
+- [@wujunze](https://github.com/wujunze)
+
+
 
 ### See also
 
@@ -161,4 +163,4 @@ Orange的插件设计参考自[Kong](https://github.com/Mashape/kong).
 
 ### License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) License

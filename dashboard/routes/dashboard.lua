@@ -172,6 +172,11 @@ return function(config, store)
         res:render("jwt_auth/jwt_auth")
     end)
 
+    -- HMAC AUTH
+    dashboard_router:get("/hmac_auth", function(req, res, next)
+        res:render("hmac_auth/hmac_auth")
+    end)
+
     dashboard_router:get("/waf", function(req, res, next)
         res:render("waf")
     end)
@@ -200,5 +205,4 @@ return function(config, store)
 
     return dashboard_router
 end
-
 

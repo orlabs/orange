@@ -43,19 +43,22 @@
 
                             <div class="col-sm-2">
                                 <select class="form-control" name="rule-judge-condition-type">
+                                    <option value="Random" {@if c.type == "Random" } selected {@/if}>Random</option>
                                     <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
                                     <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
                                     <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
+                                    <option value="Cookie" {@if c.type == "Cookie" } selected {@/if}>Cookie</option>
                                     <option value="PostParams" {@if c.type == "PostParams" } selected {@/if}>PostParams</option>
                                     <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
                                     <option value="UserAgent" {@if c.type == "UserAgent" } selected {@/if}>UserAgent</option>
                                     <!-- <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option> -->
                                     <option value="Host" {@if c.type == "Host" } selected {@/if}>Host</option>
                                     <option value="Referer" {@if c.type == "Referer" } selected {@/if}>Referer</option>
+                                    <option value="Method" {@if c.type == "Method" } selected {@/if}>HttpMethod</option>
                                 </select>
                             </div>
                             <div class="col-sm-2 condition-name-hodler"
-                                {@if c.type!="Header"&&c.type!="Query"&&c.type!="PostParams" }
+                                {@if c.type!="Header"&&c.type!="Query"&&c.type!="Cookie"&&c.type!="PostParams" }
                                     style="display:none;padding-left:0px;"
                                 {@else}
                                     style="padding-left:0px;"
@@ -72,6 +75,7 @@
                                     <option value=">=" {@if c.operator==">=" } selected {@/if}>&ge;</option>
                                     <option value="<" {@if c.operator=="<"} selected {@/if}>&lt;</option>
                                     <option value="<=" {@if c.operator=="<="} selected {@/if}>&le;</option>
+                                    <option value="%" {@if c.operator=="%"} selected {@/if}>%</option>
                                 </select>
                             </div>
                             <div class="col-sm-3">
