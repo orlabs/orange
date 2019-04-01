@@ -154,6 +154,9 @@ Orange启动成功后， dashboard和API server也随之启动：
 - [@Near-Zhang](https://github.com/Near-Zhang)
 - [@khlipeng](https://github.com/khlipeng)
 - [@wujunze](https://github.com/wujunze)
+- [@shuaijinchao](https://github.com/shuaijinchao)
+- [@EasonFeng5870](https://github.com/EasonFeng5870)
+- [@zhjwpku](https://github.com/zhjwpku)
 
 
 
