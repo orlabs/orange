@@ -437,13 +437,13 @@ CREATE TABLE `consul_balancer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `consul_balancer` WRITE;
-/*!40000 ALTER TABLE `balancer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `consul_balancer` DISABLE KEYS */;
 
 INSERT INTO `consul_balancer` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
     (1,'1','{}','meta','2017-11-11 11:11:11');
 
-/*!40000 ALTER TABLE `balancer` ENABLE KEYS */;
+/*!40000 ALTER TABLE `consul_balancer` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -473,15 +473,11 @@ VALUES
 UNLOCK TABLES;
 
 
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
+# Dump of table dynamic_upstream
+# ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `dynamic_upstream`;
+
 CREATE TABLE `dynamic_upstream`
 (
     `id`      int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -491,9 +487,20 @@ CREATE TABLE `dynamic_upstream`
     `op_time` timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `unique_key` (`key`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
-  DEFAULT CHARSET = utf8;
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8;
+
+LOCK TABLES `dynamic_upstream` WRITE;
+/*!40000 ALTER TABLE `dynamic_upstream` DISABLE KEYS */;
+
 INSERT INTO `dynamic_upstream` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
 
+/*!40000 ALTER TABLE `dynamic_upstream` ENABLE KEYS */;
+UNLOCK TABLES;
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
