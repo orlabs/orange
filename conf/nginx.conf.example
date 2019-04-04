@@ -52,6 +52,8 @@ http {
     lua_shared_dict monitor 10m; # used for url monitor statistic, see plugin: monitor
     lua_shared_dict rate_limit 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
+    lua_shared_dict consul_upstream 5m; # used for consul_upstream, see plugin consul_balancer
+    lua_shared_dict consul_upstream_watch 5m; # used for consul_upstream_watch, consul_balancer
 
 
 
