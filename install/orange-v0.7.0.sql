@@ -517,8 +517,7 @@ LOCK TABLES `jwt_auth` WRITE;
 /*!40000 ALTER TABLE `jwt_auth` DISABLE KEYS */;
 
 INSERT INTO `jwt_auth` (`id`, `key`, `value`, `type`, `op_time`)
-VALUES
-    (1,'1','{}','meta','2016-11-11 11:11:11');
+VALUES (1,'1','{}','meta','2016-11-11 11:11:11');
 
 /*!40000 ALTER TABLE `jwt_auth` ENABLE KEYS */;
 UNLOCK TABLES;
