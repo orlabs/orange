@@ -1,23 +1,23 @@
 TO_INSTALL = api bin conf dashboard orange install
+DEV_ROCKS = "lua-resty-http 0.13-0" "lua-resty-kafka 0.06-0" "lua-resty-dns-client 1.0.0-1" "lua-resty-jwt 0.2.0-0" "luasocket 3.0rc1-2"
 ORANGE_HOME ?= /usr/local/orange
 ORANGE_BIN ?= /usr/local/bin/orange
 ORNAGE_HOME_PATH = $(subst /,\\/,$(ORANGE_HOME))
 
-.PHONY: test install show
+.PHONY: test install show dependencies init-config
 init-config:
 	@ test -f conf/nginx.conf   || (cp conf/nginx.conf.example conf/nginx.conf && echo "copy nginx.conf")
 	@ test -f conf/orange.conf  || (cp conf/orange.conf.example conf/orange.conf && echo "copy orange.conf")
 
-deps:init-config
-	mkdir -p resty
-	wget https://github.com/ledgetech/lua-resty-http/archive/v0.13.zip
-	unzip lua-resty-http-0.13.zip
-	yes|cp -fr   lua-resty-http-0.13/lib/resty/*  resty/
-	rm -fr  lua-resty-http-0.13.zip  lua-resty-http-0.13.zip
-	wget https://github.com/doujiang24/lua-resty-kafka/archive/v0.06.zip
-	unzip lua-resty-kafka-0.06.zip
-	yes|cp -fr lua-resty-kafka-0.06/lib/resty/* resty
-	rm -fr  lua-resty-kafka-0.06.zip lua-resty-kafka-0.06
+dependencies:
+	@for rock in $(DEV_ROCKS) ; do \
+	  if luarocks list --porcelain $$rock | grep -q "installed" ; then \
+	    echo $$rock already installed, skipping ; \
+	  else \
+	    echo $$rock not found, installing via luarocks... ; \
+	    luarocks install $$rock >> /dev/null ; \
+	  fi \
+	done;
 
 test:
 	@echo "to be continued..."
