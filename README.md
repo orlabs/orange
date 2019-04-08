@@ -26,21 +26,21 @@ Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Ora
 1) dependencies
 
 ```bash
-# cd orange
-# make dependencies
+# cd orange          // Go to the Orange directory
+# make dependencies  // Installation dependent extension
 ```
 
 2) script management
 
 use shell scripts (e.g. `start.sh`) to manage Orange.
 
-3) CLI tool
+3) CLI tools
 
 In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
 
-```
-# cd orange
-# make install
+```bash
+# cd orange     // Go to the Orange directory
+# make install  // Installation CLI tools
 ```
 
 then, the Orange runtime lua module is installed in `/usr/local/orange` and an executable command named `/usr/local/bin/orange` is generated.
