@@ -95,18 +95,22 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 
 #### 安装
 
-1) 使用方式一
+1) 依赖安装
+
+可以通过`make dependencies`将Orange依赖的扩展库安装到系统中。
+
+2) 脚本管理工具
 
 无需安装, 只要将Orange下载下来, 根据需要修改一下`orange.conf`和`nginx.conf`配置，然后使用`start.sh`脚本即可启动。
 默认提供的nginx.conf和start.sh都是最简单的配置，只是给用户一个默认的配置参考，用户应该根据实际生产要求自行添加或更改其中的配置以满足需要。
 
-2) 使用方式二
+3) 命令行管理工具
 
 可以通过`make install`将Orange安装到系统中(默认安装到/usr/local/orange)。 执行此命令后， 以下两部分将被安装：
 
-```
-/usr/local/orange     #orange运行时需要的文件
-/usr/local/bin/orange #orange命令行工具
+```bash
+# /usr/local/orange     // orange运行时需要的文件
+# /usr/local/bin/orange // orange命令行工具
 ```
 
 #### 启动
