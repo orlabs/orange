@@ -19,21 +19,28 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
     - Orange v0.6.1 and versions before v0.6.1 are compatible with lor v0.2.*
     - Orange v0.6.2+ is compatible with lor v0.3.0+
 
-Import the SQL file(e.g. install/orange-v0.6.3.sql) which is adapted to your Orange version into MySQL database named `orange`.
+Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Orange version into MySQL database named `orange`.
 
 #### Install
 
-1) script management
+1) dependencies
+
+```bash
+# cd orange          // Go to the Orange directory
+# make dependencies  // Installation dependent extension
+```
+
+2) script management
 
 use shell scripts (e.g. `start.sh`) to manage Orange.
 
-2) CLI tool
+3) CLI tools
 
 In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
 
-```
-cd orange
-make install
+```bash
+# cd orange     // Go to the Orange directory
+# make install  // Installation CLI tools
 ```
 
 then, the Orange runtime lua module is installed in `/usr/local/orange` and an executable command named `/usr/local/bin/orange` is generated.
@@ -82,6 +89,13 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 - [@spacewander](https://github.com/spacewander)
 - [@noname007](https://github.com/noname007)
 - [@itchenyi](https://github.com/itchenyi)
+- [@Near-Zhang](https://github.com/Near-Zhang)
+- [@khlipeng](https://github.com/khlipeng)
+- [@wujunze](https://github.com/wujunze)
+- [@shuaijinchao](https://github.com/shuaijinchao)
+- [@EasonFeng5870](https://github.com/EasonFeng5870)
+- [@zhjwpku](https://github.com/zhjwpku)
+
 
 ### See also
 

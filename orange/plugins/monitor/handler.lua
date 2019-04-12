@@ -78,20 +78,14 @@ function URLMonitorHandler:log(conf)
                 end
 
                 local stop = filter_rules(sid, "monitor", ngx_var_uri)
-                if stop then -- 不再执行此插件其他逻辑
+                local selector_continue = selector.handle and selector.handle.continue
+                if stop or not selector_continue then -- 不再执行此插件其他逻辑
                     return
                 end
             else
                 if selector.handle and selector.handle.log == true then
                     ngx.log(ngx.INFO, "[Monitor][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
-            end
-
-            -- if continue or break the loop
-            if selector.handle and selector.handle.continue == true then
-                -- continue next selector
-            else
-                break
             end
         end
     end

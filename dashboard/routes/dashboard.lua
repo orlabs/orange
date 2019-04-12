@@ -172,6 +172,11 @@ return function(config, store)
         res:render("jwt_auth/jwt_auth")
     end)
 
+    -- HMAC AUTH
+    dashboard_router:get("/hmac_auth", function(req, res, next)
+        res:render("hmac_auth/hmac_auth")
+    end)
+
     dashboard_router:get("/waf", function(req, res, next)
         res:render("waf")
     end)
@@ -188,6 +193,14 @@ return function(config, store)
         res:render("help")
     end)
 
+    dashboard_router:get("/balancer", function(req, res, next)
+        res:render("balancer")
+    end)
+
+    dashboard_router:get("/consul_balancer", function(req, res, next)
+        res:render("consul_balancer")
+    end)
+
     --- 加载其他"可用"插件API
     local available_plugins = config.plugins
     if not available_plugins or type(available_plugins) ~= "table" or #available_plugins<1 then
@@ -200,5 +213,4 @@ return function(config, store)
 
     return dashboard_router
 end
-
 

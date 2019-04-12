@@ -317,7 +317,7 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table key_auth
+# Dump of table jwt_auth
 # ------------------------------------------------------------
 
 DROP TABLE IF EXISTS `jwt_auth`;
@@ -333,16 +333,14 @@ CREATE TABLE `jwt_auth` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `jwt_auth` WRITE;
-/*!40000 ALTER TABLE `key_auth` DISABLE KEYS */;
+/*!40000 ALTER TABLE `jwt_auth` DISABLE KEYS */;
 
 INSERT INTO `jwt_auth` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
     (1,'1','{}','meta','2016-11-11 11:11:11');
 
-/*!40000 ALTER TABLE `key_auth` ENABLE KEYS */;
+/*!40000 ALTER TABLE `jwt_auth` ENABLE KEYS */;
 UNLOCK TABLES;
-
-
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

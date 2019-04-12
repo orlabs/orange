@@ -10,10 +10,13 @@
         "property_rate_limiting",
         "basic_auth",
         "key_auth",
+        "jwt_auth",
+        "hmac_auth",
         "signature_auth",
         "waf",
         "divide",
-        "kvstore"
+        "kvstore",
+        "balancer"
     ],
     "store": "mysql",
     "store_mysql": {

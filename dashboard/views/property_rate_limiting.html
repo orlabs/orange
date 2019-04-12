@@ -50,30 +50,73 @@
                         <td class="rule-name-td">
                             <b class="namep">${r.name}</b>
                         </td>
-                        <td class="left rule-condition-td">
-                            <p>
-                                <b>类型</b>:
-                                {@if r.judge.type==0 }
-                                    单一条件匹配
-                                {@/if}
-                                {@if r.judge.type==1 }
-                                    and匹配
-                                {@/if}
-                                {@if r.judge.type==2 }
-                                    or匹配
-                                {@/if}
-                                {@if r.judge.type==3 }
-                                    复杂匹配
-                                {@/if}
-
-
-                                {@if r.judge.type==3 }
-                                    <br/><b>表达式</b>: ${r.judge.expression}
+                        <td class="left rule-extractor-td">
+                            <p class="extractorp">
+                                {@if r.extractor}
+                                <b>变量提取类型</b>:
+                                    {@if !r.extractor.type || r.extractor.type==1 }
+                                        索引式提取
+                                    {@/if}
+                                    {@if r.extractor.type==2 }
+                                        模板式提取
+                                    {@/if}
+                                <br/>
                                 {@/if}
                             </p>
-                            {@each r.judge.conditions as c, index}
-                                <p class="conditionp">${c.type}: ${c.name} ${c.operator} ${c.value}</p>
-                            {@/each}
+
+                            {@if r.extractor && r.extractor.extractions }
+                                {@each r.extractor.extractions as e, index}
+
+                                    {@if !r.extractor.type || r.extractor.type==1 }<!-- 索引式提取 -->
+                                        {@if e.type!="URI" }
+                                            <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                                            ${e.type}{@if e.name }[${e.name}]{@/if}
+
+                                            {@if e.default=="" || e.default }
+                                                <span style="color:#aaa;margin-left:15px;">
+                                                    default: <i style="text-decoration:underline">${e.default}</i>
+                                                </span>
+                                            {@/if}
+                                        {@/if}
+
+                                        {@if e.type=="URI" }
+                                            <span>$</span><span>{</span>${ parseInt(index)+1 }<span>}</span>:
+                                            <i style="text-decoration:underline">${e.name}</i>
+                                        {@/if}
+                                        <br/>
+                                    {@/if}
+                                    {@if r.extractor.type==2 }<!-- 模板式提取 -->
+                                        {@if e.type!="URI" }
+                                            <span>{</span><span>{</span>
+                                            {@if e.type=="Query" }query.<span>${e.name}</span>{@/if}
+                                            {@if e.type=="Header" }header.<span>${e.name}</span>{@/if}
+                                            {@if e.type=="PostParams" }body.<span>${e.name}</span>{@/if}
+                                            {@if e.type=="Host" }host{@/if}
+
+                                            {@if e.type=="IP" }ip{@/if}
+                                            {@if e.type=="Method" }method{@/if}
+                                            <span>}</span><span>}</span>
+
+                                            {@if e.default=="" || e.default }
+                                                <span style="color:#aaa;margin-left:15px;">
+                                                    default: <i style="text-decoration:underline">${e.default}</i>
+                                                </span>
+                                            {@/if}
+                                        {@/if}
+
+                                        {@if e.type=="URI" }
+                                           <span>{</span><span>{</span>
+                                            uri.v1 or uri.v2 ...
+                                           <span>}</span><span>}</span>
+
+                                           <i style="text-decoration:underline">regrex: ${e.name}</i>
+
+                                        {@/if}
+                                        <br/>
+                                    {@/if}
+
+                                {@/each}
+                            {@/if}
                         </td>
 
                         <td class="left rule-urltmpl-td">
