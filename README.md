@@ -20,21 +20,37 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
     - Orange v0.6.2+ is compatible with lor v0.3.0+
 
 Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Orange version into MySQL database named `orange`.
+- Install luarocks and opm tools
+    - The Version of luarocks is higher than LuaRocks 2.2.2
+    - Opm tool is integrated in Openresty, it is under the openresty/bin directory
 
-#### Install
 
-1) dependencies
+#### Install and Config
+
+1) Install dependencies
 
 ```bash
-# cd orange          // Go to the Orange directory
-# make dependencies  // Installation dependent extension
+#cd orange         // Go to the Orange directory
+#opm --install-dir=./ get zhangbao0325/orangelib      //opm download the 3rd packages
+#luarocks install luafilesystem         //luarocks install lua dependencies             
+#luarocks install luasocket
 ```
 
-2) script management
+2) Generate configuration file
+```bash
+#cd conf
+#cp orange.conf.example orange.conf
+#cp nginx.conf.example nginx.conf
+```
+Attention:    
+ - the directive "store_mysql" in orange.conf should be modified as your mysql configuration,
+ - the directiv  "lua_package_path" should add your lua package installation path of luarocks tool;    
+
+3) script management
 
 use shell scripts (e.g. `start.sh`) to manage Orange.
 
-3) CLI tools
+4) CLI tools
 
 In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
 

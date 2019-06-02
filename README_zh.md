@@ -23,12 +23,10 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
     - 若使用的Orange版本高于或等于v0.6.2则应安装lor v0.3.0+版本
 - MySQL
     - 配置存储和集群扩展需要MySQL支持
-- 使用luarocks安装一些第三方库
-    - luarocks install https://luarocks.org/manifests/steved/penlight-1.5.4-1.rockspec
-    - luarocks install https://luarocks.org/manifests/kong/lua-resty-dns-client-2.2.0-1.rockspec
-    - luarocks install https://luarocks.org/lua-resty-http-0.13-0.src.rock
-    - luarocks install https://luarocks.org/manifests/luarocks/luasocket-3.0rc1-2.rockspec
-
+- 安装luarocks和opm包管理工具
+    - luarocks安装LuaRocks 2.2.2+以上版本。
+    - 若使用openresty,自身集成opm工具，在openresty/bin目录下。
+     
 #### 数据表导入MySQL
 
 - 在MySQL中创建数据库，名为orange
@@ -93,18 +91,34 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 - 各个server或是location的权限，如是否需要通过`allow/deny`指定配置黑白名单ip
 
 
-#### 安装
+#### 安装与配置
 
-1) 依赖安装
+1) 安装依赖包
+```
+    cd orange
+    luarocks install luafilesystem
+    luarocks install luasocket
+   
+    opm --install-dir=./ get zhangbao0325/orangelib        
+```
 
-可以通过`make dependencies`将Orange依赖的扩展库安装到系统中。
+2) 修改配置文件
+```angular2html
+    cd conf
+    cp orange.conf.example orange.conf
+    cp nginx.conf.example nginx.conf
+    
+```
+其中，orange.conf中数据库store_mysql配置请修改成你安装好的数据库。
+nginx.conf中lua_package_path添加上你的luarocks的lua包安装路径。
 
-2) 脚本管理工具
+
+3) 脚本管理工具
 
 无需安装, 只要将Orange下载下来, 根据需要修改一下`orange.conf`和`nginx.conf`配置，然后使用`start.sh`脚本即可启动。
 默认提供的nginx.conf和start.sh都是最简单的配置，只是给用户一个默认的配置参考，用户应该根据实际生产要求自行添加或更改其中的配置以满足需要。
 
-3) 命令行管理工具
+4) 命令行管理工具
 
 可以通过`make install`将Orange安装到系统中(默认安装到/usr/local/orange)。 执行此命令后， 以下两部分将被安装：
 
