@@ -42,7 +42,7 @@ http {
     client_max_body_size 1m;
 
     #----------------------------Orange configuration-----------------------------
-    lua_package_path '../?.lua;/usr/local/lor/?.lua;;';
+    lua_package_path './lualib/?.lua;./lualib/resty/?.lua;../?.lua;/usr/local/lor/?.lua;;';
     lua_code_cache on;
 
     lua_shared_dict orange_data 20m; # should not removed. used for orange data, e.g. plugins configurations..
@@ -62,6 +62,7 @@ http {
         local env_orange_conf = os.getenv("ORANGE_CONF")
         print(string.char(27) .. "[34m" .. "[INFO]" .. string.char(27).. "[0m", [[the env[ORANGE_CONF] is ]], env_orange_conf)
 
+        # Here, you can also use the absolute path, eg: local confige_file = "/home/openresty/orange/conf/orange.conf"
         local config_file = env_orange_conf or ngx.config.prefix().. "/conf/orange.conf"
         local config, store = orange.init({
             config = config_file
