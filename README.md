@@ -44,7 +44,7 @@ Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Ora
 ```
 Attention:    
  - the directive "store_mysql" in orange.conf should be modified as your mysql configuration,
- - the directiv  "lua_package_path" should add your lua package installation path of luarocks tool;    
+ - the directive  "lua_package_path" should add your lua package installation path of luarocks tool;    
 
 3) script management
 

@@ -62,7 +62,7 @@ http {
         local env_orange_conf = os.getenv("ORANGE_CONF")
         print(string.char(27) .. "[34m" .. "[INFO]" .. string.char(27).. "[0m", [[the env[ORANGE_CONF] is ]], env_orange_conf)
 
-        # Here, you can also use the absolute path, eg: local confige_file = "/home/openresty/orange/conf/orange.conf"
+        -- Here, you can also use the absolute path, eg: local confige_file = "/home/openresty/orange/conf/orange.conf"
         local config_file = env_orange_conf or ngx.config.prefix().. "/conf/orange.conf"
         local config, store = orange.init({
             config = config_file
