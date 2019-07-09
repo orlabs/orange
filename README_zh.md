@@ -95,10 +95,12 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
 
 1) 安装依赖包
 ```
-    cd orange
+    // orange 根目录
+    cd orange  
     luarocks install luafilesystem
     luarocks install luasocket
    
+   // 安装 orange 依赖包  
     opm --install-dir=./ get zhangbao0325/orangelib        
 ```
 
