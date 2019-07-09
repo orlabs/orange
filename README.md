@@ -30,7 +30,7 @@ Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Ora
 1) Install dependencies
 
 ```bash
-#cd orange         // Go to the Orange directory
+#cd orange         // Go to the Orange root directory
 #opm --install-dir=./ get zhangbao0325/orangelib      //opm download the 3rd packages
 #luarocks install luafilesystem         //luarocks install lua dependencies             
 #luarocks install luasocket
@@ -55,7 +55,7 @@ use shell scripts (e.g. `start.sh`) to manage Orange.
 In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
 
 ```bash
-# cd orange     // Go to the Orange directory
+// orange root  directory
 # make install  // Installation CLI tools
 ```
 
