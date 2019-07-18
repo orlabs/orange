@@ -98,7 +98,7 @@ conf/nginx.conf里是一些nginx相关配置，请自行检查并按照实际需
     cd orange
     luarocks install luafilesystem
     luarocks install luasocket
-   
+    luarocks install lrandom
     opm --install-dir=./ get zhangbao0325/orangelib        
 ```
 
