@@ -34,6 +34,7 @@ Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Ora
 #opm --install-dir=./ get zhangbao0325/orangelib      //opm download the 3rd packages
 #luarocks install luafilesystem         //luarocks install lua dependencies             
 #luarocks install luasocket
+#luarocks install lrandom
 ```
 
 2) Generate configuration file
@@ -43,7 +44,7 @@ Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Ora
 #cp nginx.conf.example nginx.conf
 ```
 Attention:    
- - the directive "store_mysql" in orange.conf should be modified as your mysql configuration,
+ - the directive  "store_mysql" in orange.conf should be modified as your mysql configuration,
  - the directive  "lua_package_path" should add your lua package installation path of luarocks tool;    
 
 3) script management
