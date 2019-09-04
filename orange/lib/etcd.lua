@@ -26,3 +26,52 @@ local mt = { __index = _M }
 local ops = {}
 
 local normalize
+do
+    local items = {}
+    local function concat(sep, ...)
+        local argc = select('#', ...)
+        clear_tab(items)
+        local len = 0
+
+        for i = 1, argc do
+            local v = select(i, ...)
+            if v ~= nil then
+                len = len + 1
+                items[len] = tostring(v)
+            end
+        end
+
+        return concat_tab(items, sep);
+    end
+
+
+    local segs = {}
+    function normalize(...)
+        local path = concat('/', ...)
+        local names = {}
+        local err
+
+        segs, err = split(path, [[/]], "jo", nil, nil, segs)
+        if not segs then
+            return nil, err
+        end
+
+        local len = 0
+        for _, seg in ipairs(segs) do
+            if seg == '..' then
+                if len > 0 then
+                    len = len - 1
+                end
+
+            elseif seg == '' or seg == '/' and names[len] == '/' then
+                -- do nothing
+
+            elseif seg ~= '.' then
+                len = len + 1
+                names[len] = seg
+            end
+        end
+
+        return '/' .. concat_tab(names, '/', 1, len);
+    end
+end
