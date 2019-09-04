@@ -267,11 +267,8 @@ function _M.init_meta_of_plugin(plugin, store, config)
 end
 
 function _M.init_selectors_of_plugin(plugin, store, config)
-    -- 查找enable
     local selectors = store:get_selectors(plugin)
-
     local to_update_selectors = {}
-
     if selectors then
         -- read all rules
         local rules, err = store:get_rules(plugin)
@@ -283,7 +280,6 @@ function _M.init_selectors_of_plugin(plugin, store, config)
         for _, _node in ipairs(selectors) do
             local selector_id = _node.value.id
             to_update_selectors[selector_id] = _node.value or {}
-
             local init_rules_of_it = _M.init_rules_of_selector(plugin, store, _node.value, rules)
             if not init_rules_of_it then
                 return false
@@ -302,13 +298,41 @@ function _M.init_selectors_of_plugin(plugin, store, config)
             return false
         end
     end
-
     return true
 end
 -- ########################### local cache init end #############################
 
-
 -- ########################### for data(configurations in storage) preview #############################
+local function get_selectors_and_rules(store, plugin, data)
+    local selectors, err = store:get_selectors(plugin)
+    if err then
+        ngx.log(ERR, "error to find selectors from storage when fetching data of plugin[" .. plugin .. "], err:", err)
+        return false
+    end
+    if selectors then
+        -- read all rules
+        local rules, err = store:get_rules(plugin)
+        local to_update_selectors = {}
+        for _, _node in ipairs(selectors) do
+            local selector_id = _node.value.id
+            -- init this selector's rules local cache
+            if not selector_id then
+                ngx.log(ERR, "error: selector_id is nil")
+                return false
+            end
+            to_update_selectors[selector_id] = _node.value or {}
+
+            -- init this selector's rules local cache
+            local rules = _M.get_rules_of_selector(plugin, store, _node.value, rules)
+            data[plugin .. ".selector." .. selector_id .. ".rules"] = rules
+        end
+        data[plugin .. ".selectors"]= to_update_selectors
+    else
+        ngx.log(ERR, "the size of selectors from storage is 0 when fetching data of plugin[" .. plugin .. "] selectors")
+        data[plugin .. ".selectors"] = {}
+    end
+    return nil
+end
 function _M.compose_plugin_data(store, plugin)
     local data = {}
     local ok, e
@@ -316,14 +340,12 @@ function _M.compose_plugin_data(store, plugin)
         -- get enable
         local enable = store:get_enable(plugin)
         data[plugin .. ".enable"] = enable
-
         -- get meta
         local meta, err = store:get_meta(plugin)
         if err then
             ngx.log(ERR, "error to find meta from storage when fetching data of plugin[" .. plugin .. "], err:", err)
             return false
         end
-
         if meta and type(meta) == "table" then
             data[plugin .. ".meta"] = meta or {}
         else
@@ -332,32 +354,9 @@ function _M.compose_plugin_data(store, plugin)
         end
 
         -- get selectors and its rules
-        local selectors, err = store:get_selectors(plugin)
-        if err then
-            ngx.log(ERR, "error to find selectors from storage when fetching data of plugin[" .. plugin .. "], err:", err)
-            return false
-        end
-        if selectors then
-            -- read all rules
-            local rules, err = store:get_rules(plugin)
-            local to_update_selectors = {}
-            for _, _node in ipairs(selectors) do
-                local selector_id = _node.value.id
-                -- init this selector's rules local cache
-                if not selector_id then
-                    ngx.log(ERR, "error: selector_id is nil")
-                    return false
-                end
-                to_update_selectors[selector_id] = _node.value or {}
-
-                -- init this selector's rules local cache
-                local rules = _M.get_rules_of_selector(plugin, store, _node.value, rules)
-                data[plugin .. ".selector." .. selector_id .. ".rules"] = rules
-            end
-            data[plugin .. ".selectors"]= to_update_selectors
-        else
-            ngx.log(ERR, "the size of selectors from storage is 0 when fetching data of plugin[" .. plugin .. "] selectors")
-            data[plugin .. ".selectors"] = {}
+        local res = get_selectors_and_rules(store, plugin, data)
+        if res ~= nil then
+            return res
         end
         return true, data
     end, function()
@@ -416,10 +415,10 @@ function _M.load_data(store, plugin, config)
 end
 
 -- only ETCD need to use
-function _M.regist_node(store, config, delay)
+function _M.register_node(store, config, delay)
     local d = utils.get_hostname()
-    local ip = ip_utils.get_ipv4()
-    local port = config.store_etcd.regist.port
+    local ip = utils.get_ipv4()
+    local port = config.store_etcd.register.port
     local username, password
     local credentials = config.api.credentials
     for _, credential in ipairs(credentials) do
