@@ -64,8 +64,11 @@ function Orange.init(options)
     local status, err = pcall(function()
         local conf_file_path = options.config
         config = config_loader.load(conf_file_path)
-        store = require("orange.store.mysql_store")(config.store_mysql)
-
+        local store_type = config.store
+        local modname = "orange.store." .. store_type .. ".store"
+        local data_source_key = "store_" .. store_type
+        ngx.log(ngx.ERR, "loading from data source:" .. data_source_key)
+        store = require(modname)(config[data_source_key])
         loaded_plugins = load_node_plugins(config, store)
         ngx.update_time()
         config.orange_start_at = ngx.now()
@@ -94,7 +97,7 @@ function Orange.init_worker()
     -- 仅在 init_worker 阶段调用，初始化随机因子，仅允许调用一次
     math.randomseed()
     -- 初始化定时器，清理计数器等
-    if Orange.data and Orange.data.store and Orange.data.config.store == "mysql" then
+    if Orange.data and Orange.data.store then
             local ok, err = ngx.timer.at(0, function(premature, store, config)
                 local available_plugins = config.plugins
                 for _, v in ipairs(available_plugins) do
@@ -102,12 +105,40 @@ function Orange.init_worker()
                     if not load_success then
                         os.exit(1)
                     end
-                    
+
                     if v == "consul_balancer" then
                         for ii,p in ipairs(loaded_plugins) do
                             if v == p.name then
                                 p.handler.db_ready()
                             end
+                        end
+                    end
+                end
+                if Orange.data.config.store == "etcd" then
+                    local register_rotate_time = Orange.data.config.store_etcd.register.register_rotate_time
+                    local ok , err = dao.register_node(store, config, register_rotate_time)
+                    if not ok then
+                        ngx.log(ngx.ERR, "failed to register mysql to etcd. err:" .. err)
+                        os.exit(1)
+                    end
+                    if Orange.data.config.store == "etcd" then
+                        local register_rotate_time = Orange.data.config.store_etcd.register.register_rotate_time
+                        local handler
+                        handler = function (premature, store, config)
+                            if premature then
+                                return
+                            end
+
+                            local ok , err = dao.regist_node(store, config, register_rotate_time)
+                            if not ok then
+                                return
+                            end
+                        end
+                        local ok, err = ngx.timer.every(register_rotate_time, handler, Orange.data.store,
+                            Orange.data.config)
+                        if not ok then
+                            ngx.log(ngx.ERR, "failed to create the timer: ", err)
+                            return
                         end
                     end
                 end
