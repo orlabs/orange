@@ -1,14 +1,7 @@
 local ERR = ngx.ERR
-
-local etcd = require("resty.etcd")
-local Store = require("gateway.store.base")
+local etcd = require("orange.lib.etcd")
+local Store = require("orange.store.base")
 local EtcdStore = Store:extend()
-local decode_json, encode_json
-do
-    local cjson = require "cjson.safe"
-    decode_json = cjson.decode
-    encode_json = cjson.encode
-end
 local table_insert = table.insert
 
 function EtcdStore:new(options)

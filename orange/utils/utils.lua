@@ -15,6 +15,7 @@ local ffi_typeof = ffi.typeof
 local ffi_new = ffi.new
 local ffi_str = ffi.string
 local C = ffi.C
+local ip_utils = require "lua_ip"
 
 ffi_cdef[[
 typedef unsigned char u_char;
@@ -90,6 +91,10 @@ function _M.get_hostname()
     f:close()
     hostname = string_gsub(hostname, "\n$", "")
     return hostname
+end
+
+function _M.get_ipv4()
+    return ip_utils.get_ipv4()
 end
 
 --- Generates a random unique string
