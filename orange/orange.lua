@@ -9,6 +9,7 @@ local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
 local dns_client = require("resty.dns.client")
+local ERR = ngx.ERR
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -67,7 +68,7 @@ function Orange.init(options)
         local store_type = config.store
         local modname = "orange.store." .. store_type .. ".store"
         local data_source_key = "store_" .. store_type
-        ngx.log(ngx.ERR, "loading from data source:" .. data_source_key)
+        ngx.log(ERR, "loading from data source:" .. data_source_key)
         store = require(modname)(config[data_source_key])
         loaded_plugins = load_node_plugins(config, store)
         ngx.update_time()
@@ -75,7 +76,7 @@ function Orange.init(options)
     end)
 
     if not status or err then
-        ngx.log(ngx.ERR, "Startup error: " .. err)
+        ngx.log(ERR, "Startup error: " .. err)
         os.exit(1)
     end
 
@@ -118,7 +119,7 @@ function Orange.init_worker()
                     local register_rotate_time = Orange.data.config.store_etcd.register.register_rotate_time
                     local ok , err = dao.register_node(store, config, register_rotate_time)
                     if not ok then
-                        ngx.log(ngx.ERR, "failed to register mysql to etcd. err:" .. err)
+                        ngx.log(ERR, "failed to register mysql to etcd. err:" .. err)
                         os.exit(1)
                     end
                     if Orange.data.config.store == "etcd" then
@@ -137,7 +138,7 @@ function Orange.init_worker()
                         local ok, err = ngx.timer.every(register_rotate_time, handler, Orange.data.store,
                             Orange.data.config)
                         if not ok then
-                            ngx.log(ngx.ERR, "failed to create the timer: ", err)
+                            ngx.log(ERR, "failed to create the timer: ", err)
                             return
                         end
                     end
@@ -145,7 +146,7 @@ function Orange.init_worker()
             end, Orange.data.store, Orange.data.config)
 
             if not ok then
-                ngx.log(ngx.ERR, "failed to create the timer: ", err)
+                ngx.log(ERR, "failed to create the timer: ", err)
                 return os.exit(1)
             end
     end

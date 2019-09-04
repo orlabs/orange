@@ -35,15 +35,12 @@ function _M.get_rules_of_selector(plugin, store, selector, all_rules)
         ngx.log(ERR, "error: selector or selector_id is nil")
         return {}
     end
-
     local rule_ids = selector.rules
     if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then
         return {}
     end
-
     if all_rules and type(all_rules) == "table" and #all_rules > 0 then
         local format_rules = {}
-
         -- reorder the rules as the order stored in selector
         for _, rule_id in ipairs(rule_ids) do
             for _, r in ipairs(all_rules) do
@@ -167,7 +164,8 @@ function _M.update_local_selector_rules(plugin, store, selector_id)
 
     local selector = _M.get_selector(plugin, store, selector_id)
     if not selector or not selector.value then
-        ngx.log(ERR, "error to find selector from storage when updating local selector rules, selector_id:", selector_id)
+        ngx.log(ERR, "error to find selector from storage when updating local selector rules, selector_id:",
+            selector_id)
         return false
     end
 
@@ -209,7 +207,6 @@ function _M.update_enable(plugin, store, enable)
     return store:update_enable(plugin, enable)
 end
 
-
 -- ########################### local cache init start #############################
 function _M.init_rules_of_selector(plugin, store, selector, all_rules)
     if not (selector and selector.id) then
@@ -248,7 +245,8 @@ function _M.init_meta_of_plugin(plugin, store, config)
     -- 查找enable
     local meta, err = store:get_meta(plugin)
     if err then
-        ngx.log(ERR, "error to find meta from storage when initializing plugin[" .. plugin .. "] local meta, err:", err)
+        ngx.log(ERR, "error to find meta from storage when initializing plugin[" ..
+            plugin .. "] local meta, err:", err)
         return false
     end
 
@@ -306,7 +304,8 @@ end
 local function get_selectors_and_rules(store, plugin, data)
     local selectors, err = store:get_selectors(plugin)
     if err then
-        ngx.log(ERR, "error to find selectors from storage when fetching data of plugin[" .. plugin .. "], err:", err)
+        ngx.log(ERR, "error to find selectors from storage when fetching data of plugin[" ..
+            plugin .. "], err:", err)
         return false
     end
     if selectors then
@@ -328,7 +327,8 @@ local function get_selectors_and_rules(store, plugin, data)
         end
         data[plugin .. ".selectors"]= to_update_selectors
     else
-        ngx.log(ERR, "the size of selectors from storage is 0 when fetching data of plugin[" .. plugin .. "] selectors")
+        ngx.log(ERR, "the size of selectors from storage is 0 when fetching data of plugin[" ..
+            plugin .. "] selectors")
         data[plugin .. ".selectors"] = {}
     end
     return nil
@@ -352,7 +352,6 @@ function _M.compose_plugin_data(store, plugin)
             ngx.log(ERR, "can not find meta from storage when fetching data of plugin[" .. plugin .. "]")
             return false
         end
-
         -- get selectors and its rules
         local res = get_selectors_and_rules(store, plugin, data)
         if res ~= nil then
@@ -362,12 +361,10 @@ function _M.compose_plugin_data(store, plugin)
     end, function()
         e = debug.traceback()
     end)
-
     if not ok or e then
         ngx.log(ERR, "[fetch plugin's data error], plugin:", plugin, " error:", e)
         return false
     end
-
     return true, data
 end
 
@@ -396,7 +393,8 @@ function _M.load_data(store, plugin, config)
             local init_meta = _M.init_meta_of_plugin(v, store, config)
             local init_selectors_and_rules = _M.init_selectors_of_plugin(v, store, config)
             if not init_enable or not init_meta or not init_selectors_and_rules then
-                ngx.log(ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable, " init_meta:", init_meta, " init_selectors_and_rules:", init_selectors_and_rules)
+                ngx.log(ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable, " init_meta:",
+                    init_meta, " init_selectors_and_rules:", init_selectors_and_rules)
                 return false
             else
                 ngx.log(ngx.INFO, "load data of plugin[" .. v .. "] success")
@@ -416,9 +414,6 @@ end
 
 -- only ETCD need to use
 function _M.register_node(store, config, delay)
-    local d = utils.get_hostname()
-    local ip = utils.get_ipv4()
-    local port = config.store_etcd.register.port
     local username, password
     local credentials = config.api.credentials
     for _, credential in ipairs(credentials) do
@@ -427,9 +422,9 @@ function _M.register_node(store, config, delay)
     end
     local val = {
         id = utils.new_id(),
-        name = d,
-        ip = ip,
-        port = port,
+        name = utils.get_hostname(),
+        ip = utils.get_ipv4(),
+        port = config.store_etcd.register.port,
         api_username = username,
         api_password = password
     }
