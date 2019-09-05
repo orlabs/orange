@@ -121,3 +121,51 @@ local function init_configurations(opts)
         }
     }
 end
+
+function _M.new(opts)
+    if opts == nil then
+        opts = {}
+
+    elseif not typeof.table(opts) then
+        return nil, 'opts must be table'
+    end
+
+    local timeout = opts.timeout or 5000    -- 5 sec
+    --ngx.log(ERR, opts.host)
+    local http_host = opts.host or "http://127.0.0.1:2379"
+    local ttl = opts.ttl or -1
+    local prefix = opts.prefix or "/v2/keys"
+
+    if not typeof.uint(timeout) then
+        return nil, 'opts.timeout must be unsigned integer'
+    end
+
+    if not typeof.string(http_host) then
+        return nil, 'opts.host must be string'
+    end
+
+    if not typeof.int(ttl) then
+        return nil, 'opts.ttl must be integer'
+    end
+
+    if not typeof.string(prefix) then
+        return nil, 'opts.prefix must be string'
+    end
+    local res = setmetatable({
+        timeout = timeout,
+        ttl = ttl,
+        endpoints = {
+            full_prefix = http_host .. normalize(prefix),
+            http_host = http_host,
+            prefix = prefix,
+            version     = http_host .. '/version',
+            stats_leader = http_host .. '/v2/stats/leader',
+            stats_self   = http_host .. '/v2/stats/self',
+            stats_store  = http_host .. '/v2/stats/store',
+            keys        = http_host .. '/v2/keys',
+        }
+    },
+        mt)
+    ngx.log(ERR, http_host)
+    return res
+end
