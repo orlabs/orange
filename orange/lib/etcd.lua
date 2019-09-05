@@ -169,3 +169,7 @@ function _M.new(opts)
     ngx.log(ERR, http_host)
     return res
 end
+
+local content_type = {
+    ["Content-Type"] = "application/x-www-form-urlencoded",
+}
