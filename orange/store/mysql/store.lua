@@ -96,4 +96,63 @@ function MySQLStore:update(opts)
     end
 end
 
+function MySQLStore:user_new(username, password, enable)
+    return self.db:query("insert into dashboard_user(username, password, enable) values(?,?,?)",
+        {username, password, enable})
+end
+
+function MySQLStore:user_query(username, password)
+    local res, err = self.db:query("select * from dashboard_user where username=? and password=?", {username, password})
+    return res, err
+end
+
+function MySQLStore:user_query_all(username, password)
+    local result, err = self.db:query("select id, username, is_admin, create_time, enable from dashboard_user order by id asc")
+    if not result or err or type(result) ~= "table" or #result < 1 then
+        return nil, err
+    else
+        return result, err
+    end
+end
+
+function MySQLStore:user_query_by_username(username)
+    local res, err = self.db:query("select * from dashboard_user where username=? limit 1", {username})
+    if not res or err or type(res) ~= "table" or #res ~=1 then
+        return nil, err or "error"
+    end
+    return res[1], err
+end
+
+function MySQLStore:user_update_enable(username, enable)
+    local res, err = self.db:query("update dashboard_user set enable=? where id=?", {tonumber(enable), tonumber(userid)})
+    if not res or err then
+        return false
+    else
+        return true
+    end
+    local res, err = self.db:query("select * from dashboard_user where username=? limit 1", {username})
+    if not res or err or type(res) ~= "table" or #res ~=1 then
+        return nil, err or "error"
+    end
+    return res[1], err
+end
+
+function MySQLStore:user_update_pwd_and_enable(username, pwd, enable)
+    local res, err = self.db:query("update dashboard_user set password=?, enable=? where username=?", {pwd, tonumber(enable), username})
+    if not res or err then
+        return false
+    else
+        return true
+    end
+end
+
+function MySQLStore:user_delete(username)
+    local res, err = self.db:query("delete from dashboard_user where id=?", { username })
+    if not res or err then
+        return false
+    else
+        return true
+    end
+end
+
 return MySQLStore
