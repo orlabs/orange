@@ -20,7 +20,6 @@ local type = type
 local error = error
 local ERR = ngx.ERR
 
-
 local _M = {}
 local mt = { __index = _M }
 local ops = {}
@@ -43,7 +42,6 @@ do
 
         return concat_tab(items, sep);
     end
-
 
     local segs = {}
     function normalize(...)
@@ -113,11 +111,11 @@ local function init_configurations(opts)
             full_prefix = http_host .. normalize(prefix),
             http_host = http_host,
             prefix = prefix,
-            version     = http_host .. '/version',
+            version = http_host .. '/version',
             stats_leader = http_host .. '/v2/stats/leader',
-            stats_self   = http_host .. '/v2/stats/self',
-            stats_store  = http_host .. '/v2/stats/store',
-            keys        = http_host .. '/v2/keys',
+            stats_self = http_host .. '/v2/stats/self',
+            stats_store = http_host .. '/v2/stats/store',
+            keys = http_host .. '/v2/keys',
         }
     }
 end
@@ -158,11 +156,11 @@ function _M.new(opts)
             full_prefix = http_host .. normalize(prefix),
             http_host = http_host,
             prefix = prefix,
-            version     = http_host .. '/version',
+            version = http_host .. '/version',
             stats_leader = http_host .. '/v2/stats/leader',
-            stats_self   = http_host .. '/v2/stats/self',
-            stats_store  = http_host .. '/v2/stats/store',
-            keys        = http_host .. '/v2/keys',
+            stats_self = http_host .. '/v2/stats/self',
+            stats_store = http_host .. '/v2/stats/store',
+            keys = http_host .. '/v2/keys',
         }
     },
         mt)
@@ -225,7 +223,6 @@ local function set(key, val, attr)
     if not val then
         return nil, err
     end
-
 
     local prev_exist
     if attr.prev_exist ~= nil then
@@ -320,7 +317,7 @@ local function get(key, attr)
                 wait = attr_wait,
                 waitIndex = attr.wait_index,
                 recursive = attr_recursive,
-                consistent = attr.consistent,   -- todo
+                consistent = attr.consistent, -- todo
             }
         }
     end
