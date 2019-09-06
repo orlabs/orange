@@ -276,3 +276,28 @@ local function set(key, val, attr)
 
     return res
 end
+
+local function decode_dir_value(body_node)
+    if not body_node.dir then
+        return false
+    end
+
+    if type(body_node.nodes) ~= "table" then
+        return false
+    end
+
+    local err
+    for _, node in ipairs(body_node.nodes) do
+        local val = node.value
+        if type(val) == "string" then
+            node.value, err = decode_json(val)
+            if err then
+                error("failed to decode info|" .. val)
+            end
+        end
+
+        decode_dir_value(node)
+    end
+
+    return true
+end
