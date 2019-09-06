@@ -219,3 +219,60 @@ local function _request(method, uri, opts, timeout)
     return res
 end
 
+local function set(key, val, attr)
+    local err
+    val, err = encode_json(val)
+    if not val then
+        return nil, err
+    end
+
+
+    local prev_exist
+    if attr.prev_exist ~= nil then
+        prev_exist = attr.prev_exist and 'true' or 'false'
+    end
+
+    local dir
+    if attr.dir then
+        dir = attr.dir and 'true' or 'false'
+    end
+
+    local opts = {
+        body = {
+            ttl = attr.ttl,
+            value = val,
+            dir = dir,
+        },
+        query = {
+            prevExist = prev_exist,
+            prevIndex = attr.prev_index,
+        }
+    }
+
+    -- todo: check arguments
+
+    -- verify key
+    key = normalize(key)
+    if key == '/' then
+        return nil, "key should not be a slash"
+    end
+
+    local res
+    res, err = _request(attr.in_order and 'POST' or 'PUT',
+        ops.endpoints.full_prefix .. key,
+        opts, ops.timeout)
+    if err then
+        return nil, err
+    end
+
+    -- get
+    if res.status < 300 and res.body.node and
+        not res.body.node.dir then
+        res.body.node.value, err = decode_json(res.body.node.value)
+        if err then
+            return nil, err
+        end
+    end
+
+    return res
+end
