@@ -173,3 +173,49 @@ end
 local content_type = {
     ["Content-Type"] = "application/x-www-form-urlencoded",
 }
+
+local function _request(method, uri, opts, timeout)
+    local body
+    --ngx.log(ERR, "METHOD ==================+++++++++++++++++=====================" .. method)
+    --if opts and opts.body and tab_nkeys(opts.body) > 0 then
+    if opts and opts.body then
+        body = encode_args(opts.body)
+    end
+
+    --if opts and opts.query and tab_nkeys(opts.query) > 0 then
+    if opts and opts.query then
+        uri = uri .. '?' .. encode_args(opts.query)
+    end
+    --ngx.log(ERR, "URI***************************" .. uri)
+    local http_cli, err = http.new()
+    if err then
+        return nil, err
+    end
+
+    if timeout then
+        http_cli:set_timeout(timeout * 1000)
+    end
+
+    local res
+    res, err = http_cli:request_uri(uri, {
+        method = method,
+        body = body,
+        headers = content_type,
+    })
+
+    if err then
+        return nil, err
+    end
+
+    if res.status >= 500 then
+        return nil, "invalid response code: " .. res.status
+    end
+
+    if not typeof.string(res.body) then
+        return res
+    end
+
+    res.body = decode_json(res.body)
+    return res
+end
+
