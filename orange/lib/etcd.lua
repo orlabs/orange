@@ -301,3 +301,59 @@ local function decode_dir_value(body_node)
 
     return true
 end
+
+local function get(key, attr)
+    local opts
+    if attr then
+        local attr_wait
+        if attr.wait ~= nil then
+            attr_wait = attr.wait and 'true' or 'false'
+        end
+
+        local attr_recursive
+        if attr.recursive then
+            attr_recursive = attr.recursive and 'true' or 'false'
+        end
+
+        opts = {
+            query = {
+                wait = attr_wait,
+                waitIndex = attr.wait_index,
+                recursive = attr_recursive,
+                consistent = attr.consistent,   -- todo
+            }
+        }
+    end
+    local res, err = _request("GET",
+        ops.endpoints.full_prefix .. normalize(key),
+        opts, attr and attr.timeout or ops.timeout)
+    if err then
+        return nil, err
+    end
+    --for key, val in pairs(res) do
+    --    ngx.log(ERR, "key==============================" .. key)
+    --    ngx.log(ERR, "val==============================" .. type(val))
+    --end
+
+    -- readdir
+    if attr and attr.dir then
+        if res.status == 200 and res.body.node and
+            not res.body.node.dir then
+            res.body.node.dir = false
+        end
+    end
+
+    if res.status == 200 and res.body.node then
+        if not decode_dir_value(res.body.node) then
+            local val = res.body.node.value
+            if type(val) == "string" then
+                res.body.node.value, err = decode_json(val)
+                if err then
+                    ngx.log(ERR, "failed to pass json, err:" .. err)
+                    return nil, err
+                end
+            end
+        end
+    end
+    return res
+end
