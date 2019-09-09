@@ -106,7 +106,7 @@ function MySQLStore:user_query(username, password)
     return res, err
 end
 
-function MySQLStore:user_query_all(username, password)
+function MySQLStore:user_query_all()
     local result, err = self.db:query("select id, username, is_admin, create_time, enable from dashboard_user order by id asc")
     if not result or err or type(result) ~= "table" or #result < 1 then
         return nil, err
@@ -130,7 +130,7 @@ function MySQLStore:user_update_enable(username, enable)
     else
         return true
     end
-    local res, err = self.db:query("select * from dashboard_user where username=? limit 1", {username})
+    res, err = self.db:query("select * from dashboard_user where username=? limit 1", {username})
     if not res or err or type(res) ~= "table" or #res ~=1 then
         return nil, err or "error"
     end
