@@ -58,7 +58,7 @@ function EtcdStore:user_update_enable(username, enable)
     local key = context.config.store_etcd.default_path .. "user/" .. username
     local user_info, err = self:user_query_by_username(username)
     if err ~= nil then
-        ngx.log(ngx.ERR, "Failed to get user, username=" .. username)
+        ngx.log(ERR, "Failed to get user, username=" .. username)
         return false
     end
     user_info.enable = enable
@@ -181,7 +181,7 @@ function EtcdStore:delete_selector(plugin, selector_id)
     if delete_result then
         return true
     else
-        ngx.log(ngx.ERR, "delete selector err, ", selector_id)
+        ngx.log(ERR, "delete selector err, ", selector_id)
         return false
     end
 end
@@ -277,7 +277,7 @@ function EtcdStore:get_enable(plugin)
     local key = config.store_etcd.default_path .. plugin .. "/enable"
     local res, err = EtcdStore.query(self, key)
     if err then
-        ngx.log(ngx.ERR, "Failed to query, key=" .. key)
+        ngx.log(ERR, "Failed to query, key=" .. key)
         return nil, err
     end
     if res.body.node then
@@ -293,7 +293,7 @@ end
 function EtcdStore:insert(key, val, ttl)
     local res, err = etcd.set(self.ops, key, val, ttl)
     if err then
-        ngx.log(ngx.ERR, "failed to do insert, err: " , err)
+        ngx.log(ERR, "failed to do insert, err: " , err)
         return false
     end
     return true
@@ -304,7 +304,7 @@ function EtcdStore:delete(key)
     if res and not err then
         return true
     else
-        ngx.log(ngx.ERR, "EtcdStore:delete error:", err)
+        ngx.log(ERR, "EtcdStore:delete error:", err)
         return false
     end
 end
@@ -313,7 +313,7 @@ function EtcdStore:delete_keys(keys)
     for _, key in ipairs(keys) do
         local res, err = etcd.delete(self.ops, key)
         if err then
-            ngx.log(ngx.ERR, "EtcdStore:delete error:", err)
+            ngx.log(ERR, "EtcdStore:delete error:", err)
             return false
         end
     end
@@ -325,7 +325,7 @@ function EtcdStore:update(key, val, ttl)
     if res and res.status == 200 and not err then
         return true
     else
-        ngx.log(ngx.ERR, "EtcdStore:update error:", err)
+        ngx.log(ERR, "EtcdStore:update error:", err)
         return false
     end
 end
