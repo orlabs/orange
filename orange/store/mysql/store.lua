@@ -1,5 +1,5 @@
 local type = type
-local mysql_db = require("orange.store.mysql_db")
+local mysql_db = require("orange.store.mysql.mysql_db")
 local Store = require("orange.store.base")
 local json = require("orange.utils.json")
 local table_insert = table.insert
