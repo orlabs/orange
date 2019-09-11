@@ -102,7 +102,7 @@ function Orange.init_worker()
             local ok, err = ngx.timer.at(0, function(premature, store, config)
                 local available_plugins = config.plugins
                 for _, v in ipairs(available_plugins) do
-                    local load_success = dao.load_data_by_mysql(store, v)
+                    local load_success = dao.load_data(store, v)
                     if not load_success then
                         os.exit(1)
                     end
