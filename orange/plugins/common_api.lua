@@ -461,7 +461,7 @@ return function(plugin)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)
-                local current_meta = meta.value
+                local current_meta = meta
                 if not meta or not current_meta then
                    return res:json({
                         success = false,
@@ -662,7 +662,7 @@ return function(plugin)
 
                 local update_meta_result, update_local_meta_result
                 local meta = dao.get_meta(plugin, store)
-                if not meta or not meta.value then
+                if not meta then
                     ngx.log(ngx.ERR, "error to find meta when resorting selectors")
                     return res:json({
                         success = true,
