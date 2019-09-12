@@ -420,11 +420,13 @@ function _M.register_node(store, config, delay)
         username = credential.username
         password = credential.password
     end
+    local ip = utils.get_ipv4()
+    local port = config.store_etcd.register.port
     local val = {
         id = utils.new_id(),
         name = utils.get_hostname(),
-        ip = utils.get_ipv4(),
-        port = config.store_etcd.register.port,
+        ip = ip,
+        port = port,
         api_username = username,
         api_password = password
     }
