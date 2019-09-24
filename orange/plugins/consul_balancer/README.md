@@ -39,7 +39,7 @@
         "host" : "10.0.201.156",
         "port" : 8500,
         "interval" : 10,
-        "token" : 'token'
+        "token" : "token"
     }
     interval计量单位为s
     token为ACL中指定的token,(注，未测试)
