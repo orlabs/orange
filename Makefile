@@ -5,6 +5,7 @@ INSTALL ?= install
 COPY ?= cp
 LINK ?= ln
 REMOVE ?= rm
+CHMOD ?= chmod
 UNAME ?= $(shell uname)
 OR_EXEC ?= $(shell which openresty)
 LUA_JIT_DIR ?= $(shell ${OR_EXEC} -V 2>&1 | grep prefix | grep -Eo 'prefix=(.*?)/nginx' | grep -Eo '/.*/')luajit
@@ -32,6 +33,8 @@ endif
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
 	$(INSTALL) install/orange-v0.7.0.sql conf/orange-v0.7.0.sql
+	$(CHMOD) +x bin/orange
+
 
 
 ### install:      Install the Orange
