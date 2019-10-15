@@ -1,4 +1,5 @@
-worker_processes  4;
+worker_processes 1;
+user root;
 
 events {
     worker_connections  4096;

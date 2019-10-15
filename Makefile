@@ -33,8 +33,6 @@ endif
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
 	$(INSTALL) install/orange-v0.7.0.sql conf/orange-v0.7.0.sql
-	$(CHMOD) +x bin/orange
-
 
 
 ### install:      Install the Orange
