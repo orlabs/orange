@@ -1,46 +1,62 @@
-TO_INSTALL = api bin conf dashboard orange install
-DEV_ROCKS = "lua-resty-http 0.13-0" "lua-resty-kafka 0.06-0" "lua-resty-dns-client 1.0.0-1" "lua-resty-jwt 0.2.0-0" "luasocket 3.0rc1-2"
-ORANGE_HOME ?= /usr/local/orange
-ORANGE_BIN ?= /usr/local/bin/orange
-ORNAGE_HOME_PATH = $(subst /,\\/,$(ORANGE_HOME))
+INST_PREFIX ?= /usr
+INST_LUADIR ?= $(INST_PREFIX)/share/lua/5.1
+INST_BINDIR ?= /usr/bin
+INSTALL ?= install
+COPY ?= cp
+LINK ?= ln
+REMOVE ?= rm
+UNAME ?= $(shell uname)
+OR_EXEC ?= $(shell which openresty)
+LUA_JIT_DIR ?= $(shell ${OR_EXEC} -V 2>&1 | grep prefix | grep -Eo 'prefix=(.*?)/nginx' | grep -Eo '/.*/')luajit
+LUAROCKS_VER ?= $(shell luarocks --version | grep -E -o  "luarocks [0-9]+")
 
-.PHONY: test install show dependencies init-config
-init-config:
-	@ test -f conf/nginx.conf   || (cp conf/nginx.conf.example conf/nginx.conf && echo "copy nginx.conf")
-	@ test -f conf/orange.conf  || (cp conf/orange.conf.example conf/orange.conf && echo "copy orange.conf")
 
-dependencies:
-	@for rock in $(DEV_ROCKS) ; do \
-	  if luarocks list --porcelain $$rock | grep -q "installed" ; then \
-	    echo $$rock already installed, skipping ; \
-	  else \
-	    echo $$rock not found, installing via luarocks... ; \
-	    luarocks install $$rock >> /dev/null ; \
-	  fi \
-	done;
+### help:         Show Makefile rules.
+.PHONY: help
+help:
+	@echo Makefile rules:
+	@echo
+	@grep -E '^### [-A-Za-z0-9_]+:' Makefile | sed 's/###/   /'
 
-test:
-	@echo "to be continued..."
 
-install:init-config
-	@rm -rf $(ORANGE_BIN)
-	@rm -rf $(ORANGE_HOME)
-	@mkdir -p $(ORANGE_HOME)
+### dev:          Create Orange development ENV
+.PHONY: dev
+dev:
+ifeq ($(UNAME),Darwin)
+	luarocks install --lua-dir=$(LUA_JIT_DIR) rockspec/orange-0.7-0.rockspec --tree=deps --only-deps --local
+else ifneq ($(LUAROCKS_VER),'luarocks 3')
+	luarocks install rockspec/orange-0.7-0.rockspec --tree=deps --only-deps --local
+else
+	luarocks install --lua-dir=/usr/local/openresty/luajit rockspec/orange-0.7-0.rockspec --tree=deps --only-deps --local
+endif
+	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
+	$(INSTALL) conf/orange.conf.example conf/orange.conf
+	$(INSTALL) install/orange-v0.7.0.sql conf/orange-v0.7.0.sql
 
-	@for item in $(TO_INSTALL) ; do \
-		cp -a $$item $(ORANGE_HOME)/; \
-	done;
 
-	@cat $(ORANGE_HOME)/conf/nginx.conf | sed "s/..\/?.lua;\/usr\/local\/lor\/?.lua;;/"$(ORNAGE_HOME_PATH)"\/?.lua;\/usr\/local\/lor\/?.lua;;/" > $(ORANGE_HOME)/conf/new_nginx.conf
-	@rm $(ORANGE_HOME)/conf/nginx.conf
-	@mv $(ORANGE_HOME)/conf/new_nginx.conf $(ORANGE_HOME)/conf/nginx.conf
+### install:      Install the Orange
+.PHONY: install
+install:
+	$(INSTALL) -d /usr/local/orange/logs
+	$(INSTALL) -d /usr/local/orange/conf
+	$(INSTALL) -d /usr/local/orange/dashboard/views
+	$(INSTALL) -d /usr/local/orange/dashboard/static
 
-	@echo "#!/usr/bin/env resty" >> $(ORANGE_BIN)
-	@echo "package.path=\"$(ORANGE_HOME)/?.lua;;\" .. package.path" >> $(ORANGE_BIN)
-	@echo "require(\"bin.main\")(arg)" >> $(ORANGE_BIN)
-	@chmod +x $(ORANGE_BIN)
-	@echo "Orange installed."
-	$(ORANGE_BIN) help
+	$(INSTALL) conf/nginx.conf.example /usr/local/orange/conf/nginx.conf
+	$(INSTALL) conf/orange.conf.example /usr/local/orange/conf/orange.conf
+	$(INSTALL) conf/mime.types /usr/local/orange/conf/mime.types
+	$(INSTALL) install/orange-v0.7.0.sql /usr/local/orange/conf/orange-v0.7.0.sql
 
-show:
-	$(ORANGE_BIN) help
+	$(INSTALL) -d $(INST_LUADIR)/orange/dashboard
+	$(INSTALL) -d $(INST_LUADIR)/orange/orange
+	$(INSTALL) -d $(INST_LUADIR)/orange/bin
+
+	$(COPY) -rf dashboard/* $(INST_LUADIR)/orange/dashboard
+	$(COPY) -rf dashboard/views/* /usr/local/orange/dashboard/views
+	$(COPY) -rf dashboard/static/* /usr/local/orange/dashboard/static
+	$(COPY) -rf orange/* $(INST_LUADIR)/orange/orange
+	$(COPY) -rf bin/* $(INST_LUADIR)/orange/bin
+
+	$(INSTALL) bin/orange $(INST_BINDIR)/orange
+	$(REMOVE) -f /usr/local/bin/orange
+	$(LINK) -s $(INST_BINDIR)/orange /usr/local/bin/orange

@@ -1,6 +1,7 @@
 local version = require("orange.version")
 local args_util = require("bin.utils.args_util")
 local logger = require("bin.utils.logger")
+local command_util = require("bin.utils.command_util")
 
 local cmds = {
     start = "Start the Orange Gateway",
@@ -28,7 +29,7 @@ The commands are:
 ]], version, help_cmds)
 
 
-local function exec(args)
+local function exec(args, env)
     local cmd = table.remove(args, 1)
     if cmd == "help" or cmd == "-h" or cmd == "--help" then
         return logger:print(help)
@@ -48,9 +49,9 @@ local function exec(args)
         return
     end
 
-    local cmd = require("bin.cmds." .. cmd)
-    local cmd_exec = cmd.execute
-    local cmd_help = cmd.help
+    local command = require("bin.cmds." .. cmd)
+    local cmd_exec = command.execute
+    local cmd_help = command.help
 
     args = args_util.parse_args(args)
     if args.h or args.help then return logger:print(cmd_help) end
@@ -60,6 +61,12 @@ local function exec(args)
     logger:info("nginx: %s", ngx.config.nginx_version)
     if jit and jit.version then
         logger:info("Lua: %s", jit.version)
+    end
+
+    if env == 'prod' then
+        args.prefix = "/usr/local/orange"
+    else
+        args.prefix = command_util.pwd()
     end
 
     xpcall(function() cmd_exec(args) end, function(err)

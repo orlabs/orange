@@ -8,69 +8,95 @@
 A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 
 
-### Install & Usages
+## Install & Usages
 
-#### Requirements
+### Install of Production Environment (Not Support macOS)
 
-- MySQL v5.5+
-- OpenResty v1.9.7.3+ or Nginx+lua module
-    - install OpenResty with `--with-http_stub_status_module` option
-- [Lor Framework](https://github.com/sumory/lor) please mind:
-    - Orange v0.6.1 and versions before v0.6.1 are compatible with lor v0.2.*
-    - Orange v0.6.2+ is compatible with lor v0.3.0+
+#### 1) Install Dependencies
+We recommend that you use [luarocks](https://luarocks.org/) to install Orange to reduce problems caused by dependency extensions in different operating system releases.
 
-Import the SQL file(e.g. install/orange-v0.7.0.sql) which is adapted to your Orange version into MySQL database named `orange`.
-- Install luarocks and opm tools
-    - The Version of luarocks is higher than LuaRocks 2.2.2
-    - Opm tool is integrated in Openresty, it is under the openresty/bin directory
+System dependencies (`openresty`, `resty-cli`, `luarocks`, etc.) necessary to install Orange on different operating systems, See: [Install Dependencies](docs/install-dependencies.md) Document.
 
+#### 2) Install Lor Framework
 
-#### Install and Config
+Check the [official documentation](https://github.com/sumory/lor) for `Lor Framework` or execute the following command.
 
-1) Install dependencies
+ - Orange v0.6.1 and versions before v0.6.1 are compatible with lor v0.2.*
+ 
+ - Orange v0.6.2+ is compatible with lor v0.3.0+
 
 ```bash
-#cd orange         // Go to the Orange root directory
-#opm --install-dir=./ get zhangbao0325/orangelib      //opm download the 3rd packages
-#luarocks install luafilesystem         //luarocks install lua dependencies             
-#luarocks install luasocket
-#luarocks install lrandom
+git clone https://github.com/sumory/lor.git
+cd lor
+sudo make install
 ```
 
-2) Generate configuration file
-```bash
-#cd conf
-#cp orange.conf.example orange.conf
-#cp nginx.conf.example nginx.conf
-```
-Attention:    
- - the directive  "store_mysql" in orange.conf should be modified as your mysql configuration,
- - the directive  "lua_package_path" should add your lua package installation path of luarocks tool;    
-
-3) script management
-
-use shell scripts (e.g. `start.sh`) to manage Orange.
-
-4) CLI tools
-
-In addition to `start.sh` script, a new cli tool could be utilized to manage Orange. You should install the cli first:
+#### 3) Install Orange
 
 ```bash
-// orange root  directory
-# make install  // Installation CLI tools
+curl -Lo install.sh https://raw.githubusercontent.com/orlabs/orange/master/install/install-orange.sh
+sudo sh install.sh
 ```
 
-then, the Orange runtime lua module is installed in `/usr/local/orange` and an executable command named `/usr/local/bin/orange` is generated.
+After the installation process is completed, the output message `orange 0.7-0 is now installed in /usr/local/orange/deps (license: MIT)` indicates that the installation was successful.
 
-#### Usages
+#### 4) Import MySQL
 
-Before starting Orange, you should ensure that the `orange.conf` and `nginx.conf` are redefined to satisfy the demands of your project.
+Requirements: MySQL Version 5.5+
 
-1) script management
+ - Login to the `MySQL` client, create an `orange` database.
+ 
+ - Import the data table (`/usr/local/orange/conf/orange-v0.7.0.sql`).
+ 
+ - Modify the `Orange` configuration file (`/usr/local/orange/conf/orange.conf`) `MySQL` related configuration.
 
-Just `sh start.sh` to start Orange. You could rewrite some other shell scripts as you need.
+#### 5) Start Orange
 
-2) CLI tool
+```bash
+sudo orange start
+```
+
+After the Orange launches successfully, the `dashboard` and `API Server` are started:
+
+ - Access `Dashboard` via `http://localhost:9999`.
+ - Access `API Server` via `http://localhost:7777`.
+
+At this point, `Orange` has all been installed and configured, please enjoy it.
+
+### Install of Development Environment (Not Support macOS)
+
+#### 1) Dependencies and Lor
+
+Please use the [Install Dependencies](#1-install-dependencies) and [Install Lor Framework](#2-install-lor-framework) methods in [Install of Production Environment](#install-of-production-environment-not-support-macos) to install.
+
+#### 2) Install Orange
+
+```bash
+git clone https://github.com/orlabs/orange.git
+cd orange
+sodu make dev
+```
+
+After the installation process is completed, the output message `Stopping after installing dependencies for orange 0.7-0` indicates that the installation was successful.
+
+#### 3) Import MySQL
+
+Please use the [Import MySQL](#4-import-mysql) methods in [Install of Production Environment](#install-of-production-environment-not-support-macos) to import.
+
+Note: Install `Orange` in `Development Environment`, the `MySQL Data Table` file and the `Orange Config` file are located in the `conf` folder of the current project.
+
+#### 4) Start Orange
+
+```bash
+sudo ./bin/orange start
+```
+
+Access method after the successful startup of `Orange`, please refer to: [Start Orange](#5-start-orange) in [Install of Production Environment](#install-of-production-environment-not-support-macos).
+
+
+### Usages
+
+#### CLI tools
 
 `orange help` to check usages:
 
@@ -89,17 +115,17 @@ help    Show help tips
 ```
 
 
-### Documents
+## Documents
 
 Find more about Orange on its [website](http://orange.sumory.com/docs). There is only a Chinese version for now.
 
 
-### Docker
+## Docker
 
 [https://store.docker.com/community/images/syhily/orange](https://store.docker.com/community/images/syhily/orange) maintained by [@syhily](https://github.com/syhily)
 
 
-### Contributors
+## Contributors
 
 - [@syhily](https://github.com/syhily)
 - [@lhmwzy](https://github.com/lhmwzy)
@@ -114,11 +140,11 @@ Find more about Orange on its [website](http://orange.sumory.com/docs). There is
 - [@zhjwpku](https://github.com/zhjwpku)
 
 
-### See also
+## See also
 
 The plugin architecture is highly inspired by [Kong](https://github.com/Mashape/kong).
 
 
-### License
+## License
 
 [MIT](./LICENSE)
