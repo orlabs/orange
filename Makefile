@@ -6,8 +6,6 @@ COPY ?= cp
 LINK ?= ln
 REMOVE ?= rm
 CHMOD ?= chmod
-OR_EXEC ?= $(shell which openresty)
-LUA_JIT_DIR ?= $(shell ${OR_EXEC} -V 2>&1 | grep prefix | grep -Eo 'prefix=(.*?)/nginx' | grep -Eo '/.*/')luajit
 LUAROCKS_VER ?= $(shell luarocks --version | grep -E -o  "luarocks [0-9]+")
 
 
