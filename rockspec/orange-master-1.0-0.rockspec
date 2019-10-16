@@ -1,4 +1,4 @@
-package = "orange-dev"
+package = "orange-master"
 version = "1.0-0"
 supported_platforms = {"linux"}
 
