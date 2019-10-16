@@ -24,11 +24,11 @@ help:
 .PHONY: dev
 dev:
 ifeq ($(UNAME),Darwin)
-	luarocks install --lua-dir=$(LUA_JIT_DIR) rockspec/orange-0.7-0.rockspec --tree=deps --only-deps --local
+	luarocks install --lua-dir=$(LUA_JIT_DIR) rockspec/orange-0.8-0.rockspec --tree=deps --only-deps --local
 else ifneq ($(LUAROCKS_VER),'luarocks 3')
-	luarocks install rockspec/orange-0.7-0.rockspec --tree=deps --only-deps --local
+	luarocks install rockspec/orange-0.8-0.rockspec --tree=deps --only-deps --local
 else
-	luarocks install --lua-dir=/usr/local/openresty/luajit rockspec/orange-0.7-0.rockspec --tree=deps --only-deps --local
+	luarocks install --lua-dir=/usr/local/openresty/luajit rockspec/orange-0.8-0.rockspec --tree=deps --only-deps --local
 endif
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
