@@ -1,10 +1,10 @@
 package = "orange"
-version = "0.7-0"
+version = "0.8-0"
 supported_platforms = {"linux"}
 
 source = {
     url = "git://github.com/orlabs/orange",
-    branch = "v0.7.0",
+    branch = "v0.8.0",
 }
 
 description = {
