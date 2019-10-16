@@ -13,9 +13,9 @@ A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
 ### Install of Production Environment (Not Support macOS)
 
 #### 1) Install Dependencies
-We recommend that you use [luarocks](https://luarocks.org/) to install Orange to reduce problems caused by dependency extensions in different operating system releases.
+We recommend that you use [luarocks](https://luarocks.org/) to install `Orange` to reduce problems caused by dependency extensions in different operating system releases.
 
-System dependencies (`openresty`, `resty-cli`, `luarocks`, etc.) necessary to install Orange on different operating systems, See: [Install Dependencies](docs/install-dependencies.md) Document.
+System dependencies (`openresty`, `resty-cli`, `luarocks`, etc.) necessary to install `Orange` on different operating systems, See: [Install Dependencies](docs/install-dependencies.md) Document.
 
 #### 2) Install Lor Framework
 
@@ -56,7 +56,7 @@ Requirements: MySQL Version 5.5+
 sudo orange start
 ```
 
-After the Orange launches successfully, the `dashboard` and `API Server` are started:
+After the `Orange` launches successfully, the `dashboard` and `API Server` are started:
 
  - Access `Dashboard` via `http://localhost:9999`.
  - Access `API Server` via `http://localhost:7777`.
@@ -117,7 +117,7 @@ help    Show help tips
 
 ## Documents
 
-Find more about Orange on its [website](http://orange.sumory.com/docs). There is only a Chinese version for now.
+Find more about `Orange` on its [website](http://orange.sumory.com/docs). There is only a Chinese version for now.
 
 
 ## Docker

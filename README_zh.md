@@ -5,11 +5,11 @@
 
 <a href="./README_zh.md" style="font-size:13px">中文</a> | <a href="./README.md" style="font-size:13px">English</a> | <a href="http://orange.sumory.com" style="font-size:13px">Website</a>
 
-Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还可用于API监控、访问控制(鉴权、WAF)、流量筛选、访问限速、AB测试、静/动态分流等。它有以下特性：
+`Orange` 是一个基于 `OpenResty` 的API网关。除 `Nginx` 的基本功能外，它还可用于`API监控`、`访问控制(鉴权、WAF)`、`流量筛选`、`访问限速`、`AB测试`、`静/动态分流` 等。它有以下特性：
 
-- 提供了一套默认的Dashboard用于动态管理各种功能和配置
-- 提供了API接口用于实现第三方服务(如个性化运维需求、第三方Dashboard等)
-- 可根据规范编写自定义插件扩展Orange功能
+- 提供了一套默认的 `Dashboard` 用于动态管理各种功能和配置。
+- 提供了API接口用于实现第三方服务(如`个性化运维需求`、`第三方Dashboard`等)。
+- 可根据规范编写自定义插件扩展 `Orange` 功能。
 
 
 ## 安装 & 使用
@@ -20,15 +20,15 @@ Orange是一个基于OpenResty的API网关。除Nginx的基本功能外，它还
 
 我们推荐使用 `luarocks` 来安装 `Orange`，以减少由不同操作系统发行版本中的依赖项扩展引起的问题。
 
-在不同的操作系统上安装Orange所必需的系统依赖（openresty，resty-cli，luarocks等），请参见：[依赖安装文档](docs/install-dependencies.md)。
+在不同的操作系统上安装 `Orange` 所必需的系统依赖（`openresty`、`resty-cli`、`luarocks`等），请参见：[依赖安装文档](docs/install-dependencies.md)。
 
 #### 2) 安装 Lor Framework
 
 查看`Lor Framework`[官方文档](https://github.com/sumory/lor)或执行以下命令。
 
- - 若使用的Orange版本低于v0.6.2则应安装lor v0.2.*版本。
+ - 若使用的 `Orange` 版本低于 `v0.6.2` 则应安装 `lor v0.2.*` 版本。
  
- - 若使用的Orange版本高于或等于v0.6.2则应安装lor v0.3.0+版本。
+ - 若使用的 `Orange` 版本高于或等于 `v0.6.2` 则应安装 `lor v0.3.0+` 版本。
 
 ```bash
 git clone https://github.com/sumory/lor.git
@@ -146,7 +146,7 @@ help    Show help tips
 
 ## See also
 
-Orange的插件设计参考自[Kong](https://github.com/Mashape/kong).
+`Orange`的插件设计参考自[Kong](https://github.com/Mashape/kong).
 
 ## License
 
