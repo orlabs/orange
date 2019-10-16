@@ -22,17 +22,9 @@ LUA_ROCKS_VER=`luarocks --version | grep -Eo  "luarocks [0-9]+"`
 echo $LUA_ROCKS_VER
 
 
-UNAME=`uname`
-echo $UNAME
-
-
 do_install() {
-    if [ "$UNAME" == "Darwin" ]; then
+    if [ "$LUA_ROCKS_VER" == 'luarocks 3' ]; then
         luarocks install --lua-dir=$LUA_JIT_DIR orange --tree=/usr/local/orange/deps --local
-
-    elif [ "$LUA_ROCKS_VER" == 'luarocks 3' ]; then
-        luarocks install --lua-dir=$LUA_JIT_DIR orange --tree=/usr/local/orange/deps --local
-
     else
         luarocks install orange --tree=/usr/local/orange/deps --local
     fi
