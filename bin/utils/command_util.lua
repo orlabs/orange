@@ -26,7 +26,7 @@ function _M.run_command(command)
     local n = os.tmpname() -- get a temporary file name to store output
     local f = os.tmpname() -- get a temporary file name to store script
     _M.write_to_file(f, command)
-    local exit_code = os.execute("/bin/bash "..f.." > "..n.." 2>&1")
+    os.execute("/bin/bash "..f.." > "..n.." 2>&1")
     local result = _M.read_file(n)
     os.remove(n)
     os.remove(f)

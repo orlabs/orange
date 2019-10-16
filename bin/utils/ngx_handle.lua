@@ -9,12 +9,12 @@ local function create_dirs(necessary_dirs)
 end
 
 local function remove_ngx_conf(ngx_conf)
-    os.remove(ngx_conf)
+    os.command("mv -f "..ngx_conf .. " /tmp/")
 end
 
 local function ngx_command(args)
-    if not args then 
-        error("error args to execute nginx command.") 
+    if not args then
+        error("error args to execute nginx command.")
         os.exit(1)
     end
 
