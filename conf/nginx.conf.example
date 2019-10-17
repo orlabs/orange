@@ -1,4 +1,4 @@
-worker_processes 1;
+worker_processes auto;
 user root;
 
 events {
