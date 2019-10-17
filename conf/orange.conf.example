@@ -14,9 +14,7 @@
         "hmac_auth",
         "signature_auth",
         "waf",
-        "divide",
-        "kvstore",
-        "balancer"
+        "divide"
     ],
     "store": "mysql",
     "store_mysql": {
