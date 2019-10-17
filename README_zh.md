@@ -79,7 +79,7 @@ sudo orange start
 ```bash
 git clone https://github.com/orlabs/orange.git
 cd orange
-sodu make dev
+sudo make dev
 ```
 
 安装过程结束后，输出消息 `Stopping after installing dependencies for orange 0.7-0` 即说明安装成功。
