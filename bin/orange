@@ -1,0 +1,38 @@
+#!/usr/bin/env resty
+
+local function string_trim(s)
+    return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+local function system_cmd(cmd)
+    local t = io.popen(cmd)
+    local data = t:read("*all")
+    t:close()
+    return data
+end
+
+local pwd = string_trim(system_cmd("pwd"))
+if not pwd then
+    error("unable to get current path.")
+end
+
+local env = "prod"
+local script_path = debug.getinfo(1).source:sub(2)
+if script_path:sub(1, 4) == '/usr' then
+    -- Standard Mode Installation
+    package.path  = "/usr/local/orange/deps/share/lua/5.1/orange/?.lua;"
+            .. "/usr/local/orange/deps/share/lua/5.1/?.lua;"
+            .. package.path
+else
+    -- Development Mode Installation
+    package.path  = pwd .. "/deps/share/lua/5.1/orange/?.lua;"
+            .. pwd .. "/deps/share/lua/5.1/?.lua;"
+            .. package.path
+    env = 'dev'
+end
+
+if #arg == 0 then
+    table.insert(arg, "help")
+end
+
+require("bin.main")(arg, env)
