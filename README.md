@@ -5,7 +5,7 @@
 <a href="./README_zh.md" style="font-size:13px">中文</a> | <a href="./README.md" style="font-size:13px">English</a> | <a href="http://orange.sumory.com" style="font-size:13px">Website</a>
 
 
-A Gateway based on OpenResty(Nginx+lua) for API Monitoring and Management.
+A Gateway based on OpenResty(Nginx + Lua) for API Monitoring and Management.
 
 
 ## Install & Usages
