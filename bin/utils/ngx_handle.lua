@@ -8,9 +8,6 @@ local function create_dirs(necessary_dirs)
     end
 end
 
-local function remove_ngx_conf(ngx_conf)
-    os.command("mv -f "..ngx_conf .. " /tmp/")
-end
 
 local function ngx_command(args)
     if not args then
@@ -18,15 +15,12 @@ local function ngx_command(args)
         os.exit(1)
     end
 
-    local orange_conf, prefix, ngx_conf, ngx_signal = "", "", "", ""
-    -- if args.orange_conf ~= nil then orange_conf = "-g \"env ORANGE_CONF=" .. args.orange_conf .. ";\"" end
     if args.orange_conf ~= nil then orange_conf = "ORANGE_CONF=" .. args.orange_conf .. " " end
     if args.prefix then prefix = "-p " .. args.prefix end
     if args.ngx_conf then ngx_conf = "-c " .. args.ngx_conf end
     if args.ngx_signal then ngx_signal = "-s " .. args.ngx_signal end
 
 
-    -- local cmd = string.format("nginx %s %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
     local cmd = string.format("%snginx %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
     logger:info(cmd)
     return os.execute(cmd)
