@@ -59,7 +59,6 @@ luac.out
 
 
 # Orange exclude
-bin/orange
 .DS_Store
 new_plugin.sh
 test_conf

@@ -13,8 +13,8 @@ local function remove_ngx_conf(ngx_conf)
 end
 
 local function ngx_command(args)
-    if not args then 
-        error("error args to execute nginx command.") 
+    if not args then
+        error("error args to execute nginx command.")
         os.exit(1)
     end
 
@@ -27,7 +27,7 @@ local function ngx_command(args)
 
 
     -- local cmd = string.format("nginx %s %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
-    local cmd = string.format("%snginx %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
+    local cmd = string.format("%sopenresty %s %s %s", orange_conf, prefix, ngx_conf, ngx_signal)
     logger:info(cmd)
     return os.execute(cmd)
 end
