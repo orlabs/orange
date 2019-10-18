@@ -26,10 +26,6 @@
 
 查看`Lor Framework`[官方文档](https://github.com/sumory/lor)或执行以下命令。
 
- - 若使用的 `Orange` 版本低于 `v0.6.2` 则应安装 `lor v0.2.*` 版本。
- 
- - 若使用的 `Orange` 版本高于或等于 `v0.6.2` 则应安装 `lor v0.3.0+` 版本。
-
 ```bash
 git clone https://github.com/sumory/lor.git
 cd lor
@@ -43,7 +39,7 @@ curl -Lo install.sh https://raw.githubusercontent.com/orlabs/orange/master/insta
 sudo sh install.sh
 ```
 
-安装过程结束后，输出消息 `orange 0.7-0 is now installed in /usr/local/orange/deps (license: MIT)` 即说明安装成功。
+安装过程结束后，输出消息 `orange 0.8-0 is now installed in /usr/local/orange/deps (license: MIT)` 即说明安装成功。
 
 #### 4) 导入 MySQL
 
@@ -51,7 +47,7 @@ sudo sh install.sh
 
  - 登录到 `MySQL` 客户端，创建一个 `orange` 数据库。
  
- - 导入数据表（`/usr/local/orange/conf/orange-v0.7.0.sql`）。
+ - 导入数据表（`/usr/local/orange/conf/orange-v0.8.0.sql`）。
  
  - 修改`Orange`配位置文件中（`/usr/local/orange/conf/orange.conf`）`MySQL`相关配置。
 
@@ -82,7 +78,7 @@ cd orange
 sudo make dev
 ```
 
-安装过程结束后，输出消息 `Stopping after installing dependencies for orange 0.7-0` 即说明安装成功。
+安装过程结束后，输出消息 `Stopping after installing dependencies for orange-master 1.0-0` 即说明安装成功。
 
 #### 3) 导入 MySQL
 

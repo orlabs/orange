@@ -21,10 +21,6 @@ System dependencies (`openresty`, `resty-cli`, `luarocks`, etc.) necessary to in
 
 Check the [official documentation](https://github.com/sumory/lor) for `Lor Framework` or execute the following command.
 
- - Orange v0.6.1 and versions before v0.6.1 are compatible with lor v0.2.*
- 
- - Orange v0.6.2+ is compatible with lor v0.3.0+
-
 ```bash
 git clone https://github.com/sumory/lor.git
 cd lor
@@ -38,7 +34,7 @@ curl -Lo install.sh https://raw.githubusercontent.com/orlabs/orange/master/insta
 sudo sh install.sh
 ```
 
-After the installation process is completed, the output message `orange 0.7-0 is now installed in /usr/local/orange/deps (license: MIT)` indicates that the installation was successful.
+After the installation process is completed, the output message `orange 0.8-0 is now installed in /usr/local/orange/deps (license: MIT)` indicates that the installation was successful.
 
 #### 4) Import MySQL
 
@@ -46,7 +42,7 @@ Requirements: MySQL Version 5.5+
 
  - Login to the `MySQL` client, create an `orange` database.
  
- - Import the data table (`/usr/local/orange/conf/orange-v0.7.0.sql`).
+ - Import the data table (`/usr/local/orange/conf/orange-v0.8.0.sql`).
  
  - Modify the `Orange` configuration file (`/usr/local/orange/conf/orange.conf`) `MySQL` related configuration.
 
@@ -77,7 +73,7 @@ cd orange
 sodu make dev
 ```
 
-After the installation process is completed, the output message `Stopping after installing dependencies for orange 0.7-0` indicates that the installation was successful.
+After the installation process is completed, the output message `Stopping after installing dependencies for orange-master 1.0-0` indicates that the installation was successful.
 
 #### 3) Import MySQL
 

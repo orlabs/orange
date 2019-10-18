@@ -27,7 +27,7 @@ else
 endif
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
-	$(INSTALL) install/orange-v0.7.0.sql conf/orange-v0.7.0.sql
+	$(INSTALL) install/orange-v0.8.0.sql conf/orange-v0.8.0.sql
 
 
 ### install:      Install the Orange
@@ -41,7 +41,7 @@ install:
 	$(INSTALL) conf/nginx.conf.example /usr/local/orange/conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example /usr/local/orange/conf/orange.conf
 	$(INSTALL) conf/mime.types /usr/local/orange/conf/mime.types
-	$(INSTALL) install/orange-v0.7.0.sql /usr/local/orange/conf/orange-v0.7.0.sql
+	$(INSTALL) install/orange-v0.8.0.sql /usr/local/orange/conf/orange-v0.8.0.sql
 
 	$(INSTALL) -d $(INST_LUADIR)/orange/dashboard
 	$(INSTALL) -d $(INST_LUADIR)/orange/orange
