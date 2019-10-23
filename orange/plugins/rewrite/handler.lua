@@ -43,8 +43,8 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                             to_rewrite = string_sub(to_rewrite, 1, from-1)
                             if qs then
                                 local args = ngx_decode_args(qs, 0)
-                                if args then 
-                                    ngx_set_uri_args(args) 
+                                if args then
+                                    ngx_set_uri_args(args)
                                 end
                             end
                         end
@@ -75,7 +75,7 @@ function RewriteHandler:rewrite(conf)
     local meta = orange_db.get_json("rewrite.meta")
     local selectors = orange_db.get_json("rewrite.selectors")
     local ordered_selectors = meta and meta.selectors
-    
+
     if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
         return
     end
@@ -85,7 +85,7 @@ function RewriteHandler:rewrite(conf)
         ngx.log(ngx.INFO, "==[Rewrite][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
-            local selector_pass 
+            local selector_pass
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else
