@@ -46,12 +46,14 @@ install:
 	$(INSTALL) -d $(INST_LUADIR)/orange/dashboard
 	$(INSTALL) -d $(INST_LUADIR)/orange/orange
 	$(INSTALL) -d $(INST_LUADIR)/orange/bin
+	$(INSTALL) -d $(INST_LUADIR)/orange/api
 
 	$(COPY) -rf dashboard/* $(INST_LUADIR)/orange/dashboard
 	$(COPY) -rf dashboard/views/* /usr/local/orange/dashboard/views
 	$(COPY) -rf dashboard/static/* /usr/local/orange/dashboard/static
 	$(COPY) -rf orange/* $(INST_LUADIR)/orange/orange
 	$(COPY) -rf bin/* $(INST_LUADIR)/orange/bin
+	$(COPY) -rf api/* $(INST_LUADIR)/orange/api
 
 	$(INSTALL) bin/orange $(INST_BINDIR)/orange
 	$(REMOVE) -f /usr/local/bin/orange
