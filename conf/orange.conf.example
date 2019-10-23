@@ -43,7 +43,7 @@
         ]
     },
     "api": {
-        "auth_enable": true,
+        "auth_enable": false,
         "credentials": [
             {
                 "username":"api_username",
