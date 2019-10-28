@@ -8,7 +8,6 @@ local ck = require("orange.lib.cookie")
 local utils = require("orange.utils.utils")
 local config_loader = require("orange.utils.config_loader")
 local dao = require("orange.store.dao")
-local dns_client = require("resty.dns.client")
 
 local HEADERS = {
     PROXY_LATENCY = "X-Orange-Proxy-Latency",
@@ -84,9 +83,6 @@ function Orange.init(options)
         consul = consul
     }
 
-    -- init dns_client
-    assert(dns_client.init())
-
     return config, store
 end
 
@@ -102,7 +98,7 @@ function Orange.init_worker()
                     if not load_success then
                         os.exit(1)
                     end
-                    
+
                     if v == "consul_balancer" then
                         for ii,p in ipairs(loaded_plugins) do
                             if v == p.name then
@@ -170,12 +166,6 @@ function Orange.access()
     ngx.ctx.ORANGE_ACCESS_ENDED_AT = now_time
     ngx.ctx.ORANGE_PROXY_LATENCY = now_time - ngx.req.start_time() * 1000
     ngx.ctx.ACCESSED = true
-end
-
-function Orange.balancer()
-    for _, plugin in ipairs(loaded_plugins) do
-        plugin.handler:balancer()
-    end
 end
 
 function Orange.header_filter()
