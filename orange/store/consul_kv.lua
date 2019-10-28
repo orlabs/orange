@@ -1,4 +1,4 @@
-local resty_consul = require('orange.lib.hamishforbes.lua-resty-consul.consul')
+local resty_consul = require('resty.consul')
 local orange = require("orange.orange")
 
 local _M = {}
@@ -8,7 +8,7 @@ function _M.new()
     local consul = resty_consul:new({
         host = cfg.host,
         port = cfg.port,
-    }) 
+    })
 
     consul.cfg = cfg
     return consul
