@@ -80,11 +80,11 @@ function RedirectHandler:redirect()
     local meta = orange_db.get_json("redirect.meta")
     local selectors = orange_db.get_json("redirect.selectors")
     local ordered_selectors = meta and meta.selectors
-
+    
     if not enable or enable ~= true or not meta or not ordered_selectors or not selectors then
         return
     end
-
+    
     local ngx_var = ngx.var
     local ngx_var_uri = ngx_var.uri
     local ngx_var_host = ngx_var.http_host
@@ -95,7 +95,7 @@ function RedirectHandler:redirect()
         ngx.log(ngx.INFO, "==[Redirect][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
-            local selector_pass
+            local selector_pass 
             if selector.type == 0 then -- 全流量选择器
                 selector_pass = true
             else

@@ -95,8 +95,9 @@ http {
 
         location / {
             set $upstream_host $host;
-            set $upstream_uri '';
-            set $upstream_scheme 'http';
+            set $upstream_request_uri '';
+            set $upstream_url '';
+            set $upstream_scheme '';
 
             rewrite_by_lua_block {
                 local orange = context.orange
@@ -115,7 +116,7 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Scheme $scheme;
-            proxy_pass $upstream_scheme://default_upstream$upstream_uri;
+            proxy_pass $upstream_scheme$upstream_url$upstream_request_uri;
 
 
             header_filter_by_lua_block {

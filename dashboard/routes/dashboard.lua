@@ -193,6 +193,10 @@ return function(config, store)
         res:render("help")
     end)
 
+    dashboard_router:get("/balancer", function(req, res, next)
+        res:render("balancer")
+    end)
+
     dashboard_router:get("/consul_balancer", function(req, res, next)
         res:render("consul_balancer")
     end)
