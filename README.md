@@ -79,7 +79,11 @@ After the installation process is completed, the output message `Stopping after 
 
 Please use the [Import MySQL](#4-import-mysql) methods in [Install of Production Environment](#install-of-production-environment-not-support-macos) to import.
 
-Note: Install `Orange` in `Development Environment`, the `MySQL Data Table` file and the `Orange Config` file are located in the `conf` folder of the current project.
+Note: Install `Orange` in `Development Environment`.
+
+- The `MySQL Data Table` file and the `Orange Config` file are located in the `conf` folder of the current project.
+
+- Import the data table (`/usr/local/orange/conf/orange-master.sql`).
 
 #### 4) Start Orange
 

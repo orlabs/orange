@@ -21,13 +21,13 @@ help:
 .PHONY: dev
 dev:
 ifneq ($(LUAROCKS_VER),'luarocks 3')
-	luarocks install rockspec/orange-master-1.0-0.rockspec --tree=deps --only-deps --local
+	luarocks install rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
 else
-	luarocks install --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-1.0-0.rockspec --tree=deps --only-deps --local
+	luarocks install --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
 endif
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
-	$(INSTALL) install/orange-v0.8.0.sql conf/orange-v0.8.0.sql
+	$(INSTALL) install/orange-master.sql conf/orange-master.sql
 
 
 ### install:      Install the Orange
