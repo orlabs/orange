@@ -84,7 +84,11 @@ sudo make dev
 
 请使用 [生产环境安装](#生产环境安装不支持-macos) 方式中的 [导入 MySQL](#4-导入-MySQL) 方法进行导入。
 
-注意：在开发模式下安装 `Orange`，`MySQL数据表` 文件和 `Orange配置` 文件位于当前项目的 `conf`文件夹中。
+注意：在开发模式下安装 `Orange`。
+
+- `MySQL数据表` 文件和 `Orange配置` 文件位于当前项目的 `conf`文件夹中。
+
+- 请导入 `master` 分支SQL文件（`/usr/local/orange/conf/orange-master.sql`）。
 
 #### 4) 启动 Orange
 

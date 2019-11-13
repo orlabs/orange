@@ -1,5 +1,5 @@
-package = "orange-master"
-version = "1.0-0"
+package = "orange"
+version = "master-0"
 supported_platforms = {"linux"}
 
 source = {
