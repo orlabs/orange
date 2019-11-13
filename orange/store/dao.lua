@@ -5,7 +5,14 @@ local type = type
 local xpcall = xpcall
 local json = require("orange.utils.json")
 local orange_db = require("orange.store.orange_db")
-
+local ERR = ngx.ERR
+local utils = require("orange.utils.utils")
+local decode_json, encode_json
+do
+    local cjson = require "cjson.safe"
+    decode_json = cjson.decode
+    encode_json = cjson.encode
+end
 
 local _M = {
     desc = "store access & local cache manage"
@@ -15,49 +22,29 @@ function _M.get_selector(plugin, store, selector_id)
     if not selector_id or selector_id == "" or type(selector_id) ~= "string" then
         return nil
     end
-
-    local selector, err = store:query({
-        sql = "select * from " .. plugin .. " where `key` = ? and `type` = ? limit 1",
-        params = { selector_id, "selector" }
-    })
-
-    if not err and selector and type(selector) == "table" and #selector > 0 then
-        return selector[1]
+    local res, err = store:get_selector(plugin, selector_id)
+    if err then
+        ngx.log(ERR, "error to find meta from storage when initializing plugin[" .. plugin .. "] local meta, err:", err)
+        return false
     end
-
-    return nil
+    return res
 end
 
-function _M.get_rules_of_selector(plugin, store, rule_ids)
+function _M.get_rules_of_selector(plugin, store, selector, all_rules)
+    if not (selector and selector.id) then
+        ngx.log(ERR, "error: selector or selector_id is nil")
+        return {}
+    end
+    local rule_ids = selector.rules
     if not rule_ids or type(rule_ids) ~= "table" or #rule_ids == 0 then
         return {}
     end
-
-    local to_concat = {}
-    for _, r in ipairs(rule_ids) do
-        table_insert(to_concat, "'" .. r .. "'")
-    end
-    local to_get_rules_ids = table_concat(to_concat, ",")
-    if not to_get_rules_ids or to_get_rules_ids == "" then
-        return {}
-    end
-
-    local rules, err = store:query({
-        sql = "select * from " .. plugin .. " where `key` in ( " .. to_get_rules_ids .. ") and `type`=?",
-        params = {"rule" }
-    })
-    if err then
-        ngx.log(ngx.ERR, "error to get rules of selector, err:", err)
-        return {}
-    end
-
-    if rules and type(rules) == "table" and #rules > 0 then
+    if all_rules and type(all_rules) == "table" and #all_rules > 0 then
         local format_rules = {}
-
         -- reorder the rules as the order stored in selector
         for _, rule_id in ipairs(rule_ids) do
-            for _, r in ipairs(rules) do
-                local tmp = json.decode(r.value)
+            for _, r in ipairs(all_rules) do
+                local tmp = r.value
                 if tmp and tmp.id == rule_id then
                     table_insert(format_rules, tmp)
                 end
@@ -73,24 +60,11 @@ function _M.delete_rules_of_selector(plugin, store, rule_ids)
     if not rule_ids or rule_ids == "" or type(rule_ids) ~= "table" then
         return true
     end
-
-    local to_concat = {}
-    for _, r in ipairs(rule_ids) do
-        table_insert(to_concat, "'" .. r .. "'")
-    end
-    local to_delete_rules_ids = table_concat(to_concat, ",")
-    if not to_delete_rules_ids or to_delete_rules_ids == "" then
-        return true
-    end
-
-    local delete_result = store:delete({
-        sql = "delete from " .. plugin .. " where `key` in (" .. to_delete_rules_ids .. ") and `type`=?",
-        params = { "rule" }
-    })
-    if delete_result then
+    local res = store:delete_rules_of_selector(plugin, rule_ids)
+    if res then
         return true
     else
-        ngx.log(ngx.ERR, "delete rules of selector err, ", rule_ids)
+        ngx.log(ERR, "delete rules of selector err, ", rule_ids)
         return false
     end
 end
@@ -99,29 +73,21 @@ function _M.delete_selector(plugin, store, selector_id)
     if not selector_id or selector_id == "" or type(selector_id) ~= "string" then
         return true
     end
-
-    local delete_result = store:delete({
-        sql = "delete from " .. plugin .. " where `key` = ? and `type` = ?",
-        params = { selector_id, "selector" }
-    })
+    local delete_result, err = store:delete_selector(plugin, selector_id)
     if delete_result then
         return true
     else
-        ngx.log(ngx.ERR, "delete selector err, ", selector_id)
+        ngx.log(ERR, "delete selector err, ", selector_id)
         return false
     end
 end
 
 function _M.get_meta(plugin, store)
-    local meta, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ? limit 1",
-        params = {"meta"}
-    })
-
-    if not err and meta and type(meta) == "table" and #meta > 0 then
-        return meta[1]
+    local meta, err = store:get_meta(plugin)
+    if not err and meta and type(meta) == "table" then
+        return meta
     else
-        ngx.log(ngx.ERR, "[FATAL ERROR]meta not found while it must exist.")
+        ngx.log(ERR, "[FATAL ERROR]meta not found while it must exist.")
         return nil
     end
 end
@@ -130,392 +96,305 @@ function _M.update_meta(plugin, store, meta)
     if not meta or type(meta) ~= "table" then
         return false
     end
-
     local meta_json_str = json.encode(meta)
     if not meta_json_str then
-        ngx.log(ngx.ERR, "encode error: meta to save is not json format.")
+        ngx.log(ERR, "encode error: meta to save is not json format.")
         return false
     end
-
-    local result = store:update({
-        sql = "update " .. plugin .. " set `value` = ? where `type` = ?",
-        params = {meta_json_str, "meta"}
-    })
-
-    return result
+    local res, err = store:update_meta(plugin, meta)
+    if err then
+        ngx.log(ERR, "failed to update meta, err:", err)
+        return false
+    end
+    return res
 end
 
 function _M.update_selector(plugin, store, selector)
     if not selector or type(selector) ~= "table" then
         return false
     end
-
-    local selector_json_str = json.encode(selector)
-    if not selector_json_str then
-        ngx.log(ngx.ERR, "encode error: selector to save is not json format.")
-        return false
-    end
-
-    local result = store:update({
-        sql = "update " .. plugin .. " set `value` = ? where `key`=? and `type` = ?",
-        params = {selector_json_str, selector.id, "selector"}
-    })
-
+    local result = store:update_selector(plugin, selector)
     return result
 end
 
 function _M.update_local_meta(plugin, store)
-    local meta, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ? limit 1",
-        params = {"meta"}
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "error to find meta from storage when updating local meta, err:", err)
-        return false
-    end
-
-    if meta and type(meta) == "table" and #meta > 0 then
-        local success, err, forcible = orange_db.set(plugin .. ".meta", meta[1].value or '{}')
+    local meta = _M.get_meta(plugin, store)
+    if meta and type(meta) == "table" then
+        local success, err, forcible = orange_db.set(plugin .. ".meta", encode_json(meta or {}))
         if err or not success then
-            ngx.log(ngx.ERR, "update local plugin's meta error, err:", err)
+            ngx.log(ERR, "update local plugin's meta error, err:", err)
             return false
         end
     else
-        ngx.log(ngx.ERR, "can not find meta from storage when updating local meta")
+        ngx.log(ERR, "can not find meta from storage when updating local meta")
     end
-
     return true
 end
 
 function _M.update_local_selectors(plugin, store)
-    local selectors, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ?",
-        params = {"selector"}
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "error to find selectors from storage when updating local selectors, err:", err)
-        return false
-    end
-
+    local selectors = store:get_selectors(plugin)
     local to_update_selectors = {}
-    if selectors and type(selectors) == "table" then
-        for _, s in ipairs(selectors) do
-            to_update_selectors[s.key] = json.decode(s.value or "{}")
+    if selectors then
+        for _, _node in ipairs(selectors) do
+            local selector_id = _node.value.id
+            to_update_selectors[selector_id] = _node.value or {}
         end
 
         local success, err, forcible = orange_db.set_json(plugin .. ".selectors", to_update_selectors)
         if err or not success then
-            ngx.log(ngx.ERR, "update local plugin's selectors error, err:", err)
+            ngx.log(ERR, "update local plugin's selectors error, err:", err)
             return false
         end
     else
-        ngx.log(ngx.ERR, "the size of selectors from storage is 0 when updating local selectors")
+        ngx.log(ERR, "the size of selectors from storage is 0 when updating local selectors")
         local success, err, forcible = orange_db.set_json(plugin .. ".selectors", {})
         if err or not success then
-            ngx.log(ngx.ERR, "update local plugin's selectors error, err:", err)
+            ngx.log(ERR, "update local plugin's selectors error, err:", err)
             return false
         end
     end
-
     return true
 end
 
 function _M.update_local_selector_rules(plugin, store, selector_id)
     if not selector_id then
-        ngx.log(ngx.ERR, "error to find selector from storage when updating local selector rules, selector_id is nil")
+        ngx.log(ERR, "error to find selector from storage when updating local selector rules, selector_id is nil")
         return false
     end
 
     local selector = _M.get_selector(plugin, store, selector_id)
     if not selector or not selector.value then
-        ngx.log(ngx.ERR, "error to find selector from storage when updating local selector rules, selector_id:", selector_id)
+        ngx.log(ERR, "error to find selector from storage when updating local selector rules, selector_id:",
+            selector_id)
         return false
     end
 
-    selector = json.decode(selector.value)
-    local rules_ids = selector.rules or {}
-    local rules = _M.get_rules_of_selector(plugin, store, rules_ids)
-
+    selector = selector.value
+    -- read all rules
+    local rules_res, err = store:get_rules(plugin)
+    local rules = _M.get_rules_of_selector(plugin, store, selector, rules_res)
     local success, err, forcible = orange_db.set_json(plugin .. ".selector." .. selector_id .. ".rules", rules)
     if err or not success then
-        ngx.log(ngx.ERR, "update local rules of selector error, err:", err)
+        ngx.log(ERR, "update local rules of selector error, err:", err)
         return false
     end
-
     return true
 end
 
 function _M.create_selector(plugin, store, selector)
-    return store:insert({
-        sql = "insert into " .. plugin .. "(`key`, `value`, `type`, `op_time`) values(?,?,?,?)",
-        params = { selector.id, json.encode(selector), "selector", selector.time }
-    })
+    return store:create_selector(plugin, selector)
 end
 
 function _M.update_rule(plugin, store, rule)
-    return store:update({
-        sql = "update " .. plugin .. " set `value`=?,`op_time`=? where `key`=? and `type`=?",
-        params = { json.encode(rule), rule.time, rule.id, "rule" }
-    })
+    local res, err = store:update_rule(plugin, rule)
+    if err then
+        ngx.log(ERR, "update rule failed, err:", err)
+        return false
+    end
+    return res
 end
 
 function _M.create_rule(plugin, store, rule)
-    return store:insert({
-        sql = "insert into " .. plugin .. "(`key`, `value`, `op_time`, `type`) values(?,?,?,?)",
-        params = { rule.id, json.encode(rule), rule.time, "rule" }
-    })
-end
-
-function _M.get_enable(plugin, store)
-    return store:query({
-        sql = "select `value` from meta where `key`=?",
-        params = { plugin .. ".enable" }
-    })
+    local res, err = store:create_rule(plugin, rule)
+    if not res and err then
+        ngx.log(ERR, "failed to create rule, err:" .. err)
+        return false
+    end
+    return true
 end
 
 function _M.update_enable(plugin, store, enable)
-    return store:update({
-        sql = "replace into meta SET `key`=?, `value`=?",
-        params = { plugin .. ".enable", enable }
-    })
+    return store:update_enable(plugin, enable)
 end
-
 
 -- ########################### local cache init start #############################
-function _M.init_rules_of_selector(plugin, store, selector_id)
-    if not selector_id then
-        ngx.log(ngx.ERR, "error: selector_id is nil")
+function _M.init_rules_of_selector(plugin, store, selector, all_rules)
+    if not (selector and selector.id) then
+        ngx.log(ERR, "error: selector or selector_id is nil")
         return false
     end
 
-    local selector = _M.get_selector(plugin, store, selector_id)
-    if not selector or not selector.value then
-        ngx.log(ngx.ERR, "error to find selector from storage when initializing plugin[" .. plugin .. "] local selector rules, selector_id:", selector_id)
-        return false
-    end
-
-    selector = json.decode(selector.value)
     local rules_ids = selector.rules or {}
-    local rules = _M.get_rules_of_selector(plugin, store, rules_ids)
-
-    local success, err, forcible = orange_db.set_json(plugin .. ".selector." .. selector_id .. ".rules", rules)
+    local rules = {}
+    -- reorder the rules as the order stored in selector
+    for _, rule_id in ipairs(rules_ids) do
+        for _, r in ipairs(all_rules) do
+            local tmp = r.value
+            --local tmp = json.decode(r.value)
+            if tmp and tmp.id == rule_id then
+                table_insert(rules, tmp)
+            end
+        end
+    end
+    local success, err, forcible = orange_db.set_json(plugin .. ".selector." .. selector.id .. ".rules", rules)
     if err or not success then
-        ngx.log(ngx.ERR, "init plugin[" .. plugin .. "] local rules of selector error, err:", err)
+        ngx.log(ERR, "init plugin[" .. plugin .. "] local rules of selector error, err:", err)
         return false
     end
-
     return true
 end
 
-function _M.init_enable_of_plugin(plugin, store)
+function _M.init_enable_of_plugin(plugin, store, config)
     -- 查找enable
-    local enables, err = store:query({
-        sql = "select `key`, `value` from meta where `key`=?",
-        params = {plugin .. ".enable"}
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "Load `enable` of plugin[" .. plugin .. "], error: ", err)
-        return false
-    end
-
-    if enables and type(enables) == "table" and #enables > 0 then
-        orange_db.set(plugin .. ".enable", enables[1].value == "1")
-    else
-        orange_db.set(plugin .. ".enable", false)
-    end
-
+    local enable = store:get_enable(plugin)
+    orange_db.set(plugin .. ".enable", enable)
     return true
 end
 
-function _M.init_meta_of_plugin(plugin, store)
-    local meta, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ? limit 1",
-        params = {"meta"}
-    })
-
+function _M.init_meta_of_plugin(plugin, store, config)
+    -- 查找enable
+    local meta, err = store:get_meta(plugin)
     if err then
-        ngx.log(ngx.ERR, "error to find meta from storage when initializing plugin[" .. plugin .. "] local meta, err:", err)
+        ngx.log(ERR, "error to find meta from storage when initializing plugin[" ..
+            plugin .. "] local meta, err:", err)
         return false
     end
 
-    if meta and type(meta) == "table" and #meta > 0 then
-        local success, err, forcible = orange_db.set(plugin .. ".meta", meta[1].value or '{}')
+    if meta and type(meta) == "table" then
+        --ngx.log(ERR, "init_meta_of_plugin DATA ======================== " .. type(meta.body.node.value)) table
+        local success, err, forcible = orange_db.set(plugin .. ".meta", encode_json(meta or {}))
         if err or not success then
-            ngx.log(ngx.ERR, "init local plugin[" .. plugin .. "] meta error, err:", err)
+            ngx.log(ERR, "init local plugin[" .. plugin .. "] meta error, err:", err)
             return false
         end
     else
-        ngx.log(ngx.ERR, "can not find meta from storage when initializing plugin[" .. plugin .. "] local meta")
+        ngx.log(ERR, "can not find meta from storage when initializing plugin[" .. plugin .. "] local meta")
     end
 
     return true
 end
 
-function _M.init_selectors_of_plugin(plugin, store)
-    local selectors, err = store:query({
-        sql = "select * from " .. plugin .. " where `type` = ?",
-        params = {"selector"}
-    })
-
-    if err then
-        ngx.log(ngx.ERR, "error to find selectors from storage when initializing plugin[" .. plugin .. "], err:", err)
-        return false
-    end
-
+function _M.init_selectors_of_plugin(plugin, store, config)
+    local selectors = store:get_selectors(plugin)
     local to_update_selectors = {}
-    if selectors and type(selectors) == "table" then
-        for _, s in ipairs(selectors) do
-            to_update_selectors[s.key] = json.decode(s.value or "{}")
-
-            -- init this selector's rules local cache
-            local init_rules_of_it = _M.init_rules_of_selector(plugin, store, s.key)
+    if selectors then
+        -- read all rules
+        local rules, err = store:get_rules(plugin)
+        if err then
+            ngx.log(ERR, "init local plugin[" .. plugin .. "] selectors error, err:", err)
+            return false
+        end
+        --local rules = rules_res.body.node.nodes
+        for _, _node in ipairs(selectors) do
+            local selector_id = _node.value.id
+            to_update_selectors[selector_id] = _node.value or {}
+            local init_rules_of_it = _M.init_rules_of_selector(plugin, store, _node.value, rules)
             if not init_rules_of_it then
                 return false
             end
         end
-
         local success, err, forcible = orange_db.set_json(plugin .. ".selectors", to_update_selectors)
         if err or not success then
-            ngx.log(ngx.ERR, "init local plugin[" .. plugin .. "] selectors error, err:", err)
+            ngx.log(ERR, "init local plugin[" .. plugin .. "] selectors error, err:", err)
             return false
         end
     else
-        ngx.log(ngx.ERR, "the size of selectors from storage is 0 when initializing plugin[" .. plugin .. "] local selectors")
+        ngx.log(ERR, "the size of selectors from storage is 0 when initializing plugin[" .. plugin .. "] local selectors")
         local success, err, forcible = orange_db.set_json(plugin .. ".selectors", {})
         if err or not success then
-            ngx.log(ngx.ERR, "init local plugin[" .. plugin .. "] selectors error, err:", err)
+            ngx.log(ERR, "init local plugin[" .. plugin .. "] selectors error, err:", err)
             return false
         end
     end
-
     return true
 end
 -- ########################### local cache init end #############################
 
-
 -- ########################### for data(configurations in storage) preview #############################
+local function get_selectors_and_rules(store, plugin, data)
+    local selectors, err = store:get_selectors(plugin)
+    if err then
+        ngx.log(ERR, "error to find selectors from storage when fetching data of plugin[" ..
+            plugin .. "], err:", err)
+        return false
+    end
+    if selectors then
+        -- read all rules
+        local rules, err = store:get_rules(plugin)
+        local to_update_selectors = {}
+        for _, _node in ipairs(selectors) do
+            local selector_id = _node.value.id
+            -- init this selector's rules local cache
+            if not selector_id then
+                ngx.log(ERR, "error: selector_id is nil")
+                return false
+            end
+            to_update_selectors[selector_id] = _node.value or {}
+
+            -- init this selector's rules local cache
+            local rules = _M.get_rules_of_selector(plugin, store, _node.value, rules)
+            data[plugin .. ".selector." .. selector_id .. ".rules"] = rules
+        end
+        data[plugin .. ".selectors"]= to_update_selectors
+    else
+        ngx.log(ERR, "the size of selectors from storage is 0 when fetching data of plugin[" ..
+            plugin .. "] selectors")
+        data[plugin .. ".selectors"] = {}
+    end
+    return nil
+end
 function _M.compose_plugin_data(store, plugin)
     local data = {}
     local ok, e
     ok = xpcall(function()
         -- get enable
-        local enables, err = store:query({
-            sql = "select `key`, `value` from meta where `key`=?",
-            params = {plugin .. ".enable"}
-        })
-
-        if err then
-            ngx.log(ngx.ERR, "Load `enable` of plugin[" .. plugin .. "], error: ", err)
-            return false
-        end
-
-        if enables and type(enables) == "table" and #enables > 0 then
-            data[plugin .. ".enable"] = (enables[1].value == "1")
-        else
-            data[plugin .. ".enable"] = false
-        end
-
+        local enable = store:get_enable(plugin)
+        data[plugin .. ".enable"] = enable
         -- get meta
-        local meta, err = store:query({
-            sql = "select * from " .. plugin .. " where `type` = ? limit 1",
-            params = {"meta"}
-        })
-
+        local meta, err = store:get_meta(plugin)
         if err then
-            ngx.log(ngx.ERR, "error to find meta from storage when fetching data of plugin[" .. plugin .. "], err:", err)
+            ngx.log(ERR, "error to find meta from storage when fetching data of plugin[" .. plugin .. "], err:", err)
             return false
         end
-
-        if meta and type(meta) == "table" and #meta > 0 then
-            data[plugin .. ".meta"] = json.decode(meta[1].value) or {}
+        if meta and type(meta) == "table" then
+            data[plugin .. ".meta"] = meta or {}
         else
-            ngx.log(ngx.ERR, "can not find meta from storage when fetching data of plugin[" .. plugin .. "]")
+            ngx.log(ERR, "can not find meta from storage when fetching data of plugin[" .. plugin .. "]")
             return false
         end
-
         -- get selectors and its rules
-        local selectors, err = store:query({
-            sql = "select * from " .. plugin .. " where `type` = ?",
-            params = {"selector"}
-        })
-
-        if err then
-            ngx.log(ngx.ERR, "error to find selectors from storage when fetching data of plugin[" .. plugin .. "], err:", err)
-            return false
+        local res = get_selectors_and_rules(store, plugin, data)
+        if res ~= nil then
+            return res
         end
-
-        local to_update_selectors = {}
-        if selectors and type(selectors) == "table" then
-            for _, s in ipairs(selectors) do
-                to_update_selectors[s.key] = json.decode(s.value or "{}")
-
-                -- init this selector's rules local cache
-                local selector_id = s.key
-                if not selector_id then
-                    ngx.log(ngx.ERR, "error: selector_id is nil")
-                    return false
-                end
-
-                local selector = _M.get_selector(plugin, store, selector_id)
-                if not selector or not selector.value then
-                    ngx.log(ngx.ERR, "error to find selector from storage when fetch plugin[" .. plugin .. "] selector rules, selector_id:", selector_id)
-                    return false
-                end
-
-                selector = json.decode(selector.value)
-                local rules_ids = selector.rules or {}
-                local rules = _M.get_rules_of_selector(plugin, store, rules_ids)
-                data[plugin .. ".selector." .. selector_id .. ".rules"] = rules
-            end
-
-            data[plugin .. ".selectors"]= to_update_selectors
-        else
-            ngx.log(ngx.ERR, "the size of selectors from storage is 0 when fetching data of plugin[" .. plugin .. "] selectors")
-            data[plugin .. ".selectors"] = {}
-        end
-
         return true, data
     end, function()
         e = debug.traceback()
     end)
-
     if not ok or e then
-        ngx.log(ngx.ERR, "[fetch plugin's data error], plugin:", plugin, " error:", e)
+        ngx.log(ERR, "[fetch plugin's data error], plugin:", plugin, " error:", e)
         return false
     end
-
     return true, data
 end
 
--- ########################### init cache when starting orange #############################
-function _M.load_data_by_mysql(store, plugin)
+-- ########################### init cache when starting gateway #############################
+function _M.load_data(store, plugin, config)
     local ok, e
     ok = xpcall(function()
         local v = plugin
         if not v or v == "" then
-            ngx.log(ngx.ERR, "params error, the `plugin` is nil")
+            ngx.log(ERR, "params error, the `plugin` is nil")
             return false
         end
 
-        if v == "stat" then
+        if v == "stat" or v == "prometheus" then
             return
         elseif v == "kvstore" then
-            local init_enable = _M.init_enable_of_plugin(v, store)
+            local init_enable = _M.init_enable_of_plugin(v, store, config)
             if not init_enable then
-                ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable)
+                ngx.log(ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable)
                 return false
             else
                 ngx.log(ngx.INFO, "load data of plugin[" .. v .. "] success")
             end
         else -- ignore `stat` and `kvstore`
-            local init_enable = _M.init_enable_of_plugin(v, store)
-            local init_meta = _M.init_meta_of_plugin(v, store)
-            local init_selectors_and_rules = _M.init_selectors_of_plugin(v, store)
+            local init_enable = _M.init_enable_of_plugin(v, store, config)
+            local init_meta = _M.init_meta_of_plugin(v, store, config)
+            local init_selectors_and_rules = _M.init_selectors_of_plugin(v, store, config)
             if not init_enable or not init_meta or not init_selectors_and_rules then
-                ngx.log(ngx.ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable, " init_meta:", init_meta, " init_selectors_and_rules:", init_selectors_and_rules)
+                ngx.log(ERR, "load data of plugin[" .. v .. "] error, init_enable:", init_enable, " init_meta:",
+                    init_meta, " init_selectors_and_rules:", init_selectors_and_rules)
                 return false
             else
                 ngx.log(ngx.INFO, "load data of plugin[" .. v .. "] success")
@@ -526,11 +405,39 @@ function _M.load_data_by_mysql(store, plugin)
     end)
 
     if not ok or e then
-        ngx.log(ngx.ERR, "[load plugin's data error], plugin:", plugin, " error:", e)
+        ngx.log(ERR, "[load plugin's data error], plugin:", plugin, " error:", e)
         return false
     end
 
     return true
+end
+
+-- only ETCD need to use
+function _M.register_node(store, config, delay)
+    local username, password
+    local credentials = config.api.credentials
+    for _, credential in ipairs(credentials) do
+        username = credential.username
+        password = credential.password
+    end
+    local ip = utils.get_ipv4()
+    local port = config.store_etcd.register.port
+    local val = {
+        id = utils.new_id(),
+        name = utils.get_hostname(),
+        ip = ip,
+        port = port,
+        api_username = username,
+        api_password = password
+    }
+    local store_etcd = config.store_etcd
+    local key_prefix = store_etcd.default_path .. "node/nodes/"
+    local key = key_prefix .. ip .. ":" .. port
+    local res, err = store.insert(store, key, val, delay * 3)
+    if err ~= nil then
+        ngx.log(ERR, "failed to register myself to etcd. err:" .. err)
+    end
+    return res, err
 end
 
 return _M

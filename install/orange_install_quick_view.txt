@@ -1,0 +1,27 @@
+cd /opt/
+wget https://openresty.org/download/openresty-1.15.8.2.tar.gz
+tar zxvf openresty-1.15.8.2.tar.gz 
+cd openresty-1.15.8.2
+./configure --prefix=/usr/local/openresty             --with-luajit             --with-pcre-jit             --with-http_iconv_module             --with-http_realip_module             --with-http_stub_status_module             --with-http_ssl_module             --with-http_v2_module             --with-stream             --with-stream_ssl_module
+gmake && gmake install
+
+wget https://luarocks.org/releases/luarocks-2.4.3.tar.gz
+tar zxvf luarocks-2.4.3.tar.gz
+./configure --prefix=/usr/local/openresty/luajit     --with-lua=/usr/local/openresty/luajit/     --lua-suffix=jit     --with-lua-include=/usr/local/openresty/luajit/include/luajit-2.1
+make build && make install
+/usr/local/openresty/luajit/bin/luarocks install luafilesystem
+/usr/local/openresty/luajit/bin/luarocks install lrandom
+/usr/local/openresty/luajit/bin/luarocks install https://luarocks.org/manifests/kong/lua_ip-0.1-2.rockspec
+/usr/local/openresty/luajit/bin/luarocks install https://luarocks.org/manifests/membphis/lua-typeof-0.1-0.rockspec
+/usr/local/openresty/luajit/bin/luarocks install penlight
+/usr/local/openresty/luajit/bin/luarocks install https://luarocks.org/manifests/kong/lua-resty-dns-client-2.2.0-1.rockspec
+/usr/local/openresty/luajit/bin/luarocks install luasocket
+
+cd /opt
+git clone https://github.com/dangdangdotcom/orange.git
+cd orange
+cd /usr/local/orange
+/usr/local/openresty/bin/opm --install-dir=./ get zhangbao0325/orangelib
+/usr/local/openresty/bin/opm  install sumory/lor
+make install
+sh start.sh

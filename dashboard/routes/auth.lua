@@ -39,18 +39,18 @@ return function(config, store)
         end
 
         local isExist = false
-        local userid = 0
+        local userid = 1
 
         password = encode(password .. "#" .. pwd_secret)
         --ngx.say(username.. "#" ..password)
-        local result, err = user_model:query(username, password)
+        local result, err = user_model:query_by_username(username)
 
         local user = {}
         if result and not err then
-            if result and #result == 1 then
+            if result and type(result) == "table" then
                 isExist = true
-                user = result[1]
-                userid = user.id
+                user = result
+                --userid = user.id
             end
         else
             isExist = false
@@ -58,19 +58,22 @@ return function(config, store)
 
         if isExist == true then
             local is_admin = false
-            if user.is_admin == 1 then
+            if user.is_admin == "1" then
                 ngx.log(ngx.INFO, "管理员[", user.username, "]登录")
                 is_admin = true
             else
                 ngx.log(ngx.INFO, "普通用户[", user.username, "]登录")
             end
 
-            req.session.set("user", {
+            local session = {
                 username = username,
                 is_admin = is_admin,
-                userid = userid,
-                create_time = user.create_time or ""
-            })
+                userid = userid
+            }
+
+            --ngx.log(ngx.ERR, session.create_time)
+
+            req.session.set("user", session)
             return res:json({
                 success = true,
                 msg = "登录成功."

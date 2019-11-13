@@ -146,7 +146,7 @@ return function(plugin)
                     })
                 end
 
-                local current_selector = json.decode(selector.value)
+                local current_selector = selector.value
                 if not current_selector then
                     return res:json({
                         success = false,
@@ -273,7 +273,7 @@ return function(plugin)
                     })
                 end
 
-                local current_selector = json.decode(selector.value)
+                local current_selector = selector.value
                 if not current_selector then
                     return res:json({
                         success = false,
@@ -376,7 +376,7 @@ return function(plugin)
                         msg = "error to find selector when resorting rules of it"
                     })
                 else
-                    local new_selector = json.decode(selector.value) or {}
+                    local new_selector = selector.value or {}
                     new_selector.rules = rules
                     update_selector_result = dao.update_selector(plugin, store, new_selector)
                     if update_selector_result then
@@ -443,7 +443,7 @@ return function(plugin)
                 end
 
                 -- delete rules of it
-                local to_del_selector = json.decode(selector.value)
+                local to_del_selector = selector.value
                 if not to_del_selector then
                     return res:json({
                         success = false,
@@ -461,7 +461,7 @@ return function(plugin)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)
-                local current_meta = json.decode(meta.value)
+                local current_meta = meta
                 if not meta or not current_meta then
                    return res:json({
                         success = false,
@@ -525,7 +525,7 @@ return function(plugin)
 
                 -- update meta
                 local meta = dao.get_meta(plugin, store)
-                local current_meta = json.decode(meta and meta.value or "{}")
+                local current_meta = meta
                 if not meta or not current_meta then
                    return res:json({
                         success = false,
@@ -552,7 +552,7 @@ return function(plugin)
                             tag = nil
                         })
                     end
-                    
+
                     local update_local_meta_result = dao.update_local_meta(plugin, store)
                     local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if update_local_meta_result and update_local_selectors_result then
@@ -590,7 +590,8 @@ return function(plugin)
                     })
                 end
 
-                old_selector = json.decode(old_selector.value)
+                --old_selector = json.decode(old_selector.value)
+                old_selector = old_selector.value
                 if not old_selector then
                     return res:json({
                         success = false,
@@ -661,14 +662,14 @@ return function(plugin)
 
                 local update_meta_result, update_local_meta_result
                 local meta = dao.get_meta(plugin, store)
-                if not meta or not meta.value then
+                if not meta then
                     ngx.log(ngx.ERR, "error to find meta when resorting selectors")
                     return res:json({
                         success = true,
                         msg = "error to find meta when resorting selectors"
                     })
                 else
-                    local new_meta = json.decode(meta.value) or {}
+                    local new_meta = meta.value or {}
                     new_meta.selectors = selectors
                     update_meta_result = dao.update_meta(plugin, store, new_meta)
                     if update_meta_result then

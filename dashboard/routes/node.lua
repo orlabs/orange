@@ -8,7 +8,7 @@ local string_format = string.format
 local lor = require("lor.index")
 local socket = require("socket")
 local orange_db = require("orange.store.orange_db")
-
+local ip_utils = require "lua_ip"
 
 return function(config, store)
 
@@ -16,28 +16,8 @@ return function(config, store)
     local node_model = require("dashboard.model.node")(config)
 
     local function get_nodes()
-        local nodes = node_model:query_all()
-
-        if nodes then
-            for _, node in pairs(nodes) do
-                -- 格式化成 json 数据
-                node.sync_status = json.decode(node.sync_status)
-            end
-        end
-
-        return nodes
+        return node_model:query_all()
     end
-
-    -- 获取 IP
-    local function get_ip_by_hostname(hostname)
-        local ip, resolved = socket.dns.toip(hostname)
-        local ListTab = {}
-        for k, v in ipairs(resolved.ip) do
-            table.insert(ListTab, v)
-        end
-        return unpack(ListTab)
-    end
-
 
     -- 节点同步
     local function sync_nodes(nodes, plugins)
@@ -85,7 +65,7 @@ return function(config, store)
     end
 
     function node_router:register()
-        local local_ip = get_ip_by_hostname(socket.dns.gethostname())
+        local local_ip = ip_utils.get_ipv4()
         node_model:registry(local_ip, 7777, config.api.credentials[1])
     end
 
