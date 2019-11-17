@@ -17,7 +17,7 @@ do_install() {
 
     sudo apt-get install -y openresty openresty-resty luarocks
 
-    luarocks install --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
+    sodu luarocks make --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
 
     git clone https://github.com/iresty/test-nginx.git test-nginx
 
