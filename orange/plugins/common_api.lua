@@ -7,9 +7,6 @@ local orange_db = require("orange.store.orange_db")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
 local dao = require("orange.store.dao")
-local consul_kv = require("orange.store.consul_kv")
-local consul = require("orange.plugins.consul_balancer.consul_balancer")
-local orange = require("orange.orange")
 
 -- build common apis
 return function(plugin)
@@ -451,10 +448,6 @@ return function(plugin)
                     })
                 end
 
-                if plugin == "consul_balancer" then
-                    orange.data.consul.remove_watch(to_del_selector)
-                end
-
                 local to_del_rules_ids = to_del_selector.rules or {}
                 local d_result = dao.delete_rules_of_selector(plugin, store, to_del_rules_ids)
                 ngx.log(ngx.INFO, "delete rules of selector:", d_result)
@@ -544,15 +537,6 @@ return function(plugin)
 
                 -- update local meta & selectors
                 if insert_result then
-                    if plugin == "consul_balancer" then
-                        orange.data.consul.add_watch({
-                            id = selector.id,
-                            name = selector.name,
-                            service = selector.service,
-                            tag = nil
-                        })
-                    end
-                    
                     local update_local_meta_result = dao.update_local_meta(plugin, store)
                     local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if update_local_meta_result and update_local_selectors_result then
@@ -606,15 +590,6 @@ return function(plugin)
                 -- 更新selector
                 local update_selector_result = dao.update_selector(plugin, store, selector)
                 if update_selector_result then
-                    if plugin == "consul_balancer" then
-                        orange.data.consul.add_watch({
-                            id = selector.id,
-                            name = selector.name,
-                            service = selector.service,
-                            tag = nil
-                        })
-                    end
-
                     local update_local_selectors_result = dao.update_local_selectors(plugin, store)
                     if not update_local_selectors_result then
                         return res:json({
