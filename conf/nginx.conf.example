@@ -24,11 +24,6 @@ http {
     sendfile        on;
     keepalive_timeout  65;
 
-    map $http_upgrade $connection_upgrade {
-        websocket upgrade;
-        default $http_connection;
-    }
-
     upstream default_upstream {
         server localhost:8001;
     }
@@ -54,8 +49,6 @@ http {
     lua_shared_dict monitor 10m; # used for url monitor statistic, see plugin: monitor
     lua_shared_dict rate_limit 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
-    lua_shared_dict consul_upstream 5m; # used for consul_upstream, see plugin consul_balancer
-    lua_shared_dict consul_upstream_watch 5m; # used for consul_upstream_watch, consul_balancer
 
 
 
@@ -95,9 +88,7 @@ http {
 
         location / {
             set $upstream_host $host;
-            set $upstream_request_uri '';
-            set $upstream_url '';
-            set $upstream_scheme '';
+            set $upstream_url 'http://default_upstream';
 
             rewrite_by_lua_block {
                 local orange = context.orange
@@ -111,13 +102,11 @@ http {
             }
 
             # proxy
-            proxy_set_header Host $host:$server_port;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Scheme $scheme;
-            proxy_pass $upstream_scheme$upstream_url$upstream_request_uri;
+            proxy_set_header Host $upstream_host;
+            proxy_pass $upstream_url;
 
 
             header_filter_by_lua_block {
