@@ -3,7 +3,7 @@
 set -ex
 
 before_install() {
-    sudo cpanm --notest Test::Nginx
+    sudo cpanm --notest Test::Nginx >build.log 2>&1 || (cat build.log && exit 1)
     mysql -uroot -e 'CREATE DATABASE IF NOT EXISTS orange;'
     mysql -uroot orange < install/orange-master.sql;
 }
