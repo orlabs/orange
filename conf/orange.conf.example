@@ -3,7 +3,6 @@
         "stat",
         "headers",
         "monitor",
-        "dynamic_upstream",
         "redirect",
         "rewrite",
         "rate_limiting",
@@ -14,7 +13,8 @@
         "hmac_auth",
         "signature_auth",
         "waf",
-        "divide"
+        "divide",
+        "kvstore"
     ],
     "store": "mysql",
     "store_mysql": {
