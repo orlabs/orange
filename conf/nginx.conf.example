@@ -142,9 +142,10 @@ http {
                 local json = require "cjson"
                 ngx.status = 200
                 ngx.say("Host: "..ngx.var.host .. "  URI: " .. ngx.var.uri)
-                ngx.say('[Query string]',json.encode(ngx.req.get_uri_args()))
+                ngx.say('[Query Params]', json.encode(ngx.req.get_uri_args()))
                 ngx.req.read_body()
-                ngx.say('[Post Params]',json.encode(ngx.req.get_post_args()))
+                ngx.say('[Post Params]', json.encode(ngx.req.get_post_args()))
+                ngx.say('[Header Params]', json.encode(ngx.req.get_headers()))
             }
         }
     }
