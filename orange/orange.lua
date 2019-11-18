@@ -76,12 +76,9 @@ function Orange.init(options)
         os.exit(1)
     end
 
-    local consul = require("orange.plugins.consul_balancer.consul_balancer")
-    consul.set_shared_dict_name("consul_upstream", "consul_upstream_watch")
     Orange.data = {
         store = store,
         config = config,
-        consul = consul
     }
 
     -- init dns_client
@@ -101,14 +98,6 @@ function Orange.init_worker()
                     local load_success = dao.load_data_by_mysql(store, v)
                     if not load_success then
                         os.exit(1)
-                    end
-                    
-                    if v == "consul_balancer" then
-                        for ii,p in ipairs(loaded_plugins) do
-                            if v == p.name then
-                                p.handler.db_ready()
-                            end
-                        end
                     end
                 end
             end, Orange.data.store, Orange.data.config)
