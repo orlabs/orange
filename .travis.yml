@@ -1,47 +1,40 @@
-os: linux
 dist: xenial
-
 sudo: required
+
+language: c
+
+matrix:
+  fast_finish: true
 
 addons:
   apt:
     packages:
+      - perl
+      - cmake
+      - check
+      - lua-check
+      - automake
+      - autoconf
       - cpanminus
+      - pkg-config
       - build-essential
       - libncurses5-dev
+      - libpcre3
       - libpcre3-dev
       - libreadline-dev
       - libssl-dev
-      - perl
-      - etcd
-      - luarocks
-      - cmake
-      - lua-check
+      - libjemalloc-dev
+      - libjemalloc1
+      - libtool
 
-env:
-  global:
-    - OPENRESTY_PREFIX=/usr/local/openresty-debug
+services:
+  - mysql
 
 before_install:
-  - sudo cpanm --notest Test::Nginx IPC::Run > build.log 2>&1 || (cat build.log && exit 1)
+  - $PWD/.travis/linux_runner.sh before_install
 
 install:
-  - wget -qO - https://openresty.org/package/pubkey.gpg | sudo apt-key add -
-  - sudo apt-get -y install software-properties-common
-  - sudo add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main"
-  - sudo apt-get update
-  - sudo apt-get install openresty-debug
-  - sudo opm --install-dir=./ get zhangbao0325/orangelib
-  - sudo luarocks install luafilesystem  
-  - sudo luarocks install luasocket
-  - sudo cd cd conf
-  - sudo cp orange.conf.example orange.conf
-  - sudo cp nginx.conf.example nginx.conf
-  - git clone https://github.com/openresty/test-nginx.git test-nginx
+  - $PWD/.travis/linux_runner.sh do_install
 
 script:
-  - sudo service etcd start
-  - sudo orange start
-  - export PATH=$OPENRESTY_PREFIX/nginx/sbin:$OPENRESTY_PREFIX/luajit/bin:$PATH
-  - make check || exit 1
-  - prove -Itest-nginx/lib -r t
+  - $PWD/.travis/linux_runner.sh run_tests
