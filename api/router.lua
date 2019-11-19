@@ -9,10 +9,10 @@ local lor = require("lor.index")
 
 local function load_plugin_api(plugin, api_router, store)
     local plugin_api_path = "orange.plugins." .. plugin .. ".api"
-    ngx.log(ngx.ERR, "[plugin's api load], plugin_api_path:", plugin_api_path)
+    ngx.log(ngx.INFO, "[plugin's api load], plugin_api_path:", plugin_api_path)
 
     local ok, plugin_api, e
-    ok = xpcall(function() 
+    ok = xpcall(function()
         plugin_api = require(plugin_api_path)
     end, function()
         e = debug.traceback()
@@ -88,7 +88,7 @@ return function(config, store)
                     name = v
                 }
             end
-            
+
             plugins[v] = tmp
         end
 
@@ -100,7 +100,7 @@ return function(config, store)
         })
     end)
 
-  
+
     --- 加载其他"可用"插件API
     local available_plugins = config.plugins
     if not available_plugins or type(available_plugins) ~= "table" or #available_plugins<1 then
