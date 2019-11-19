@@ -6,7 +6,7 @@ run_tests();
 
 __DATA__
 
-=== TEST 1: enable plugin
+=== TEST 1: enable headers plugin
 --- config
     location /t {
         content_by_lua_block {
@@ -24,10 +24,12 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
-=== TEST 2: add selectors
+=== TEST 2: add headers selectors
 --- config
     location /t {
         content_by_lua_block {
@@ -54,10 +56,12 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
-=== TEST 3: add route (id: 1)
+=== TEST 3: add headers route (id: 1)
 --- config
     location /t {
         content_by_lua_block {
@@ -104,6 +108,8 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
@@ -122,6 +128,8 @@ connection: close
 x-api-engine: orange
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
@@ -138,10 +146,12 @@ connection: close
 x-api-engine: orange
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
-=== TEST 6: disable plugin
+=== TEST 6: disable headers plugin
 --- config
     location /t {
         content_by_lua_block {
@@ -159,3 +169,5 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
