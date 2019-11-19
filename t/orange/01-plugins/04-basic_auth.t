@@ -122,7 +122,7 @@ GET /plugin_basic_auth
 --- request
 GET /plugin_basic_auth
 --- more_headers
-Authorization: b3JhbmdlOjEyMzQ1Ng==
+Authorization: Basic b3JhbmdlOjEyMzQ1Ng==
 --- response_body
 uri: /plugin_basic_auth
 --- error_code chomp
