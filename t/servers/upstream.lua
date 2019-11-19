@@ -23,6 +23,10 @@ function _M.plugin_rewrite()
     ngx.say("uri: ", ngx.var.uri)
 end
 
+function _M.plugin_basic_auth()
+    ngx.say("uri: ", ngx.var.uri)
+end
+
 function _M.go()
     local action = str_sub(ngx.var.uri, 2)
     local find = str_find(action, "/", 1, true)
