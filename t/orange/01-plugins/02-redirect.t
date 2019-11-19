@@ -24,6 +24,8 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
@@ -34,7 +36,7 @@ OK
             local t = require("servers.api").go
             local code, message = t('/redirect/selectors', ngx.HTTP_POST, {
                 selector = [[{
-                    "name":"headers-selectors",
+                    "name":"redirect-selectors",
                     "type":0,
                     "judge":{},
                     "handle":{
@@ -54,6 +56,8 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
@@ -99,6 +103,8 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
@@ -107,9 +113,10 @@ OK
 GET /plugin/redirect/301 HTTP/1.1
 --- response_headers
 Location: http://www.google.cn
---- error_code: 301
 --- no_error_log
 [error]
+--- error_code chomp
+301
 
 
 
@@ -155,6 +162,8 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
 
 
 
@@ -163,9 +172,10 @@ OK
 GET /plugin/redirect/302
 --- response_headers
 Location: http://www.google.cn
---- error_code: 302
 --- no_error_log
 [error]
+--- error_code chomp
+302
 
 
 
@@ -187,3 +197,5 @@ GET /t
 OK
 --- no_error_log
 [error]
+--- error_code chomp
+200
