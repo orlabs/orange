@@ -19,6 +19,14 @@ do_install() {
 
     sudo luarocks make --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
 
+    cp conf/nginx.conf.example  conf/nginx.conf
+    cp conf/orange.conf.example conf/orange.conf
+
+    git clone https://github.com/sumory/lor.git lor
+    cd lor
+    sudo make install
+    cd ..
+
     git clone https://github.com/iresty/test-nginx.git test-nginx
 
 }
