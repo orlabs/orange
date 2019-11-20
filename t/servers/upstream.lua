@@ -52,7 +52,11 @@ function _M.plugin_rate_limiting()
     ngx.say("uri: ", ngx.var.uri)
 end
 
-function _M.plugin_waf()
+function _M.plugin_waf_deny()
+    ngx.say("uri: ", ngx.var.uri)
+end
+
+function _M.plugin_waf_allow()
     ngx.say("uri: ", ngx.var.uri)
 end
 
