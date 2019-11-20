@@ -1,5 +1,6 @@
-local str_sub = string.sub
+local str_sub  = string.sub
 local str_find = string.find
+local pairs    = pairs
 
 local _M = {}
 
@@ -33,6 +34,10 @@ end
 
 function _M.plugin_jwt_auth()
     ngx.say("uri: ", ngx.var.uri)
+    local headers = ngx.req.get_headers()
+    for k, v in pairs(headers) do
+        ngx.say(k, ": ", v)
+    end
 end
 
 function _M.plugin_hmac_auth()
