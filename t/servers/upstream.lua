@@ -60,7 +60,13 @@ function _M.plugin_waf_allow()
     ngx.say("uri: ", ngx.var.uri)
 end
 
-function _M.plugin_divide()
+function _M.plugin_divide_1981()
+    ngx.say("host: ", ngx.var.host)
+    ngx.say("uri: ", ngx.var.uri)
+end
+
+function _M.plugin_divide_1982()
+    ngx.say("host: ", ngx.var.host)
     ngx.say("uri: ", ngx.var.uri)
 end
 
