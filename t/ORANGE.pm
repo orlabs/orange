@@ -87,6 +87,7 @@ _EOC_
 
     server {
         listen 1981;
+        listen 1982;
         location / {
             content_by_lua_block {
                 require("servers.upstream").go()
