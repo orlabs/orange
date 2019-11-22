@@ -10,13 +10,6 @@ curl -XPOST http://127.0.0.1:7777/headers/enable -d "enable=1"
 
 ### Add Selectors to Plugin
 
-| Params Name    | Params Description |
-|----------------|--------------------|
-|name            | selectors name. |
-|type            | selectors type, value of `0` indicates `all request` and `1` indicates `custom request`. |
-|handle.continue | selectors action, value of `true` indicates `continue selector` and `false` indicates  `skip selector`. |
-|handle.log      | selectors log, value of `true` indicates `record logs` and `false` indicates  `not record logs`. |
-
 ```shell
 curl http://127.0.0.1:7777/headers/selectors -X POST -d '
 {
@@ -31,14 +24,14 @@ curl http://127.0.0.1:7777/headers/selectors -X POST -d '
 }'
 ```
 
-### Add URI to Plugin
+| Params Name    | Params Description |
+|----------------|--------------------|
+|name            | selectors name. |
+|type            | selectors type, value of `0` indicates `all request` and `1` indicates `custom request`. |
+|handle.continue | selectors action, value of `true` indicates `continue selector` and `false` indicates  `skip selector`. |
+|handle.log      | selectors log, value of `true` indicates `record logs` and `false` indicates  `not record logs`. |
 
-| Params Name        | Params Description   |
-|----------------|----------|
-|headers.type    | data extraction type，value of `normal` indicates `current value`, and `extraction` indicates `variable extraction`.|
-|headers.override| overwrite data, value of `0` indicates `not cover`, and `1` indicates `cover`. |
-|headers.name    | header name |
-|headers.value   | header default value. |
+### Add URI to Plugin
 
 ```shell
 curl http://127.0.0.1:7777/headers/selectors/{selector_id}/rules -X POST -d
@@ -72,6 +65,13 @@ curl http://127.0.0.1:7777/headers/selectors/{selector_id}/rules -X POST -d
     "enable": true
 }
 ```
+
+| Params Name        | Params Description   |
+|----------------|----------|
+|headers.type    | data extraction type，value of `normal` indicates `current value`, and `extraction` indicates `variable extraction`.|
+|headers.override| overwrite data, value of `0` indicates `not cover`, and `1` indicates `cover`. |
+|headers.name    | header name |
+|headers.value   | header default value. |
 
 ### Disable Plugin
 
