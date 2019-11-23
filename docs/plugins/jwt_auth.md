@@ -80,14 +80,14 @@ curl http://127.0.0.1:7777/jwt_auth/selectors/{selector_id}/rules -X POST -d
 
 ### Test Plugin
 
-> request success for header
+> authentication success request for header
 
 ```shell
 curl -X GET http://127.0.0.1/plugin_jwt_auth -H "Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmFua28ifQ.cJ-3zovM7Wq2gAS2YQ_udk4PW9iRzLbREHI1Yesycb8"
 HTTP/1.1 200 OK
 ```
 
-> request success for query
+> authentication success request for query
 
 ```shell
 curl -X GET http://127.0.0.1/plugin_jwt_auth?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmFua28ifQ.cJ-3zovM7Wq2gAS2YQ_udk4PW9iRzLbREHI1Yesycb8

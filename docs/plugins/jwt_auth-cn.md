@@ -78,6 +78,29 @@ curl http://127.0.0.1:7777/jwt_auth/selectors/{selector_id}/rules -X POST -d
 |handle.code     | 认证失败 `HTTP` 状态码，值可以是 `4XX` 级别。|
 |handle.log      | 是否记录日志，值为 `true` 表示 `记录日志`，为 `false` 表示 `不记录日志`。 |
 
+### 测试插件
+
+> 认证成功请求（header方式）
+
+```shell
+curl -X GET http://127.0.0.1/plugin_jwt_auth -H "Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmFua28ifQ.cJ-3zovM7Wq2gAS2YQ_udk4PW9iRzLbREHI1Yesycb8"
+HTTP/1.1 200 OK
+```
+
+> 认证成功请求（query方式）
+
+```shell
+curl -X GET http://127.0.0.1/plugin_jwt_auth?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmFua28ifQ.cJ-3zovM7Wq2gAS2YQ_udk4PW9iRzLbREHI1Yesycb8
+HTTP/1.1 200 OK
+```
+
+> 认证失败请求
+
+```shell
+curl -X GET http://127.0.0.1/plugin_jwt_auth
+HTTP/1.1 401 Unauthorized
+```
+
 ### 关闭插件
 
 ```shell
