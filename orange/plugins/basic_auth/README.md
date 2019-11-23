@@ -1,2 +1,0 @@
-### HTTP Basic Authorization Plugin
-
