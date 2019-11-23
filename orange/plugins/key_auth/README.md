@@ -1,2 +1,0 @@
-### HTTP Key Authorization Plugin
-
