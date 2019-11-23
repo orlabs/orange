@@ -60,8 +60,8 @@ curl http://127.0.0.1:7777/signature_auth/selectors/{selector_id}/rules -X POST 
 
 | 参数名称        | 参数描述       |
 |----------------|---------------|
-|handle.period | 时间周期。|
-|handle.count | 时间周期内最大访问次数。|
+|handle.period   | 时间周期。|
+|handle.count    | 时间周期内最大访问次数。|
 |handle.log      | 是否记录日志，值为 `true` 表示 `记录日志`，为 `false` 表示 `不记录日志`。 |
 
 ### 测试插件
