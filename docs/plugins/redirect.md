@@ -64,7 +64,7 @@ curl http://127.0.0.1:7777/redirect/selectors/{selector_id}/rules -X POST -d
 | Params Name    | Params Description |
 |----------------|--------------------|
 |handle.uri_tmpl | redirect url, example: `http://www.google.cn`.|
-|handle.trim_qs | clear query, value of `true` indicates `clear query`, and `false` indicates `not clear query`.|
+|handle.trim_qs  | clear query, value of `true` indicates `clear query`, and `false` indicates `not clear query`.|
 |handle.redirect_status | redirect http code, value is `301` or `302`.|
 |handle.log      | record logs, value of `true` indicates `record logs`, and `false` indicates `not record logs`. |
 
