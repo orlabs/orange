@@ -60,8 +60,8 @@ curl http://127.0.0.1:7777/rate_limiting/selectors/{selector_id}/rules -X POST -
 
 | Params Name    | Params Description |
 |----------------|--------------------|
-|handle.period | time period. |
-|handle.count | maximum number of visits in the time period. |
+|handle.period   | time period. |
+|handle.count    | maximum number of visits in the time period. |
 |handle.log      | record logs, value of `true` indicates `record logs`, and `false` indicates `not record logs`. |
 
 ### Test Plugin
