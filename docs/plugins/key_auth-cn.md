@@ -71,8 +71,8 @@ curl http://127.0.0.1:7777/key_auth/selectors/{selector_id}/rules -X POST -d
 |handle.credentials.type | 认证参数类型，值为 `1` 表示 `header`，为 `2` 表示 `query`，为 `3` 表示 `post`。|
 |handle.credentials.key | 认证参数名称。|
 |handle.credentials.target_value | 认证参数值。|
-|handle.code | 认证失败 `HTTP` 状态码, 值可以是 `4XX` 级别。|
-|handle.log      | 是否记录日志, 值为 `true` 表示 `记录日志`, 为 `false` 表示 `不记录日志`。 |
+|handle.code | 认证失败 `HTTP` 状态码，值可以是 `4XX` 级别。|
+|handle.log      | 是否记录日志，值为 `true` 表示 `记录日志`，为 `false` 表示 `不记录日志`。 |
 
 ### 关闭插件
 
