@@ -27,11 +27,6 @@ http {
     keepalive_timeout  65;
     keepalive_requests 10000;
 
-    map $http_upgrade $connection_upgrade {
-        websocket upgrade;
-        default $http_connection;
-    }
-
     upstream default_upstream {
         keepalive 65;
         server localhost:8001;
