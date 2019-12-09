@@ -1,3 +1,4 @@
+install/* linguist-vendored=true
+
 dashboard/static/* linguist-vendored=true
 dashboard/views/* linguist-vendored=true
-install/* linguist-vendored=true
