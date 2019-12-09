@@ -1,4 +1,10 @@
-install/* linguist-vendored=true
-
-dashboard/static/* linguist-vendored=true
-dashboard/views/* linguist-vendored=true
+*.js linguist-vendored=true
+*.css linguist-vendored=true
+*.sql linguist-vendored=true
+*.otf linguist-vendored=true
+*.eot linguist-vendored=true
+*.svg linguist-vendored=true
+*.ttt linguist-vendored=true
+*.html linguist-vendored=true
+*.woff linguist-vendored=true
+*.woff2 linguist-vendored=true
