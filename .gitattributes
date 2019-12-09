@@ -1,2 +1,10 @@
-dashboard/views/* linguist-vendored
-dashboard/static/* linguist-vendored
+*.html linguist-vendored
+*.css linguist-vendored
+*.js linguist-vendored
+*.sql linguist-vendored
+*.otf linguist-vendored
+*.eot linguist-vendored
+*.svg linguist-vendored
+*.ttt linguist-vendored
+*.woff linguist-vendored
+*.woff2 linguist-vendored
