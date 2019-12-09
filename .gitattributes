@@ -5,6 +5,8 @@
 *.eot linguist-vendored=true
 *.svg linguist-vendored=true
 *.ttt linguist-vendored=true
+*.png linguist-vendored=true
+*.ico linguist-vendored=true
 *.html linguist-vendored=true
 *.woff linguist-vendored=true
 *.woff2 linguist-vendored=true
