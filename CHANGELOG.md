@@ -20,6 +20,15 @@
 
 - Fixed `luarocks` installation` api` directory not exists.
 
+#### Change
+
+- `lua-resty-consul` dependency library changed from storing in the project to installing using` luarocks`.
+- `nginx.conf` The default log level, adjusted from` info` to `error`.
+- The `balancer` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
+- The `dynamic_upstream` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
+- The `consul_balancer` plugin migrated to` v0.9.0-dev` due to conflict with existing functions.
+- The `persist` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
+
 #### Document
 
 - Added usage documentation for `headers` plugin.
@@ -34,14 +43,6 @@
 - Added usage documentation for `divide` plugin.
 - Added usage documentation for `global_statistics` plugin.
 
-#### Change
-
-- `lua-resty-consul` dependency library changed from storing in the project to installing using` luarocks`.
-- `nginx.conf` The default log level, adjusted from` info` to `error`.
-- The `balancer` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
-- The `dynamic_upstream` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
-- The `consul_balancer` plugin migrated to` v0.9.0-dev` due to conflict with existing functions.
-- The `persist` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
 
 ## 0.8.0 
 > Released on 2019.10.18
@@ -91,6 +92,7 @@
 - Refactored the management code and documentation of `balancer` module.
 - Update `Makefile` to specify version for dependencies.
 
+
 ## 0.6.4 
 > Released on 2017.05.16
 
@@ -109,6 +111,7 @@
 - Modify `Makefile` to support custom installation path.
 - Remove the documentation in `docs/api`. For more documents, please visit [Official Website](http://orange.sumory.com).
 
+
 ## 0.6.3
 > Released on 2017.03.10
 
@@ -116,6 +119,7 @@
 
 - Added `signature auth` plugin.
 - Added default configuration file templates `ngingx.conf.example` and` orange.conf.example`.
+
 
 ## 0.6.2 
 > Released on 2017.02.18
@@ -129,12 +133,14 @@
 - If the `Orange` version is below` 0.6.2`, then `lor v0.2.x` Version should be installed, `lor v0.2.6` is recommended.
 - If `Orange` version is` 0.6.2` or above, you can upgrade `lor v0.3.0 +` version.
 
+
 ## 0.6.1 
 > Released on 2017.02.09
 
 #### Feature
 
 - Added `property based rate limiting` plugin.
+
 
 ## 0.6.0 
 > Released on 2016.11.13
@@ -150,12 +156,14 @@
 
 - `Orange 0.6.x` Is not compatible with previous versions.
 
+
 ## 0.5.1
 > Released on 2016.11.10
 
 #### FIX
 
 - Fixed SQL import issue.
+
 
 ## 0.5.0 
 > Released on 2016.10.04
@@ -192,6 +200,7 @@
 
 - Added `Basic Auth` plugin.
 
+
 ## 0.2.0
 > Released on 2016.07.15
 
@@ -206,12 +215,14 @@
 
 - Removed `file store` support.
 
+
 ## 0.1.1 
 > Released on 2016.05.09
 
 #### Feature
 
 - When using `MySQL` as storage, add user system for` Dashboard`.
+
 
 ## 0.1.0 
 > Released on 2016.05.04

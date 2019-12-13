@@ -20,6 +20,15 @@
 
 - `luarocks` 安装 `api` 目录不存在问题。
 
+#### 变更
+
+- `lua-resty-consul` 依赖库由项目中存储改为使用 `luarocks` 安装。
+- `nginx.conf` 默认日志级别，由 `info` 调整为 `error`。
+- `balancer`  插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
+- `dynamic_upstream`  插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
+- `consul_balancer` 插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
+- `persist` 插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
+
 #### 文档
 
 - 为 `headers` 插件添加使用文档。
@@ -34,14 +43,6 @@
 - 为 `divide` 插件添加使用文档。
 - 为 `global_statistics` 插件添加使用文档。
 
-#### 变更
-
-- `lua-resty-consul` 依赖库由项目中存储改为使用 `luarocks` 安装。
-- `nginx.conf` 默认日志级别，由 `info` 调整为 `error`。
-- `balancer`  插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
-- `dynamic_upstream`  插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
-- `consul_balancer` 插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
-- `persist` 插件由于与现有功能冲突，迁移至 `v0.9.0-dev`。
 
 ## 0.8.0 
 > Released on 2019.10.18
@@ -91,6 +92,7 @@
 - 对 `balancer` 模块的管理后台代码和文档说明规则重构。
 - 更新 `Makefile`，对依赖进行版本指定。
 
+
 ## 0.6.4 
 > Released on 2017.05.16
 
@@ -109,6 +111,7 @@
 - 修改Makefile，支持自定义安装路径。
 - 移除 `docs/api` 中的文档，更多文档请到[官网](http://orange.sumory.com)查看。
 
+
 ## 0.6.3
 > Released on 2017.03.10
 
@@ -116,6 +119,7 @@
 
 - 新增 `signature auth` 插件。
 - 新增默认配置文件模板 `ngingx.conf.example` 和 `orange.conf.example`。
+
 
 ## 0.6.2 
 > Released on 2017.02.18
@@ -129,12 +133,14 @@
 - 若使用的 `Orange` 版本在 `0.6.2` 以下，则应安装 `lor v0.2.x` 版本, 推荐 `lor v0.2.6`。
 - 若使用的 `Orange` 版本在 `0.6.2` 及以上，可升级 `lor v0.3.0+` 版本。
 
+
 ## 0.6.1 
 > Released on 2017.02.09
 
 #### 新功能
 
 - 新增 `property based rate limiting` 插件。
+
 
 ## 0.6.0 
 > Released on 2016.11.13
@@ -150,12 +156,14 @@
 
 - `Orange 0.6.*` 版本与之前的版本并不兼容。
 
+
 ## 0.5.1
 > Released on 2016.11.10
 
 #### 修复
 
 - 修复SQL导入问题。
+
 
 ## 0.5.0 
 > Released on 2016.10.04
@@ -192,6 +200,7 @@
 
 - 新增 `Basic Auth` 插件。
 
+
 ## 0.2.0
 > Released on 2016.07.15
 
@@ -205,6 +214,7 @@
 #### 变更
 
 - 去除 `file store` 支持。
+
 
 ## 0.1.1 
 > Released on 2016.05.09
