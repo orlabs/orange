@@ -41,7 +41,7 @@ install:
 	$(INSTALL) conf/nginx.conf.example /usr/local/orange/conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example /usr/local/orange/conf/orange.conf
 	$(INSTALL) conf/mime.types /usr/local/orange/conf/mime.types
-	$(INSTALL) install/orange-v0.8.0.sql /usr/local/orange/conf/orange-v0.8.0.sql
+	$(INSTALL) install/orange-v0.8.1.sql /usr/local/orange/conf/orange-v0.8.1.sql
 
 	$(INSTALL) -d $(INST_LUADIR)/orange/dashboard
 	$(INSTALL) -d $(INST_LUADIR)/orange/orange

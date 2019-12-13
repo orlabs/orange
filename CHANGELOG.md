@@ -1,113 +1,230 @@
-### v0.7.0 2019
+## 0.8.1
+> Released on 2019.12.12
 
-- 支持通过cookie、随机数、HTTP method进行拦截过滤
-- 新增取余的方式进行匹配规则
-- 新增kafka、balancer、consul_balancer、persist log、node插件
-- 修复一些已知bug：后台页面展示异常
-- 对后台页面、balancer等模块的代码和文档说明的重构
-- 修复了issue#160，解决balancer开关未打开时出现invalid URL prefix in "" 的错误
-- 修复了issue#162，解决选择器类型为1时continue=false的错误
-- 修复了issue#233，解决proxy read timeout配置无效的问题
-- 修复了issue#236，解决忽略大小写进行匹配鉴权值的问题
-- 修改Makefile
-    - 使用指定版的依赖
+#### Feature
 
+- Integrated Automation Construction Platform (Travis CI).
+- Added basic test framework (Test :: Nginx).
+- Add test cases for `headers` plugin.
+- Add test cases for the `redirect` plugin.
+- Add test cases for `rewrite` plugin.
+- Add test cases for `basic_auth` plugin.
+- Add test cases for `key_auth` plugin.
+- Add test cases for `jwt_auth` plugin.
+- Add test cases for `signature_auth` plugin.
+- Add test cases for `rate_limiting` plugin.
+- Add test cases for `waf` plugin.
+- Add test cases for `divide` plugin.
 
-### v0.6.4 2017.05.16
+#### FIX
 
-- 修复issue#110, 解决在添加/删除规则后本地js cache未更新，之后立刻更改选择器配置造成的规则丢失bug
-- 修改Makefile， 支持自定义安装路径
-    - 自定义安装后，orange命令须手动添加到环境变量
-    - 使用诸如start命令时需指定--prefix
-- 为github issue添加默认模板
-- 默认的配置文件添加了一些log项
-- 修复了原来pr里的一些拼写问题
-- 移除docs/api里的文档， 更多文档请到[官网](http://orange.sumory.com)查看
+- Fixed `luarocks` installation` api` directory not exists.
 
-### v0.6.3 2017.03.10
+#### Document
 
-- 添加插件： `signature auth plugin`
-- 将默认的配置文件做成模板，即`ngingx.conf.example`和`orange.conf.example`
+- Added usage documentation for `headers` plugin.
+- Added usage documentation for `redirect` plugin.
+- Added usage documentation for `rewrite` plugin.
+- Added usage documentation for `basic_auth` plugin
+- Added usage documentation for `key_auth` plugin.
+- Added usage documentation for `jwt_auth` plugin.
+- Added usage documentation for `signature_auth` plugin.
+- Added usage documentation for `rate_limiting` plugin.
+- Added usage documentation for `waf` plugin.
+- Added usage documentation for `divide` plugin.
+- Added usage documentation for `global_statistics` plugin.
 
-### v0.6.2 2017.02.18
+#### Change
 
-- 兼容Orange与最新版本的[lor]（https://github.com/sumory/lor）, 即lor v0.3.0
+- `lua-resty-consul` dependency library changed from storing in the project to installing using` luarocks`.
+- `nginx.conf` The default log level, adjusted from` info` to `error`.
+- The `balancer` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
+- The `dynamic_upstream` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
+- The `consul_balancer` plugin migrated to` v0.9.0-dev` due to conflict with existing functions.
+- The `persist` plugin migrated to` v0.9.0-dev` due to conflicts with existing features.
 
-注意：
+## 0.8.0 
+> Released on 2019.10.18
 
-- 若使用的Orange版本在0.6.2以下，则应安装lor v0.2.*版本, 推荐lor v0.2.6
-- 若使用的Orange版本在0.6.2及以上，可升级lor到v0.3.0+版本
+#### Feature
 
-### v0.6.1 2017.02.09
-
-添加property based rate limiting插件，该插件由[@noname007](https://github.com/noname007)贡献
-
-### v0.6.0 2016.11.13
-
-注意，0.6.*版本与之前的版本并不兼容，主要改动如下：
-
-- 重构Dashboard
-- 新增kvstore插件： 用于通过API存取shared dict数据
-- 重构“规则”设计： 流量筛选时改为分层结构， 通过“选择器”对规则分组
-- 提取插件API公共代码统一维护
-
-### v0.5.1 2016.11.10
-
-- 修复一个sql bug
-
-### v0.5.0 2016.10.04
-
-- 添加`Makefile`安装方式
-- 支持通过命令行`orange store`初始化数据库
-- 添加resty-cli支持
-    - 支持orange start/stop/restart/reload/store等命令
-- Break Change: 将*.conf配置移动到conf目录下
+- Dependency installation changed from `opm` to` luarocks` for dependency installation and environment deployment.
 
 
-### v0.4.0 2016.09.24
+## 0.7.1 
+> Released on 2019.07.09
 
-- [x] 删除examples
-- [x] 添加key auth插件
-- [x] 限流插件rate limiting
-- [ ] 防重提交机制（delay）
-- [x] 补全新插件API文档
+#### Feature
 
-### v0.3.0 2016.07.21
+- Use `opm` to install` Orange` dependencies.
 
-- 添加HTTP Basic Auth插件
+#### FIX
 
-### v0.2.0
-
-- API Server支持HTTP Basic Authorization
-- 变量提取模块增加新类型
-	- URL提取器支持一次提取多值
-	- 以模板方式使用变量，格式为{{extractor.key}}
-- 去除file store支持
-- 提供Restful API及详细描述文档
-- 分离内置的Dashboard，减少与API的耦合
-
-### v0.1.1 2016.05.09
-
-- 在使用MySQL作为存储时，为dashboard控制台添加账户系统
+- Fixed `Makefile` installation project dependency issue.
+- Fixed the problem of obtaining template variables.
+- Fixed the issue that `balancer` cannot be read after adding` divide` shunt plugin.
 
 
-### v0.1.0 2016.05.04
+## 0.7.0 
+> Released on 2019.04.01
 
-特性:
+#### Feature
 
-- 配置项支持文件存储和MySQL存储
-- 通过MySQL存储来简单支持集群部署
-- 支持通过自定义插件方式扩展功能
-- 默认内置六个插件
-	- 全局状态统计
-	- 自定义监控
-	- URL重写
-	- URI重定向
-	- 简单防火墙
-	- 代理、ABTesting、分流
-- 提供管理界面用于管理内置插件
+- Supports request interception filtering through `cookie`,` random number`, and `HTTP Method`.
+- Added the method of taking margin for rule matching.
+- Added `kafka` plugin.
+- Added `balancer` plugin.
+- Added `consul_balancer` plugin.
+- Added `persist log` plugin.
+- Added `node` plugin.
 
-### v0.0.2
+#### FIX
 
- - 完成监控、redirect/rewrite、WAF、分流等几个插件
- - 仍不推荐生产使用
+- Fixed dashboard page display problem.
+- Fixed `invalid URL prefix in" "error when` balancer` switch is not turned on.
+- Fixed `continue = false` error when selector type is` 1`.
+- Fixed invalid proxy read timeout configuration.
+- Fixed the problem of ignoring case for matching authentication value.
+
+#### Change
+
+- Refactored the management code and documentation of `balancer` module.
+- Update `Makefile` to specify version for dependencies.
+
+## 0.6.4 
+> Released on 2017.05.16
+
+#### Feature
+
+- Added default template for `github issue`.
+- Added `log` configuration to the default configuration file.
+
+#### FIX
+
+- Fixed the problem of missing rules caused by the local `JavaScript Cache` not being updated after adding and removing rules.
+- Fixed spelling issue in `PR`.
+
+#### Change
+
+- Modify `Makefile` to support custom installation path.
+- Remove the documentation in `docs/api`. For more documents, please visit [Official Website](http://orange.sumory.com).
+
+## 0.6.3
+> Released on 2017.03.10
+
+#### Feature
+
+- Added `signature auth` plugin.
+- Added default configuration file templates `ngingx.conf.example` and` orange.conf.example`.
+
+## 0.6.2 
+> Released on 2017.02.18
+
+#### Feature
+
+- Compatible with `Orange` and the latest version of` Lor Framework`, ie `lor v0.3.0`.
+
+#### Note
+
+- If the `Orange` version is below` 0.6.2`, then `lor v0.2.x` Version should be installed, `lor v0.2.6` is recommended.
+- If `Orange` version is` 0.6.2` or above, you can upgrade `lor v0.3.0 +` version.
+
+## 0.6.1 
+> Released on 2017.02.09
+
+#### Feature
+
+- Added `property based rate limiting` plugin.
+
+## 0.6.0 
+> Released on 2016.11.13
+
+#### Feature
+
+- Refactored `Dashboard`.
+- Added `kvstore` plugin for accessing` shared dict` data via API.
+- Refactored rule design, changed to hierarchical structure when filtering traffic, grouped rules by `selector`.
+- Extract plug-in API public code so that it can be maintained uniformly.
+
+#### Note
+
+- `Orange 0.6.x` Is not compatible with previous versions.
+
+## 0.5.1
+> Released on 2016.11.10
+
+#### FIX
+
+- Fixed SQL import issue.
+
+## 0.5.0 
+> Released on 2016.10.04
+
+#### Feature
+
+- Added `Makefile` installation method.
+- Initialize database via command line `orange store`.
+- Added `resty-cli` support, command` orange [start | stop | restart | reload | store] `.
+
+#### Change
+
+- Move `*.conf` configuration to `conf` directory.
+
+
+## 0.4.0 
+> Released on 2016.09.24
+
+#### Feature
+
+- Added `rate limiting`, current limiting plugin.
+- Added prevention repeat submit mechanism (delay).
+- Added `key auth` plugin.
+
+#### Change
+
+- Remove `examples`。
+
+
+### v0.3.0 
+> Released on 2016.07.21
+
+#### Feature
+
+- Added `Basic Auth` plugin.
+
+## 0.2.0
+> Released on 2016.07.15
+
+#### Feature
+
+- `API Server` supports` HTTP Basic Authorization`.
+- Variable extraction module adds new types, `URL` extractor supports extracting multiple values at once. The template method uses variables in the format `{{extractor.key}}`.
+- Provide `Restful API` and detailed description document.
+- Separate built-in `Dashboard` to reduce coupling with API.
+
+#### Change
+
+- Removed `file store` support.
+
+## 0.1.1 
+> Released on 2016.05.09
+
+#### Feature
+
+- When using `MySQL` as storage, add user system for` Dashboard`.
+
+## 0.1.0 
+> Released on 2016.05.04
+
+#### Feature
+
+- Configuration items support `file` and `MySQL` storage.
+- Simple support for cluster deployment via `MySQL` storage.
+- Support extended functions through custom plugins.
+- Added `Global statistics`, global status statistics plugin.
+- Added `Custom monitoring`, custom monitoring plugin.
+- Added `URL Rewiter`, URL rewrite plugin.
+- Added `URL Redirect`, URI redirection plugin.
+- Added `WAF`, firewall plugin.
+- Added `ABTesting`, shunt plugin.
+- Provide management interface for managing built-in plugins.
