@@ -185,7 +185,7 @@
 - Remove `examples`。
 
 
-### v0.3.0 
+## 0.3.0 
 > Released on 2016.07.21
 
 #### Feature
