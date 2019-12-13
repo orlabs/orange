@@ -34,7 +34,7 @@ curl -Lo install.sh https://raw.githubusercontent.com/orlabs/orange/master/insta
 sudo sh install.sh
 ```
 
-After the installation process is completed, the output message `orange 0.8-0 is now installed in /usr/local/orange/deps (license: MIT)` indicates that the installation was successful.
+After the installation process is completed, the output message `orange 0.8-1 is now installed in /usr/local/orange/deps (license: MIT)` indicates that the installation was successful.
 
 #### 4) Import MySQL
 
@@ -42,7 +42,7 @@ Requirements: MySQL Version 5.5+
 
  - Login to the `MySQL` client, create an `orange` database.
  
- - Import the data table (`/usr/local/orange/conf/orange-v0.8.0.sql`).
+ - Import the data table (`/usr/local/orange/conf/orange-v0.8.1.sql`).
  
  - Modify the `Orange` configuration file (`/usr/local/orange/conf/orange.conf`) `MySQL` related configuration.
 
