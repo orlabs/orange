@@ -70,7 +70,7 @@ Please use the [Install Dependencies](#1-install-dependencies) and [Install Lor 
 ```bash
 git clone https://github.com/orlabs/orange.git
 cd orange
-sodu make dev
+sudo make dev
 ```
 
 After the installation process is completed, the output message `Stopping after installing dependencies for orange-master 1.0-0` indicates that the installation was successful.
