@@ -37,7 +37,7 @@ function DB:exec(sql)
     db:query("SET NAMES utf8")
     local res, err, errno, sqlstate = db:query(sql)
     if not res or err then
-        ngx.log(ngx.ERR, "bad result: ", err, ": ", errno, ": ", sqlstate, ".")
+        ngx.log(ngx.ERR, "sql: ", sql, " bad result: ", err, ": ", errno, ": ", sqlstate, ".")
     end
 
     local ok, err = db:set_keepalive(conf.pool_config.max_idle_timeout, conf.pool_config.pool_size)

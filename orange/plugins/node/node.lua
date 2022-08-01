@@ -1,19 +1,20 @@
 local socket = require("socket")
 local http = require("resty.http")
+local sputils = require("orange.utils.sputils")
 local string_format = string.format
 local encode_base64 = ngx.encode_base64
 
 local _M = {}
 
 -- 获取 IP
-local function get_ip_by_hostname(hostname)
-    local _, resolved = socket.dns.toip(hostname)
-    local list_tab = {}
-    for _, v in ipairs(resolved.ip) do
-        table.insert(list_tab, v)
-    end
-    return unpack(list_tab)
-end
+--local function get_ip_by_hostname(hostname)
+--    local _, resolved = socket.dns.toip(hostname)
+--    local list_tab = {}
+--    for _, v in ipairs(resolved.ip) do
+--        table.insert(list_tab, v)
+--    end
+--    return unpack(list_tab)
+--end
 
 function _M.init(config)
     ngx.log(ngx.ERR, "node init")
@@ -21,7 +22,8 @@ end
 
 function _M.get_ip()
     if not _M.ip then
-        _M.ip = get_ip_by_hostname(socket.dns.gethostname())
+        _M.ip = os.getenv("ORANGE_HOST")
+        --_M.ip = get_ip_by_hostname(socket.dns.gethostname())
     end
     return _M.ip
 end
@@ -41,7 +43,9 @@ local function sync_node_plugins(node, plugins)
             -- 设置超时时间 1000 ms
             httpc:set_timeout(1000)
 
-            local url = string_format("http://%s:%s", node.ip, node.port)
+            -- 解析出的ip
+            local nodeIp = sputils.hostToIp(node.ip)
+            local url = string_format("http://%s:%s", nodeIp, node.port)
             local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
             local path = string_format('/%s/sync?seed=' .. ngx.time(), plugin)
 

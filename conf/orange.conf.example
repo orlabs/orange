@@ -13,17 +13,18 @@
         "hmac_auth",
         "signature_auth",
         "waf",
-        "divide"
+        "divide",
+        "node"
     ],
     "store": "mysql",
     "store_mysql": {
         "timeout": 5000,
         "connect_config": {
-            "host": "127.0.0.1",
+            "host": "192.168.56.103",
             "port": 3306,
             "database": "orange",
             "user": "root",
-            "password": "",
+            "password": "root",
             "charset": "utf8",
             "max_packet_size": 1048576
         },
@@ -34,7 +35,7 @@
         "desc": "mysql configuration"
     },
     "dashboard": {
-        "auth": false,
+        "auth": true,
         "session_secret": "y0ji4pdj61aaf3f11c2e65cd2263d3e7e5",
         "whitelist": [
             "^/auth/login$",
@@ -42,12 +43,18 @@
         ]
     },
     "api": {
-        "auth_enable": false,
+        "auth_enable": true,
         "credentials": [
             {
                 "username":"api_username",
                 "password":"api_password"
             }
         ]
+    },
+    "redis": {
+        "host": "192.168.56.103",
+        "port": "6379",
+        "password": "",
+        "db_index": "4"
     }
 }

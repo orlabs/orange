@@ -42,11 +42,12 @@
                                 return false;
                             }
 
-                            var ip_pattern = /^\d+\.\d+\.\d+\.\d+$/;
-                            if (!ip || !ip.match(ip_pattern)) {
-                                L.Common.showErrorTip("提示", "IP 格式不正确!");
-                                return false;
-                            }
+                            // 取消ip验证
+                            // var ip_pattern = /^\d+\.\d+\.\d+\.\d+$/;
+                            // if (!ip || !ip.match(ip_pattern)) {
+                            //     L.Common.showErrorTip("提示", "IP 格式不正确!");
+                            //     return false;
+                            // }
 
                             var port_pattern = /^\d+$/;
                             if (!port || isNaN(port) || port < 1 || port > 65535 || !port.toString().match(port_pattern)) {

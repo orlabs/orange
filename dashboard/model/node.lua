@@ -1,5 +1,6 @@
 local DB = require("dashboard.model.db")
 local json = require("orange.utils.json")
+local socket = require("socket")
 
 return function(config)
 
@@ -68,7 +69,21 @@ return function(config)
     end
 
     function node_model:query_by_ip(ip)
+        if not ip then
+            ngx.log(ngx.ERROR,'ip值为nil:',ip)
+            return nil, err
+        end
         local result, err = db:query("select * from " .. table_name .. " where ip=?", { ip })
+        if not result or err or type(result) ~= "table" or #result ~= 1 then
+            return nil, err
+        else
+            return result[1], err
+        end
+    end
+
+    --查询基础节点
+    function node_model:query_basic_node()
+        local result, err = db:query("select * from " .. table_name .. " where basic_node='1'")
         if not result or err or type(result) ~= "table" or #result ~= 1 then
             return nil, err
         else
@@ -116,7 +131,7 @@ return function(config)
         local local_node = self:query_by_ip(ip)
 
         if not local_node then
-            self:new(ip, ip, port, credentials.username, credentials.password)
+            self:new(socket.dns.gethostname(), ip, port, credentials.username, credentials.password)
             local_node = self.query_by_ip(ip)
         end
 

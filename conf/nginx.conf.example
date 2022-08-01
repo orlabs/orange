@@ -7,6 +7,8 @@ events {
 
 # optional: path of orange.conf
 env ORANGE_CONF;
+# 提前标准环境变量,以便后续lua代码中可以使用os.getenv
+env ORANGE_HOST;
 
 http {
     resolver 114.114.114.114; # replace it with your favorite config
