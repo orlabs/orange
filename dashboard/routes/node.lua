@@ -8,7 +8,7 @@ local string_format = string.format
 local lor = require("lor.index")
 local socket = require("socket")
 local orange_db = require("orange.store.orange_db")
-
+local sputils = require("orange.utils.sputils")
 
 return function(config, store)
 
@@ -29,14 +29,14 @@ return function(config, store)
     end
 
     -- 获取 IP
-    local function get_ip_by_hostname(hostname)
-        local ip, resolved = socket.dns.toip(hostname)
-        local ListTab = {}
-        for k, v in ipairs(resolved.ip) do
-            table.insert(ListTab, v)
-        end
-        return unpack(ListTab)
-    end
+    --local function get_ip_by_hostname(hostname)
+    --    local ip, resolved = socket.dns.toip(hostname)
+    --    local ListTab = {}
+    --    for k, v in ipairs(resolved.ip) do
+    --        table.insert(ListTab, v)
+    --    end
+    --    return unpack(ListTab)
+    --end
 
 
     -- 节点同步
@@ -50,7 +50,9 @@ return function(config, store)
                 -- 设置超时时间 1000 ms
                 httpc:set_timeout(1000)
 
-                local url = string_format("http://%s:%s", node.ip, node.port)
+                -- 解析ip
+                local nodeIp = sputils.hostToIp(node.ip)
+                local url = string_format("http://%s:%s", nodeIp, node.port)
                 local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
                 local path = '/node/sync?seed=' .. ngx.time()
 
@@ -67,7 +69,7 @@ return function(config, store)
                 local sync_status = ''
 
                 if not resp or err then
-                    ngx.log(ngx.ERR, string_format("%s : %s", node.ip, err))
+                    ngx.log(ngx.ERR, string_format("%s : %s", nodeIp, err))
                     sync_status = '{"ERROR":false}'
                 else
                     ngx.log(ngx.ERR, resp.body)
@@ -85,7 +87,8 @@ return function(config, store)
     end
 
     function node_router:register()
-        local local_ip = get_ip_by_hostname(socket.dns.gethostname())
+        local local_ip = os.getenv("ORANGE_HOST")
+        --local local_ip = get_ip_by_hostname(socket.dns.gethostname())
         node_model:registry(local_ip, 7777, config.api.credentials[1])
     end
 
@@ -162,14 +165,14 @@ return function(config, store)
             })
         end
 
-        -- ip
-        local ip_len = slen(ip)
-        if ip_len < 7 and ip_len > 15 then
-            return res:json({
-                success = false,
-                msg = "IP 长度应为 7-15 位."
-            })
-        end
+        -- 取消ip验证
+        --local ip_len = slen(ip)
+        --if ip_len < 7 and ip_len > 15 then
+        --    return res:json({
+        --        success = false,
+        --        msg = "IP 长度应为 7-15 位."
+        --    })
+        --end
 
         -- port
         local port = tonumber(req.body.port)
@@ -246,14 +249,14 @@ return function(config, store)
             })
         end
 
-        -- ip
-        local ip_len = slen(ip)
-        if ip_len < 7 and ip_len > 15 then
-            return res:json({
-                success = false,
-                msg = "IP 长度应为 7-15 位."
-            })
-        end
+        -- 取消ip验证
+        --local ip_len = slen(ip)
+        --if ip_len < 7 and ip_len > 15 then
+        --    return res:json({
+        --        success = false,
+        --        msg = "IP 长度应为 7-15 位."
+        --    })
+        --end
 
         -- port
         if port < 1 or port > 65535 then

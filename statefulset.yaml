@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: orange-gateway-a-headless
+spec:
+    # 这个决定了未准备好的endpoints是否在DNS的记录中
+    publishNotReadyAddresses: true
+    clusterIP: None
+    selector:
+        app: orange-gateway-a
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: orange-gateway-b-headless
+spec:
+    # 这个决定了未准备好的endpoints是否在DNS的记录中
+    publishNotReadyAddresses: true
+    clusterIP: None
+    selector:
+        app: orange-gateway-b
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: orange-gateway-a
+spec:
+    selector:
+      app: orange-gateway-a
+    ports:
+      - port: 80
+        name: web
+        targetPort: 80
+        nodePort: 30080
+      - port: 7777
+        name: api
+        targetPort: 7777
+        nodePort: 30077
+      - port: 9999
+        name: admin
+        targetPort: 9999
+        nodePort: 30099
+    type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: orange-gateway-b
+spec:
+    selector:
+        app: orange-gateway-b
+    ports:
+        - port: 80
+          name: web
+          targetPort: 80
+          nodePort: 30081
+        - port: 7777
+          name: api
+          targetPort: 7777
+          nodePort: 30078
+        - port: 9999
+          name: admin
+          targetPort: 9999
+          nodePort: 30100
+    type: NodePort
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: orange-gateway-a
+spec:
+    # 指定StatefulSet控制器要使用这个Headless Service
+    serviceName: orange-gateway-a-headless
+    replicas: 1
+    selector:
+        matchLabels:
+            app: orange-gateway-a
+    template:
+        metadata:
+            labels:
+                app: orange-gateway-a
+        spec:
+            containers:
+                - name: orange-gateway-a
+                  image: wangxiaowu950330/orange:v1
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: ORANGE_HOST
+                      value: orange-gateway-a-0.orange-gateway-a-headless.default.svc.cluster.local
+                  ports:
+                    - containerPort: 80
+                    - containerPort: 7777
+                    - containerPort: 9999
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: orange-gateway-b
+spec:
+    # 指定StatefulSet控制器要使用这个Headless Service
+    serviceName: orange-gateway-b-headless
+    replicas: 1
+    selector:
+        matchLabels:
+            app: orange-gateway-b
+    template:
+        metadata:
+            labels:
+                app: orange-gateway-b
+        spec:
+            containers:
+                - name: orange-gateway-b
+                  image: wangxiaowu950330/orange:v1
+                  imagePullPolicy: IfNotPresent
+                  env:
+                      - name: ORANGE_HOST
+                        value: orange-gateway-b-0.orange-gateway-b-headless.default.svc.cluster.local
+                  ports:
+                      - containerPort: 80
+                      - containerPort: 7777
+                      - containerPort: 9999
