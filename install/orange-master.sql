@@ -1,3 +1,8 @@
+# ************************************************************
+# MySQL: 5.7
+# Database: orange
+# ************************************************************
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -13,13 +18,13 @@
 DROP TABLE IF EXISTS `basic_auth`;
 
 CREATE TABLE `basic_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                              `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                              `key` varchar(255) NOT NULL DEFAULT '',
+                              `value` varchar(2000) NOT NULL DEFAULT '',
+                              `type` varchar(11) DEFAULT '0',
+                              `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                              PRIMARY KEY (`id`),
+                              UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `basic_auth` WRITE;
@@ -39,14 +44,14 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `dashboard_user`;
 
 CREATE TABLE `dashboard_user` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(60) NOT NULL DEFAULT '' COMMENT '用户名',
-  `password` varchar(255) NOT NULL DEFAULT '' COMMENT '密码',
-  `is_admin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否是管理员账户：0否，1是',
-  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建或者更新时间',
-  `enable` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否启用该用户：0否1是',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_username` (`username`)
+                                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                  `username` varchar(60) NOT NULL DEFAULT '' COMMENT '用户名',
+                                  `password` varchar(255) NOT NULL DEFAULT '' COMMENT '密码',
+                                  `is_admin` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否是管理员账户：0否，1是',
+                                  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建或者更新时间',
+                                  `enable` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否启用该用户：0否1是',
+                                  PRIMARY KEY (`id`),
+                                  UNIQUE KEY `unique_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='dashboard users';
 
 LOCK TABLES `dashboard_user` WRITE;
@@ -66,13 +71,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `divide`;
 
 CREATE TABLE `divide` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                          `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                          `key` varchar(255) NOT NULL DEFAULT '',
+                          `value` varchar(2000) NOT NULL DEFAULT '',
+                          `type` varchar(11) DEFAULT '0',
+                          `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          PRIMARY KEY (`id`),
+                          UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `divide` WRITE;
@@ -92,13 +97,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `key_auth`;
 
 CREATE TABLE `key_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                            `key` varchar(255) NOT NULL DEFAULT '',
+                            `value` varchar(2000) NOT NULL DEFAULT '',
+                            `type` varchar(11) DEFAULT '0',
+                            `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `key_auth` WRITE;
@@ -118,12 +123,12 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `meta`;
 
 CREATE TABLE `meta` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(5000) NOT NULL DEFAULT '',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                        `key` varchar(255) NOT NULL DEFAULT '',
+                        `value` varchar(5000) NOT NULL DEFAULT '',
+                        `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -134,13 +139,13 @@ CREATE TABLE `meta` (
 DROP TABLE IF EXISTS `monitor`;
 
 CREATE TABLE `monitor` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                           `key` varchar(255) NOT NULL DEFAULT '',
+                           `value` varchar(2000) NOT NULL DEFAULT '',
+                           `type` varchar(11) DEFAULT '0',
+                           `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `monitor` WRITE;
@@ -160,13 +165,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `rate_limiting`;
 
 CREATE TABLE `rate_limiting` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                 `key` varchar(255) NOT NULL DEFAULT '',
+                                 `value` varchar(2000) NOT NULL DEFAULT '',
+                                 `type` varchar(11) DEFAULT '0',
+                                 `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                 PRIMARY KEY (`id`),
+                                 UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `rate_limiting` WRITE;
@@ -182,13 +187,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `property_rate_limiting`;
 
 CREATE TABLE `property_rate_limiting` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                                          `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                          `key` varchar(255) NOT NULL DEFAULT '',
+                                          `value` varchar(2000) NOT NULL DEFAULT '',
+                                          `type` varchar(11) DEFAULT '0',
+                                          `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                          PRIMARY KEY (`id`),
+                                          UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `property_rate_limiting` WRITE;
@@ -207,13 +212,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `signature_auth`;
 
 CREATE TABLE `signature_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                  `key` varchar(255) NOT NULL DEFAULT '',
+                                  `value` varchar(2000) NOT NULL DEFAULT '',
+                                  `type` varchar(11) DEFAULT '0',
+                                  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                  PRIMARY KEY (`id`),
+                                  UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `signature_auth` WRITE;
@@ -232,13 +237,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `redirect`;
 
 CREATE TABLE `redirect` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                            `key` varchar(255) NOT NULL DEFAULT '',
+                            `value` varchar(2000) NOT NULL DEFAULT '',
+                            `type` varchar(11) DEFAULT '0',
+                            `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `redirect` WRITE;
@@ -258,13 +263,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `rewrite`;
 
 CREATE TABLE `rewrite` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                           `key` varchar(255) NOT NULL DEFAULT '',
+                           `value` varchar(2000) NOT NULL DEFAULT '',
+                           `type` varchar(11) DEFAULT '0',
+                           `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `rewrite` WRITE;
@@ -284,13 +289,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `waf`;
 
 CREATE TABLE `waf` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                       `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                       `key` varchar(255) NOT NULL DEFAULT '',
+                       `value` varchar(2000) NOT NULL DEFAULT '',
+                       `type` varchar(11) DEFAULT '0',
+                       `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                       PRIMARY KEY (`id`),
+                       UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `waf` WRITE;
@@ -310,13 +315,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `balancer`;
 
 CREATE TABLE `balancer` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(10240) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                            `key` varchar(255) NOT NULL DEFAULT '',
+                            `value` varchar(10240) NOT NULL DEFAULT '',
+                            `type` varchar(11) DEFAULT '0',
+                            `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `balancer` WRITE;
@@ -333,77 +338,77 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `persist`;
 
 CREATE TABLE `persist` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                           `key` varchar(255) NOT NULL DEFAULT '',
+                           `value` varchar(2000) NOT NULL DEFAULT '',
+                           `type` varchar(11) DEFAULT '0',
+                           `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `persist` WRITE;
 
 INSERT INTO `persist` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-  (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
+    (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
 
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `persist_log`;
 
 CREATE TABLE `persist_log` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `ip` varchar(20) NOT NULL DEFAULT '',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `stat_time` datetime DEFAULT NULL,
-  `request_2xx` int(11) DEFAULT '0',
-  `request_3xx` int(11) DEFAULT '0',
-  `request_4xx` int(11) DEFAULT '0',
-  `request_5xx` int(11) DEFAULT '0',
-  `total_request_count` int(11) DEFAULT '0',
-  `total_success_request_count` int(11) DEFAULT '0',
-  `traffic_read` int(11) DEFAULT '0',
-  `traffic_write` int(11) DEFAULT '0',
-  `total_request_time` int(11) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `ip` (`ip`),
-  KEY `op_time` (`op_time`),
-  KEY `stat_time` (`stat_time`)
+                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                               `ip` varchar(20) NOT NULL DEFAULT '',
+                               `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               `stat_time` datetime DEFAULT NULL,
+                               `request_2xx` int(11) DEFAULT '0',
+                               `request_3xx` int(11) DEFAULT '0',
+                               `request_4xx` int(11) DEFAULT '0',
+                               `request_5xx` int(11) DEFAULT '0',
+                               `total_request_count` int(11) DEFAULT '0',
+                               `total_success_request_count` int(11) DEFAULT '0',
+                               `traffic_read` int(11) DEFAULT '0',
+                               `traffic_write` int(11) DEFAULT '0',
+                               `total_request_time` int(11) DEFAULT '0',
+                               PRIMARY KEY (`id`),
+                               KEY `ip` (`ip`),
+                               KEY `op_time` (`op_time`),
+                               KEY `stat_time` (`stat_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cluster_node`;
 
 CREATE TABLE `cluster_node` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `ip` varchar(20) NOT NULL DEFAULT '',
-  `port` smallint(6) DEFAULT '7777',
-  `api_username` varchar(50) DEFAULT '',
-  `api_password` varchar(50) DEFAULT '',
-  `sync_status` varchar(2000) DEFAULT '',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`ip`)
+                                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                `name` varchar(255) NOT NULL DEFAULT '',
+                                `ip` varchar(20) NOT NULL DEFAULT '',
+                                `port` smallint(6) DEFAULT '7777',
+                                `api_username` varchar(50) DEFAULT '',
+                                `api_password` varchar(50) DEFAULT '',
+                                `sync_status` varchar(2000) DEFAULT '',
+                                `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                PRIMARY KEY (`id`),
+                                UNIQUE KEY `unique_key` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `node`;
 
 CREATE TABLE `node` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                        `key` varchar(255) NOT NULL DEFAULT '',
+                        `value` varchar(2000) NOT NULL DEFAULT '',
+                        `type` varchar(11) DEFAULT '0',
+                        `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `node` WRITE;
 
 INSERT INTO `node` (`id`, `key`, `value`, `type`, `op_time`)
 VALUES
-  (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
+    (1, '1', '{}', 'meta', '2016-11-11 11:11:11');
 
 UNLOCK TABLES;
 
@@ -414,13 +419,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `consul_balancer`;
 
 CREATE TABLE `consul_balancer` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                   `key` varchar(255) NOT NULL DEFAULT '',
+                                   `value` varchar(2000) NOT NULL DEFAULT '',
+                                   `type` varchar(11) DEFAULT '0',
+                                   `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   PRIMARY KEY (`id`),
+                                   UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `consul_balancer` WRITE;
@@ -440,13 +445,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `hmac_auth`;
 
 CREATE TABLE `hmac_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                             `key` varchar(255) NOT NULL DEFAULT '',
+                             `value` varchar(2000) NOT NULL DEFAULT '',
+                             `type` varchar(11) DEFAULT '0',
+                             `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                             PRIMARY KEY (`id`),
+                             UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `hmac_auth` WRITE;
@@ -491,13 +496,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `jwt_auth`;
 
 CREATE TABLE `jwt_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                            `key` varchar(255) NOT NULL DEFAULT '',
+                            `value` varchar(2000) NOT NULL DEFAULT '',
+                            `type` varchar(11) DEFAULT '0',
+                            `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`id`),
+                            UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `jwt_auth` WRITE;
@@ -516,13 +521,13 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `headers`;
 
 CREATE TABLE `headers` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `value` varchar(2000) NOT NULL DEFAULT '',
-  `type` varchar(11) DEFAULT '0',
-  `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_key` (`key`)
+                           `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                           `key` varchar(255) NOT NULL DEFAULT '',
+                           `value` varchar(2000) NOT NULL DEFAULT '',
+                           `type` varchar(11) DEFAULT '0',
+                           `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           PRIMARY KEY (`id`),
+                           UNIQUE KEY `unique_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `headers` WRITE;

@@ -42,7 +42,7 @@ Requirements: MySQL Version 5.5+
 
  - Login to the `MySQL` client, create an `orange` database.
  
- - Import the data table (`/usr/local/orange/conf/orange-v0.8.1.sql`).
+ - Import the data table (`/usr/local/orange/conf/orange-v0.8.2.sql`).
  
  - Modify the `Orange` configuration file (`/usr/local/orange/conf/orange.conf`) `MySQL` related configuration.
 

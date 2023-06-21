@@ -47,7 +47,7 @@ sudo sh install.sh
 
  - 登录到 `MySQL` 客户端，创建一个 `orange` 数据库。
  
- - 导入数据表（`/usr/local/orange/conf/orange-v0.8.1.sql`）。
+ - 导入数据表（`/usr/local/orange/conf/orange-master.sql`）。
  
  - 修改`Orange`配位置文件中（`/usr/local/orange/conf/orange.conf`）`MySQL`相关配置。
 
