@@ -20,6 +20,7 @@ function _M.get(key)
 end
 
 function _M.set(key, value, expired)
+    ngx.log(ngx.ERR, "get redis: ", redis)
     return redis.set(cache, key, value, expired or 0)
 end
 
