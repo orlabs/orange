@@ -20,7 +20,7 @@
     "store_mysql": {
         "timeout": 5000,
         "connect_config": {
-            "host": "192.168.56.103",
+            "host": "192.168.56.100",
             "port": 3306,
             "database": "orange",
             "user": "root",
@@ -52,7 +52,7 @@
         ]
     },
     "redis": {
-        "host": "192.168.56.103",
+        "host": "192.168.56.100",
         "port": "6379",
         "password": "",
         "db_index": "4"
