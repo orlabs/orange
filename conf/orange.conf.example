@@ -54,7 +54,7 @@
     "redis": {
         "host": "192.168.56.100",
         "port": "6379",
-        "password": "",
+        "password": "123456",
         "db_index": "4"
     }
 }
