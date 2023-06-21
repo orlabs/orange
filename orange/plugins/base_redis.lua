@@ -38,8 +38,7 @@ end
 
 function BaseRedis.setnx(cache_prefix, key, value, expired)
     key = cache_prefix .. ":" .. key
-    ngx.log(ngx.ERR, "key: ", key)
-    local res, err = cache:setnx(key, value, expired or -1)
+    local res, err = cache:set(key, value, "EX", expired or -1, "NX")
     return res, err
 end
 
