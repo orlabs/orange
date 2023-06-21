@@ -16,6 +16,7 @@ local EXPIRE_TIME = {
 local _M = {}
 
 function _M.get(key)
+    ngx.log(ngx.ERR, "get redis: ", redis)
     return redis.get(cache, key)
 end
 
