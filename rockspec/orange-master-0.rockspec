@@ -15,7 +15,7 @@ description = {
 }
 
 dependencies = {
-    "luafilesystem = 1.7.0-2",
+    "luafilesystem = 1.8.0-1",
     "penlight = 1.5.4-1",
     "lrandom = 20180729-1",
     "luacrypto = 0.3.2-2",

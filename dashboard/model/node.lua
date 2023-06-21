@@ -70,7 +70,7 @@ return function(config)
 
     function node_model:query_by_ip(ip)
         if not ip then
-            ngx.log(ngx.ERROR,'ip值为nil:',ip)
+            ngx.log(ngx.ERR,'There is no Ip : ',ip)
             return nil, err
         end
         local result, err = db:query("select * from " .. table_name .. " where ip=?", { ip })

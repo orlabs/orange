@@ -10,13 +10,11 @@ function _M.htmlDecode(s)
 end
 
 function _M.hostToIp(hostname)
-    ngx.log(ngx.ERR,"=================解析ip==================")
     local ip, resolved = socket.dns.toip(hostname)
     if resolved then
-        ngx.log(ngx.ERR,"解析出的ip: ",ip)
+        ngx.log(ngx.INFO,"解析出的ip: ",ip)
         return ip
     end
-    ngx.log(ngx.ERR,"=================解析错误,返回127.0.0.1==================")
     return "127.0.0.1"
 end
 
