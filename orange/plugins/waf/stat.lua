@@ -1,12 +1,13 @@
 local ipairs = ipairs
 local table_insert = table.insert
-local status = ngx.shared.waf_status
+local redis = require("orange.plugins.base_redis")
+local status = "waf_status"
 
 
 local _M = {}
 
 function _M.get_one(key)
-    local value, flags = status:get(key)
+    local value = redis.get(status, key)
     local count = value or 0
     return count
 end
@@ -16,9 +17,9 @@ function _M.count(key, value)
         return
     end
 
-    local newval, err = status:incr(key, value)
-    if not newval or err then
-        status:set(key, 1)
+    local newval = redis.incr(status, key, value)
+    if not newval then
+        redis.set(status, key, 1)
     end
 end
 
@@ -33,7 +34,7 @@ end
 -- @param max_count only the first max_count keys (if any) are returned
 --
 function _M.get_all(max_count)
-    local keys = status:get_keys(max_count or 500)
+    local keys = redis.get_keys(status..":*")
     local result = {}
 
     if keys then
