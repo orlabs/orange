@@ -22,7 +22,7 @@ help:
 dev:
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
-	$(INSTALL) install/orange-master.sql conf/orange-master.sql
+	$(INSTALL) install/orange-v0.8.2.sql conf/orange-v0.8.2.sql
 
 
 ### install:      Install the Orange

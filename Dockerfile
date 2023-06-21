@@ -19,5 +19,8 @@ RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && yum -y reinstall glibc-common \
     && localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
 EXPOSE 9999 80 7777
+# 提前构建
+COPY rockspec Makefile ./
+RUN make dependency
 COPY . .
 CMD make dev && make install && resty bin/orange start && tail -f /opt/orange/logs/access.log
