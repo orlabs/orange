@@ -20,11 +20,6 @@ help:
 ### dev:          Create Orange development ENV
 .PHONY: dev
 dev:
-ifneq ($(LUAROCKS_VER),'luarocks 3')
-	luarocks install rockspec/orange-master-0.rockspec --server=https://luarocks.cn --tree=deps --only-deps --local
-else
-	luarocks install --server=https://luarocks.cn --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
-endif
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
 	$(INSTALL) install/orange-master.sql conf/orange-master.sql
@@ -58,3 +53,13 @@ install:
 	$(INSTALL) bin/orange $(INST_BINDIR)/orange
 	$(REMOVE) -f /usr/local/bin/orange
 	$(LINK) -s $(INST_BINDIR)/orange /usr/local/bin/orange
+
+
+### dependency:          install the dependencies from .rockspec
+.PHONY: dependency
+dependency:
+ifneq ($(LUAROCKS_VER),'luarocks 3')
+	luarocks install rockspec/orange-master-0.rockspec --server=https://luarocks.cn --tree=deps --only-deps --local
+else
+	luarocks install --server=https://luarocks.cn --lua-dir=/usr/local/openresty/luajit rockspec/orange-master-0.rockspec --tree=deps --only-deps --local
+endif
