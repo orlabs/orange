@@ -1,6 +1,7 @@
 local resty_lock = require("resty.lock")
 local json = require("orange.utils.json")
 local redis = require("orange.plugins.base_redis")
+local sputils = require("orange.utils.sputils")
 local ngx_log = ngx.log
 local cache = "rate_limiting"
 
@@ -16,12 +17,12 @@ local EXPIRE_TIME = {
 local _M = {}
 
 function _M.get(key)
-    ngx.log(ngx.ERR, "get redis: ", redis)
+    ngx.log(ngx.ERR, "get redis: ", sputils.tableToStr(redis))
     return redis.get(cache, key)
 end
 
 function _M.set(key, value, expired)
-    ngx.log(ngx.ERR, "get redis: ", redis)
+    ngx.log(ngx.ERR, "get redis: ", sputils.tableToStr(redis))
     return redis.set(cache, key, value, expired or 0)
 end
 
