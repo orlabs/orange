@@ -15,6 +15,7 @@ end
 --end
 
 function StatHandler:access(conf)
+    StatHandler.super.access(self)
     stat.log()
 end
 
