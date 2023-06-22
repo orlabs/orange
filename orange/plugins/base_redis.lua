@@ -38,7 +38,7 @@ end
 
 function BaseRedis.setnx(cache_prefix, key, value, expired)
     key = cache_prefix .. ":" .. key
-    local res, err = cache:set(key, value, "EX", expired or -1, "NX")
+    local res, err = cache:set(key, value, "EX", expired or 0, "NX")
     return res, err
 end
 
