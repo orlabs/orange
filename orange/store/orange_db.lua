@@ -1,11 +1,11 @@
 local json = require("orange.utils.json")
-local redis = require("orange.plugins.base_redis")
-local cache = "orange_data"
+local orange_data = ngx.shared.orange_data
+
 
 local _M = {}
 
 function _M._get(key)
-    return redis.get_string(cache, key)
+    return orange_data:get(key)
 end
 
 function _M.get_json(key)
@@ -16,12 +16,12 @@ function _M.get_json(key)
     return value, f
 end
 
-function _M._set(key, value)
-    return redis.set(cache, key, value)
+function _M.get(key)
+    return _M._get(key)
 end
 
-function _M.set(key, value, expired)
-    return redis.set(cache, key, value, expired)
+function _M._set(key, value)
+    return orange_data:set(key, value)
 end
 
 function _M.set_json(key, value)
@@ -31,12 +31,23 @@ function _M.set_json(key, value)
     return _M._set(key, value)
 end
 
+function _M.set(key, value)
+    -- success, err, forcible
+    return _M._set(key, value)
+end
+
 function _M.incr(key, value)
-    return redis:incr(cache, key, value)
+    return orange_data:incr(key, value)
 end
 
 function _M.delete(key)
-    return redis.delete(cache, key)
+    return orange_data:delete(key)
 end
+
+function _M.delete_all()
+    orange_data:flush_all()
+    orange_data:flush_expired()
+end
+
 
 return _M
