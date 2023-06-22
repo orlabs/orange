@@ -14,7 +14,7 @@ end
 --    stat.init()
 --end
 
-function StatHandler:log(conf)
+function StatHandler:log()
     stat.log()
 end
 

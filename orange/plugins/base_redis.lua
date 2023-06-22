@@ -67,6 +67,8 @@ function BaseRedis.setnx(cache_prefix, key, value, ttl)
     return res
 end
 
+--red:incr(key, increment)：将key的值加上increment，返回增加后的结果。如果key不存在，会先将它的值设为0再执行自增操作。如果key的值不能被解释为整数，则会返回错误。
+--red:incrby(key, increment)：将key的值加上increment，返回增加后的结果。与red:incr不同的是，它可以指定增加的数量，而不是固定增加1。如果key不存在，会先将它的值设为0再执行自增操作。如果key的值不能被解释为整数，则会返回错误。
 function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
     local res, err
