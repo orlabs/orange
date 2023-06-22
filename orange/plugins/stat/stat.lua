@@ -12,8 +12,6 @@ local KEY_REQUEST_2XX = "REQUEST_2XX"
 local KEY_REQUEST_3XX = "REQUEST_3XX"
 local KEY_REQUEST_4XX = "REQUEST_4XX"
 local KEY_REQUEST_5XX = "REQUEST_5XX"
-local shared = ngx.shared.status
-
 local redis = require("orange.plugins.base_redis")
 local status = "orange_stat"
 local sputils = require("orange.utils.sputils")
@@ -46,7 +44,7 @@ end
 
 function _M.log()
     -- 初始化检查
-    --_M.init()
+    _M.init()
     ngx.log(ngx.ERR, '==========================================')
     local ngx_var = ngx.var
     redis.incr(status, KEY_TOTAL_COUNT, 1)
