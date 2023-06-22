@@ -30,9 +30,12 @@ function BaseRedis.get_string(cache_prefix, key)
 end
 
 function BaseRedis.set(cache_prefix, key, value, expired)
+    if not expired then
+        expired = -1
+    end
     key = cache_prefix .. ":" .. key
     local res, err = cache:set(key, value)
-    cache:expire(key, expired or 10000)
+    cache:expire(key, expired)
     return res
 end
 
@@ -44,13 +47,16 @@ function BaseRedis.setnx(cache_prefix, key, value, expired)
 end
 
 function BaseRedis.incr(cache_prefix, key, value, expired)
+    if not expired then
+        expired = -1
+    end
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
     if not res then
         res, err = cache:set(key, 0)
-        cache:expire(key, expired or 10000)
+        cache:expire(key, expired)
     end
-    res, err = cache:incr(key)
+    res, err = cache:incr(key, value)
     return res
 end
 
