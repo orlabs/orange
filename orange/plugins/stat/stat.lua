@@ -22,8 +22,6 @@ local _M = {}
 
 function _M.init()
     local res, _ = redis.get_string(status, STAT_LOCK)
-    ngx.log(ngx.ERR, not res)
-    redis.set(status, "aaa", true, 10000)
     if not res then
         redis.set(status, STAT_LOCK, true)
         -- ngx.time() 是 OpenResty 提供的一个函数，用于获取当前时间戳。它返回的是一个整数
