@@ -21,7 +21,7 @@ local orange_version = require("orange/version")
 local _M = {}
 
 function _M.init()
-    local res, err = redis.setnx(status, STAT_LOCK, true)
+    local res, err = redis.setnx(status, STAT_LOCK, "true")
     ngx.log(ngx.ERR, 'redis setnx : ' .. res)
     if res and (not res == 0) then
         -- ngx.time() 是 OpenResty 提供的一个函数，用于获取当前时间戳。它返回的是一个整数
