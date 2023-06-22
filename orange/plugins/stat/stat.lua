@@ -45,6 +45,7 @@ end
 function _M.log()
     -- 初始化检查
     _M.init()
+    ngx.log(ngx.ERR, '==========================================')
     local ngx_var = ngx.var
     redis.incr(status, KEY_TOTAL_COUNT, 1)
 
