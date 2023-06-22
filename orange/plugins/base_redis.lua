@@ -52,10 +52,10 @@ function BaseRedis.incr(cache_prefix, key, value, expired)
     end
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
-    if not res then
-        res, err = cache:set(key, 0)
-        cache:expire(key, expired)
-    end
+    --if not res then
+    --    res, err = cache:set(key, 0)
+    --    cache:expire(key, expired)
+    --end
     res, err = cache:incr(key, value)
     return res
 end
