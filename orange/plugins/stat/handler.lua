@@ -10,12 +10,11 @@ function StatHandler:new()
 end
 
 -- TODO init_worker_by_lua 是在 Nginx worker 进程启动后执行的 Lua 代码块。在这个环境中，不允许进行一些操作，如发起网络请求、操作文件系统等
---function StatHandler:init_worker(conf)
---    stat.init()
---end
+function StatHandler:init_worker(conf)
+    ngx.log(ngx.DEBUG, " executing plugin \"", self._name, "\": init_worker")
+end
 
-function StatHandler:access(conf)
-    StatHandler.super.access(self)
+function StatHandler:log(conf)
     stat.log()
 end
 
