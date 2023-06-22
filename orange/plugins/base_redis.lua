@@ -20,43 +20,66 @@ local cache = redis:new({
 function BaseRedis.get(cache_prefix, key)
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
+    if not res then
+        ngx.log(ngx.ERR, "failed to get Redis key: ", err)
+        return nil
+    end
     return tonumber(res)
 end
 
 function BaseRedis.get_string(cache_prefix, key)
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
+    if not res then
+        ngx.log(ngx.ERR, "failed to get Redis key: ", err)
+        return nil
+    end
     return res
 end
 
-function BaseRedis.set(cache_prefix, key, value, expired)
-    if not expired then
-        expired = 10000
-    end
+function BaseRedis.set(cache_prefix, key, value, ttl)
     key = cache_prefix .. ":" .. key
-    local res, err = cache:set(key, value)
-    cache:expire(key, expired)
+    local res, err
+    if ttl then
+        res, err = cache:setex(key, ttl, value)
+    else
+        res, err = cache:set(key, value)
+    end
+    if not res then
+        ngx.log(ngx.ERR, "failed to set Redis key: ", err)
+        return nil
+    end
     return res
 end
 
--- expired不可以设置-1
-function BaseRedis.setnx(cache_prefix, key, value, expired)
+function BaseRedis.setnx(cache_prefix, key, value, ttl)
     key = cache_prefix .. ":" .. key
-    local res, err = cache:set(key, value, "EX", expired, "NX")
-    return res, err
+    local res, err
+    if ttl then
+        res, err = cache:setex(key, ttl, value)
+    else
+        res, err = cache:setnx(key, value)
+    end
+    if not res then
+        ngx.log(ngx.ERR, "failed to setnx Redis key: ", err)
+        return nil
+    end
+    return res
 end
 
-function BaseRedis.incr(cache_prefix, key, value, expired)
-    if not expired then
-        expired = 10000
-    end
+function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
-    local res, err = cache:get(key)
-    --if not res then
-    --    res, err = cache:set(key, 0)
-    --    cache:expire(key, expired)
-    --end
-    res, err = cache:incr(key, value)
+    local res, err
+    if ttl then
+        res, err = cache:incrby(key, delta or 1)
+        cache:expire(key, ttl)
+    else
+        res, err = cache:incr(key, delta or 1)
+    end
+    if not res then
+        ngx.log(ngx.ERR, "failed to incr Redis key: ", err)
+        return nil
+    end
     return res
 end
 
