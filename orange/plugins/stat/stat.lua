@@ -14,6 +14,7 @@ local KEY_REQUEST_4XX = "REQUEST_4XX"
 local KEY_REQUEST_5XX = "REQUEST_5XX"
 local redis = require("orange.plugins.base_redis")
 local status = "orange_stat"
+local sputils = require("orange.utils.sputils")
 
 local orange_version = require("orange/version")
 
@@ -21,6 +22,7 @@ local _M = {}
 
 function _M.init()
     local res, err = redis.setnx(status, STAT_LOCK, true)
+    ngx.log(ngx.INFO, 'redis setnx : ' .. sputils.tableToStr(res))
     if res and (not res == 0) then
         -- ngx.time() 是 OpenResty 提供的一个函数，用于获取当前时间戳。它返回的是一个整数
         redis.set(status, KEY_START_TIME, ngx.time())
