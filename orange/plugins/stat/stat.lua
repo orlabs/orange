@@ -73,6 +73,8 @@ function _M.log()
 end
 
 function _M.stat()
+    -- 初始化检查
+    _M.init()
     local ngx_lua_version = ngx.config.ngx_lua_version
     local result = {
         nginx_version = ngx.var.nginx_version,
