@@ -20,7 +20,7 @@ local cache = redis:new({
 function BaseRedis.get(cache_prefix, key)
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
-    if not res then
+    if not err then
         ngx.log(ngx.ERR, "failed to get Redis key: ", err)
         return nil
     end
@@ -30,7 +30,7 @@ end
 function BaseRedis.get_string(cache_prefix, key)
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
-    if not res then
+    if not err then
         ngx.log(ngx.ERR, "failed to get Redis key: ", err)
         return nil
     end
@@ -45,7 +45,7 @@ function BaseRedis.set(cache_prefix, key, value, ttl)
     else
         res, err = cache:set(key, value)
     end
-    if not res then
+    if not err then
         ngx.log(ngx.ERR, "failed to set Redis key: ", err)
         return nil
     end
@@ -60,7 +60,7 @@ function BaseRedis.setnx(cache_prefix, key, value, ttl)
     else
         res, err = cache:setnx(key, value)
     end
-    if not res then
+    if not err then
         ngx.log(ngx.ERR, "failed to setnx Redis key: ", err)
         return nil
     end
@@ -73,12 +73,12 @@ function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
     local res, err
     if ttl then
-        res, err = cache:incrby(key, delta or 1)
+        res, err = cache:incr(key, delta or 1)
         cache:expire(key, ttl)
     else
         res, err = cache:incr(key, delta or 1)
     end
-    if not res then
+    if not err then
         ngx.log(ngx.ERR, "failed to incr Redis key: ", err)
         return nil
     end
