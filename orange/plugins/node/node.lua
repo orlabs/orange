@@ -20,9 +20,10 @@ function _M.init(config)
     ngx.log(ngx.ERR, "node init")
 end
 
+-- 使用headless方式
 function _M.get_ip()
     if not _M.ip then
-        _M.ip = os.getenv("ORANGE_HOST")
+        _M.ip = socket.dns.gethostname() + "." + os.getenv("ORANGE_SERVICE")
         --_M.ip = get_ip_by_hostname(socket.dns.gethostname())
     end
     return _M.ip
@@ -43,8 +44,8 @@ local function sync_node_plugins(node, plugins)
             -- 设置超时时间 1000 ms
             httpc:set_timeout(1000)
 
-            -- 解析出的ip
-            local nodeIp = sputils.hostToIp(node.ip)
+            -- 因为orange这里无法直接使用dns进行访问，所以将其解析成ip
+            local nodeIp = sputils.dnsToIp(node.ip)
             local url = string_format("http://%s:%s", nodeIp, node.port)
             local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
             local path = string_format('/%s/sync?seed=' .. ngx.time(), plugin)

@@ -70,20 +70,10 @@ return function(config)
 
     function node_model:query_by_ip(ip)
         if not ip then
-            ngx.log(ngx.ERR,'There is no Ip : ',ip)
+            ngx.log(ngx.ERR,'Not Receive Ip Param ... ')
             return nil, err
         end
         local result, err = db:query("select * from " .. table_name .. " where ip=?", { ip })
-        if not result or err or type(result) ~= "table" or #result ~= 1 then
-            return nil, err
-        else
-            return result[1], err
-        end
-    end
-
-    --查询基础节点
-    function node_model:query_basic_node()
-        local result, err = db:query("select * from " .. table_name .. " where basic_node='1'")
         if not result or err or type(result) ~= "table" or #result ~= 1 then
             return nil, err
         else

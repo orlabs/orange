@@ -5,10 +5,11 @@ events {
     worker_connections  4096;
 }
 
+# 提前标准环境变量,以便后续lua代码中可以使用os.getenv
 # optional: path of orange.conf
 env ORANGE_CONF;
-# 提前标准环境变量,以便后续lua代码中可以使用os.getenv
-env ORANGE_HOST;
+# orange statefulset headless serviceName
+env ORANGE_SERVICE;
 
 http {
     resolver 114.114.114.114; # replace it with your favorite config

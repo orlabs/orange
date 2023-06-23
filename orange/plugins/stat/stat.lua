@@ -12,70 +12,61 @@ local KEY_REQUEST_2XX = "REQUEST_2XX"
 local KEY_REQUEST_3XX = "REQUEST_3XX"
 local KEY_REQUEST_4XX = "REQUEST_4XX"
 local KEY_REQUEST_5XX = "REQUEST_5XX"
-local redis = require("orange.plugins.base_redis")
-local status = "orange_stat"
-local sputils = require("orange.utils.sputils")
+local status = ngx.shared.status
 
 local orange_version = require("orange/version")
 
 local _M = {}
 
 function _M.init()
-    local res, _ = redis.get_string(status, STAT_LOCK)
-    if not res then
-        redis.set(status, STAT_LOCK, true)
-        -- ngx.time() 是 OpenResty 提供的一个函数，用于获取当前时间戳。它返回的是一个整数
-        redis.set(status, KEY_START_TIME, ngx.time())
+    local ok, err = status:add(STAT_LOCK, true)
+    if ok then
+        status:set(KEY_START_TIME, ngx.time())
 
-        redis.set(status, KEY_TOTAL_COUNT, 0)
-        redis.set(status, KEY_TOTAL_SUCCESS_COUNT, 0)
+        status:set(KEY_TOTAL_COUNT, 0)
+        status:set(KEY_TOTAL_SUCCESS_COUNT, 0)
 
-        redis.set(status, KEY_TRAFFIC_READ, 0)
-        redis.set(status, KEY_TRAFFIC_WRITE, 0)
+        status:set(KEY_TRAFFIC_READ, 0)
+        status:set(KEY_TRAFFIC_WRITE, 0)
 
-        redis.set(status, KEY_TOTAL_REQUEST_TIME, 0)
+        status:set(KEY_TOTAL_REQUEST_TIME, 0)
 
-        redis.set(status, KEY_REQUEST_2XX, 0)
-        redis.set(status, KEY_REQUEST_3XX, 0)
-        redis.set(status, KEY_REQUEST_4XX, 0)
-        redis.set(status, KEY_REQUEST_5XX, 0)
+        status:set(KEY_REQUEST_2XX, 0)
+        status:set(KEY_REQUEST_3XX, 0)
+        status:set(KEY_REQUEST_4XX, 0)
+        status:set(KEY_REQUEST_5XX, 0)
     end
 end
 
 function _M.log()
-    -- 初始化检查
-    _M.init()
-    ngx.log(ngx.ERR, '==========================================')
     local ngx_var = ngx.var
-    redis.incr(status, KEY_TOTAL_COUNT, 1)
+    status:incr(KEY_TOTAL_COUNT, 1)
 
     local http_status = tonumber(ngx_var.status)
 
     if http_status < 400 then
-        redis.incr(status, KEY_TOTAL_SUCCESS_COUNT, 1)
+        status:incr(KEY_TOTAL_SUCCESS_COUNT, 1)
     end
 
     if http_status >= 200 and http_status < 300 then
-        redis.incr(status, KEY_REQUEST_2XX, 1)
+        status:incr(KEY_REQUEST_2XX, 1)
     elseif http_status >= 300 and http_status < 400 then
-        redis.incr(status, KEY_REQUEST_3XX, 1)
+        status:incr(KEY_REQUEST_3XX, 1)
     elseif http_status >= 400 and http_status < 500 then
-        redis.incr(status, KEY_REQUEST_4XX, 1)
+        status:incr(KEY_REQUEST_4XX, 1)
     elseif http_status >= 500 and http_status < 600 then
-        redis.incr(status, KEY_REQUEST_5XX, 1)
+        status:incr(KEY_REQUEST_5XX, 1)
     end
 
 
-    redis.incr(status, KEY_TRAFFIC_READ, ngx_var.request_length)
-    redis.incr(status, KEY_TRAFFIC_WRITE, ngx_var.bytes_sent)
+    status:incr(KEY_TRAFFIC_READ, ngx_var.request_length)
+    status:incr(KEY_TRAFFIC_WRITE, ngx_var.bytes_sent)
 
     local request_time = ngx.now() - ngx.req.start_time()
-    redis.incr(status, KEY_TOTAL_REQUEST_TIME, request_time)
+    status:incr(KEY_TOTAL_REQUEST_TIME, request_time)
 end
 
 function _M.stat()
-    -- 初始化检查
-    _M.init()
     local ngx_lua_version = ngx.config.ngx_lua_version
     local result = {
         nginx_version = ngx.var.nginx_version,
@@ -84,22 +75,22 @@ function _M.stat()
         address = ngx.var.server_addr,
         worker_count = ngx.worker.count(),
         timestamp = ngx.time(),
-        load_timestamp = redis.get(status, KEY_START_TIME),
+        load_timestamp = status:get(KEY_START_TIME),
         ngx_prefix = ngx.config.prefix(),
 
 
 
-        start_time = redis.get(status, KEY_START_TIME),
-        total_count = redis.get(status, KEY_TOTAL_COUNT),
-        total_success_count = redis.get(status, KEY_TOTAL_SUCCESS_COUNT),
-        traffic_read = redis.get(status, KEY_TRAFFIC_READ),
-        traffic_write = redis.get(status, KEY_TRAFFIC_WRITE),
-        total_request_time = math.floor(redis.get(status, KEY_TOTAL_REQUEST_TIME)),
+        start_time = status:get(KEY_START_TIME),
+        total_count = status:get(KEY_TOTAL_COUNT),
+        total_success_count = status:get(KEY_TOTAL_SUCCESS_COUNT),
+        traffic_read = status:get(KEY_TRAFFIC_READ),
+        traffic_write = status:get(KEY_TRAFFIC_WRITE),
+        total_request_time = math.floor(status:get(KEY_TOTAL_REQUEST_TIME)),
 
-        request_2xx = redis.get(status, KEY_REQUEST_2XX),
-        request_3xx = redis.get(status, KEY_REQUEST_3XX),
-        request_4xx = redis.get(status, KEY_REQUEST_4XX),
-        request_5xx = redis.get(status, KEY_REQUEST_5XX),
+        request_2xx = status:get(KEY_REQUEST_2XX),
+        request_3xx = status:get(KEY_REQUEST_3XX),
+        request_4xx = status:get(KEY_REQUEST_4XX),
+        request_5xx = status:get(KEY_REQUEST_5XX),
 
         con_active = ngx.var.connections_active,
         con_rw = ngx.var.connections_reading + ngx.var.connections_writing,

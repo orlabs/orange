@@ -50,8 +50,8 @@ return function(config, store)
                 -- 设置超时时间 1000 ms
                 httpc:set_timeout(1000)
 
-                -- 解析ip
-                local nodeIp = sputils.hostToIp(node.ip)
+                -- 因为orange这里无法直接使用dns进行访问，所以将其解析成ip
+                local nodeIp = sputils.dnsToIp(node.ip)
                 local url = string_format("http://%s:%s", nodeIp, node.port)
                 local authorization = encode_base64(string_format("%s:%s", node.api_username, node.api_password))
                 local path = '/node/sync?seed=' .. ngx.time()
@@ -87,7 +87,7 @@ return function(config, store)
     end
 
     function node_router:register()
-        local local_ip = os.getenv("ORANGE_HOST")
+        local local_ip = socket.dns.gethostname() + "." + os.getenv("ORANGE_SERVICE")
         --local local_ip = get_ip_by_hostname(socket.dns.gethostname())
         node_model:registry(local_ip, 7777, config.api.credentials[1])
     end
