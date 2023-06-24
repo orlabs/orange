@@ -73,7 +73,11 @@ function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
     local res, err
     ngx.log(ngx.ERR, "get value: ", delta)
-    res, err = cache:incrby(key,tonumber((delta or 1)))
+    if type(delta) == "number" and delta % 1 == 0 then  -- 如果增量为整数
+        res, err = cache:incrby(key,tonumber((delta or 1)))
+    else  -- 否则认为增量为浮点数
+        res, err = cache:incrbyfloat(key,delta)
+    end
     if ttl then
         cache:expire(key, ttl)
     end

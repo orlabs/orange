@@ -14,7 +14,7 @@ local REQUEST_5XX = "REQUEST_5XX:"
 local redis = require("orange.plugins.base_redis")
 local status = "orange_monitor"
 local function safe_count(key, value, default_value)
-    -- 在log_by_lua*上下文中使用ngx.timer.at延迟执行Redis操作
+    -- 在*_by_lua*上下文中使用ngx.timer.at延迟执行Redis操作
     ngx.timer.at(0, function()
         local newval, err = redis.incr(status, key, value)
         if not newval or err then
