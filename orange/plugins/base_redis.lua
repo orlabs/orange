@@ -71,13 +71,12 @@ end
 --red:incrby(key, increment)：将key的值加上increment，返回增加后的结果。与red:incr不同的是，它可以指定增加的数量，而不是固定增加1。如果key不存在，会先将它的值设为0再执行自增操作。如果key的值不能被解释为整数，则会返回错误。
 function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
-    ngx.log(ngx.ERR, "incr delta: ", delta)
     local res, err
     if ttl then
         res, err = cache:incrby(key, delta or 1)
         cache:expire(key, ttl)
     else
-        res, err = cache:incrby(key, delta or 1)
+        res, err = cache:incr(key, delta or 1)
     end
     if err then
         ngx.log(ngx.ERR, "failed to incr Redis key: ", err)
