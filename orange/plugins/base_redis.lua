@@ -72,6 +72,7 @@ end
 function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
     local res, err
+    ngx.log(ngx.ERR, "get value: ", delta)
     res, err = cache:incrby(key,tonumber((delta or 1)))
     if ttl then
         cache:expire(key, ttl)
