@@ -43,33 +43,40 @@ function _M.init()
 end
 
 function _M.log()
-    -- 初始化检查
-    _M.init()
     local ngx_var = ngx.var
-    redis.incr(status, KEY_TOTAL_COUNT, 1)
+    local ngx_var_status = ngx_var.status
+    local request_length = ngx_var.request_length
+    local bytes_sent = ngx_var.bytes_sent
+    local start_time = ngx.req.start_time()
+    -- 在log_by_lua*上下文中使用ngx.timer.at延迟执行Redis操作
+    ngx.timer.at(0, function()
+        -- 初始化检查
+        _M.init()
+        redis.incr(status, KEY_TOTAL_COUNT, 1)
 
-    local http_status = tonumber(ngx_var.status)
+        local http_status = tonumber(ngx_var_status)
 
-    if http_status < 400 then
-        redis.incr(status, KEY_TOTAL_SUCCESS_COUNT, 1)
-    end
+        if http_status < 400 then
+            redis.incr(status, KEY_TOTAL_SUCCESS_COUNT, 1)
+        end
 
-    if http_status >= 200 and http_status < 300 then
-        redis.incr(status, KEY_REQUEST_2XX, 1)
-    elseif http_status >= 300 and http_status < 400 then
-        redis.incr(status, KEY_REQUEST_3XX, 1)
-    elseif http_status >= 400 and http_status < 500 then
-        redis.incr(status, KEY_REQUEST_4XX, 1)
-    elseif http_status >= 500 and http_status < 600 then
-        redis.incr(status, KEY_REQUEST_5XX, 1)
-    end
+        if http_status >= 200 and http_status < 300 then
+            redis.incr(status, KEY_REQUEST_2XX, 1)
+        elseif http_status >= 300 and http_status < 400 then
+            redis.incr(status, KEY_REQUEST_3XX, 1)
+        elseif http_status >= 400 and http_status < 500 then
+            redis.incr(status, KEY_REQUEST_4XX, 1)
+        elseif http_status >= 500 and http_status < 600 then
+            redis.incr(status, KEY_REQUEST_5XX, 1)
+        end
 
 
-    redis.incr(status, KEY_TRAFFIC_READ, ngx_var.request_length)
-    redis.incr(status, KEY_TRAFFIC_WRITE, ngx_var.bytes_sent)
+        redis.incr(status, KEY_TRAFFIC_READ, request_length)
+        redis.incr(status, KEY_TRAFFIC_WRITE, bytes_sent)
 
-    local request_time = ngx.now() - ngx.req.start_time()
-    redis.incr(status, KEY_TOTAL_REQUEST_TIME, request_time)
+        local request_time = ngx.now() - start_time
+        redis.incr(status, KEY_TOTAL_REQUEST_TIME, request_time)
+    end)
 end
 
 function _M.stat()

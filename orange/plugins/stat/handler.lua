@@ -14,10 +14,7 @@ function StatHandler:init_worker(conf)
 end
 
 function StatHandler:log(conf)
-    -- 在log_by_lua*上下文中使用ngx.timer.at延迟执行Redis操作
-    ngx.timer.at(0, function()
-        stat.log()
-    end)
+    stat.log()
 end
 
 return StatHandler
