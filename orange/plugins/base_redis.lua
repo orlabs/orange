@@ -72,11 +72,9 @@ end
 function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
     local res, err
+    res, err = cache:incrby(key, delta or 1)
     if ttl then
-        res, err = cache:incrby(key, delta or 1)
         cache:expire(key, ttl)
-    else
-        res, err = cache:incr(key, delta or 1)
     end
     if err then
         ngx.log(ngx.ERR, "failed to incr Redis key: ", err)
