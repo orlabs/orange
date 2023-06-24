@@ -72,7 +72,7 @@ end
 function BaseRedis.incr(cache_prefix, key, delta, ttl)
     key = cache_prefix .. ":" .. key
     local res, err
-    res, err = cache:incrby(key, delta or 1)
+    res, err = cache:incrby(key,tonumber((delta or 1)))
     if ttl then
         cache:expire(key, ttl)
     end
