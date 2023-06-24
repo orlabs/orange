@@ -11,11 +11,12 @@ local REQUEST_3XX = "REQUEST_3XX:"
 local REQUEST_4XX = "REQUEST_4XX:"
 local REQUEST_5XX = "REQUEST_5XX:"
 
-local status = ngx.shared.monitor
+local redis = require("orange.plugins.base_redis")
+local status = "orange_monitor"
 local function safe_count(key, value, default_value)
-    local newval, err = status:incr(key, value)
+    local newval, err = redis.incr(status, key, value)
     if not newval or err then
-        status:set(key, default_value or value)
+        redis.set(status, key, default_value or value)
     end
 end
 
@@ -23,16 +24,16 @@ end
 local _M = {}
 
 function _M.get_one(key_suffix)
-    local total_count, _ = status:get(TOTAL_COUNT .. key_suffix)
+    local total_count, _ = redis.get(status,TOTAL_COUNT .. key_suffix)
     total_count = total_count or 0
 
-    local traffic_read, _ = status:get(TRAFFIC_READ .. key_suffix)
+    local traffic_read, _ = redis.get(status, TRAFFIC_READ .. key_suffix)
     traffic_read = traffic_read or 0
 
-    local traffic_write, _ = status:get(TRAFFIC_WRITE .. key_suffix)
+    local traffic_write, _ = redis.get(status, TRAFFIC_WRITE .. key_suffix)
     traffic_write = traffic_write or 0
 
-    local total_request_time, _ = status:get(TOTAL_REQUEST_TIME .. key_suffix)
+    local total_request_time, _ = redis.get(status, TOTAL_REQUEST_TIME .. key_suffix)
     total_request_time = total_request_time or 0
 
     local average_request_time, average_traffic_read, average_traffix_write
@@ -46,16 +47,16 @@ function _M.get_one(key_suffix)
         average_traffix_write = 0
     end
 
-    local request_2xx, _ = status:get(REQUEST_2XX .. key_suffix)
+    local request_2xx, _ = redis.get(status, REQUEST_2XX .. key_suffix)
     request_2xx = request_2xx or 0
 
-    local request_3xx, _ = status:get(REQUEST_3XX .. key_suffix)
+    local request_3xx, _ = redis.get(status, REQUEST_3XX .. key_suffix)
     request_3xx = request_3xx or 0
 
-    local request_4xx, _ = status:get(REQUEST_4XX .. key_suffix)
+    local request_4xx, _ = redis.get(status, REQUEST_4XX .. key_suffix)
     request_4xx = request_4xx or 0
 
-    local request_5xx, _ = status:get(REQUEST_5XX .. key_suffix)
+    local request_5xx, _ = redis.get(status, REQUEST_5XX .. key_suffix)
     request_5xx = request_5xx or 0
 
     local result = {
