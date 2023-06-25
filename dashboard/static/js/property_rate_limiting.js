@@ -102,9 +102,9 @@
             var count = $("#rule-handle-count").val();
             count = parseInt(count);
             if(isNaN(count)){
-                console.log("最多访问次数输入错误：", count);
+                console.log("xxx输入错误：", count);
                 result.success = false;
-                result.data = "最多访问次数输入错误，须是整数";
+                result.data = "xxx输入错误，须是整数";
                 return result;
             }
             handle.count = count;
