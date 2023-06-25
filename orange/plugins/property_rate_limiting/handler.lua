@@ -69,12 +69,14 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                     local before_handle_count = get_current_stat(handle_count_key) or 0
 
                     if is_blocked and handle.count <= before_handle_count then
+                        if handle.log == true then
+                            ngx.log(ngx.INFO, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                        end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         ngx.exit(429)
                         return true
                     end
 
-                    ngx.header[plugin_config.plug_reponse_header_prefix .. limit_type] = handle.count
                     if current_stat >= handle.count then
                         if handle.log == true then
                             ngx.log(ngx.INFO, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)

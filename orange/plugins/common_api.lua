@@ -7,6 +7,7 @@ local orange_db = require("orange.store.orange_db")
 local utils = require("orange.utils.utils")
 local stringy = require("orange.utils.stringy")
 local dao = require("orange.store.dao")
+local sputils = require("orange.utils.sputils")
 
 -- build common apis
 return function(plugin)
@@ -136,6 +137,9 @@ return function(plugin)
             return function(req, res, next)
                 local selector_id = req.params.id
                 local selector = dao.get_selector(plugin, store, selector_id)
+                ngx.log(ngx.ERR, '==================')
+                ngx.log(ngx.ERR, sputils.tableToStr(selector))
+                ngx.log(ngx.ERR, '==================')
                 if not selector or not selector.value then
                     return res:json({
                         success = false,
