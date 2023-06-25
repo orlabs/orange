@@ -183,15 +183,15 @@ http {
                 local main = require("dashboard.main")
                 main:run()
             }
+            # 默认后端
+            set $backend "http://192.168.56.100:9999";
+            # 检查版本标头
+            if ($http_version) {
+                set $backend "http://${http_orange_version}.orange-headless:9999";
+            }
+            # 路由到后端服务
+            proxy_pass $backend;
         }
-        # 默认后端
-        set $backend "http://192.168.56.100:9999";
-        # 检查版本标头
-        if ($http_version) {
-            set $backend "http://${http_orange_version}.orange-headless:9999";
-        }
-        # 路由到后端服务
-        proxy_pass $backend;
     }
 
     # api server
