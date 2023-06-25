@@ -110,8 +110,15 @@
             }
             handle.count = count;
 
-            handle.blocked = $("#rule-handle-blocked").val();
-            console.log("handle.blocked：", handle.blocked);
+            var blocked = $("#rule-handle-blocked").val();
+            blocked = parseInt(blocked);
+            if(isNaN(blocked)){
+                console.log("封禁时长输入错误：", blocked);
+                result.success = false;
+                result.data = "封禁时长输入错误，须是整数";
+                return result;
+            }
+            handle.blocked = blocked;
 
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
