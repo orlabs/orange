@@ -23,7 +23,7 @@ end
 -- 使用headless方式
 function _M.get_ip()
     if not _M.ip then
-        _M.ip = socket.dns.gethostname() + "." + os.getenv("ORANGE_SERVICE")
+        _M.ip = socket.dns.gethostname() .. "." .. os.getenv("ORANGE_SERVICE")
         --_M.ip = get_ip_by_hostname(socket.dns.gethostname())
     end
     return _M.ip

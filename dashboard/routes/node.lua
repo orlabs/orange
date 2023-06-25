@@ -87,7 +87,7 @@ return function(config, store)
     end
 
     function node_router:register()
-        local local_ip = socket.dns.gethostname() + "." + os.getenv("ORANGE_SERVICE")
+        local local_ip = socket.dns.gethostname() .. "." .. os.getenv("ORANGE_SERVICE")
         --local local_ip = get_ip_by_hostname(socket.dns.gethostname())
         node_model:registry(local_ip, 7777, config.api.credentials[1])
     end
