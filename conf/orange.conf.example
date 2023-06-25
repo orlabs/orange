@@ -15,6 +15,7 @@
         "waf",
         "divide",
         "kvstore",
+        "persist",
         "node"
     ],
     "store": "mysql",

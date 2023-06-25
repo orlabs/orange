@@ -1,0 +1,89 @@
+<div id="extractor-area">
+    <div class="form-group">
+        <label class="col-sm-1 control-label">变量</label>
+        <div class="col-sm-11">
+            <div class="col-sm-3" style="padding-left:0px;">
+                <select class="form-control" id="rule-extractor-type">
+                    {@if r.extractor}
+                        <option value="1" {@if !r.extractor.type || r.extractor.type==1 } selected {@/if}>索引式提取</option>
+                        <option value="2" {@if r.extractor.type && r.extractor.type==2 } selected {@/if}>模板式提取</option>
+                    {@/if}
+
+                    {@if !r.extractor}
+                        <option value="1">索引式提取</option>
+                        <option value="2">模板式提取</option>
+                    {@/if}
+                </select>
+            </div>
+            <div class="col-sm-1" style="line-height: 30px;">
+                <a id="add-extraction-btn" class="btn btn-success" style="padding:0 5px;"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div><!-- 描述 -->
+
+    {@if r.extractor && r.extractor.extractions }
+        {@each r.extractor.extractions as c, index}
+            <div class="form-group pair extraction-holder">
+                <label class="col-sm-1 control-label"></label>
+
+                <div class="col-sm-2">
+                    <select class="form-control" name="rule-extractor-extraction-type">
+                        <option value="Query" {@if c.type == "Query" } selected {@/if}>Query</option>
+                        <option value="Header" {@if c.type == "Header" } selected {@/if}>Header</option>
+                        <option value="Cookie" {@if c.type == "Cookie" } selected {@/if}>Cookie</option>
+                        <option value="PostParams" {@if c.type == "PostParams" } selected {@/if}>PostParams</option>
+                        <option value="Host" {@if c.type == "Host" } selected {@/if}>Host</option>
+                        <option value="URI" {@if c.type == "URI" } selected {@/if}>URI</option>
+                        <option value="IP" {@if c.type == "IP" } selected {@/if}>IP</option>
+                        <option value="Method" {@if c.type == "Method" } selected {@/if}>Method</option>
+                    </select>
+                </div>
+                <div class="col-sm-2 extraction-name-hodler"
+                    {@if c.type!="Header"&&c.type!="Query"&&c.type!="Cookie"&&c.type!="PostParams"&&c.type!="URI" }
+                        style="display:none;padding-left:0px;"
+                    {@else}
+                        style="padding-left:0px;"
+                    {@/if}>
+                    <input type="text" class="form-control" name="rule-extractor-extraction-name" placeholder="name" value="${c.name}">
+                </div>
+
+                <!-- URI提取不提供默认值功能-->
+                <div class="col-sm-5 extraction-default-hodler" style="padding: 0px;">
+                    <div class="col-sm-6" style="padding-left: 0px;">
+                        <select class="form-control" name="rule-extractor-extraction-has-default" {@if c.type=="URI"} style="display:none;" {@/if}>
+                            {@if c.default || c.default=="" }
+                                <option value="0">无默认值</option>
+                                <option value="1" selected>有默认值</option>
+                            {@/if}
+
+                            {@if c.default!="" && !c.default }
+                                <option value="0" selected>无默认值</option>
+                                <option value="1">有默认值</option>
+                            {@/if}
+
+                        </select>
+                    </div>
+                    <div class="col-sm-6"
+                        {@if c.type=="URI" || c.default!="" && !c.default } style="padding-left: 0px;display:none;"
+                        {@else} style="padding-left: 0px;" {@/if}
+                     name="rule-extractor-extraction-default">
+                        <input type="text"  class="form-control"  placeholder="default value" value="${c.default}">
+                    </div>
+                </div>
+
+                <div class="col-sm-1" style="margin-top:5px;float:right;margin-right: 50px;">
+                    <span class="input-group-btn">
+                        <a class="btn btn-remove" style="padding:0 5px;">
+                            <i class="fa fa-remove"></i>
+                        </a>
+                        <a class="btn btn-add" style="padding:0 5px;">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </span>
+                </div>
+            </div>
+        {@/each}
+    {@/if}
+
+</div>
+<!-- extractor -->

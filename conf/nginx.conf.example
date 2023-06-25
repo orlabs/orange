@@ -183,7 +183,44 @@ http {
                 local main = require("dashboard.main")
                 main:run()
             }
-            # 默认后端
+        }
+    }
+
+
+    # orange dashboard fronted
+    server {
+        listen       8888;
+        stub_status on;
+        #server_name  localhost;
+        access_log ./logs/dashboard_access.log main;
+        error_log ./logs/dashboard_error.log info;
+
+        location = /favicon.ico {
+            log_not_found off;
+            access_log off;
+        }
+
+        # default page.
+        location ~^/$ {
+            root ./fronted/views;
+            index index.html;
+        }
+
+        location ~* ^.+.(html)$ {
+            root ./fronted/views;
+            add_header Cache-Control no-cache,no-store;
+        }
+
+        location /robots.txt {
+            return 200 'User-agent: *\nDisallow: /';
+        }
+
+        # dashboard的静态文件
+        location ~* /static/(.*) {
+            alias ./fronted/static/$1;
+        }
+
+        location / {
             set $backend "http://192.168.56.100:9999";
             # 检查版本标头
             if ($http_version) {
