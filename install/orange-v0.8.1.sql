@@ -359,7 +359,7 @@ DROP TABLE IF EXISTS `persist_log`;
 
 CREATE TABLE `persist_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `ip` varchar(20) NOT NULL DEFAULT '',
+  `ip` varchar(255) NOT NULL DEFAULT '',
   `op_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `stat_time` datetime DEFAULT NULL,
   `request_2xx` int(11) DEFAULT '0',
@@ -382,7 +382,7 @@ DROP TABLE IF EXISTS `cluster_node`;
 CREATE TABLE `cluster_node` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `ip` varchar(20) NOT NULL DEFAULT '',
+  `ip` varchar(255) NOT NULL DEFAULT '',
   `port` smallint(6) DEFAULT '7777',
   `api_username` varchar(50) DEFAULT '',
   `api_password` varchar(50) DEFAULT '',
