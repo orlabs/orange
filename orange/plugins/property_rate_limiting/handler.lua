@@ -50,7 +50,6 @@ local function filter_rules(sid, plugin, ngx_var_uri)
         if rule.enable == true then
             --ngx.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule))
             ngx.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule.extractor))
-            ngx.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(extractor_util.extract_variables(rule.extractor)))
             ngx.log(ngx.ERR, "property_rate_limiting - rule: ", table_concat( extractor_util.extract_variables(rule.extractor),"#"))
             local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
             ngx.log(ngx.ERR, "property_rate_limiting - real_value: ", real_value)
