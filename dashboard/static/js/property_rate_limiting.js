@@ -111,6 +111,7 @@
             handle.count = count;
 
             handle.blocked = $("#rule-handle-blocked").val();
+            console.log("handle.blocked：", handle.blocked);
 
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
