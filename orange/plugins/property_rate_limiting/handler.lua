@@ -46,37 +46,37 @@ local function filter_rules(sid, plugin, ngx_var_uri)
     for i, rule in ipairs(rules) do
         if rule.enable == true then
             local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
-            sp_utils.log(ngx.INFO, "property_rate_limiting - real_value: ", limit_type)
+            sp_utils.log(ngx.ERR, "property_rate_limiting - real_value: ", limit_type)
             local pass = (real_value ~= '');
 
             -- handle阶段
             local handle = rule.handle
             if pass then
                 local limit_type = get_limit_type(handle.period)
-                sp_utils.log(ngx.INFO, "property_rate_limiting - limit_type: ", limit_type)
+                sp_utils.log(ngx.ERR, "property_rate_limiting - limit_type: ", limit_type)
                 -- only work for valid limit type(1 second/minute/hour/day)
                 if limit_type then
                     local current_timetable = utils.current_timetable()
                     local time_key = current_timetable[limit_type]
-                    sp_utils.log(ngx.INFO,"property_rate_limiting - time_key：",time_key)
+                    sp_utils.log(ngx.ERR,"property_rate_limiting - time_key：",time_key)
                     local limit_key = rule.id .. "#" .. time_key .. "#" .. real_value
-                    sp_utils.log(ngx.INFO,"property_rate_limiting - limit_key：",limit_key)
+                    sp_utils.log(ngx.ERR,"property_rate_limiting - limit_key：",limit_key)
                     --得到当前缓存中limit_key的数量
                     local current_stat = get_current_stat(limit_key) or 0
-                    sp_utils.log(ngx.INFO,"property_rate_limiting - current_stat:",current_stat,",limit_type:",limit_type)
+                    sp_utils.log(ngx.ERR,"property_rate_limiting - current_stat:",current_stat,",limit_type:",limit_type)
                     --block_key 添加限制类型limit_type 区分不同规则
                     local block_key = block_prefix .. "#" .. rule.id .. "#" .. real_value .. "#" .. limit_type
-                    sp_utils.log(ngx.INFO,"property_rate_limiting - block_key：",block_key)
+                    sp_utils.log(ngx.ERR,"property_rate_limiting - block_key：",block_key)
                     --判断访问的IP是否被封禁
                     local is_blocked = get_current_stat(block_key)
-                    sp_utils.log(ngx.INFO,"property_rate_limiting - is_blocked:",isBlocked)
+                    sp_utils.log(ngx.ERR,"property_rate_limiting - is_blocked:",isBlocked)
                     local handle_count_key = rule.id .. "#" .. limit_type
                     local before_handle_count = get_current_stat(handle_count_key) or 0
                     sp_utils.log(ngx.ERR,"property_rate_limiting - before_handle_count:",before_handle_count)
 
                     if is_blocked and handle.count <= before_handle_count then
                         if handle.log == true then
-                            ngx.log(ngx.INFO, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         ngx.exit(429)
@@ -85,7 +85,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
                     if current_stat >= handle.count then
                         if handle.log == true then
-                            ngx.log(ngx.INFO, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         if not is_blocked then
@@ -105,7 +105,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
                         -- only for test, comment it in production
                         -- if handle.log == true then
-                        --     ngx.log(ngx.INFO, "[RateLimiting-Rule] ", rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat + 1)
+                        --     ngx.log(ngx.ERR, "[RateLimiting-Rule] ", rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat + 1)
                         -- end
                     end
                 end
@@ -140,7 +140,7 @@ function PropertyRateLimitingHandler:access(conf)
 
     local ngx_var_uri = ngx.var.uri
     for i, sid in ipairs(ordered_selectors) do
-        ngx.log(ngx.INFO, "==[",plugin_config.name_for_log,"][PASS THROUGH SELECTOR:", sid, "]")
+        ngx.log(ngx.ERR, "==[",plugin_config.name_for_log,"][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
             local selector_pass
@@ -152,7 +152,7 @@ function PropertyRateLimitingHandler:access(conf)
 
             if selector_pass then
                 if selector.handle and selector.handle.log == true then
-                    ngx.log(ngx.INFO, "[",plugin_config.name_for_log,"][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                    ngx.log(ngx.ERR, "[",plugin_config.name_for_log,"][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
 
                 local stop = filter_rules(sid, plugin_config.table_name, ngx_var_uri)
@@ -162,7 +162,7 @@ function PropertyRateLimitingHandler:access(conf)
                 end
             else
                 if selector.handle and selector.handle.log == true then
-                    ngx.log(ngx.INFO, "[",plugin_config.name_for_log,"][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                    ngx.log(ngx.ERR, "[",plugin_config.name_for_log,"][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
             end
         end
