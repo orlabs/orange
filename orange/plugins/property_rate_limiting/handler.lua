@@ -48,37 +48,37 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
-            --sp_utils.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule))
-            sp_utils.log(ngx.ERR, "property_rate_limiting - rule: ", extractor_util.extract_variables(rule.extractor))
-            sp_utils.log(ngx.ERR, "property_rate_limiting - rule: ", table_concat( extractor_util.extract_variables(rule.extractor),"#"))
+            --ngx.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule))
+            ngx.log(ngx.ERR, "property_rate_limiting - rule: ", extractor_util.extract_variables(rule.extractor))
+            ngx.log(ngx.ERR, "property_rate_limiting - rule: ", table_concat( extractor_util.extract_variables(rule.extractor),"#"))
             local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
-            sp_utils.log(ngx.ERR, "property_rate_limiting - real_value: ", real_value)
+            ngx.log(ngx.ERR, "property_rate_limiting - real_value: ", real_value)
             local pass = (real_value ~= '');
 
             -- handle阶段
             local handle = rule.handle
             if pass then
                 local limit_type = get_limit_type(handle.period)
-                sp_utils.log(ngx.ERR, "property_rate_limiting - limit_type: ", limit_type)
+                ngx.log(ngx.ERR, "property_rate_limiting - limit_type: ", limit_type)
                 -- only work for valid limit type(1 second/minute/hour/day)
                 if limit_type then
                     local current_timetable = utils.current_timetable()
                     local time_key = current_timetable[limit_type]
-                    sp_utils.log(ngx.ERR,"property_rate_limiting - time_key：",time_key)
+                    ngx.log(ngx.ERR,"property_rate_limiting - time_key：",time_key)
                     local limit_key = rule.id .. "#" .. time_key .. "#" .. real_value
-                    sp_utils.log(ngx.ERR,"property_rate_limiting - limit_key：",limit_key)
+                    ngx.log(ngx.ERR,"property_rate_limiting - limit_key：",limit_key)
                     --得到当前缓存中limit_key的数量
                     local current_stat = get_current_stat(limit_key) or 0
-                    sp_utils.log(ngx.ERR,"property_rate_limiting - current_stat:",current_stat,",limit_type:",limit_type)
+                    ngx.log(ngx.ERR,"property_rate_limiting - current_stat:",current_stat,",limit_type:",limit_type)
                     --block_key 添加限制类型limit_type 区分不同规则
                     local block_key = block_prefix .. "#" .. rule.id .. "#" .. real_value .. "#" .. limit_type
-                    sp_utils.log(ngx.ERR,"property_rate_limiting - block_key：",block_key)
+                    ngx.log(ngx.ERR,"property_rate_limiting - block_key：",block_key)
                     --判断访问的IP是否被封禁
                     local is_blocked = get_current_stat(block_key)
-                    sp_utils.log(ngx.ERR,"property_rate_limiting - is_blocked:",isBlocked)
+                    ngx.log(ngx.ERR,"property_rate_limiting - is_blocked:",isBlocked)
                     local handle_count_key = rule.id .. "#" .. limit_type
                     local before_handle_count = get_current_stat(handle_count_key) or 0
-                    sp_utils.log(ngx.ERR,"property_rate_limiting - before_handle_count:",before_handle_count)
+                    ngx.log(ngx.ERR,"property_rate_limiting - before_handle_count:",before_handle_count)
 
                     if is_blocked and handle.count <= before_handle_count then
                         if handle.log == true then
