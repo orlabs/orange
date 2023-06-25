@@ -48,9 +48,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
-            --ngx.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule))
-            ngx.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule.extractor))
-            ngx.log(ngx.ERR, "property_rate_limiting - rule: ", table_concat( extractor_util.extract_variables(rule.extractor),"#"))
+            ngx.log(ngx.ERR, "property_rate_limiting - rule.extractor: ", sp_utils.tableToStr(rule.extractor))
             local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
             ngx.log(ngx.ERR, "property_rate_limiting - real_value: ", real_value)
             local pass = (real_value ~= '');
@@ -65,13 +63,13 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                     local current_timetable = utils.current_timetable()
                     local time_key = current_timetable[limit_type]
                     ngx.log(ngx.ERR,"property_rate_limiting - time_key：",time_key)
-                    local limit_key = rule.id .. "#" .. time_key .. "#" .. real_value
+                    local limit_key = rule.id .. "#" .. time_key .. "#" .. real_value .. "#" .. ip
                     ngx.log(ngx.ERR,"property_rate_limiting - limit_key：",limit_key)
                     --得到当前缓存中limit_key的数量
                     local current_stat = get_current_stat(limit_key) or 0
                     ngx.log(ngx.ERR,"property_rate_limiting - current_stat:",current_stat,",limit_type:",limit_type)
                     --block_key 添加限制类型limit_type 区分不同规则
-                    local block_key = block_prefix .. "#" .. rule.id .. "#" .. real_value .. "#" .. limit_type
+                    local block_key = block_prefix .. "#" .. rule.id .. "#" .. real_value .. "#" .. limit_type .. "#" .. ip
                     ngx.log(ngx.ERR,"property_rate_limiting - block_key：",block_key)
                     --判断访问的IP是否被封禁
                     local is_blocked = get_current_stat(block_key)
