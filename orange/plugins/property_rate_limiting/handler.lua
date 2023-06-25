@@ -45,6 +45,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
+            sp_utils.log(ngx.ERR, "property_rate_limiting - rule: ", sp_utils.tableToStr(rule))
             local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
             sp_utils.log(ngx.ERR, "property_rate_limiting - real_value: ", real_value)
             local pass = (real_value ~= '');
