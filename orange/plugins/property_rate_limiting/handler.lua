@@ -43,12 +43,13 @@ local function filter_rules(sid, plugin, ngx_var_uri)
         return false
     end
 
-    --得到IP
+    --得到remote_addr
     local ip = ngx.var.remote_addr
 
     for i, rule in ipairs(rules) do
         if rule.enable == true then
             ngx.log(ngx.ERR, "property_rate_limiting - rule.extractor: ", sp_utils.tableToStr(rule.extractor))
+            -- 变量取值
             local real_value = table_concat( extractor_util.extract_variables(rule.extractor),"#")
             ngx.log(ngx.ERR, "property_rate_limiting - real_value: ", real_value)
             local pass = (real_value ~= '');
@@ -73,14 +74,14 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                     ngx.log(ngx.ERR,"property_rate_limiting - block_key：",block_key)
                     --判断访问的IP是否被封禁
                     local is_blocked = get_current_stat(block_key)
-                    ngx.log(ngx.ERR,"property_rate_limiting - is_blocked:",isBlocked)
+                    ngx.log(ngx.ERR,"property_rate_limiting - is_blocked:", is_blocked)
                     local handle_count_key = rule.id .. "#" .. limit_type
                     local before_handle_count = get_current_stat(handle_count_key) or 0
                     ngx.log(ngx.ERR,"property_rate_limiting - before_handle_count:",before_handle_count)
 
                     if is_blocked and handle.count <= before_handle_count then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip:", ip, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         ngx.exit(429)
@@ -89,7 +90,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
                     if current_stat >= handle.count then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip:", ip, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         if not is_blocked then
