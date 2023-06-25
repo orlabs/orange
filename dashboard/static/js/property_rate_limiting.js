@@ -110,6 +110,8 @@
             }
             handle.count = count;
 
+            handle.blocked = $("#rule-handle-blocked").val();
+
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;
             result.handle = handle;
