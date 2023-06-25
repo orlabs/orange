@@ -137,9 +137,6 @@ return function(plugin)
             return function(req, res, next)
                 local selector_id = req.params.id
                 local selector = dao.get_selector(plugin, store, selector_id)
-                ngx.log(ngx.ERR, '==========create========')
-                ngx.log(ngx.ERR, sputils.tableToStr(selector))
-                ngx.log(ngx.ERR, '==========create========')
                 if not selector or not selector.value then
                     return res:json({
                         success = false,
@@ -228,9 +225,6 @@ return function(plugin)
                 rule.time = utils.now()
 
                 local update_result = dao.update_rule(plugin, store, rule)
-                ngx.log(ngx.ERR, '==========update========')
-                ngx.log(ngx.ERR, sputils.tableToStr(rule))
-                ngx.log(ngx.ERR, '==========update========')
 
                 if update_result then
                     local old_rules = orange_db.get_json(plugin .. ".selector." .. selector_id .. ".rules") or {}
