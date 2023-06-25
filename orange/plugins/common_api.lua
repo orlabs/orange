@@ -229,7 +229,7 @@ return function(plugin)
 
                 local update_result = dao.update_rule(plugin, store, rule)
                 ngx.log(ngx.ERR, '==========update========')
-                ngx.log(ngx.ERR, sputils.tableToStr(update_result))
+                ngx.log(ngx.ERR, sputils.tableToStr(rule))
                 ngx.log(ngx.ERR, '==========update========')
 
                 if update_result then
