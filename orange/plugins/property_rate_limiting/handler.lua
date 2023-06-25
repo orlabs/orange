@@ -79,29 +79,31 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                     local before_handle_count = get_current_stat(handle_count_key) or 0
                     ngx.log(ngx.ERR,"property_rate_limiting - before_handle_count：",before_handle_count)
 
+                    --如果该ip访问量大于等于限制访问频次，则返回429
                     if is_blocked and handle.count <= before_handle_count then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip：", ip, ' ', rule.name, " uri：", ngx_var_uri, " limit：", handle.count, " reached:", current_stat, " remaining：", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip：", ip, ' rule_name：', rule.name, " uri：", ngx_var_uri, " limit：", handle.count, " reached:", current_stat, " remaining：", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         ngx.exit(429)
                         return true
                     end
 
+                    --current_stat：当前访问次数，handle.count：限制时间范围内的访问访问数量
                     if current_stat >= handle.count then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip：", ip, ' ', rule.name, " uri：", ngx_var_uri, " limit：", handle.count, " reached：", current_stat, " remaining：", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip：", ip, ' rule_name：', rule.name, " uri：", ngx_var_uri, " limit：", handle.count, " reached：", current_stat, " remaining：", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         if not is_blocked then
-                            --设置封禁时长  handle.blocked秒后自动从缓存过期
-                            counter.set(block_key,1,handle.blocked)
+                            --之前没用被封禁，则设置封禁时长，handle.blocked秒后自动从缓存过期
+                            counter.set(block_key, 1, handle.blocked)
                         end
                         ngx.exit(429)
                         return true
                     else
+                        --在访问频次范围内，访问次数+1
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = handle.count - current_stat - 1
-
                         counter.set(handle_count_key,handle.count,handle.blocked)
                         if is_blocked then
                             counter.delete(block_key)
