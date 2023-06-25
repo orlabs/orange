@@ -81,7 +81,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
                     if is_blocked and handle.count <= before_handle_count then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip:", ip, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip:", ip, ' ', rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         ngx.exit(429)
@@ -90,7 +90,7 @@ local function filter_rules(sid, plugin, ngx_var_uri)
 
                     if current_stat >= handle.count then
                         if handle.log == true then
-                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip:", ip, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
+                            ngx.log(ngx.ERR, plugin_config.message_forbidden, " ip:", ip, ' ', rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
                         if not is_blocked then
