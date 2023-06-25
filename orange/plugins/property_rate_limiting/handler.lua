@@ -10,6 +10,7 @@ local BasePlugin = require("orange.plugins.base_handler")
 local plugin_config =  require("orange.plugins.property_rate_limiting.plugin")
 local counter = require("orange.plugins.property_rate_limiting.counter")
 local extractor_util = require("orange.utils.extractor")
+local block_prefix = "BLOCK"
 
 local function get_current_stat(limit_key)
     return counter.get(limit_key)
@@ -56,20 +57,42 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                     local current_timetable = utils.current_timetable()
                     local time_key = current_timetable[limit_type]
                     local limit_key = rule.id .. "#" .. time_key .. "#" .. real_value
+                    --得到当前缓存中limit_key的数量
                     local current_stat = get_current_stat(limit_key) or 0
 
-                    ngx.header[plugin_config.plug_reponse_header_prefix .. limit_type] = handle.count
+                    --block_key 添加限制类型limit_type 区分不同规则
+                    local block_key = block_prefix .. "#" .. rule.id .. "#" .. real_value .. "#" .. limit_type
 
+                    --判断访问的IP是否被封禁
+                    local is_blocked = get_current_stat(block_key)
+                    local handle_count_key = rule.id .. "#" .. limit_type
+                    local before_handle_count = get_current_stat(handle_count_key) or 0
+
+                    if is_blocked and handle.count <= before_handle_count then
+                        ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
+                        ngx.exit(429)
+                        return true
+                    end
+
+                    ngx.header[plugin_config.plug_reponse_header_prefix .. limit_type] = handle.count
                     if current_stat >= handle.count then
                         if handle.log == true then
                             ngx.log(ngx.INFO, plugin_config.message_forbidden, rule.name, " uri:", ngx_var_uri, " limit:", handle.count, " reached:", current_stat, " remaining:", 0)
                         end
-
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = 0
+                        if not is_blocked then
+                            --设置封禁时长  handle.blocked秒后自动从缓存过期
+                            counter.set(block_key,1,handle.blocked)
+                        end
                         ngx.exit(429)
                         return true
                     else
                         ngx.header[plugin_config.plug_reponse_header_prefix ..limit_type] = handle.count - current_stat - 1
+
+                        counter.set(handle_count_key,handle.count,handle.blocked)
+                        if is_blocked then
+                            counter.delete(block_key)
+                        end
                         incr_stat(limit_key, limit_type)
 
                         -- only for test, comment it in production
