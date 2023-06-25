@@ -441,6 +441,7 @@
                         default_value = "";
                     }
                     extraction.default = default_value;
+                    console.log('============', extraction)
                 }
 
                 extractions.push(extraction);
