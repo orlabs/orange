@@ -164,7 +164,7 @@ http {
             # 设置默认路由地址
             set $backend "http://192.168.56.100:9999";
             # 检查标头
-            if ($http_version) {
+            if ($http_orange_version) {
                 set $backend "http://${http_orange_version}.orange-headless:9999";
             }
             # 路由到后端服务

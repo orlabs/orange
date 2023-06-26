@@ -110,12 +110,16 @@
             handle.count = count;
 
             var blocked = $("#rule-handle-blocked").val();
-            blocked = parseInt(blocked);
-            if(isNaN(blocked)){
-                console.log("封禁时长输入错误：", blocked);
-                result.success = false;
-                result.data = "封禁时长输入错误，须是整数";
-                return result;
+            // 如果不为空
+            if (blocked){
+                blocked = parseInt(blocked);
+                // 判断是否是数字
+                if(isNaN(blocked) || blocked == 0){
+                    console.log("封禁时长输入错误：", blocked);
+                    result.success = false;
+                    result.data = "封禁时长输入错误，须是整数且不为0";
+                    return result;
+                }
             }
             handle.blocked = blocked;
 
