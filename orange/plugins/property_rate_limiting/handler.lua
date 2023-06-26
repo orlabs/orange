@@ -143,7 +143,8 @@ local function filter_rules(sid, plugin, ngx_var_uri)
                     local current_stat = get_stat_by_key(limit_key) or 0
                     ngx.log(ngx.ERR,"property_rate_limiting - current_stat：",current_stat,", limit_type：",limit_type)
 
-                    --如果blocked不为空，则需要进行封禁-403。反之429
+                    --如果blocked不为空，则需要进行封禁403。反之429
+                    ngx.log(ngx.ERR, "property_rate_limiting - blocked_num: ", blocked_num)
                     if blocked_num then
                         return do_filter_has_blocked(handle, rule, real_value, limit_type, limit_key, remote_addr, current_stat, blocked_num, ngx_var_uri)
                     else
