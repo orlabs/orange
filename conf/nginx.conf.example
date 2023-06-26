@@ -161,6 +161,7 @@ http {
         error_log off;
 
         location / {
+            # 设置默认路由地址
             set $backend "http://192.168.56.100:9999";
             # 检查标头
             if ($http_version) {
