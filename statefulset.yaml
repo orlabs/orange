@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: orange-headless
+spec:
+    # 这个决定了未准备好的endpoints是否在DNS的记录中
+    publishNotReadyAddresses: false
+    clusterIP: None
+    selector:
+        app: orange
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: orange
+spec:
+    selector:
+        app: orange
+    ports:
+        - port: 80
+          name: http-web
+          targetPort: 80
+          nodePort: 35080
+          appProtocol: HTTP
+        - port: 7777
+          name: http-api
+          targetPort: 7777
+          nodePort: 35077
+          appProtocol: HTTP
+        - port: 8888
+          name: http-fronted
+          targetPort: 8888
+          nodePort: 35088
+          appProtocol: HTTP
+        - port: 9999
+          name: http-admin
+          targetPort: 9999
+          appProtocol: HTTP
+    type: NodePort
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: orange
+    labels:
+        app: orange
+spec:
+    # 指定StatefulSet控制器要使用这个Headless Service
+    serviceName: orange-headless
+    updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+            maxUnavailable: 0
+    replicas: 1
+    selector:
+        matchLabels:
+            app: orange
+    template:
+        metadata:
+            labels:
+                app: orange
+        spec:
+            containers:
+                - name: orange
+                  image: $REGISTRY_ADDRESS/${NODE_ENV}/${CI_PROJECT_NAME}:v${CI_PIPELINE_ID}
+                  imagePullPolicy: IfNotPresent
+                  livenessProbe:
+                      tcpSocket:
+                          port: 80
+                  readinessProbe:
+                      tcpSocket:
+                          port: 80
+                  env:
+                      - name: ORANGE_SERVICE
+                        value: orange-headless
+                  ports:
+                      - containerPort: 80
+                      - containerPort: 7777
+                      - containerPort: 8888
+                      - containerPort: 9999
+            imagePullSecrets:
+                - name: nexus3secret
+            dnsPolicy: ClusterFirst
+            hostAliases:
+                - ip: 10.43.163.153
+                  hostnames:
+                      - redis-alone-access.middleware
+            dnsConfig:
+                options:
+                    - name: ndots
+                      value: "2"
+            restartPolicy: Always
