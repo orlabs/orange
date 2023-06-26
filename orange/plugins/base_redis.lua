@@ -21,7 +21,7 @@ function BaseRedis.get(cache_prefix, key)
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
     if err then
-        ngx.log(ngx.ERR, "failed to get Redis key: ", err)
+        ngx.log(ngx.ERR, "failed to get Redis key: ", err .. '，Redis key is：' .. key)
         return nil
     end
     return tonumber(res)
@@ -31,7 +31,7 @@ function BaseRedis.get_string(cache_prefix, key)
     key = cache_prefix .. ":" .. key
     local res, err = cache:get(key)
     if err then
-        ngx.log(ngx.ERR, "failed to get Redis key: ", err)
+        ngx.log(ngx.ERR, "failed to get Redis key: ", err .. '，Redis key is：' .. key)
         return nil
     end
     return res
@@ -46,7 +46,7 @@ function BaseRedis.set(cache_prefix, key, value, ttl)
         res, err = cache:set(key, value)
     end
     if err then
-        ngx.log(ngx.ERR, "failed to set Redis key: ", err)
+        ngx.log(ngx.ERR, "failed to set Redis key: ", err .. '，Redis key is：' .. key .. '，Redis value is：' .. value)
         return nil
     end
     return res
@@ -61,7 +61,7 @@ function BaseRedis.setnx(cache_prefix, key, value, ttl)
         res, err = cache:setnx(key, value)
     end
     if err then
-        ngx.log(ngx.ERR, "failed to setnx Redis key: ", err)
+        ngx.log(ngx.ERR, "failed to setnx Redis key: ", err .. '，Redis key is：' .. key .. '，Redis value is：' .. value)
         return nil
     end
     return res
