@@ -153,6 +153,24 @@ http {
         }
     }
 
+    # orange dashboard fronted
+    server {
+        listen 8888;
+        # server_name localhost 127.0.0.1;
+        access_log off;
+        error_log off;
+
+        location / {
+            set $backend "http://192.168.56.100:9999";
+            # 检查标头
+            if ($http_version) {
+                set $backend "http://${http_orange_version}.orange-headless:9999";
+            }
+            # 路由到后端服务
+            proxy_pass $backend;
+        }
+    }
+
 
     # orange dashboard server
     server {
