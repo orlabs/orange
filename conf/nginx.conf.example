@@ -169,8 +169,8 @@ http {
     server {
         listen 8888;
         # server_name localhost 127.0.0.1;
-        access_log off;
-        error_log off;
+        access_log ./logs/fronted_access.log main;
+        error_log ./logs/fronted_error.log info;
 
         location / {
             # 设置默认路由地址
