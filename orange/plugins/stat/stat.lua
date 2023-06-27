@@ -15,6 +15,7 @@ local KEY_REQUEST_5XX = "REQUEST_5XX"
 local redis = require("orange.plugins.base_redis")
 local status = "orange_stat"
 local sputils = require("orange.utils.sputils")
+local socket = require("socket")
 
 local orange_version = require("orange/version")
 
@@ -87,7 +88,8 @@ function _M.stat()
         nginx_version = ngx.var.nginx_version,
         ngx_lua_version = math.floor(ngx_lua_version / 1000000) .. '.' .. math.floor(ngx_lua_version / 1000) ..'.' .. math.floor(ngx_lua_version % 1000),
         orange_version = orange_version,
-        address = ngx.var.server_addr,
+        --address = ngx.var.server_addr,
+        address = socket.dns.gethostname(),
         worker_count = ngx.worker.count(),
         timestamp = ngx.time(),
         load_timestamp = redis.get(status, KEY_START_TIME),

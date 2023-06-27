@@ -81,10 +81,6 @@ spec:
             imagePullSecrets:
                 - name: nexus3secret
             dnsPolicy: ClusterFirst
-            hostAliases:
-                - ip: 10.43.163.153
-                  hostnames:
-                      - redis-alone-access.middleware
             dnsConfig:
                 options:
                     - name: ndots
