@@ -12,7 +12,8 @@ env ORANGE_CONF;
 env ORANGE_SERVICE;
 
 http {
-    resolver 114.114.114.114; # replace it with your favorite config
+    # 添加kube-dns, 使k8s环境下可以解析对应service name
+    resolver kube-dns.kube-system 114.114.114.114; # replace it with your favorite config
     charset UTF-8;
     include ./mime.types;
 
