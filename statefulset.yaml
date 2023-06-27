@@ -79,8 +79,4 @@ spec:
                       - containerPort: 8888
                       - containerPort: 9999
             dnsPolicy: ClusterFirst
-            dnsConfig:
-                options:
-                    - name: ndots
-                      value: "2"
             restartPolicy: Always

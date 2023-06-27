@@ -13,7 +13,7 @@ env ORANGE_SERVICE;
 
 http {
     # 添加kube-dns, 使k8s环境下可以解析对应service name
-    resolver kube-dns.kube-system 114.114.114.114; # replace it with your favorite config
+    resolver kube-dns.kube-system.svc.cluster.local; # replace it with your favorite config
     charset UTF-8;
     include ./mime.types;
 
@@ -163,10 +163,10 @@ http {
 
         location / {
             # 设置默认路由地址
-            set $backend "http://192.168.56.100:9999";
+            set $backend "http://orange-0.orange-headless.default.svc.cluster.local:9999";
             # 检查标头
             if ($http_orange_version) {
-                set $backend "http://${http_orange_version}.orange-headless:9999";
+                set $backend "http://${http_orange_version}.orange-headless.default.svc.cluster.local:9999";
             }
             # 路由到后端服务
             proxy_pass $backend;
