@@ -78,8 +78,6 @@ spec:
                       - containerPort: 7777
                       - containerPort: 8888
                       - containerPort: 9999
-            imagePullSecrets:
-                - name: nexus3secret
             dnsPolicy: ClusterFirst
             dnsConfig:
                 options:
