@@ -76,6 +76,7 @@ function _M.log()
         redis.incr(status, KEY_TRAFFIC_WRITE, bytes_sent)
 
         local request_time = ngx.now() - start_time
+        --TODO
         --redis.incr(status, KEY_TOTAL_REQUEST_TIME, request_time)
     end)
 end
