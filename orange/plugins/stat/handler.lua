@@ -13,7 +13,7 @@ function StatHandler:init_worker(conf)
     ngx.log(ngx.DEBUG, 'stat plugin init...')
 end
 
-function StatHandler:log(conf)
+function StatHandler:body_filter(conf)
     stat.log()
 end
 
