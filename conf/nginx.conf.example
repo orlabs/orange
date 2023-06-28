@@ -2,7 +2,7 @@ worker_processes auto;
 user root;
 
 events {
-    worker_connections  512;
+    worker_connections  4096;
 }
 
 # 提前标准环境变量,以便后续lua代码中可以使用os.getenv
