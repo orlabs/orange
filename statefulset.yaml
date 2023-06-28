@@ -64,6 +64,13 @@ spec:
                 - name: orange
                   image: $REGISTRY_ADDRESS/${NODE_ENV}/${CI_PROJECT_NAME}:v${CI_PIPELINE_ID}
                   imagePullPolicy: IfNotPresent
+                  lifecycle:
+                      preStop:
+                          exec:
+                              command:
+                                  - /bin/sh
+                                  - -c
+                                  - "while [ $(netstat -plunt | grep tcp | wc -l | xargs) -ne 0 ]; do sleep 1; done"
                   livenessProbe:
                       tcpSocket:
                           port: 80
