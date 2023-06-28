@@ -96,7 +96,6 @@ http {
     server {
         listen       80;
         #server_name  my_domain.com;
-        deny all;
         location = /favicon.ico {
             log_not_found off;
             access_log off;
