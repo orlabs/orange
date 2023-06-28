@@ -10,10 +10,10 @@ function StatHandler:new()
 end
 
 function StatHandler:init_worker(conf)
-    ngx.log(ngx.DEBUG, 'stat plugin init...')
+    stat.init()
 end
 
-function StatHandler:body_filter(conf)
+function StatHandler:log(conf)
     stat.log()
 end
 

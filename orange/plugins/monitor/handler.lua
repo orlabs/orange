@@ -48,7 +48,7 @@ function URLMonitorHandler:new(store)
     self.store = store
 end
 
-function URLMonitorHandler:body_filter(conf)
+function URLMonitorHandler:log(conf)
     URLMonitorHandler.super.log(self)
 
     local enable = orange_db.get("monitor.enable")
