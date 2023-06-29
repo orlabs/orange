@@ -3,6 +3,7 @@ local args_util = require("bin.utils.args_util")
 local logger = require("bin.utils.logger")
 
 local function new_handler(args)
+    -- args.prefix：/opt/orange
     args.necessary_dirs ={ -- runtime nginx conf/pid/logs dir
         tmp = args.prefix .. '/tmp',
         logs = args.prefix .. '/logs'
