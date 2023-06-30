@@ -48,4 +48,4 @@ COPY rockspec ./rockspec/
 COPY Makefile ./Makefile
 RUN make dependency
 COPY . .
-CMD make dev && make install && sleep 10 && resty bin/orange start && tail -f /opt/orange/logs/access.log
+CMD make dev && make install && sleep 5 && resty bin/orange start && tail -f /opt/orange/logs/access.log
