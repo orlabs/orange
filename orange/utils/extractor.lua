@@ -4,7 +4,7 @@ local string_find = string.find
 local string_lower = string.lower
 local table_insert = table.insert
 local ngx_re_match = ngx.re.match
-
+local cjson = require("cjson")
 local function extract_variable(extraction)
     if not extraction or not extraction.type then
         return ""
@@ -45,6 +45,23 @@ local function extract_variable(extraction)
         local post_params, err = ngx.req.get_post_args()
         if not post_params or err then
             ngx.log(ngx.ERR, "[Extract Variable]failed to get post args: ", err)
+            return false
+        end
+        result = post_params[extraction.name]
+    elseif etype == "JsonPostParams" then
+        local headers = ngx.req.get_headers()
+        local header = headers['Content-Type']
+        if header then
+            local is_multipart = string_find(header, "multipart")
+            if is_multipart and is_multipart > 0 then
+                return false
+            end
+        end
+        ngx.req.read_body()
+        local data = ngx.req.get_body_data()
+        local post_params = cjson.decode(data)
+        if not post_params then
+            ngx.log(ngx.ERR, "[Extract Variable]failed to get post args")
             return false
         end
         result = post_params[extraction.name]
@@ -111,6 +128,28 @@ local function extract_variable_for_template(extractions)
             local post_params, err = ngx.req.get_post_args()
             if not post_params or err then
                 ngx.log(ngx.ERR, "[Extract Variable]failed to get post args: ", err)
+                ok = false
+            end
+
+            if ok then
+                if not result["body"] then result["body"] = {} end
+                result["body"][extraction.name] = post_params[extraction.name] or extraction.default
+            end
+        elseif etype == "JsonPostParams" then
+            local headers = ngx.req.get_headers()
+            local header = headers['Content-Type']
+            local ok = true
+            if header then
+                local is_multipart = string_find(header, "multipart")
+                if is_multipart and is_multipart > 0 then
+                    ok = false
+                end
+            end
+            ngx.req.read_body()
+            local data = ngx.req.get_body_data()
+            local post_params = cjson.decode(data)
+            if not post_params then
+                ngx.log(ngx.ERR, "[Extract Variable]failed to get post args")
                 ok = false
             end
 
