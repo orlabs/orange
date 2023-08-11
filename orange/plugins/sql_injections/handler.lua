@@ -3,7 +3,7 @@ local json = require("orange.utils.json")
 local sputils = require("orange.utils.sputils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
-local injection = require "resty.injection"
+local injection = require("orange.utils.injection")
 
 local function filter_rules(sid, plugin, ngx_var_uri, params)
 

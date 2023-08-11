@@ -8,7 +8,7 @@ RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && rpm -ivh epel-release-latest-7.noarch.rpm \
     # install some compilation tools
-    && yum install -y yum-utils git libuuid-devel pcre-devel openssl-devel gcc gcc-c++ make perl-Digest-MD5 lua-devel cmake3 curl libtool autoconf automake openresty-resty readline-devel unzip gettext kde-l10n-Chinese which net-tools \
+    && yum install -y yum-utils git libuuid-devel pcre-devel openssl-devel gcc gcc-c++ make perl-Digest-MD5 lua-devel cmake3 curl libtool autoconf automake openresty-resty readline-devel unzip gettext kde-l10n-Chinese which net-tools swig \
     && yum -y reinstall glibc-common \
     && ln -s /usr/bin/cmake3 /usr/bin/cmake \
     && localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
