@@ -26,7 +26,6 @@ dependencies = {
     "lua-resty-jwt = 0.2.0-0",
     "lua-resty-consul = 0.2-0",
 	"lua-resty-injection = 1.0-1",
-	"lua-ffi-libinjection = 1.0-2",
 }
 
 build = {
