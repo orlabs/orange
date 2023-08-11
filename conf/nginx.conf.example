@@ -1,8 +1,10 @@
 worker_processes auto;
 user root;
+worker_rlimit_nofile 65535;
 
 events {
-    worker_connections  4096;
+    multi_accept on;
+    worker_connections  65535;
 }
 
 # 提前标准环境变量,以便后续lua代码中可以使用os.getenv
@@ -28,6 +30,7 @@ http {
 
     sendfile        on;
     keepalive_timeout  65;
+    keepalive_requests 10000;
 
     # update remote-addr/real-ip
     set_real_ip_from    0.0.0.0/0;
@@ -41,6 +44,7 @@ http {
     }
 
     upstream default_upstream {
+        keepalive 65;
         server localhost:8001;
     }
 
@@ -116,10 +120,13 @@ http {
 
             access_by_lua_block {
                 local orange = context.orange
+                orange.init_cookies()
                 orange.access()
             }
 
             # proxy
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Scheme $scheme;

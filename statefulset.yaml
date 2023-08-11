@@ -35,6 +35,7 @@ spec:
         - port: 9999
           name: http-admin
           targetPort: 9999
+          nodePort: 35099
           appProtocol: HTTP
     type: NodePort
 ---
