@@ -3,10 +3,37 @@ local _M = {}
 local base = require "resty.core.base"
 base.allows_subsystem("http")
 local get_request = base.get_request
+local string_lower = string.lower
+local string_find = string.find
+local json = require("orange.utils.json")
+
 
 --- 将斜杠 / 转移后的 &#47;，转回正常斜杠符号
 function _M.htmlDecode(s)
     return string.gsub(s,"&#47;","/");
+end
+
+-- get request params str by one of these methods(get/delete/put/post)
+function _M.getReqParamsStr(ngx)
+    local method = ngx.req.get_method()
+    if method and (string_lower(method) == 'get' or string_lower(method) == 'delete') then
+        local args = ngx.req.get_uri_args()
+        return json.decode(args)
+    elseif method and (string_lower(method) == 'put' or string_lower(method) == 'post') then
+        -- no check file
+        local headers = ngx.req.get_headers()
+        local header = headers['Content-Type']
+        if header then
+            local is_multipart = string_find(header, "multipart")
+            if is_multipart and is_multipart > 0 then
+                return ""
+            end
+        end
+        ngx.req.read_body()
+        local body = ngx.req.get_body_data()
+        return json.decode(body)
+    end
+    return ""
 end
 
 function _M.dnsToIp(hostname)

@@ -15,7 +15,9 @@
         "waf",
         "divide",
         "kvstore",
-        "node"
+        "node",
+        "sql_injections",
+        "xss_code"
     ],
     "store": "mysql",
     "store_mysql": {

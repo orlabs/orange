@@ -150,6 +150,14 @@ return function(config, store)
         res:render("key_auth/key_auth")
     end)
 
+    dashboard_router:get("/xss_code", function(req, res, next)
+        res:render("xss_code")
+    end)
+
+    dashboard_router:get("/sql_injections", function(req, res, next)
+        res:render("sql_injections")
+    end)
+
     -- JWT AUTH
     dashboard_router:get("/jwt_auth", function(req, res, next)
         res:render("jwt_auth/jwt_auth")

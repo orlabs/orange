@@ -13,8 +13,8 @@ env ORANGE_SERVICE;
 
 http {
     # 修改kube-dns, 使k8s环境下可以解析对应service name
-    # resolver 114.114.114.114; # replace it with your favorite config
-    resolver kube-dns.kube-system.svc.cluster.local;
+    resolver 114.114.114.114; # replace it with your favorite config
+    # resolver kube-dns.kube-system.svc.cluster.local;
     charset UTF-8;
     include ./mime.types;
 
@@ -65,6 +65,8 @@ http {
     lua_shared_dict monitor 10m; # used for url monitor statistic, see plugin: monitor
     lua_shared_dict rate_limit 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
+    lua_shared_dict xss_code 10m; # used for xss_code, see plugin: xss_code
+    lua_shared_dict sql_injections 10m; # used for sql_injections, see plugin: sql_injections
 
 
 
