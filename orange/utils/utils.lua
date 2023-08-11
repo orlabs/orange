@@ -182,7 +182,6 @@ end
 -- @return success A boolean indicating wether the module was found.
 -- @return module The retrieved module.
 function _M.load_module_if_exists(module_name)
-    ngx.log(ngx.ERR, "module_name : ", module_name)
     local status, res = pcall(require, module_name)
     if status then
         return true, res
