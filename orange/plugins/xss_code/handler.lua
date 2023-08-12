@@ -60,7 +60,7 @@ function XssCodeHandler:access(conf)
     local params = sputils.getReqParamsStr(ngx)
     local ngx_var_uri = ngx.var.uri
     for i, sid in ipairs(ordered_selectors) do
-        ngx.log(ngx.ERR, "==[XssCode][PASS THROUGH SELECTOR:", sid, "]")
+        ngx.log(ngx.INFO, "==[XssCode][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
             local selector_pass
@@ -72,11 +72,10 @@ function XssCodeHandler:access(conf)
 
             if selector_pass then
                 if selector.handle and selector.handle.log == true then
-                    ngx.log(ngx.ERR, "[XssCode][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                    ngx.log(ngx.INFO, "[XssCode][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
 
                 local filter_res = filter_rules(sid, "xss_code", ngx_var_uri, params)
-                ngx.log(ngx.ERR, "[XssCode][filter_res：", "] ", filter_res)
                 --true则拦截,false则继续
                 if filter_res == true then
                     -- 不再执行此插件其他逻辑
@@ -92,7 +91,7 @@ function XssCodeHandler:access(conf)
                 end
             else
                 if selector.handle and selector.handle.log == true then
-                    ngx.log(ngx.ERR, "[XssCode][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                    ngx.log(ngx.INFO, "[XssCode][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
             end
         end

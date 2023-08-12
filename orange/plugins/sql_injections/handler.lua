@@ -61,7 +61,7 @@ function SqlInjectionsHandler:access(conf)
     local params = sputils.getReqParamsStr(ngx)
     local ngx_var_uri = ngx.var.uri
     for i, sid in ipairs(ordered_selectors) do
-        ngx.log(ngx.ERR, "==[SqlInjections][PASS THROUGH SELECTOR:", sid, "]")
+        ngx.log(ngx.INFO, "==[SqlInjections][PASS THROUGH SELECTOR:", sid, "]")
         local selector = selectors[sid]
         if selector and selector.enable == true then
             local selector_pass
@@ -73,7 +73,7 @@ function SqlInjectionsHandler:access(conf)
 
             if selector_pass then
                 if selector.handle and selector.handle.log == true then
-                    ngx.log(ngx.ERR, "[SqlInjections][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                    ngx.log(ngx.INFO, "[SqlInjections][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
 
                 local filter_res = filter_rules(sid, "sql_injections", ngx_var_uri, params)
@@ -92,7 +92,7 @@ function SqlInjectionsHandler:access(conf)
                 end
             else
                 if selector.handle and selector.handle.log == true then
-                    ngx.log(ngx.ERR, "[SqlInjections][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
+                    ngx.log(ngx.INFO, "[SqlInjections][NOT-PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
             end
         end

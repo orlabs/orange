@@ -10,7 +10,6 @@ local ffi = require "ffi"
 local ffi_new = ffi.new
 local ffi_str = ffi.string
 local ffi_cdef = ffi.cdef
-local ffi_load = ffi.load
 
 ffi_cdef[[
 const char* libinjection_version(void);
@@ -18,15 +17,12 @@ int libinjection_sqli(const char* s, size_t slen, char fingerprint[]);
 int libinjection_xss(const char* s, size_t slen);
 ]]
 
-local load_path = "/opt/orange/deps/lib64/lua/5.1/libinjection.so"
-
 local fpr = ffi_new("char[?]", 8)
 
 local lib, loaded
 
 -- "borrowed" from CF aho-corasick lib
 local function _loadlib()
-    ngx.log(ngx.ERR, "==[加载.......", "]")
     if (not loaded) then
         local path, so_path
         local libname = "libinjection.so"
@@ -67,7 +63,7 @@ function _M.sql(str)
     if lib.libinjection_sqli(str, #str, fpr) ~= 0 then
         local fingerprint  = ffi_str(fpr)
         if not fingerprint then
-            ngx.log(ngx.ERR, "==[sql] [injection: ", fingerprint, "]")
+            ngx.log(ngx.INFO, "==[sql] [injection: ", fingerprint, "]")
         end
         return true
     end
@@ -80,7 +76,7 @@ function _M.xss(str)
     end
     local res, err = lib.libinjection_xss(str, #str) ~= 0
     if not err then
-        ngx.log(ngx.ERR, "==[xss] [injection: ", err, "]")
+        ngx.log(ngx.INFO, "==[xss] [injection: ", err, "]")
     end
     return res
 end
