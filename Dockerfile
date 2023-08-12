@@ -19,6 +19,13 @@ RUN cd /usr/local/src \
     && cd lor \
     && make install
 RUN cd /usr/local/src \
+    && git clone https://gitee.com/xiaowu_wang/libinjection.git \
+    # compile libinjection
+    && cd libinjection/lua \
+    && make \
+    && mkdir -p /opt/orange/deps/lib64/lua/5.1/ \
+    && cp libinjection.so /opt/orange/deps/lib64/lua/5.1/
+RUN cd /usr/local/src \
     # install luarocks
     && git clone https://gitee.com/xiaowu_wang/luarocks.git \
     && cd luarocks \
