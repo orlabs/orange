@@ -23,6 +23,18 @@ int RAND_bytes(u_char *buf, int num);
 
 local _M = {}
 
+_M.strip = function(str)
+    if str == nil then
+        return ""
+    end
+    str = tostring(str)
+    if #str > 200 then
+        return str:gsub("^%s+", ""):reverse():gsub("^%s+", ""):reverse()
+    else
+        return str:match("^%s*(.-)%s*$")
+    end
+end
+
 function _M.now()
     local n = date()
     local result = n:fmt("%Y-%m-%d %H:%M:%S")

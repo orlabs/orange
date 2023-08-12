@@ -16,7 +16,7 @@
                 <div class="row content-header">
                     <div class="col-md-12">
                         <div class="pull-left">
-                            <h4 class="head_title"><a href="https://github.com/client9/libinjection">XSS Code</a></h4>
+                            <h4 class="head_title"><a href="https://github.com/Kong/kong/blob/master/kong/plugins/bot-detection">Bot Detection</a></h4>
                         </div>
                         <div class="pull-right">
                              {(common/plugin-op.html)}
@@ -75,6 +75,7 @@
                             {@/each}
                         </td>
                         <td class="left rule-urltmpl-td">
+                            继续匹配: ${r.handle.continue}<br/>
                             记录日志: ${r.handle.log}
                         </td>
                         <td class="left" title="变更时间">
@@ -107,6 +108,12 @@
 
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-continue">
+                            <option value="true">继续匹配</option>
+                            <option value="false">停止匹配</option>
+                        </select>
+                    </div>
                     <div class="col-sm-3">
                         <select class="form-control" id="rule-handle-log">
                             <option value="true">记录日志</option>
@@ -146,6 +153,12 @@
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
                     <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-continue">
+                            <option value="true" {@if r.handle.continue==true} selected {@/if}>继续匹配</option>
+                            <option value="false" {@if r.handle.continue==false} selected {@/if}>停止匹配</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
                         <select class="form-control" id="rule-handle-log">
                             <option value="true" {@if r.handle.log==true} selected {@/if}>记录日志</option>
                             <option value="false" {@if r.handle.log==false} selected {@/if}>不记录日志</option>
@@ -174,11 +187,11 @@
     {(common/selector-edit.html)}
 
     {(common/common_js.html)}<!-- 通用js -->
-    <script src="/static/js/xss_code.js"></script>
+    <script src="/static/js/bot_detection.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            APP.Common.resetNav("nav-xss-code");
-            APP.XssCode.init();
+            APP.Common.resetNav("nav-bot-detection");
+            APP.BotDetection.init();
             $(".sortable-list").sortable().disableSelection();
         });
     </script>

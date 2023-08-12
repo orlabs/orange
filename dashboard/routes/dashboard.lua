@@ -158,6 +158,10 @@ return function(config, store)
         res:render("sql_injections")
     end)
 
+    dashboard_router:get("/bot_detection", function(req, res, next)
+        res:render("bot_detection")
+    end)
+
     -- JWT AUTH
     dashboard_router:get("/jwt_auth", function(req, res, next)
         res:render("jwt_auth/jwt_auth")

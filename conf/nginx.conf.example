@@ -71,6 +71,7 @@ http {
     lua_shared_dict property_rate_limiting 10m; # used for rate limiting count, see plugin: rate_limiting
     lua_shared_dict xss_code 10m; # used for xss_code, see plugin: xss_code
     lua_shared_dict sql_injections 10m; # used for sql_injections, see plugin: sql_injections
+    lua_shared_dict bot_detection 10m; # used for bot_detection, see plugin: bot_detection
 
 
 

@@ -3,6 +3,7 @@
 -- - https://github.com/bungle/lua-resty-injection/blob/master/lib/resty/injection.lua
 -- - https://github.com/p0pr0ck5/lua-ffi-libinjection/blob/master/lib/resty/libinjection.lua
 -- modified by xiaowu
+
 local _M = {}
 _M.version = "0.1.1"
 
@@ -46,12 +47,7 @@ local function _loadlib()
         lib = ffi.load(path)
         if (lib) then
             loaded = true
-            return true
-        else
-            return false
         end
-    else
-        return true
     end
 end
 
@@ -74,11 +70,7 @@ function _M.xss(str)
     if (not loaded) then
         _loadlib()
     end
-    local res, err = lib.libinjection_xss(str, #str) ~= 0
-    if not err then
-        ngx.log(ngx.INFO, "==[xss] [injection: ", err, "]")
-    end
-    return res
+    return lib.libinjection_xss(str, #str) ~= 0
 end
 
 return _M

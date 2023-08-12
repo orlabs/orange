@@ -17,7 +17,8 @@
         "kvstore",
         "node",
         "sql_injections",
-        "xss_code"
+        "xss_code",
+        "bot_detection"
     ],
     "store": "mysql",
     "store_mysql": {
