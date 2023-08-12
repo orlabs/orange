@@ -26,6 +26,7 @@ local function filter_rules(sid, plugin, ngx_var_uri, params)
                     ngx.log(ngx.ERR, "[SqlInjections] start handling: ", rule.id, ":", ngx_var_uri)
                 end
 
+                ngx.log(ngx.ERR, "==[SqlInjections][filter-res:", injection.sql(params), "]")
                 if handle.continue == true then
                 else
                     return injection.sql(params) -- 不再匹配后续的规则
@@ -77,7 +78,6 @@ function SqlInjectionsHandler:access(conf)
                 end
 
                 local filter_res = filter_rules(sid, "sql_injections", ngx_var_uri, params)
-                ngx.log(ngx.ERR, "[SqlInjections][filter_res：", "] ", filter_res)
                 -- true则拦截,false则继续
                 if filter_res == true then
                     -- 不再执行此插件其他逻辑
