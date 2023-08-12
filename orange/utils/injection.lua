@@ -3,6 +3,8 @@
 -- - https://github.com/bungle/lua-resty-injection/blob/master/lib/resty/injection.lua
 -- - https://github.com/p0pr0ck5/lua-ffi-libinjection/blob/master/lib/resty/libinjection.lua
 -- modified by xiaowu
+local _M = {}
+_M.version = "0.1.1"
 
 local ffi = require "ffi"
 local ffi_new = ffi.new
@@ -19,8 +21,6 @@ int libinjection_xss(const char* s, size_t slen);
 local load_path = "/opt/orange/deps/lib64/lua/5.1/libinjection.so"
 
 local fpr = ffi_new("char[?]", 8)
-
-local injection = { version = ffi_str(lib.libinjection_version()) }
 
 local lib, loaded
 
@@ -58,7 +58,7 @@ local function _loadlib()
     end
 end
 
-function injection.sql(str)
+function _M.sql(str)
     if (not loaded) then
         if (not _loadlib()) then
             return false
@@ -75,7 +75,7 @@ function injection.sql(str)
     return false
 end
 
-function injection.xss(str)
+function _M.xss(str)
     if (not loaded) then
         if (not _loadlib()) then
             return false
@@ -88,4 +88,4 @@ function injection.xss(str)
     return res
 end
 
-return injection
+return _M
