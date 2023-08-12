@@ -4,7 +4,7 @@ local utils = require("orange.utils.utils")
 local sputils = require("orange.utils.sputils")
 local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
-local bot_rules = require "rules"
+local bot_rules = require "orange.plugins.bot_detection.rules"
 local ipairs = ipairs
 local re_find = ngx.re.find
 
