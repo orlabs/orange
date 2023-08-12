@@ -5,7 +5,7 @@ base.allows_subsystem("http")
 local get_request = base.get_request
 local string_lower = string.lower
 local string_find = string.find
-local json = require("orange.utils.json")
+local cjson = require "cjson"
 
 
 --- 将斜杠 / 转移后的 &#47;，转回正常斜杠符号
@@ -15,14 +15,10 @@ end
 
 -- get request params str by one of these methods(get/delete/put/post)
 function _M.getReqParamsStr(ngx)
-    local method = ngx.req.get_method()
-    ngx.log(ngx.ERR,"getReqParamsStrMethod : ",method)
-    if method and (string_lower(method) == 'get' or string_lower(method) == 'delete') then
-        local args = ngx.req.get_uri_args()
-        local res = json.decode(args)
-        ngx.log(ngx.ERR,"getReqParamsStr : ",res)
-        return res
-    elseif method and (string_lower(method) == 'put' or string_lower(method) == 'post') then
+    local args
+    if ngx.req.get_method() == "GET" or ngx.req.get_method() == "DELETE" then
+        args = ngx.req.get_uri_args()
+    elseif ngx.req.get_method() == "PUT" or ngx.req.get_method() == "POST" then
         -- no check file
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
@@ -33,12 +29,17 @@ function _M.getReqParamsStr(ngx)
             end
         end
         ngx.req.read_body()
-        local body = ngx.req.get_body_data()
-        local res = json.decode(body)
-        ngx.log(ngx.ERR,"getReqParamsStr : ",res)
-        return res
+        args = ngx.req.get_post_args()
     end
-    return ""
+    if next(args) ~= nil then
+        local res = cjson.encode(args)
+        ngx.log(ngx.ERR,"getReqParamsStr : ",res)
+        -- 有参数
+        return res
+    else
+        -- 无参数
+        return ""
+    end
 end
 
 function _M.dnsToIp(hostname)
