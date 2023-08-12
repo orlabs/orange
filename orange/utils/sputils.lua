@@ -28,15 +28,10 @@ function _M.getReqParamsStr(ngx)
             if is_multipart and is_multipart > 0 then
                 return ""
             end
-            local is_x_www_form_urlencoded = string_find(header, "x-www-form-urlencoded")
-            ngx.log(ngx.ERR,"is_x_www_form_urlencoded: ", is_x_www_form_urlencoded)
-            if is_x_www_form_urlencoded and is_x_www_form_urlencoded > 0 then
+            if header == "application/x-www-form-urlencoded" then
                 ngx.req.read_body()
                 args = ngx.req.get_post_args()
-            end
-            local is_application_json = string_find(header, "json")
-            ngx.log(ngx.ERR,"is_application_json: ", is_application_json)
-            if is_application_json and is_application_json > 0 then
+            elseif header == "application/json" then
                 ngx.req.read_body()
                 args = ngx.req.get_body_data()
             end
