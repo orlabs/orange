@@ -116,7 +116,7 @@ function BotDetectionHandler:access(conf)
                     -- 必须有print内容，否则只有exit不生效.
                     local res = json.encode({
                         code = 90001,
-                        msg = "sql-injections - can not access!",
+                        msg = "bot-detection - can not access!",
                         status = "fail"
                     })
                     ngx.print(res)
