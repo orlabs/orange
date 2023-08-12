@@ -22,7 +22,6 @@ function _M.getReqParamsStr(ngx)
         -- no check file
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
-        ngx.log(ngx.ERR,"getReq header: ",header)
         if header then
             local is_multipart = string_find(header, "multipart")
             if is_multipart and is_multipart > 0 then
@@ -42,7 +41,7 @@ function _M.getReqParamsStr(ngx)
             return ""
         end
     end
-    if args ~= nil and next(args) ~= nil then
+    if next(args) ~= nil then
         local querystring = ""
         -- 拼接参数
         for k,v in pairs(args) do
