@@ -41,7 +41,7 @@ function _M.getReqParamsStr(ngx)
                 querystring = querystring .. " " .. v
             end
         end
-        ngx.log(ngx.ERR,"getReqParamsStr : ",querystring)
+        ngx.log(ngx.ERR,"getReqParamsStr: ",querystring)
         -- 有参数
         return querystring
     else

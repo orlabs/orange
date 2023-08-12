@@ -26,7 +26,6 @@ local function filter_rules(sid, plugin, ngx_var_uri, params)
                     ngx.log(ngx.ERR, "[SqlInjections] start handling: ", rule.id, ":", ngx_var_uri)
                 end
 
-                ngx.log(ngx.ERR, "==[SqlInjections][filter-res-2:", injection.sql("4 union select 1,1,version(),1"), "]")
                 if handle.continue == true then
                 else
                     return injection.sql(params) -- 不再匹配后续的规则
