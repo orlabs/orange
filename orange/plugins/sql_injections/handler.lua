@@ -26,7 +26,7 @@ local function filter_rules(sid, plugin, ngx_var_uri, params)
                     ngx.log(ngx.ERR, "[SqlInjections] start handling: ", rule.id, ":", ngx_var_uri)
                 end
 
-                ngx.log(ngx.ERR, "==[SqlInjections][filter-res-1:", injection.sql(params), "]")
+                ngx.log(ngx.ERR, "==[SqlInjections][filter-res-1:", params, "]")
                 ngx.log(ngx.ERR, "==[SqlInjections][filter-res-2:", injection.sql("test; DROP users;"), "]")
                 if handle.continue == true then
                 else
