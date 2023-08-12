@@ -16,9 +16,12 @@ end
 -- get request params str by one of these methods(get/delete/put/post)
 function _M.getReqParamsStr(ngx)
     local method = ngx.req.get_method()
+    ngx.log(ngx.ERR,"getReqParamsStrMethod : ",method)
     if method and (string_lower(method) == 'get' or string_lower(method) == 'delete') then
         local args = ngx.req.get_uri_args()
-        return json.decode(args)
+        local res = json.decode(args)
+        ngx.log(ngx.ERR,"getReqParamsStr : ",res)
+        return res
     elseif method and (string_lower(method) == 'put' or string_lower(method) == 'post') then
         -- no check file
         local headers = ngx.req.get_headers()
@@ -31,7 +34,9 @@ function _M.getReqParamsStr(ngx)
         end
         ngx.req.read_body()
         local body = ngx.req.get_body_data()
-        return json.decode(body)
+        local res = json.decode(body)
+        ngx.log(ngx.ERR,"getReqParamsStr : ",res)
+        return res
     end
     return ""
 end

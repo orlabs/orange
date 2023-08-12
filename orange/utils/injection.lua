@@ -14,7 +14,7 @@ int libinjection_sqli(const char* s, size_t slen, char fingerprint[]);
 int libinjection_xss(const char* s, size_t slen);
 ]]
 
-local load_path = "/opt/orange/orange/deps/lib64/lua/5.1/libinjection.so"
+local load_path = "/opt/orange/deps/lib64/lua/5.1/libinjection.so"
 
 local lib = ffi_load(load_path)
 local fpr = ffi_new("char[?]", 8)
