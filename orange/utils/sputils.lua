@@ -37,8 +37,9 @@ function _M.getReqParamsStr(ngx)
                 ngx.req.read_body()
                 args = ngx.req.get_body_data()
             end
+        else
+            return ""
         end
-        return ""
     end
     if next(args) ~= nil then
         local querystring = ""
