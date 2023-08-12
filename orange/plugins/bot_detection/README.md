@@ -30,3 +30,20 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 
 ### 测试
+
+```bash
+curl --location 'http://192.168.56.100' \
+--header 'User-Agent: Pingdom.com_bot_version_1.4'
+```
+
+
+```bash
+curl --location 'http://192.168.56.100' \
+--header 'User-Agent: aws-cli/1.23.12 Python/3.9.13 Linux/5.4.273-137.508.amzn2.x86_64 exec-env/AWS_CLI boto3/1.24.18'
+```
+
+
+```bash
+curl --location 'http://192.168.56.100' \
+--header 'User-Agent: Baiduspider+ (http://www.baidu.com/search/spider_jp.html)'
+```
