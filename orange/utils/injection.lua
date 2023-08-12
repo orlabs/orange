@@ -26,6 +26,7 @@ local lib, loaded
 
 -- "borrowed" from CF aho-corasick lib
 local function _loadlib()
+    ngx.log(ngx.ERR, "==[加载.......", "]")
     if (not loaded) then
         local path, so_path
         local libname = "libinjection.so"
@@ -59,7 +60,6 @@ local function _loadlib()
 end
 
 function _M.sql(str)
-    ngx.log(ngx.ERR, "==[hasbeen loaded: ", (not loaded), "]")
     if (not loaded) then
         _loadlib()
     end
