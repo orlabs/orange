@@ -22,7 +22,6 @@ function _M.getReqParamsStr(ngx)
         -- no check file
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
-        ngx.log(ngx.ERR,"header: ", header)
         if header then
             local is_multipart = string_find(header, "multipart")
             if is_multipart and is_multipart > 0 then
@@ -33,7 +32,8 @@ function _M.getReqParamsStr(ngx)
                 args = ngx.req.get_post_args()
             elseif header == "application/json" then
                 ngx.req.read_body()
-                args = ngx.req.get_body_data()
+                local data = ngx.req.get_body_data()
+                args = cjson.decode(data)
             end
         else
             return ""
