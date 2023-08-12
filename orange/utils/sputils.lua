@@ -27,9 +27,18 @@ function _M.getReqParamsStr(ngx)
             if is_multipart and is_multipart > 0 then
                 return ""
             end
+            local is_x_www_form_urlencoded = string_find(header, "x-www-form-urlencoded")
+            if is_x_www_form_urlencoded and is_x_www_form_urlencoded > 0 then
+                ngx.req.read_body()
+                args = ngx.req.get_post_args()
+            end
+            local is_application_json = string_find(header, "json")
+            if is_application_json and is_application_json > 0 then
+                ngx.req.read_body()
+                args = ngx.req.get_body_data()
+            end
         end
-        ngx.req.read_body()
-        args = ngx.req.get_post_args()
+        return ""
     end
     if next(args) ~= nil then
         local querystring = ""
