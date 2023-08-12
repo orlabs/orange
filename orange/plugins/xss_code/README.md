@@ -33,16 +33,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 ```bash
 curl --location 'http://192.168.56.100' \
---header 'Cookie: Hm_lvt_40028a604fad74cc0dee058f9a116c82=1691457547,1691723036; SOPEIID=2e0b60447159506a7505998964108006864; SOPEIID.sig=ZZqYDek_vK4IgHjMsx1v50HTvd4; Hm_lpvt_40028a604fad74cc0dee058f9a116c82=1691723046' \
---header 'Referer: https://servicewechat.com/wx51f2f66c1f2b50fe/devtools/page-frame.html' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'test=test<script></script>'
 ```
 
 ```bash
 curl --location 'http://192.168.56.100' \
---header 'Cookie: Hm_lvt_40028a604fad74cc0dee058f9a116c82=1691457547,1691723036; SOPEIID=2e0b60447159506a7505998964108006864; SOPEIID.sig=ZZqYDek_vK4IgHjMsx1v50HTvd4; Hm_lpvt_40028a604fad74cc0dee058f9a116c82=1691723046' \
---header 'Referer: https://servicewechat.com/wx51f2f66c1f2b50fe/devtools/page-frame.html' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'test=test<script></script>'
+--header 'Content-Type: application/json' \
+--data '{
+    "test":"test<script></script>"
+}'
 ```
