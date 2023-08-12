@@ -32,10 +32,19 @@ function _M.getReqParamsStr(ngx)
         args = ngx.req.get_post_args()
     end
     if next(args) ~= nil then
-        local res = cjson.encode(args)
-        ngx.log(ngx.ERR,"getReqParamsStr : ",res)
+        -- 后续逻辑相同,使用args处理参数
+        local querystring = ""
+        -- 拼接参数
+        for k,v in pairs(args) do
+            if not querystring then
+                querystring = k .. ";" .. v
+            else
+                querystring = querystring .. ";" .. k .. ";" .. v
+            end
+        end
+        ngx.log(ngx.ERR,"getReqParamsStr : ",querystring)
         -- 有参数
-        return res
+        return querystring
     else
         -- 无参数
         return ""
