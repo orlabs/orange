@@ -76,9 +76,10 @@ function SqlInjectionsHandler:access(conf)
                     ngx.log(ngx.ERR, "[SqlInjections][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
 
-                local doFilter = filter_rules(sid, "sql_injections", ngx_var_uri, params)
+                local filter_res = filter_rules(sid, "sql_injections", ngx_var_uri, params)
+                ngx.log(ngx.ERR, "[SqlInjections][filter_res：", "] ", filter_res)
                 -- true则拦截,false则继续
-                if doFilter == true then
+                if filter_res == true then
                     -- 不再执行此插件其他逻辑
                     -- 必须有print内容，否则只有exit不生效.
                     local res = json.encode({
