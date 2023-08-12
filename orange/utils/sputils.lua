@@ -32,7 +32,6 @@ function _M.getReqParamsStr(ngx)
         args = ngx.req.get_post_args()
     end
     if next(args) ~= nil then
-        -- 后续逻辑相同,使用args处理参数
         local querystring = ""
         -- 拼接参数
         for k,v in pairs(args) do
