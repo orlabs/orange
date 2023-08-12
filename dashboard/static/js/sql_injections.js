@@ -6,12 +6,12 @@
         },
 
         init: function () {
-            L.Common.loadConfigs("xss_code", _this, true);
+            L.Common.loadConfigs("sql_injections", _this, true);
             _this.initEvents();
         },
 
         initEvents: function(){
-            var op_type = "xss_code";
+            var op_type = "sql_injections";
             L.Common.initRuleAddDialog(op_type, _this);//添加规则对话框
             L.Common.initRuleDeleteDialog(op_type, _this);//删除规则对话框
             L.Common.initRuleEditDialog(op_type, _this);//编辑规则对话框
