@@ -59,10 +59,9 @@ local function _loadlib()
 end
 
 function _M.sql(str)
+    ngx.log(ngx.ERR, "==[hasbeen loaded: ", (not loaded), "]")
     if (not loaded) then
-        if (not _loadlib()) then
-            return false
-        end
+        _loadlib()
     end
 
     if lib.libinjection_sqli(str, #str, fpr) ~= 0 then
@@ -77,9 +76,7 @@ end
 
 function _M.xss(str)
     if (not loaded) then
-        if (not _loadlib()) then
-            return false
-        end
+        _loadlib()
     end
     local res, err = lib.libinjection_xss(str, #str) ~= 0
     if not err then

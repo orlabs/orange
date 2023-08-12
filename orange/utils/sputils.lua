@@ -37,9 +37,9 @@ function _M.getReqParamsStr(ngx)
         -- 拼接参数
         for k,v in pairs(args) do
             if not querystring then
-                querystring = k .. ";" .. v
+                querystring = v
             else
-                querystring = querystring .. ";" .. k .. ";" .. v
+                querystring = querystring .. " " .. v
             end
         end
         ngx.log(ngx.ERR,"getReqParamsStr : ",querystring)
