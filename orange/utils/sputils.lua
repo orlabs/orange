@@ -25,7 +25,7 @@ function _M.getReqParamsStr(ngx)
         if header then
             local is_multipart = string_find(header, "multipart")
             if is_multipart and is_multipart > 0 then
-                return ""
+                return nil
             end
             if header == "application/x-www-form-urlencoded" then
                 ngx.req.read_body()
@@ -35,27 +35,9 @@ function _M.getReqParamsStr(ngx)
                 local data = ngx.req.get_body_data()
                 args = cjson.decode(data)
             end
-        else
-            return ""
         end
     end
-    if args ~= nil and next(args) ~= nil then
-        local querystring = ""
-        -- 拼接参数
-        for k,v in pairs(args) do
-            if not querystring then
-                querystring = v
-            else
-                querystring = querystring .. " " .. v
-            end
-        end
-        ngx.log(ngx.ERR,"getReqParamsStr: ",querystring)
-        -- 有参数
-        return querystring
-    else
-        -- 无参数
-        return ""
-    end
+    return args
 end
 
 function _M.dnsToIp(hostname)

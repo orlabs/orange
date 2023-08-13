@@ -59,7 +59,7 @@ function _M.sql(str)
     if lib.libinjection_sqli(str, #str, fpr) ~= 0 then
         local fingerprint  = ffi_str(fpr)
         if not fingerprint then
-            ngx.log(ngx.INFO, "==[sql] [injection: ", fingerprint, "]")
+            ngx.log(ngx.ERR, "==[sql] [injection: ", fingerprint, "]")
         end
         return true
     end

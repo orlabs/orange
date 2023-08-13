@@ -5,7 +5,7 @@ local orange_db = require("orange.store.orange_db")
 local judge_util = require("orange.utils.judge")
 local injection = require("orange.utils.injection")
 
-local function filter_rules(sid, plugin, ngx_var_uri, params)
+local function filter_rules(sid, plugin, ngx_var_uri, args)
 
     local rules = orange_db.get_json(plugin .. ".selector." .. sid .. ".rules")
     if not rules or type(rules) ~= "table" or #rules <= 0 then
@@ -28,7 +28,13 @@ local function filter_rules(sid, plugin, ngx_var_uri, params)
 
                 if handle.continue == true then
                 else
-                    return injection.sql(params) -- 不再匹配后续的规则
+                    if args ~= nil and next(args) ~= nil then
+                        for k,v in pairs(args) do
+                            if injection.sql(k) or injection.sql(v) then
+                                return true
+                            end
+                        end
+                    end
                 end
             end
         end
