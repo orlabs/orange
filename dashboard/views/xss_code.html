@@ -75,6 +75,7 @@
                             {@/each}
                         </td>
                         <td class="left rule-urltmpl-td">
+                            继续匹配: ${r.handle.continue}<br/>
                             记录日志: ${r.handle.log}
                         </td>
                         <td class="left" title="变更时间">
@@ -107,6 +108,12 @@
 
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-continue">
+                            <option value="true">继续匹配</option>
+                            <option value="false">停止匹配</option>
+                        </select>
+                    </div>
                     <div class="col-sm-3">
                         <select class="form-control" id="rule-handle-log">
                             <option value="true">记录日志</option>
@@ -145,6 +152,12 @@
 
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="rule-handle-continue">
+                            <option value="true" {@if r.handle.continue==true} selected {@/if}>继续匹配</option>
+                            <option value="false" {@if r.handle.continue==false} selected {@/if}>停止匹配</option>
+                        </select>
+                    </div>
                     <div class="col-sm-3">
                         <select class="form-control" id="rule-handle-log">
                             <option value="true" {@if r.handle.log==true} selected {@/if}>记录日志</option>
