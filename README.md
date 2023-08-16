@@ -523,3 +523,43 @@ coroutine 0:
 Orange可以抵挡高并发场景下的冲击
 
 但依靠Orange抵挡专业的DDos攻击，还需要其他的办法
+
+# 插件开发补充
+
+## ngx_lua_waf --- Nginx防火墙
+
+ngx_lua_waf 是一个高性能的轻量级 web 应用防火墙，基于 lua-nginx-module。
+
+它具有以下功能：
+
+> - 防止sql注入，本地包含，部分溢出，fuzzing测试，xss,SSRF等web攻击
+> - 防止svn/备份之类文件泄漏
+> - 防止ApacheBench之类压力测试工具的攻击
+> - 屏蔽常见的扫描黑客工具，扫描器
+> - 屏蔽异常的网络请求
+> - 屏蔽图片附件类目录php执行权限
+> - 防止webshell上传
+
+经过 unixhot 的修改和重构，拥有了以下功能：
+
+- 支持IP白名单和黑名单功能，直接将黑名单的IP访问拒绝
+- 支持URL白名单，将不需要过滤的URL进行定义
+- 支持User-Agent的过滤，匹配自定义规则中的条目，然后进行处理（返回403）
+- 支持CC攻击防护，单个URL指定时间的访问次数，超过设定值，直接返回403
+- 支持Cookie过滤，匹配自定义规则中的条目，然后进行处理（返回403）
+- 支持URL过滤，匹配自定义规则中的条目，如果用户请求的URL包含这些，返回403
+- 支持URL参数过滤，原理同上
+- 支持日志记录，将所有拒绝的操作，记录到日志中去
+- 日志记录为JSON格式，便于日志分析，例如使用ELKStack进行攻击日志收集、存储、搜索和展示
+
+## 新增插件 - `orange/plugins/bot_detection`
+
+> 详见`orange/plugins/bot_detection/README.md`
+
+## 新增插件 - `orange/plugins/sql_injections`
+
+> 详见`orange/plugins/sql_injections/README.md`
+
+## 新增插件 - `orange/plugins/bot_detection`
+
+> 详见`orange/plugins/bot_detection/README.md`
