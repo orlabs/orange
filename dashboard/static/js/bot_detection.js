@@ -32,7 +32,6 @@
             L.Common.initSwitchBtn(op_type, _this);//redirect关闭、开启
             L.Common.initSyncDialog(op_type, _this);//编辑规则对话框
 
-            _this.initStatisticBtnEvent();
         },
 
         buildRule: function(){
