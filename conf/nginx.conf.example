@@ -60,6 +60,12 @@ http {
     #----------------------------Orange configuration-----------------------------
     lua_package_path  "$prefix/deps/share/lua/5.1/?.lua;$prefix/deps/share/lua/5.1/orange/?.lua;$prefix/?.lua;/usr/share/lua/5.1/?.lua;/usr/local/lor/?.lua;;";
     lua_package_cpath "$prefix/deps/lib64/lua/5.1/?.so;$prefix/deps/lib/lua/5.1/?.so;/usr/lib64/lua/5.1/?.so;;";
+    #----------------------------ngx waf configuration-----------------------------
+    lua_package_path "/usr/local/nginx/conf/waf/?.lua";
+    lua_shared_dict limit 10m;
+    init_by_lua_file /usr/local/nginx/conf/waf/init.lua;
+    access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;
+    #----------------------------ngx waf configuration-----------------------------
     lua_code_cache on;
 
     lua_shared_dict orange_data 20m; # should not removed. used for orange data, e.g. plugins configurations..
