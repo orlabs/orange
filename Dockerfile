@@ -1,6 +1,7 @@
 FROM centos:7
 WORKDIR /opt/orange
 EXPOSE 80 7777 8888 9999
+COPY CentOS-Base.repo /etc/yum.repos.d/
 RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && yum update -y \
     && yum install -y wget \
