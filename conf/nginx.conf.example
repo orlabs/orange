@@ -80,7 +80,7 @@ http {
 
 
 
-    init_by_lua_block {
+    init_worker_by_lua_block {
         local orange = require("orange.orange")
         local env_orange_conf = os.getenv("ORANGE_CONF")
         print(string.char(27) .. "[34m" .. "[INFO]" .. string.char(27).. "[0m", [[the env[ORANGE_CONF] is ]], env_orange_conf)
@@ -97,10 +97,6 @@ http {
             store = store,
             config = config
         }
-    }
-
-    init_worker_by_lua_block {
-        local orange = context.orange
         orange.init_worker()
     }
 
