@@ -28,16 +28,12 @@ RUN cd /usr/local/src \
 RUN mkdir -p /usr/local/nginx/conf \
     # download ngx waf
     && cd /usr/local/nginx/conf \
-    && git clone https://gitee.com/xiaowu_wang/ngx_lua_waf.git \
-    && cd ngx_lua_waf \
-    && git checkout v0.7.2-orange \
-    && cd ../ \
+    && git clone https://gitee.com/xiaowu_wang/ngx_lua_waf.git --branch v0.7.2-orange --single-branch \
     && mv ngx_lua_waf waf
 RUN cd /usr/local/src \
     # install luarocks
-    && git clone https://gitee.com/xiaowu_wang/luarocks.git \
+    && git clone https://gitee.com/xiaowu_wang/luarocks.git --branch v3.9.2 --single-branch \
     && cd luarocks \
-    && git checkout v3.9.2 \
     && ./configure --prefix=/usr/local/luarocks --with-lua=/usr --with-lua-include=/usr/include \
     && make \
     && make install \
