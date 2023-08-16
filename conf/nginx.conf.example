@@ -58,13 +58,8 @@ http {
     client_max_body_size 1m;
 
     #----------------------------Orange configuration-----------------------------
-    lua_package_path  "/usr/local/nginx/conf/waf/?.lua;$prefix/deps/share/lua/5.1/?.lua;$prefix/deps/share/lua/5.1/orange/?.lua;$prefix/?.lua;/usr/share/lua/5.1/?.lua;/usr/local/lor/?.lua;;";
+    lua_package_path  "$prefix/deps/share/lua/5.1/?.lua;$prefix/deps/share/lua/5.1/orange/?.lua;$prefix/?.lua;/usr/share/lua/5.1/?.lua;/usr/local/lor/?.lua;;";
     lua_package_cpath "$prefix/deps/lib64/lua/5.1/?.so;$prefix/deps/lib/lua/5.1/?.so;/usr/lib64/lua/5.1/?.so;;";
-    #----------------------------ngx waf configuration-----------------------------
-    lua_shared_dict limit 10m;
-    init_by_lua_file /usr/local/nginx/conf/waf/init.lua;
-    access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;
-    #----------------------------ngx waf configuration-----------------------------
     lua_code_cache on;
 
     lua_shared_dict orange_data 20m; # should not removed. used for orange data, e.g. plugins configurations..
@@ -78,6 +73,24 @@ http {
     lua_shared_dict sql_injections 10m; # used for sql_injections, see plugin: sql_injections
     lua_shared_dict bot_detection 10m; # used for bot_detection, see plugin: bot_detection
 
+    init_by_lua_block {
+        local orange = require("orange.orange")
+        local env_orange_conf = os.getenv("ORANGE_CONF")
+        print(string.char(27) .. "[34m" .. "[INFO]" .. string.char(27).. "[0m", [[the env[ORANGE_CONF] is ]], env_orange_conf)
+
+        -- Here, you can also use the absolute path, eg: local confige_file = "/home/openresty/orange/conf/orange.conf"
+        local config_file = env_orange_conf or ngx.config.prefix().. "/conf/orange.conf"
+        local config, store = orange.init({
+            config = config_file
+        })
+
+        -- the orange context
+        context = {
+            orange = orange,
+            store = store,
+            config = config
+        }
+    }
 
     init_worker_by_lua_block {
         local orange = context.orange
