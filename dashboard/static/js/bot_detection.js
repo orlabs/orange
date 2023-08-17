@@ -76,6 +76,7 @@
         buildHandle: function(){
             var result = {};
             var handle = {};
+            handle.rule = ($("#rule-handle-code").val());
             handle.continue = ($("#rule-handle-continue").val() === "true");
             handle.log = ($("#rule-handle-log").val() === "true");
             result.success = true;

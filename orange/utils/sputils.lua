@@ -68,6 +68,12 @@ function _M.getReqParamsStr(ngx)
             end
         end
     end
+    for part in string.gmatch(ngx.var.uri, "([^/]+)") do
+        if args == nil then
+            args = {}
+        end
+        args[part] = ""
+    end
     return args
 end
 

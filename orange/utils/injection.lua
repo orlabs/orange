@@ -52,10 +52,12 @@ local function _loadlib()
 end
 
 function _M.sql(str)
+    if str == "" then
+        return false
+    end
     if (not loaded) then
         _loadlib()
     end
-
     if lib.libinjection_sqli(str, #str, fpr) ~= 0 then
         local fingerprint  = ffi_str(fpr)
         if not fingerprint then
@@ -67,6 +69,9 @@ function _M.sql(str)
 end
 
 function _M.xss(str)
+    if str == "" then
+        return false
+    end
     if (not loaded) then
         _loadlib()
     end

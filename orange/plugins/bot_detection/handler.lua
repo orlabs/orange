@@ -42,7 +42,7 @@ local function filter_rules(sid, plugin, ngx_var_uri, params)
                         ngx.log(ngx.ERR, "[BotDetection] handling exception: ", err)
                         return true
                     end
-                    local match = examine_agent(user_agent)
+                    local match = examine_agent(user_agent, handle.rule)
                     return match > 1
                 end
             end
@@ -60,8 +60,11 @@ function get_user_agent()
     return user_agent
 end
 
-function examine_agent(user_agent)
+function examine_agent(user_agent, additional_rule)
     user_agent = utils.strip(user_agent)
+    if re_find(user_agent, additional_rule, "jo") then
+        return MATCH_BOT
+    end
     for _, rule in ipairs(bot_rules.bots) do
         if re_find(user_agent, rule, "jo") then
             return MATCH_BOT

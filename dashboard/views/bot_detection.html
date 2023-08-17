@@ -153,6 +153,9 @@
                 <div class="form-group handle-holder">
                     <label class="col-sm-1 control-label">处理</label>
                     <div class="col-sm-3">
+                        <input type="text" class="form-control" id="rule-handle-code" placeholder="附加规则(单条)">
+                    </div>
+                    <div class="col-sm-3">
                         <select class="form-control" id="rule-handle-continue">
                             <option value="true" {@if r.handle.continue==true} selected {@/if}>继续匹配</option>
                             <option value="false" {@if r.handle.continue==false} selected {@/if}>停止匹配</option>
