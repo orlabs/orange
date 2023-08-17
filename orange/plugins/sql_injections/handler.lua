@@ -86,14 +86,7 @@ function SqlInjectionsHandler:access(conf)
                 -- true则拦截,false则继续
                 if filter_res == true then
                     -- 不再执行此插件其他逻辑
-                    -- 必须有print内容，否则只有exit不生效.
-                    local res = json.encode({
-                        code = 90001,
-                        msg = "sql-injections - can not access!",
-                        status = "fail"
-                    })
-                    ngx.print(res)
-                    ngx.exit(ngx.OK)
+                    sputils.waf_html()
                     return
                 end
             else

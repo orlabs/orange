@@ -20,6 +20,7 @@ help:
 ### dev:          Create Orange development ENV
 .PHONY: dev
 dev:
+	$(REMOVE) -f conf/*.conf
 	$(INSTALL) conf/nginx.conf.example conf/nginx.conf
 	$(INSTALL) conf/orange.conf.example conf/orange.conf
 	$(INSTALL) install/orange-v0.8.1.sql conf/orange-v0.8.1.sql
