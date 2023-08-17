@@ -62,7 +62,7 @@ end
 
 function examine_agent(user_agent, additional_rule)
     user_agent = utils.strip(user_agent)
-    if re_find(user_agent, additional_rule, "jo") then
+    if additional_rule ~= nil and additional_rule ~= "" and re_find(user_agent, additional_rule, "jo") then
         return MATCH_BOT
     end
     for _, rule in ipairs(bot_rules.bots) do
