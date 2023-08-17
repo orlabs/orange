@@ -52,7 +52,7 @@ local function _loadlib()
 end
 
 function _M.sql(str)
-    if str == "" then
+    if type(str) ~= "string" or str == "" then
         return false
     end
     if (not loaded) then
@@ -69,7 +69,7 @@ function _M.sql(str)
 end
 
 function _M.xss(str)
-    if str == "" then
+    if type(str) ~= "string" or str == "" then
         return false
     end
     if (not loaded) then
