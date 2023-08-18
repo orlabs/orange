@@ -57,6 +57,9 @@ function _M.getReqParamsStr(ngx)
     local uri_args = ngx.req.get_uri_args()
     if uri_args ~= nil and next(uri_args) ~= nil then
         for k, v in pairs(uri_args) do
+            if k and k ~= '' then
+                table.insert(args, k)
+            end
             if v and v ~= '' then
                 table.insert(args, v)
             end
@@ -81,6 +84,9 @@ function _M.getReqParamsStr(ngx)
             end
             if body_args ~= nil and next(body_args) ~= nil then
                 for k, v in pairs(body_args) do
+                    if k and k ~= '' then
+                        table.insert(args, k)
+                    end
                     if v and v ~= '' then
                         table.insert(args, v)
                     end
