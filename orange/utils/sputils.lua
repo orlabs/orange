@@ -88,6 +88,7 @@ function _M.getReqParamsStr(ngx)
             end
         end
     end
+    ngx.log(ngx.ERR, _M.tableToStr(args))
     return args
 end
 
