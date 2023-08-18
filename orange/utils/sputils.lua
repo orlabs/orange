@@ -88,7 +88,7 @@ function _M.getReqParamsStr(ngx)
             end
         end
     end
-    if args then
+    if args and args ~= nil then
         args = table.unique(args)
     end
     return args
