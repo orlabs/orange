@@ -27,7 +27,7 @@ local function filter_rules(sid, plugin, ngx_var_uri, args)
 
                 if handle.continue == true then
                 else
-                    for v in ipairs(args) do
+                    for i, v in ipairs(args) do
                         if injection.xss(v) then
                             return true
                         end

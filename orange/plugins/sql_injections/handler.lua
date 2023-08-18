@@ -29,7 +29,6 @@ local function filter_rules(sid, plugin, ngx_var_uri, args)
                 if handle.continue == true then
                 else
                     for i, v in ipairs(args) do
-                        ngx.log(ngx.ERR, "[SqlInjections] args: ", v)
                         if injection.sql(v) then
                             return true
                         end
