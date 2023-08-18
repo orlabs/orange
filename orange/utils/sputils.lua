@@ -88,7 +88,10 @@ function _M.getReqParamsStr(ngx)
             end
         end
     end
-    return table.unique(args)
+    if args then
+        args = table.unique(args)
+    end
+    return args
 end
 
 -- waf return html
