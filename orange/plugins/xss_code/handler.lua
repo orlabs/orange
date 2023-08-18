@@ -27,11 +27,9 @@ local function filter_rules(sid, plugin, ngx_var_uri, args)
 
                 if handle.continue == true then
                 else
-                    if args ~= nil and next(args) ~= nil then
-                        for k,v in pairs(args) do
-                            if injection.xss(k) or injection.xss(v) then
-                                return true
-                            end
+                    for v in ipairs(args) do
+                        if injection.xss(v) then
+                            return true
                         end
                     end
                 end

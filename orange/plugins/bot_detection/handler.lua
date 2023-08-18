@@ -11,7 +11,7 @@ local re_find = ngx.re.find
 local MATCH_EMPTY = 0
 local MATCH_BOT = 3
 
-local function filter_rules(sid, plugin, ngx_var_uri, params)
+local function filter_rules(sid, plugin, ngx_var_uri)
 
     local rules = orange_db.get_json(plugin .. ".selector." .. sid .. ".rules")
     if not rules or type(rules) ~= "table" or #rules <= 0 then
@@ -94,7 +94,6 @@ function BotDetectionHandler:access(conf)
         return
     end
 
-    local params = sputils.getReqParamsStr(ngx)
     local ngx_var_uri = ngx.var.uri
     for i, sid in ipairs(ordered_selectors) do
         ngx.log(ngx.INFO, "==[BotDetection][PASS THROUGH SELECTOR:", sid, "]")
@@ -112,7 +111,7 @@ function BotDetectionHandler:access(conf)
                     ngx.log(ngx.INFO, "[BotDetection][PASS-SELECTOR:", sid, "] ", ngx_var_uri)
                 end
 
-                local filter_res = filter_rules(sid, "bot_detection", ngx_var_uri, params)
+                local filter_res = filter_rules(sid, "bot_detection", ngx_var_uri)
                 -- true则拦截,false则继续
                 if filter_res == true then
                     -- 不再执行此插件其他逻辑

@@ -46,35 +46,49 @@ end
 
 -- get request params str by one of these methods(get/delete/put/post)
 function _M.getReqParamsStr(ngx)
-    local args
-    if ngx.req.get_method() == "GET" or ngx.req.get_method() == "DELETE" then
-        args = ngx.req.get_uri_args()
-    elseif ngx.req.get_method() == "PUT" or ngx.req.get_method() == "POST" then
-        -- no check file
+    local args = {}
+    -- 处理uri
+    for part in string.gmatch(ngx.var.uri, "([^/]+)") do
+        if part and part ~= '' then
+            table.insert(args, part)
+        end
+    end
+    -- 处理url params
+    local uri_args = ngx.req.get_uri_args()
+    if uri_args ~= nil and next(uri_args) ~= nil then
+        for k, v in pairs(uri_args) do
+            if v and v ~= '' then
+                table.insert(args, v)
+            end
+        end
+    end
+    -- 处理req body
+    if ngx.req.get_method() == "PUT" or ngx.req.get_method() == "POST" then
         local headers = ngx.req.get_headers()
         local header = headers['Content-Type']
         if header then
+            local body_args
             local is_multipart = string_find(header, "multipart")
             if is_multipart and is_multipart > 0 then
-                return nil
-            end
-            if header == "application/x-www-form-urlencoded" then
+                -- do not check file
+            elseif header == "application/x-www-form-urlencoded" then
                 ngx.req.read_body()
-                args = ngx.req.get_post_args()
+                body_args = ngx.req.get_post_args()
             elseif header == "application/json" then
                 ngx.req.read_body()
                 local data = ngx.req.get_body_data()
-                args = cjson.decode(data)
+                body_args = cjson.decode(data)
+            end
+            if body_args ~= nil and next(body_args) ~= nil then
+                for k, v in pairs(body_args) do
+                    if v and v ~= '' then
+                        table.insert(args, v)
+                    end
+                end
             end
         end
     end
-    for part in string.gmatch(ngx.var.uri, "([^/]+)") do
-        if args == nil then
-            args = {}
-        end
-        args[part] = ""
-    end
-    return args
+    return table.unique(args)
 end
 
 -- waf return html
