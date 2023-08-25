@@ -59,9 +59,14 @@ local function extract_variable(extraction)
         end
         ngx.req.read_body()
         local data = ngx.req.get_body_data()
-        local post_params = cjson.decode(data)
-        if not post_params then
-            ngx.log(ngx.ERR, "[Extract Variable]failed to get post args")
+        local post_params
+        if data ~= nil then
+            post_params = cjson.decode(data)
+            if not post_params then
+                ngx.log(ngx.ERR, "[Extract Variable]failed to get post args")
+                return false
+            end
+        else
             return false
         end
         result = post_params[extraction.name]
@@ -147,9 +152,14 @@ local function extract_variable_for_template(extractions)
             end
             ngx.req.read_body()
             local data = ngx.req.get_body_data()
-            local post_params = cjson.decode(data)
-            if not post_params then
-                ngx.log(ngx.ERR, "[Extract Variable]failed to get post args")
+            local post_params
+            if data ~= nil then
+                post_params = cjson.decode(data)
+                if not post_params then
+                    ngx.log(ngx.ERR, "[Extract Variable]failed to get post args")
+                    ok = false
+                end
+            else
                 ok = false
             end
 

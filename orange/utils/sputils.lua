@@ -80,7 +80,9 @@ function _M.getReqParamsStr(ngx)
             elseif header == "application/json" then
                 ngx.req.read_body()
                 local data = ngx.req.get_body_data()
-                body_args = cjson.decode(data)
+                if data ~= nil then
+                    body_args = cjson.decode(data)
+                end
             end
             if body_args ~= nil and next(body_args) ~= nil then
                 for k, v in pairs(body_args) do
